@@ -1,0 +1,14 @@
+#!/bin/bash
+# example: 01.05.2018 06:26:01 1Loznice 206 v024.4+21021.0000.012.0000000000
+
+cdate=`date +"%d.%m.%Y %H:%M:%S"`
+fdate=`date +"%d%m%Y"`
+th=`/root/Adafruit_Python_DHT/examples/AdafruitDHT.py 22 11`
+t=`echo ${th:5:4}`
+h=`echo ${th:21:4}`
+cline1="1Vonku teplota0${t}+00000.0000.000.0000000000"
+cline2="1Vonku vlhkost0${h}+00000.0000.000.0000000000"
+
+echo "${cdate} ${cline1}" >> /root/.k/data/k_19_${fdate}
+echo "${cdate} ${cline2}" >> /root/.k/data/k_20_${fdate}
+
