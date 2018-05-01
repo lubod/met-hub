@@ -1,0 +1,3 @@
+@reboot nodejs /root/.k/main.js
+* * * * * /root/.k/k
+* * * * * /root/.k/th
