@@ -76,12 +76,12 @@ function drawBasic3(res) {
 }
 
 function drawBasic(res, div) {
-      var data = new google.visualization.DataTable();
-	  var room = res.substr(21, 13);
-      data.addColumn('datetime', 'Time');
-      data.addColumn('number', room + " measured");
-      data.addColumn('number', room + " set");
-      data.addColumn('number', 'Heating');
+	var data = new google.visualization.DataTable();
+	var room = res.substr(21, 13);
+	data.addColumn('datetime', 'Time');
+	data.addColumn('number', room + " measured");
+	data.addColumn('number', room + " set");
+	data.addColumn('number', 'Heating');
 
 	var lines = res.split("\n");
 	for (var i = 0; i < lines.length; i++) {
@@ -96,27 +96,27 @@ function drawBasic(res, div) {
 			temperature -= 0.9;
 			set -= 1;
 		}
-		data.addRow([new Date(line.substr(6, 4), line.substr(3, 2) - 1, line.substr(0, 2), line.substr(11, 2), line.substr(14, 2), 0, 0), temperature, set, parseInt(line.substr(56, 1)) + 15]);
+		data.addRow([new Date(line.substr(6, 4), line.substr(3, 2) - 1, line.substr(0, 2), line.substr(11, 2), line.substr(14, 2), 0, 0), temperature, set, set + (set/10 * parseInt(line.substr(56, 1)))]);
 	}
-      var options = {
-        hAxis: {
-          title: 'Time',
-		  format: 'dd.MM.yyyy HH:mm'
-        },
-        vAxis: {
-          title: '°C',
-			viewWindow: {min: 15}
-        },
-		series: {2: {type: 'bars'}},
+	var options = {
+        	hAxis: {
+          	title: 'Time',
+			format: 'dd.MM.yyyy HH:mm'
+        	},
+        	vAxis: {
+          		title: '°C',
+			viewWindow: {}
+        	},
+		series: {2: { }},  
 		height: 350
-      };
+	};
 
-      var chart = new google.visualization.LineChart(document.getElementById(div));
+	var chart = new google.visualization.LineChart(document.getElementById(div));
 
-      chart.draw(data, options);
-		loading-=1;
-		if (loading <= 0) {
-			document.getElementById("showButton").textContent="Show";
-			document.getElementById("showButton").disabled=false;
-		}
-    }
+	chart.draw(data, options);
+	loading-=1;
+	if (loading <= 0) {
+		document.getElementById("showButton").textContent="Show";
+		document.getElementById("showButton").disabled=false;
+	}
+}
