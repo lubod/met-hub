@@ -90,7 +90,13 @@ function drawBasic(res, div) {
 		if (line.length < 65) {
 			continue;
 		}
-		var temperature = parseFloat(line.substr(34, 5));
+                var temperature;
+                if (line[34] == '0') {
+                        temperature = parseFloat(line.substr(35, 4));
+                }
+                else {
+                        temperature = parseFloat(line.substr(34, 5));
+                }
 		var set = parseInt(line.substr(39, 3)); 
 		if (room == "Obyv kuch vzd") {
 			temperature -= 0.9;
