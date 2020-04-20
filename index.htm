@@ -1,91 +1,52 @@
-<html>
-	<head>
-		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<script type="text/javascript" charset="utf-8" src="data.js"></script>
-	</head>
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+</head>
+
 <body>
-	<div>
-		<select id="room" name="room">
-			<option value="k_19,k_20">Vonku</option>
-			<option value="k_0,k_10">Obyvacka</option>
-			<option value="k_2,k_12">Pracovna</option>
-			<option value="k_1,k_11">Zadverie</option>
-			<option value="k_5,k_15">Izba - Petra</option>
-			<option value="k_6,k_16">Izba - chlapci</option>
-			<option value="k_7,k_17">Spalna</option>
-			<option value="k_3,k_13">Chodba</option>
-			<option value="k_4,k_14">Satna</option>
-			<option value="k_8,k_9">Kupelne</option>
-		</select>
-		<select id="day" name="day">
-			<option value="01">01</option>
-			<option value="02">02</option>
-			<option value="03">03</option>
-			<option value="04">04</option>
-			<option value="05">05</option>
-			<option value="06">06</option>
-			<option value="07">07</option>
-			<option value="08">08</option>
-			<option value="09">09</option>
-			<option value="10">10</option>
-			<option value="11">11</option>
-			<option value="12">12</option>
-			<option value="13">13</option>
-			<option value="14">14</option>
-			<option value="15">15</option>
-			<option value="16">16</option>
-			<option value="17">17</option>
-			<option value="18">18</option>
-			<option value="19">19</option>
-			<option value="20">20</option>
-			<option value="21">21</option>
-			<option value="22">22</option>
-			<option value="23">23</option>
-			<option value="24">24</option>
-			<option value="25">25</option>
-			<option value="26">26</option>
-			<option value="27">27</option>
-			<option value="28">28</option>
-			<option value="29">29</option>
-			<option value="30">30</option>
-			<option value="31">31</option>
-		</select>
-		<select id="month" name="month">
-			<option value="01">Januar</option>
-			<option value="02">Februar</option>
-			<option value="03">Marec</option>
-			<option value="04">April</option>
-			<option value="05">Maj</option>
-			<option value="06">Jun</option>
-			<option value="07">Jul</option>
-			<option value="08">August</option>
-			<option value="09">September</option>
-			<option value="10">Oktober</option>
-			<option value="11">November</option>
-			<option value="12">December</option>
-		</select>
-		<select id="year" name="year">
-			<option value="2015">2015</option>
-			<option value="2016">2016</option>
-			<option value="2017">2017</option>
-			<option value="2018">2018</option>
-			<option value="2019">2019</option>
-			<option value="2020">2020</option>
-			<option value="2021">2021</option>
-			<option value="2022">2022</option>
-			<option value="2023">2023</option>
-			<option value="2024">2024</option>
-		</select>
-		<button id="showButton" name="showButton" type="button" onclick="loadData()">Show</button>
-	</div>
-	<div id="chart1_div" ></div>
-	<div id="chart2_div" ></div>
-	<div id="chart3_div" ></div>
-	<script>
-	var currentDate = new Date();
-	document.getElementById("day").value = ("0" + currentDate.getDate()).slice(-2);
-	document.getElementById("month").value = ("0" + (currentDate.getMonth() + 1)).slice(-2);
-	document.getElementById("year").value = currentDate.getFullYear();
-	</script>
+  <div class="container-fluid text-center">
+    <div class="row">
+      <div class="col">
+        <select id="room" class="custom-select">
+          <option id="vonku" value="vonku" selected>Vonku</option>
+          <option id="obyvacka" value="obyvacka">Obyvacka</option>
+          <option id="pracovna" value="pracovna">Pracovna</option>
+          <option id="zadverie" value="zadverie">Zadverie</option>
+          <option id="petra" value="petra">Petra</option>
+          <option id="chalani" value="chalani">Chalani</option>
+          <option id="spalna" value="spalna">Spalna</option>
+          <option id="chodba" value="chodba">Chodba</option>
+          <option id="satna" value="satna">Satna</option>
+          <option id="kupelne" value="kupelne">Kupelne</option>
+        </select>
+      </div>
+    </div>
+    <p id="last1" class="font-weight-bold text-center"></p>
+    <div id="chart_div1"></div>
+    <p id="last2" class="font-weight-bold text-center"></p>
+    <div id="chart_div2"></div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+  <script type="text/javascript" src="app.js"></script>
 </body>
+
 </html>
