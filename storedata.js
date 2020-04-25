@@ -89,16 +89,21 @@ function getData(param) {
         .then(res => res.text());
 }
 
+
 function getExternalData() {
-    return new Promise((resolve, reject) => {
-        exec("ssh pi@192.168.1.5 /home/pi/AdafruitDHT.py 22 11", (error, stdout, stderr) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(stdout);
-            }
-        });
-    });
+    return fetch("http://192.168.1.5/getTH", {
+        "credentials": "include",
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Upgrade-Insecure-Requests": "1",
+            "If-None-Match": "W/\"1b-gSBrGQ+usH2f39nYMJVnOGR8ATM\"",
+            "Cache-Control": "max-age=0"
+        },
+        "method": "GET",
+        "mode": "cors"
+    }).then(res => res.text());
 }
 
 function decode(text) {
