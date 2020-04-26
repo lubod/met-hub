@@ -136,9 +136,10 @@ function decodeTarif(text) {
 function decodeExternal(text) {
     const data = {};
     if (text !== '') {
-        const th = text.match(/Temp=(.*)\*  Humidity=(.*)%/);
+        const th = text.match(/Temp=(.*)\*  Humidity=(.*)%\nRain=(.*\n)/);
         data.temp = parseFloat(th[1]);
         data.humidity = parseFloat(th[2]);
+        data.rain = parseInt(th[3]);
         data.text = text;
     }
     return data;
@@ -160,8 +161,8 @@ async function store(data) {
         await client.query('BEGIN');
 
         let table = 'vonku';
-        let queryText = 'insert into ' + table + '(timestamp, temp, humidity) values ($1, $2, $3)';
-        let res = await client.query(queryText, [now, data[table].temp, data[table].humidity]);
+        let queryText = 'insert into ' + table + '(timestamp, temp, humidity, rain) values ($1, $2, $3, $4)';
+        let res = await client.query(queryText, [now, data[table].temp, data[table].humidity, data[table].rain]);
         console.log(data[table].text + ' inserted ' + table);
 
         table = 'tarif';
