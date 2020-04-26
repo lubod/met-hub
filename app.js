@@ -35,17 +35,25 @@ function getDataVonku() {
 function getDataDom(room) {
   document.getElementById('chart_div1').innerHTML = '';
   document.getElementById('chart_div2').innerHTML = '';
+  document.getElementById('chart_div3').innerHTML = '';
   fetch('/getData/' + room + '_vzduch').then(data => data.json()).then(json => {
     const last = json[0];
     date = new Date(last.timestamp);
-    document.getElementById('last1').innerHTML = `${date.toLocaleTimeString('sk-SK')} vzduch ${room}: ${last.temp}°C req: ${last.req}°C`;
+    document.getElementById('last1').innerHTML = `${date.toLocaleTimeString('sk-SK')} vz: ${last.temp}°C req: ${last.req}°C k: ${last.kuri}`;
     draw_table(json, 'chart_div1');
   });
   fetch('/getData/' + room + '_podlaha').then(data => data.json()).then(json => {
     const last = json[0];
     date = new Date(last.timestamp);
-    document.getElementById('last2').innerHTML = `${date.toLocaleTimeString('sk-SK')} podlaha ${room}: ${last.temp}°C req: ${last.req}°C`;
+    document.getElementById('last2').innerHTML = `${date.toLocaleTimeString('sk-SK')} pod: ${last.temp}°C req: ${last.req}°C k: ${last.kuri}`;
     draw_table(json, 'chart_div2');
+  });
+  fetch('/getData/tarif').then(data => data.json()).then(json => {
+    console.log(json[0]);
+    const last = json[0];
+    date = new Date(last.timestamp);
+    document.getElementById('last3').innerHTML = `${date.toLocaleTimeString('sk-SK')} tarif ${room}: ${last.tarif == 1 ? 'low' : 'high'}`;
+    draw_tarif(json, 'chart_div3');
   });
 }
 
@@ -90,41 +98,11 @@ function draw_vonku(json_data) {
   data2.addRows(result2);
   data3.addRows(result3);
 
-  var options1 = {
+  var options = {
     hAxis: {
-//      title: 'Time',
       format: 'HH:mm'
     },
     vAxis: {
-//      title: '°C',
-      viewWindow: {}
-    },
-    series: { 2: {} },
-    height: 290,
-    chartArea: { width: '85%', height: '85%' },
-    legend: { position: 'top' }
-  };
-  var options2 = {
-    hAxis: {
-//      title: 'Time',
-      format: 'HH:mm' // dd.MM'
-    },
-    vAxis: {
-//      title: '%',
-      viewWindow: {}
-    },
-    series: { 2: {} },
-    height: 290,
-    chartArea: { width: '85%', height: '85%' },
-    legend: { position: 'top' }
-  };
-  var options3 = {
-    hAxis: {
-//      title: 'Time',
-      format: 'HH:mm' // dd.MM'
-    },
-    vAxis: {
-//      title: '%',
       viewWindow: {}
     },
     series: { 2: {} },
@@ -133,11 +111,11 @@ function draw_vonku(json_data) {
     legend: { position: 'top' }
   };
   const chart1 = new google.visualization.LineChart(document.getElementById('chart_div1'));
-  chart1.draw(data1, options1);
+  chart1.draw(data1, options);
   const chart2 = new google.visualization.LineChart(document.getElementById('chart_div2'));
-  chart2.draw(data2, options2);
+  chart2.draw(data2, options);
   const chart3 = new google.visualization.LineChart(document.getElementById('chart_div3'));
-  chart3.draw(data3, options3);
+  chart3.draw(data3, options);
 }
 
 function draw_table(json_data, chart_div) {
@@ -146,20 +124,47 @@ function draw_table(json_data, chart_div) {
   data.addColumn('datetime', 'Time');
   data.addColumn('number', 'Temp');
   data.addColumn('number', 'Required Temp');
+  data.addColumn('number', 'Kuri');
   const result = [];
 
   for (var i in json_data) {
-    result.push([new Date(json_data[i].timestamp), parseFloat(json_data[i].temp), parseFloat(json_data[i].req)]);
+    result.push([new Date(json_data[i].timestamp), parseFloat(json_data[i].temp), parseFloat(json_data[i].req), parseInt(json_data[i].kuri)]);
   }
   data.addRows(result);
 
   var options = {
     hAxis: {
-//      title: 'Time',
       format: 'HH:mm'
     },
     vAxis: {
-//      title: '°C',
+      viewWindow: {}
+    },
+    series: { 2: {} },
+    height: 290,
+    chartArea: { width: '85%', height: '85%' },
+    legend: { position: 'top' }
+  };
+  const chart = new google.visualization.LineChart(document.getElementById(chart_div));
+  chart.draw(data, options);
+}
+
+function draw_tarif(json_data, chart_div) {
+  //    console.log(json_data);
+  const data = new google.visualization.DataTable();
+  data.addColumn('datetime', 'Time');
+  data.addColumn('number', 'Tarif');
+  const result = [];
+
+  for (var i in json_data) {
+    result.push([new Date(json_data[i].timestamp), parseInt(json_data[i].tarif)]);
+  }
+  data.addRows(result);
+
+  var options = {
+    hAxis: {
+      format: 'HH:mm'
+    },
+    vAxis: {
       viewWindow: {}
     },
     series: { 2: {} },
