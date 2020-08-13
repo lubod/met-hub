@@ -1,12 +1,23 @@
 google.load('visualization', '1', { packages: ['corechart'] });
 google.setOnLoadCallback(getDataVonku);
 
+var time = new Date().getTime();
+
 $('select').on('change', function (e) {
-  getDataRoom(this.value);
+  getDataRoom(this.value, 0);
+});
+
+$('#prev').on('click', function (e) {
+  time = time - 86400000;
+  getDataRoom(document.getElementById('room').value);
+});
+
+$('#next').on('click', function (e) {
+  time = time + 86400000;
+  getDataRoom(document.getElementById('room').value);
 });
 
 function getDataRoom(room) {
-  //console.log('changed' + room);
   if (room == 'vonku') {
     getDataVonku();
   }
@@ -19,14 +30,15 @@ function getDataRoom(room) {
 }
 
 function getDataVonku() {
+  console.log(time);
   document.getElementById('chart_div1').innerHTML = '';
   document.getElementById('chart_div2').innerHTML = '';
-  fetch('/getData/vonku').then(data => data.json()).then(json => {
+  fetch('/getData/vonku/' + time).then(data => data.json()).then(json => {
     const last = json[0];
     const date = new Date(last.timestamp);
-    document.getElementById('last1').innerHTML = `${date.toLocaleTimeString('sk-SK')} teplota vonku: ${last.temp}°C`;
-    document.getElementById('last2').innerHTML = `${date.toLocaleTimeString('sk-SK')} vlhkost vonku: ${last.humidity}%`;
-    document.getElementById('last3').innerHTML = `${date.toLocaleTimeString('sk-SK')} rain senzor: ${last.rain}`;
+    document.getElementById('last1').innerHTML = `${date.toLocaleString('sk-SK')} teplota vonku: ${last.temp}°C`;
+    document.getElementById('last2').innerHTML = `${date.toLocaleString('sk-SK')} vlhkost vonku: ${last.humidity}%`;
+    document.getElementById('last3').innerHTML = `${date.toLocaleString('sk-SK')} rain senzor: ${last.rain}`;
     draw_vonku(json);
   });
   document.getElementById('room').value = 'vonku';
@@ -36,23 +48,23 @@ function getDataDom(room) {
   document.getElementById('chart_div1').innerHTML = '';
   document.getElementById('chart_div2').innerHTML = '';
   document.getElementById('chart_div3').innerHTML = '';
-  fetch('/getData/' + room + '_vzduch').then(data => data.json()).then(json => {
+  fetch('/getData/' + room + '_vzduch/' + time).then(data => data.json()).then(json => {
     const last = json[0];
     date = new Date(last.timestamp);
-    document.getElementById('last1').innerHTML = `${date.toLocaleTimeString('sk-SK')} vz: ${last.temp}°C req: ${last.req}°C k: ${last.kuri}`;
+    document.getElementById('last1').innerHTML = `${date.toLocaleString('sk-SK')} vz: ${last.temp}°C req: ${last.req}°C k: ${last.kuri}`;
     draw_table(json, 'chart_div1');
   });
-  fetch('/getData/' + room + '_podlaha').then(data => data.json()).then(json => {
+  fetch('/getData/' + room + '_podlaha/' + time).then(data => data.json()).then(json => {
     const last = json[0];
     date = new Date(last.timestamp);
-    document.getElementById('last2').innerHTML = `${date.toLocaleTimeString('sk-SK')} pod: ${last.temp}°C req: ${last.req}°C k: ${last.kuri}`;
+    document.getElementById('last2').innerHTML = `${date.toLocaleString('sk-SK')} pod: ${last.temp}°C req: ${last.req}°C k: ${last.kuri}`;
     draw_table(json, 'chart_div2');
   });
-  fetch('/getData/tarif').then(data => data.json()).then(json => {
+  fetch('/getData/tarif/' + time).then(data => data.json()).then(json => {
     console.log(json[0]);
     const last = json[0];
     date = new Date(last.timestamp);
-    document.getElementById('last3').innerHTML = `${date.toLocaleTimeString('sk-SK')} tarif ${room}: ${last.tarif == 1 ? 'low' : 'high'}`;
+    document.getElementById('last3').innerHTML = `${date.toLocaleString('sk-SK')} tarif ${room}: ${last.tarif == 1 ? 'low' : 'high'}`;
     draw_tarif(json, 'chart_div3');
   });
 }
@@ -60,16 +72,16 @@ function getDataDom(room) {
 function getDataKupelne() {
   document.getElementById('chart_div1').innerHTML = '';
   document.getElementById('chart_div2').innerHTML = '';
-  fetch('/getData/kupelna_hore').then(data => data.json()).then(json => {
+  fetch('/getData/kupelna_hore/' + time).then(data => data.json()).then(json => {
     const last = json[0];
     date = new Date(last.timestamp);
-    document.getElementById('last1').innerHTML = `${date.toLocaleTimeString('sk-SK')} podlaha hore:  ${last.temp}°C req: ${last.req}°C`;
+    document.getElementById('last1').innerHTML = `${date.toLocaleString('sk-SK')} podlaha hore:  ${last.temp}°C req: ${last.req}°C`;
     draw_table(json, 'chart_div1');
   });
-  fetch('/getData/kupelna_dole').then(data => data.json()).then(json => {
+  fetch('/getData/kupelna_dole/' + time).then(data => data.json()).then(json => {
     const last = json[0];
     date = new Date(last.timestamp);
-    document.getElementById('last2').innerHTML = `${date.toLocaleTimeString('sk-SK')} podlaha dole: ${last.temp}°C req: ${last.req}°C`;
+    document.getElementById('last2').innerHTML = `${date.toLocaleString('sk-SK')} podlaha dole: ${last.temp}°C req: ${last.req}°C`;
     draw_table(json, 'chart_div2');
   });
 }
