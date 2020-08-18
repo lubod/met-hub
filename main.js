@@ -25,8 +25,8 @@ async function store(data) {
         await client.query('BEGIN');
 
         let table = 'stanica';
-        let queryText = 'insert into ' + table + '(timestamp, tempin, humidityin, pressurerel, pressureabs, temp, humidity, winddir, windspeed, windgust, rainrate, solarradiation, uv) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)';
-        let res = await client.query(queryText, [data.timestamp, data.tempin, data.humidityin, data.pressurerel, data.pressureabs, data.temp, data.humidity, data.winddir, data.windspeed, data.windgust, data.rainrate, data.solarradiation, data.uv]);
+        let queryText = 'insert into ' + table + '(timestamp, tempin, humidityin, pressurerel, pressureabs, temp, humidity, winddir, windspeed, windgust, rainrate, solarradiation, uv, eventrain, hourlyrain) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)';
+        let res = await client.query(queryText, [data.timestamp, data.tempin, data.humidityin, data.pressurerel, data.pressureabs, data.temp, data.humidity, data.winddir, data.windspeed, data.windgust, data.rainrate, data.solarradiation, data.uv, data.eventrain, data.hourlyrain]);
         console.log(data.timestamp + ' inserted ' + table);
 
         await client.query('COMMIT');
@@ -66,23 +66,32 @@ async function store(data) {
   model: 'WS2900_V2.01.10' }
 */
 
+const TO_MM = 25.4;
+const TO_KM = 1.6;
+const TO_HPA = 33.8639;
+
 function decodeStationData(data) {
     data.timestamp = new Date(data.dateutc + ' UTC');
     data.tempin = (5/9) * (data.tempinf - 32);
-    data.pressurerel = data.baromrelin * 33.8639;
-    data.pressureabs = data.baromabsin * 33.8639;
+    data.pressurerel = data.baromrelin * TO_HPA;
+    data.pressureabs = data.baromabsin * TO_HPA;
     data.temp = (5/9) * (data.tempf - 32);
-    data.windspeed = data.windspeedmph * 1.6;
-    data.windgust = data.windgustmph * 1.6;
+    data.windspeed = data.windspeedmph * TO_KM;
+    data.windgust = data.windgustmph * TO_KM;
     data.maxdailygustmph = data.maxdailygust;
-    data.maxdailygust = data.maxdailygustmph * 1.6;
-    data.rainrate = data.rainratein * 25.4;
-    data.eventrain = data.eventrainin * 25.4;
-    data.hourlyrain = data.hourlyrainin * 25.4;
-    data.dailyrain = data.dailyrainin * 25.4;
-    data.weeklyrain = data.weeklyrainin * 25.4;
-    data.monthlyrain = data.monthlyrainin * 25.4;
-    data.totalrain = data.totalrainin * 25.4;
+    data.maxdailygust = data.maxdailygustmph * TO_KM;
+    data.rainrate = data.rainratein * TO_MM;
+    data.eventrain = data.eventrainin * TO_MM;
+    data.hourlyrain = data.hourlyrainin * TO_MM;
+    data.dailyrain = data.dailyrainin * TO_MM;
+    data.weeklyrain = data.weeklyrainin * TO_MM;
+    data.monthlyrain = data.monthlyrainin * TO_MM;
+    data.totalrain = data.totalrainin * TO_MM;
+    data.solarradiation = data.solarradiation * 1.0;
+    data.uv = data.uv * 1.0;
+    data.humidity = data.humidity * 1.0;
+    data.humidityin = data.humidityin * 1.0;
+    data.winddir = data.winddir * 1.0;
     return data;
 }
 
@@ -97,7 +106,7 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + "/" + "index.htm");
 })
 
-app.get('/last', function (req, res) {
+app.get('/getLastData', function (req, res) {
     res.type('application/json');
     return res.json(last);
 })

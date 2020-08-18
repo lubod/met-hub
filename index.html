@@ -10,39 +10,134 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
+  <link rel="stylesheet" type="text/css" href="app.css">
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 </head>
 
 <body>
-  <div class="container-fluid text-center">
+  <div class="container text-center bg-dark text-light my-2 py-2 mx-auto" style="width: 378px;">
     <div class="row">
-      <div class="col">
-        <button type="button" id="prev" class="btn btn-primary">Prev</button>
+      <div class="col text-left">
+        <div class="">Last data Marianka</div>
+        <div id="last_timestamp" class=""></div>
       </div>
-      <div class="col">
-        <select id="room" class="custom-select">
-          <option id="vonku" value="vonku" selected>Vonku</option>
-          <option id="obyvacka" value="obyvacka">Obyvacka</option>
-          <option id="pracovna" value="pracovna">Pracovna</option>
-          <option id="zadverie" value="zadverie">Zadverie</option>
-          <option id="petra" value="petra">Petra</option>
-          <option id="chalani" value="chalani">Chalani</option>
-          <option id="spalna" value="spalna">Spalna</option>
-          <option id="chodba" value="chodba">Chodba</option>
-          <option id="satna" value="satna">Satna</option>
-          <option id="kupelne" value="kupelne">Kupelne</option>
-        </select>
-      </div>
-      <div class="col">
-        <button type="button" id="next" class="btn btn-primary">Next</button>
+      <div class="col text-right">
+        <button type="button" id="history" class="btn btn-secondary">History</button>
       </div>
     </div>
-    <p id="last1" class="font-weight-bold text-center"></p>
-    <div id="chart_div1"></div>
-    <p id="last2" class="font-weight-bold text-center"></p>
-    <div id="chart_div2"></div>
-    <p id="last3" class="font-weight-bold text-center"></p>
-    <div id="chart_div3"></div>
+  </div>
+  <div class="container text-center bg-dark text-light my-2 py-2 mx-auto" style="width: 378px;">
+    <div class="row">
+      <div class="col">
+        <p class="font-weight-bold text-center h5 text-info">OUT</p>
+        <canvas width="200" height="200" id="myCanvas">
+          <p>Your browser doesn't support canvas. Boo hoo!</p>
+        </canvas>
+      </div>
+    </div>
+
+    <div class="row">
+      <p></p>
+    </div>
+
+    <div class="row">
+      <div class="col text-left">
+        <span class="">Temp</span>
+        <span id="last_tempout" class="h4 text-info"></span>
+        <span class="text-info">°C</span>
+      </div>
+      <div class="col text-left">
+        <span class="">Hum</span>
+        <span id="last_humidityout" class="h4 text-info"></span>
+        <span class="text-info">%</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-left">
+        <span class="">Gust</span>
+        <span id="last_windgust" class="h4 text-info"></span>
+        <span class="text-info">km/h</span>
+      </div>
+      <div class="col text-left">
+        <span class="">Daily</span>
+        <span id="last_maxdailygust" class="h4 text-info"></span>
+        <span class="text-info">km/h</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-left">
+        <span class="">Rel P</span>
+        <span id="last_pressurerel" class="h4 text-info"></span>
+        <span class="text-info">hPa</span>
+      </div>
+      <div class="col text-left">
+        <span class="">Abs</span>
+        <span id="last_pressureabs" class="h4 text-info"></span>
+        <span class="text-info">hPa</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-left">
+        <span class="">SRad</span>
+        <span id="last_solarradiation" class="h4 text-info"></span>
+        <span class="text-info">W/m2</span>
+      </div>
+      <div class="col text-left">
+        <span class="">UV</span>
+        <span id="last_uv" class="h4 text-info"></span>
+        <span class="text-info"></span>
+      </div>
+    </div>
+
+    <div class="row">
+      <p></p>
+    </div>
+    <div class="row">
+      <div class="col text-left">
+        <span class="">Rain</span>
+        <span id="last_rainrate" class="h4 text-info"></span>
+        <span class="text-info">mm/hr</span>
+      </div>
+      <div class="col text-left">
+        <span class="">Event</span>
+        <span id="last_eventrain" class="h4 text-info"></span>
+        <span class="text-info">mm</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center">
+        <div class="">Hourly / Daily / Weekly / Monthly / Total</div>
+        <span id="last_hourlyrain" class="text-info"></span>
+        <span>/</span>
+        <span id="last_dailyrain" class="text-info"></span>
+        <span>/</span>
+        <span id="last_weeklyrain" class="text-info"></span>
+        <span>/</span>
+        <span id="last_monthlyrain" class="text-info"></span>
+        <span>/</span>
+        <span id="last_totalrain" class="text-info"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container text-center bg-dark text-light my-2 py-2 mx-auto" style="width: 378px;">
+    <div class="row">
+      <div class="col">
+        <p class="font-weight-bold text-center h5 text-primary">IN</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-right">
+        <span class="">Temp</span>
+        <span id="last_tempin" class="h4 text-primary"></span>
+        <span class="text-primary">°C</span>
+      </div>
+      <div class="col text-left">
+        <span class="">Hum</span>
+        <span id="last_humidityin" class="h4 text-primary"></span>
+        <span class="text-primary">%</span>
+      </div>
+    </div>
   </div>
 
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
