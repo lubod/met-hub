@@ -1,0 +1,18 @@
+html {
+    background: url('bg.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: #000;
+  
+}
+
+body {
+    background: transparent;
+}
+ 
+div.container {
+    border-radius: 12px;
+    opacity: 0.85;
+}
