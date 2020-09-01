@@ -15,18 +15,18 @@
 </head>
 
 <body>
-  <div class="container text-center bg-dark text-light my-2 py-2 mx-auto" style="width: 378px;">
+  <div class="container text-center bg-dark text-light my-2 py-2 mx-auto" style="width: 96%;">
     <div class="row">
-      <div class="col text-left">
+      <div class="col-8 text-left">
         <div class="">Last data Marianka</div>
         <div id="last_timestamp" class=""></div>
       </div>
-      <div class="col text-right">
+      <div class="col-4 text-right">
         <button type="button" id="history" class="btn btn-secondary">History</button>
       </div>
     </div>
   </div>
-  <div class="container text-center bg-dark text-light my-2 py-2 mx-auto" style="width: 378px;">
+  <div class="container text-center bg-dark text-light my-2 py-2 mx-auto" style="width: 96%;">
     <div class="row">
       <div class="col">
         <p class="font-weight-bold text-center h5 text-info">OUT</p>
@@ -36,91 +36,107 @@
       </div>
     </div>
 
-    <div class="row">
-      <p></p>
-    </div>
-
-    <div class="row">
-      <div class="col text-left">
+    <div class="row mt-3">
+      <div class="col-2 text-right">
         <span class="">Temp</span>
+      </div>
+      <div class="col-4 text-left">
         <span id="last_tempout" class="h4 text-info"></span>
         <span class="text-info">°C</span>
       </div>
-      <div class="col text-left">
+      <div class="col-2 text-right">
         <span class="">Hum</span>
+      </div>
+      <div class="col-4 text-left">
         <span id="last_humidityout" class="h4 text-info"></span>
         <span class="text-info">%</span>
       </div>
     </div>
     <div class="row">
-      <div class="col text-left">
+      <div class="col-2 text-right">
         <span class="">Gust</span>
+      </div>
+      <div class="col-4 text-left">
         <span id="last_windgust" class="h4 text-info"></span>
         <span class="text-info">km/h</span>
       </div>
-      <div class="col text-left">
+      <div class="col-2 text-right">
         <span class="">Daily</span>
+      </div>
+      <div class="col-4 text-left">
         <span id="last_maxdailygust" class="h4 text-info"></span>
         <span class="text-info">km/h</span>
       </div>
     </div>
     <div class="row">
-      <div class="col text-left">
-        <span class="">Rel P</span>
-        <span id="last_pressurerel" class="h4 text-info"></span>
-        <span class="text-info">hPa</span>
-      </div>
-      <div class="col text-left">
-        <span class="">Abs</span>
-        <span id="last_pressureabs" class="h4 text-info"></span>
-        <span class="text-info">hPa</span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col text-left">
+      <div class="col-2 text-right">
         <span class="">SRad</span>
+      </div>
+      <div class="col-4 text-left">
         <span id="last_solarradiation" class="h4 text-info"></span>
         <span class="text-info">W/m2</span>
       </div>
-      <div class="col text-left">
-        <span class="">UV</span>
+      <div class="col-2 text-right">
+        <span class="">UV-i</span>
+      </div>
+      <div class="col-4 text-left">
         <span id="last_uv" class="h4 text-info"></span>
         <span class="text-info"></span>
       </div>
     </div>
-
     <div class="row">
-      <p></p>
-    </div>
-    <div class="row">
-      <div class="col text-left">
-        <span class="">Rain</span>
+      <div class="col-1 text-right">
+        <span class="">P</span>
+      </div>
+      <div class="col-5 text-left">
+        <span id="last_pressurerel" class="h4 text-info"></span>
+        <span class="text-info">hPa</span>
+      </div>
+      <div class="col-1 text-right">
+        <span class="">R</span>
+      </div>
+      <div class="col-5 text-left">
         <span id="last_rainrate" class="h4 text-info"></span>
         <span class="text-info">mm/hr</span>
       </div>
-      <div class="col text-left">
-        <span class="">Event</span>
-        <span id="last_eventrain" class="h4 text-info"></span>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col text-center">
+        <span class="">Rain Sum</span>
         <span class="text-info">mm</span>
       </div>
     </div>
     <div class="row">
-      <div class="col text-center">
-        <div class="">Hourly / Daily / Weekly / Monthly / Total</div>
-        <span id="last_hourlyrain" class="text-info"></span>
-        <span>/</span>
-        <span id="last_dailyrain" class="text-info"></span>
-        <span>/</span>
-        <span id="last_weeklyrain" class="text-info"></span>
-        <span>/</span>
-        <span id="last_monthlyrain" class="text-info"></span>
-        <span>/</span>
-        <span id="last_totalrain" class="text-info"></span>
+      <div class="col-2 text-center">
+        <div class="">Event</div>
+        <div id="last_eventrain" class="h5 text-info"></div>
+      </div>
+      <div class="col-2 text-center">
+        <div class="">Hourly</div>
+        <div id="last_hourlyrain" class="h5 text-info"></div>
+      </div>
+      <div class="col-2 text-center">
+        <div class="">Daily</div>
+        <div id="last_dailyrain" class="h5 text-info"></div>
+      </div>
+      <div class="col-2 text-center">
+        <div class="">Weekly</div>
+        <div id="last_weeklyrain" class="h5 text-info"></div>
+      </div>
+      <div class="col-2 text-center">
+        <div class="">Monthly</div>
+        <div id="last_monthlyrain" class="h5 text-info"></div>
+      </div>
+      <div class="col-2 text-center">
+        <div class="">Total</div>
+        <div id="last_totalrain" class="h5 text-info"></div>
       </div>
     </div>
   </div>
+  </div>
 
-  <div class="container text-center bg-dark text-light my-2 py-2 mx-auto" style="width: 378px;">
+  <div class="container text-center bg-dark text-light my-2 py-2 mx-auto" style="width: 96%;">
     <div class="row">
       <div class="col">
         <p class="font-weight-bold text-center h5 text-primary">IN</p>

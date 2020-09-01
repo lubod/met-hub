@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <style type="text/css">
+        #content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="col text-right">
+        <button onclick="window.location.href = 'index.html';" type="button" id="current"
+            class="btn btn-secondary">Current</button>
+    </div>
+    <div id="content">
+        <iframe width="100%" height="100%" frameborder="0"
+            src="http://192.168.1.199:3000/d/-LNB7_HGk/stanica?orgId=1&from=now-24h&to=now"
+            title="Grafana History"></iframe>
+    </div>
+</body>
+
+</html>

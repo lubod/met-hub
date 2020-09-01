@@ -4,7 +4,7 @@ window.onload = function() {
 };
 
 $('#history').on('click', function (e) {
-  window.location.href = "history.html";
+  window.location.href = "grafana.html";
 });
 
 function getLastData() {
@@ -17,7 +17,7 @@ function getLastData() {
     document.getElementById('last_tempin').innerHTML = `${last.tempin.toFixed(1)}`;
     document.getElementById('last_humidityin').innerHTML = `${last.humidityin.toFixed(0)}`;
     document.getElementById('last_pressurerel').innerHTML = `${last.pressurerel.toFixed(1)}`;
-    document.getElementById('last_pressureabs').innerHTML = `${last.pressureabs.toFixed(1)}`;
+//    document.getElementById('last_pressureabs').innerHTML = `${last.pressureabs.toFixed(1)}`;
     document.getElementById('last_windgust').innerHTML = `${last.windgust.toFixed(1)}`;
     document.getElementById('last_maxdailygust').innerHTML = `${last.maxdailygust.toFixed(1)}`;
     document.getElementById('last_rainrate').innerHTML = `${last.rainrate.toFixed(1)}`;
