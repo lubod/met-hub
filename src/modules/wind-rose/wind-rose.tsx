@@ -2,7 +2,10 @@ import React from 'react';
 import './style.scss';
 
 type Wind = {
-  speed: string, dir: string
+  speed: string,
+  dir: string,
+  gust: string,
+  dailyGust: string
 }
 
 function WindRose(props: Wind) {
@@ -12,6 +15,8 @@ function WindRose(props: Wind) {
     const ctx = canvas.getContext('2d');
     let speed = parseFloat(wind.speed);
     let dir = parseFloat(wind.dir);
+    let gust = parseFloat(wind.gust);
+    let dailyGust = parseFloat(wind.dailyGust);
 
     if (typeof speed === 'undefined') {
       speed = 0;
@@ -79,10 +84,15 @@ function WindRose(props: Wind) {
     ctx.textAlign = "center";
     ctx.fillText(speed.toFixed(1), 200 / 2, 200 / 2);
 
-    ctx.font = "16px Arial";
+    ctx.font = "12px Arial";
     ctx.fillStyle = "17A2B8";
     ctx.textAlign = "center";
-    ctx.fillText("km/h", 200 / 2, 200 / 2 + 20);
+    ctx.fillText("km/h", 200 / 2, 200 / 2 + 16);
+
+    ctx.font = "12px Arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText("Speed", 200 / 2, 200 / 2 - 28);
 
     const cos = Math.cos((dir) * Math.PI / 180 - Math.PI / 2);
     const sin = Math.sin((dir) * Math.PI / 180 - Math.PI / 2);
@@ -128,9 +138,23 @@ function WindRose(props: Wind) {
   });
 
   return (
-    <canvas width="200" height="200" id="myCanvas" ref={canvasRef} >
-      <p>Your browser doesn't support canvas. Boo hoo!</p>
-    </canvas>
+    <div className='row'>
+      <div className='col-2 text-right'>
+        <div className='small'>Wind Gust</div>
+        <div className='h4 text-info'>{props.gust}</div>
+        <div className='text-info small'>km/h</div>
+      </div>
+      <div className='col-8'>
+        <canvas width='200' height='200' id='myCanvas' ref={canvasRef} >
+          <p>Your browser doesn't support canvas. Boo hoo!</p>
+        </canvas>
+      </div>
+      <div className='col-2 text-left'>
+        <div className='small'>Daily Gust</div>
+        <div className='h4 text-info'>{props.dailyGust}</div>
+        <div className='text-info small'>km/h</div>
+      </div>
+    </div>
   );
 };
 

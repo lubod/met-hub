@@ -2,6 +2,9 @@ const fetch = require("node-fetch");
 const { exec } = require("child_process");
 const { Pool } = require('pg')
 
+const redis = require("redis");
+const redisClient = redis.createClient();
+
 const POS_ACTUALTEMP = 14,
     POS_REQUIRED = 19,
     POS_REQUIREDALL = 22,
@@ -156,7 +159,7 @@ async function store(data) {
 
     const client = await pool.connect();
     try {
-        const now = new Date();
+        const now = data.timestamp;
         console.log('connected ' + now);
         await client.query('BEGIN');
 
@@ -187,9 +190,10 @@ async function store(data) {
     }
 }
 
-async function main() {
+async function storeData() {
     const data = {};
 
+    console.log('storeData');
     let res = await login();
     //    console.log(res);
     const count = await getCount();
@@ -204,10 +208,15 @@ async function main() {
     data['vonku'] = decodeExternal(res);
 
     res = await getTarif();
-//    console.log(res);
+    //    console.log(res);
     data['tarif'] = decodeTarif(res);
-//    console.log(data['tarif']);
+    //    console.log(data['tarif']);
+    data.timestamp = new Date();
+    data.dateutc = `${data.timestamp.getUTCFullYear()}-${data.timestamp.getUTCMonth() + 1}-${data.timestamp.getUTCDate()} ${data.timestamp.getUTCHours()}:${data.timestamp.getUTCMinutes()}:${data.timestamp.getUTCSeconds()}`;
+    console.log(data);
+    redisClient.set('dom', JSON.stringify(data));
     await store(data);
 }
 
-main();
+module.exports = { storeData }
+

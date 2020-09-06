@@ -1,20 +1,19 @@
-html {
+body {
+    background: transparent;
     background: url('bg.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
     background-color: #000;
-  
-}
-
-body {
-    background: transparent;
-    width: 96%;
-    height: 96%;
 }
  
 div.container {
     border-radius: 12px;
     opacity: 0.85;
+    width: 96%;
+}
+
+div.app {
+    width: 96%;
 }

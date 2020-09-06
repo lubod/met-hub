@@ -1,14 +1,20 @@
+
 const { Pool } = require('pg');
 const express = require('express');
 const bodyParser = require('body-parser');
+const storeData = require('./storedata.js');
 
 const app = express();
 const fs = require("fs");
 
+const redis = require("redis");
+const redisClient = redis.createClient();
+
 app.use(express.static(__dirname));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-var last = {};
+storeData.storeData();
+setInterval(storeData.storeData, 60000);
 
 async function store(data) {
     const pool = new Pool({
@@ -96,9 +102,10 @@ function decodeStationData(data) {
 }
 
 app.post('/setData', function (req, res) {
-    console.log(req.body);
-    last = decodeStationData(req.body);
+    const last = decodeStationData(req.body);
+    redisClient.set('station', JSON.stringify(last));
     store(last);
+    console.log(last);
     res.sendStatus(200);
 })
 
@@ -106,9 +113,11 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + "/" + "index.htm");
 })
 
-app.get('/getLastData', function (req, res) {
+app.get('/getLastData/:uuid', function (req, res) {
     res.type('application/json');
-    return res.json(last);
+    const last = redisClient.get(req.params.uuid, function(err, reply){
+        return res.json(JSON.parse(reply));
+    });
 })
 
 app.get('/getData/vonku/:time', function (req, res) {
