@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Data from '../data/data';
+import { Row, Col } from 'react-bootstrap';
 import './style.scss';
 
 type RoomProps = {
@@ -14,31 +15,22 @@ type RoomProps = {
 
 function Room(props: RoomProps) {
     return (
-        <div className='container text-center bg-dark text-light my-2 py-2 mx-auto'>
-            <div className='text-center'>{props.room}</div>
-            <div className='row'>
-                <div className='col-4 text-left'>
-                    <Data name='Air' value={props.air} unit='°C' ></Data>
-                </div>
-                <div className='col-4 text-left'>
-                    <Data name='Floor' value={props.floor} unit='°C' ></Data>
-                </div>
-                <div className='col-4 text-left'>
-                    <Data name='Required' value={props.required} unit='°C' ></Data>
-                </div>
-            </div>
-            <div className='row'>
-                <div className='col-4 text-left'>
-                    <Data name='Heat' value={props.heat} unit='' ></Data>
-                </div>
-                <div className='col-4 text-left'>
-                    <Data name='Summer' value={props.summer} unit='' ></Data>
-                </div>
-                <div className='col-4 text-left'>
-                    <Data name='Low' value={props.low} unit='' ></Data>
-                </div>
-            </div>
-        </div >
+        <div className='text-left small'>{props.room} 
+            <Row>
+                <Col xs={3}>
+                    <Data name='' value={props.air} unit='°C' ></Data>
+                </Col>
+                <Col xs={3}>
+                    <Data name='' value={props.floor} unit='°C' ></Data>
+                </Col>
+                <Col xs={3}>
+                    <Data name='' value={props.required} unit='°C' ></Data>
+                </Col>
+                <Col xs={2}>
+                    <Data name='' value={props.heat + props.summer + props.low} unit='' ></Data>
+                </Col>
+            </Row>
+        </div>
     );
 };
 

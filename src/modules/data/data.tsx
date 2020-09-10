@@ -9,9 +9,9 @@ type DataProps = {
 
 function Data(props: DataProps) {
     return (
-        <div>
-            <span className='small'>{props.name}</span>
-            <span className='ml-2 h4 text-info mr-1'>{props.value}</span>
+        <div className='text-left'>
+            <div className='small'>{props.name}</div>
+            <span className='h4 text-info mr-1'>{props.value}</span>
             <span className='text-info small'>{props.unit}</span>
         </div>
     );

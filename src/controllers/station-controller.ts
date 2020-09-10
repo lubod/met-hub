@@ -24,7 +24,7 @@ export class StationController {
                 pressureabs: parseFloat(json.pressureabs).toFixed(1),
                 windgust: parseFloat(json.windgust).toFixed(1),
                 windspeed: parseFloat(json.windspeed).toFixed(1),
-                winddir: parseFloat(json.winddir).toFixed(1),
+                winddir: parseFloat(json.winddir).toFixed(0),
                 maxdailygust: parseFloat(json.maxdailygust).toFixed(1),
                 solarradiation: parseFloat(json.solarradiation).toFixed(0),
                 uv: parseFloat(json.uv).toFixed(0),

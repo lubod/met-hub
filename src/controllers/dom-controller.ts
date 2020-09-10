@@ -19,7 +19,7 @@ export class DomController {
                 temp: parseFloat(json.vonku.temp).toFixed(1),
                 humidity: parseFloat(json.vonku.humidity).toFixed(0),
                 rain: parseFloat(json.vonku.rain).toFixed(0),
-                place: 'Marianka',
+                place: 'Dom',
                 obyvacka_vzduch: parseFloat(json.obyvacka_vzduch.temp).toFixed(1),
                 obyvacka_podlaha: parseFloat(json.obyvacka_podlaha.temp).toFixed(1),
                 obyvacka_req: parseFloat(json.obyvacka_vzduch.req).toFixed(1),

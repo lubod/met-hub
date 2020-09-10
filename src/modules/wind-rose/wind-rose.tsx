@@ -1,4 +1,6 @@
 import React from 'react';
+import Data from '../data/data';
+import { Row, Col } from 'react-bootstrap';
 import './style.scss';
 
 type Wind = {
@@ -15,8 +17,6 @@ function WindRose(props: Wind) {
     const ctx = canvas.getContext('2d');
     let speed = parseFloat(wind.speed);
     let dir = parseFloat(wind.dir);
-    let gust = parseFloat(wind.gust);
-    let dailyGust = parseFloat(wind.dailyGust);
 
     if (typeof speed === 'undefined') {
       speed = 0;
@@ -138,23 +138,18 @@ function WindRose(props: Wind) {
   });
 
   return (
-    <div className='row'>
-      <div className='col-2 text-right'>
-        <div className='small'>Wind Gust</div>
-        <div className='h4 text-info'>{props.gust}</div>
-        <div className='text-info small'>km/h</div>
-      </div>
-      <div className='col-8'>
+    <Row>
+      <Col xs={8}>
         <canvas width='200' height='200' id='myCanvas' ref={canvasRef} >
           <p>Your browser doesn't support canvas. Boo hoo!</p>
         </canvas>
-      </div>
-      <div className='col-2 text-left'>
-        <div className='small'>Daily Gust</div>
-        <div className='h4 text-info'>{props.dailyGust}</div>
-        <div className='text-info small'>km/h</div>
-      </div>
-    </div>
+      </Col>
+      <Col xs={4} className='text-left'>
+        <Data name='Wind Dir' value={props.dir} unit='°' ></Data>
+        <Data name='Wind Gust' value={props.gust} unit='km/h' ></Data>
+        <Data name='Daily Gust' value={props.dailyGust} unit='km/h' ></Data>
+      </Col>
+    </Row>
   );
 };
 

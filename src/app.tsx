@@ -1,21 +1,22 @@
 import React from 'react';
-import WindRose from './modules/wind-rose/wind-rose';
 import { Station } from './modules/station/station';
-import './style.scss';
-import { Row } from 'reactstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { Dom } from './modules/dom/dom';
+import './style.scss';
 
 export class App extends React.Component<{}, {}> {
   public render(): JSX.Element {
     return (
-      <div className='row'>
-        <div className='col-4'>
-          <Station />
-        </div>
-        <div className='col-4'>
-          <Dom />
-        </div>
-      </div>
+      <Container>
+        <Row>
+          <Col sm={6} className='px-0'>
+            <Station />
+          </Col>
+          <Col sm={6} className='px-0'>
+            <Dom />
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
