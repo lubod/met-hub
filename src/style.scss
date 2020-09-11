@@ -1,23 +1,5 @@
-body {
-    background: transparent;
-    background: url('bg.jpg') no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    background-color: #000;
-}
- 
-div.container {
-    border-radius: 12px;
-    opacity: 0.85;
-    width: 96%;
+.bg-very-dark {
+    opacity: 0.9;
+    background-color: #1a1b1c;
 }
 
-div.card {
-    opacity: 0.85;
-}
-
-div.app {
-    width: 96%;
-}

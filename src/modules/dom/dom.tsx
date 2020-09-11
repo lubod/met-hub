@@ -19,10 +19,10 @@ export class Dom extends React.Component<{}, {}> {
   public render(): JSX.Element {
     return (
       <div className='main'>
-        <Container className='text-center bg-dark text-light my-2 py-2 mx-auto'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <Row>
             <Col xs={12}>
-              <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-secondary mb-2'>{this.model.domData.place}</button>
+              <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-primary mb-2'>{this.model.domData.place}</button>
             </Col>
           </Row>
           <Row>
@@ -34,7 +34,7 @@ export class Dom extends React.Component<{}, {}> {
             </Col>
           </Row>
         </Container>
-        <Container className='text-center bg-dark text-light my-2 py-2 mx-auto'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <div className='text-left'>OUT</div>
           <Row>
             <Col xs={4}>
@@ -48,7 +48,7 @@ export class Dom extends React.Component<{}, {}> {
             </Col>
           </Row>
         </Container>
-        <Container className='text-center bg-dark text-light my-2 py-2 mx-auto'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <Row className='text-left'>
             <Col xs={3}>Air
             </Col>

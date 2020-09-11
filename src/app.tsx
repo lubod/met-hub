@@ -9,10 +9,10 @@ export class App extends React.Component<{}, {}> {
     return (
       <Container>
         <Row>
-          <Col sm={6} className='px-0'>
+          <Col sm={6} className='px-1'>
             <Station />
           </Col>
-          <Col sm={6} className='px-0'>
+          <Col sm={6} className='px-1'>
             <Dom />
           </Col>
         </Row>

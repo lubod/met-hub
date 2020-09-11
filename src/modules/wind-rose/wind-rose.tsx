@@ -26,16 +26,16 @@ function WindRose(props: Wind) {
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#343A40';
+    ctx.fillStyle = '#1a1b1c';
     ctx.arc(100, 100, 100, 0 * (Math.PI / 180), 360 * (Math.PI / 180), false);
     ctx.fill();
     ctx.beginPath();
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
     ctx.strokeStyle = 'white';
     ctx.arc(100, 100, 70, 0 * (Math.PI / 180), 360 * (Math.PI / 180), false);
     ctx.stroke();
     ctx.beginPath();
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.arc(100, 100, 98, 0 * (Math.PI / 180), 360 * (Math.PI / 180), false);
     ctx.stroke();
 
@@ -84,15 +84,15 @@ function WindRose(props: Wind) {
     ctx.textAlign = "center";
     ctx.fillText(speed.toFixed(1), 200 / 2, 200 / 2);
 
-    ctx.font = "12px Arial";
+    ctx.font = "13px Arial";
     ctx.fillStyle = "17A2B8";
     ctx.textAlign = "center";
     ctx.fillText("km/h", 200 / 2, 200 / 2 + 16);
 
-    ctx.font = "12px Arial";
+    ctx.font = "13px Arial";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    ctx.fillText("Speed", 200 / 2, 200 / 2 - 28);
+    ctx.fillText("Speed", 200 / 2, 200 / 2 - 30);
 
     const cos = Math.cos((dir) * Math.PI / 180 - Math.PI / 2);
     const sin = Math.sin((dir) * Math.PI / 180 - Math.PI / 2);

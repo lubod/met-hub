@@ -19,10 +19,10 @@ export class Station extends React.Component<{}, {}> {
   public render(): JSX.Element {
     return (
       <div className='main'>
-        <Container className='text-center bg-dark text-light my-2 py-2 mx-auto'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-primary bg-very-dark rounded'>
           <Row>
             <Col xs={12}>
-              <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-secondary mb-2'>{this.model.stationData.place}</button>
+              <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-primary mb-2'>{this.model.stationData.place}</button>
             </Col>
           </Row>
           <Row>
@@ -34,10 +34,10 @@ export class Station extends React.Component<{}, {}> {
             </Col>
           </Row>
         </Container>
-        <Container className='text-center bg-dark text-light my-2 py-2 mx-auto'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <WindRose speed={this.model.stationData.windspeed} dir={this.model.stationData.winddir} gust={this.model.stationData.windgust} dailyGust={this.model.stationData.maxdailygust}></WindRose>
         </Container>
-        <Container className='text-center bg-dark text-light my-2 py-2 mx-auto'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <Row>
             <Col xs={4}>
               <Data name='Temperature' value={this.model.stationData.temp} unit='°C' ></Data>
@@ -83,7 +83,7 @@ export class Station extends React.Component<{}, {}> {
             </Col>
           </Row>
         </Container>
-        <Container className='text-center bg-dark text-light my-2 py-2 mx-auto'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <div className='text-left'>IN</div>
           <Row>
             <Col xs={6}>
