@@ -1,5 +1,11 @@
+$enable-gradients: true; 
+$enable-shadows: true; 
+$primary: red;
+
 .bg-very-dark {
     opacity: 0.9;
     background-color: #1a1b1c;
+//    background-color: 'linear-gradient(to down, #1a1b1c, red)';
 }
+
 

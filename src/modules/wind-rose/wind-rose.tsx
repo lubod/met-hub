@@ -80,17 +80,17 @@ function WindRose(props: Wind) {
     ctx.fillText("NW", 39, 46);
 
     ctx.font = "30px Arial";
-    ctx.fillStyle = "#17A2B8";
+    ctx.fillStyle = "white";
     ctx.textAlign = "center";
     ctx.fillText(speed.toFixed(1), 200 / 2, 200 / 2);
 
     ctx.font = "13px Arial";
-    ctx.fillStyle = "17A2B8";
+    ctx.fillStyle = "while";
     ctx.textAlign = "center";
     ctx.fillText("km/h", 200 / 2, 200 / 2 + 16);
 
     ctx.font = "13px Arial";
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "#17A2B8";
     ctx.textAlign = "center";
     ctx.fillText("Speed", 200 / 2, 200 / 2 - 30);
 

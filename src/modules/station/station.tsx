@@ -19,10 +19,10 @@ export class Station extends React.Component<{}, {}> {
   public render(): JSX.Element {
     return (
       <div className='main'>
-        <Container className='text-center text-light my-2 py-2 mx-auto border-primary bg-very-dark rounded'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-primary bg-very-dark rounded shadow'>
           <Row>
             <Col xs={12}>
-              <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-primary mb-2'>{this.model.stationData.place}</button>
+              <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-primary mb-2 bg-gradient-primary shadow'>{this.model.stationData.place}</button>
             </Col>
           </Row>
           <Row>

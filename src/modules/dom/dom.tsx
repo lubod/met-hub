@@ -49,7 +49,7 @@ export class Dom extends React.Component<{}, {}> {
           </Row>
         </Container>
         <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
-          <Row className='text-left'>
+          <Row className='text-left text-info'>
             <Col xs={3}>Air
             </Col>
             <Col xs={3}>Floor
