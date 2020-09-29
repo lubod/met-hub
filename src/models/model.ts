@@ -4,70 +4,86 @@ export class StationData {
     timestamp: string = '';
     time: string = '';
     date: string = '';
-    tempin: string = '';
-    humidityin: string = '';
-    temp: string = '';
-    humidity: string = '';
-    pressurerel: string = '';
-    pressureabs: string = '';
-    windgust: string = '';
-    windspeed: string = '';
-    winddir: string = '';
-    maxdailygust: string = '';
-    solarradiation: string = '';
-    uv: string = '';
-    rainrate: string = '';
-    eventrain: string = '';
-    hourlyrain: string = '';
-    dailyrain: string = '';
-    weeklyrain: string = '';
-    monthlyrain: string = '';
-    totalrain: string = '';
     place: string = '';
+    tempin: number;
+    humidityin: number;
+    temp: number;
+    humidity: number;
+    pressurerel: number;
+    pressureabs: number;
+    windgust: number;
+    windspeed: number;
+    winddir: number;
+    maxdailygust: number;
+    solarradiation: number;
+    uv: number;
+    rainrate: number;
+    eventrain: number;
+    hourlyrain: number;
+    dailyrain: number;
+    weeklyrain: number;
+    monthlyrain: number;
+    totalrain: number;
+}
+
+export class StationTrendData {
+    timestamp: Array<string> = new Array<string>();
+    tempin: Array<number> = new Array<number>();
+    humidityin: Array<number> = new Array<number>();
+    temp: Array<number> = new Array<number>();
+    humidity: Array<number> = new Array<number>();
+    pressurerel: Array<number> = new Array<number>();
+    windgust: Array<number> = new Array<number>();
+    windspeed: Array<number> = new Array<number>();
+    winddir: Array<number> = new Array<number>();
+    solarradiation: Array<number> = new Array<number>();
+    uv: Array<number> = new Array<number>();
+    rainrate: Array<number> = new Array<number>();
 }
 
 export class DomData {
     timestamp: string = '';
     time: string = '';
     date: string = '';
-    temp: string = '';
-    humidity: string = '';
-    rain: string = '';
     place: string = '';
-    obyvacka_vzduch: string = '';
-    obyvacka_podlaha: string = '';
-    obyvacka_req: string = '';
-    obyvacka_kuri: string = '';
-    obyvacka_leto: string = '';
-    obyvacka_low: string = '';
-    pracovna_vzduch: string = '';
-    pracovna_podlaha: string = '';
-    pracovna_req: string = '';
-    pracovna_kuri: string = '';
-    pracovna_leto: string = '';
-    pracovna_low: string = '';
-    spalna_vzduch: string = '';
-    spalna_podlaha: string = '';
-    spalna_req: string = '';
-    spalna_kuri: string = '';
-    spalna_leto: string = '';
-    spalna_low: string = '';
-    chalani_vzduch: string = '';
-    chalani_podlaha: string = '';
-    chalani_req: string = '';
-    chalani_kuri: string = '';
-    chalani_leto: string = '';
-    chalani_low: string = '';
-    petra_vzduch: string = '';
-    petra_podlaha: string = '';
-    petra_req: string = '';
-    petra_kuri: string = '';
-    petra_leto: string = '';
-    petra_low: string = '';
+    temp: number;
+    humidity: number;
+    rain: number;
+    obyvacka_vzduch: number;
+    obyvacka_podlaha: number;
+    obyvacka_req: number;
+    obyvacka_kuri: number;
+    obyvacka_leto: number;
+    obyvacka_low: number;
+    pracovna_vzduch: number;
+    pracovna_podlaha: number;
+    pracovna_req: number;
+    pracovna_kuri: number;
+    pracovna_leto: number;
+    pracovna_low: number;
+    spalna_vzduch: number;
+    spalna_podlaha: number;
+    spalna_req: number;
+    spalna_kuri: number;
+    spalna_leto: number;
+    spalna_low: number;
+    chalani_vzduch: number;
+    chalani_podlaha: number;
+    chalani_req: number;
+    chalani_kuri: number;
+    chalani_leto: number;
+    chalani_low: number;
+    petra_vzduch: number;
+    petra_podlaha: number;
+    petra_req: number;
+    petra_kuri: number;
+    petra_leto: number;
+    petra_low: number;
 }
 
 export class StationModel {
     @observable stationData = new StationData();
+    @observable stationTrendData = new StationTrendData();
 }
 
 export class DomModel {

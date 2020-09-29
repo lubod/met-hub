@@ -1,6 +1,8 @@
 import React from 'react';
 import WindRose from '../wind-rose/wind-rose';
 import Data from '../data/data';
+import Text from '../text/text';
+import Trend from '../trend/trend';
 import { StationModel } from '../../models/model';
 import { observer } from 'mobx-react';
 import { StationController } from '../../controllers/station-controller';
@@ -27,10 +29,10 @@ export class Station extends React.Component<{}, {}> {
           </Row>
           <Row>
             <Col xs={6}>
-              <Data name='Date' value={this.model.stationData.date} unit='' ></Data>
+              <Text name='Date' value={this.model.stationData.date} ></Text>
             </Col>
             <Col xs={6}>
-              <Data name='Time' value={this.model.stationData.time} unit='' ></Data>
+              <Text name='Time' value={this.model.stationData.time} ></Text>
             </Col>
           </Row>
         </Container>
@@ -40,46 +42,52 @@ export class Station extends React.Component<{}, {}> {
         <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <Row>
             <Col xs={4}>
-              <Data name='Temperature' value={this.model.stationData.temp} unit='°C' ></Data>
+              <Data name='Temperature' value={this.model.stationData.temp} unit='°C' fix={1}></Data>
+              <Trend data={this.model.stationTrendData.temp} range={2}></Trend>
             </Col>
             <Col xs={4}>
-              <Data name='Humidity' value={this.model.stationData.humidity} unit='%' ></Data>
+              <Data name='Humidity' value={this.model.stationData.humidity} unit='%' fix={0}></Data>
+              <Trend data={this.model.stationTrendData.humidity} range={10}></Trend>
             </Col>
             <Col xs={4}>
-              <Data name='Pressure' value={this.model.stationData.pressurerel} unit='hPa' ></Data>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={4}>
-              <Data name='Radiation' value={this.model.stationData.solarradiation} unit='W/m2' ></Data>
-            </Col>
-            <Col xs={4}>
-              <Data name='UV' value={this.model.stationData.uv} unit='' ></Data>
-            </Col>
-            <Col xs={4}>
-              <Data name='Rain Rate' value={this.model.stationData.rainrate} unit='mm/h' ></Data>
+              <Data name='Pressure' value={this.model.stationData.pressurerel} unit='hPa' fix={1}></Data>
+              <Trend data={this.model.stationTrendData.pressurerel} range={1}></Trend>
             </Col>
           </Row>
           <Row>
             <Col xs={4}>
-              <Data name='Event Rain' value={this.model.stationData.eventrain} unit='mm' ></Data>
+              <Data name='Radiation' value={this.model.stationData.solarradiation} unit='W/m2' fix={0}></Data>
+              <Trend data={this.model.stationTrendData.solarradiation} range={100}></Trend>
             </Col>
             <Col xs={4}>
-              <Data name='Hourly' value={this.model.stationData.hourlyrain} unit='mm' ></Data>
+              <Data name='UV' value={this.model.stationData.uv} unit='' fix={0}></Data>
+              <Trend data={this.model.stationTrendData.uv} range={1}></Trend>
             </Col>
             <Col xs={4}>
-              <Data name='Daily' value={this.model.stationData.dailyrain} unit='mm' ></Data>
+              <Data name='Rain Rate' value={this.model.stationData.rainrate} unit='mm/h' fix={1}></Data>
+              <Trend data={this.model.stationTrendData.rainrate} range={1}></Trend>
             </Col>
           </Row>
           <Row>
             <Col xs={4}>
-              <Data name='Weekly' value={this.model.stationData.weeklyrain} unit='mm' ></Data>
+              <Data name='Event Rain' value={this.model.stationData.eventrain} unit='mm' fix={1}></Data>
             </Col>
             <Col xs={4}>
-              <Data name='Monthly' value={this.model.stationData.monthlyrain} unit='mm' ></Data>
+              <Data name='Hourly' value={this.model.stationData.hourlyrain} unit='mm' fix={1}></Data>
             </Col>
             <Col xs={4}>
-              <Data name='Total' value={this.model.stationData.totalrain} unit='mm' ></Data>
+              <Data name='Daily' value={this.model.stationData.dailyrain} unit='mm' fix={1}></Data>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={4}>
+              <Data name='Weekly' value={this.model.stationData.weeklyrain} unit='mm' fix={1}></Data>
+            </Col>
+            <Col xs={4}>
+              <Data name='Monthly' value={this.model.stationData.monthlyrain} unit='mm' fix={1}></Data>
+            </Col>
+            <Col xs={4}>
+              <Data name='Total' value={this.model.stationData.totalrain} unit='mm' fix={1}></Data>
             </Col>
           </Row>
         </Container>
@@ -87,10 +95,12 @@ export class Station extends React.Component<{}, {}> {
           <div className='text-left'>IN</div>
           <Row>
             <Col xs={6}>
-              <Data name='Temperature' value={this.model.stationData.tempin} unit='°C' ></Data>
+              <Data name='Temperature' value={this.model.stationData.tempin} unit='°C' fix={1}></Data>
+              <Trend data={this.model.stationTrendData.tempin} range={2}></Trend>
             </Col>
             <Col xs={6}>
-              <Data name='Humidity' value={this.model.stationData.humidityin} unit='%' ></Data>
+              <Data name='Humidity' value={this.model.stationData.humidityin} unit='%' fix={0}></Data>
+              <Trend data={this.model.stationTrendData.humidityin} range={10}></Trend>
             </Col>
           </Row>
         </Container>

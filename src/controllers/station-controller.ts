@@ -16,27 +16,41 @@ export class StationController {
                 timestamp: new Date(json.timestamp).toLocaleString('sk-SK'),
                 time: new Date(json.timestamp).toLocaleTimeString('sk-SK'),
                 date: new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', ''),
-                tempin: parseFloat(json.tempin).toFixed(1),
-                humidityin: parseFloat(json.humidityin).toFixed(0),
-                temp: parseFloat(json.temp).toFixed(1),
-                humidity: parseFloat(json.humidity).toFixed(0),
-                pressurerel: parseFloat(json.pressurerel).toFixed(1),
-                pressureabs: parseFloat(json.pressureabs).toFixed(1),
-                windgust: parseFloat(json.windgust).toFixed(1),
-                windspeed: parseFloat(json.windspeed).toFixed(1),
-                winddir: parseFloat(json.winddir).toFixed(0),
-                maxdailygust: parseFloat(json.maxdailygust).toFixed(1),
-                solarradiation: parseFloat(json.solarradiation).toFixed(0),
-                uv: parseFloat(json.uv).toFixed(0),
-                rainrate: parseFloat(json.rainrate).toFixed(1),
-                eventrain: parseFloat(json.eventrain).toFixed(1),
-                hourlyrain: parseFloat(json.hourlyrain).toFixed(1),
-                dailyrain: parseFloat(json.dailyrain).toFixed(1),
-                weeklyrain: parseFloat(json.weeklyrain).toFixed(1),
-                monthlyrain: parseFloat(json.monthlyrain).toFixed(1),
-                totalrain: parseFloat(json.totalrain).toFixed(1),
+                tempin: json.tempin,
+                humidityin: json.humidityin,
+                temp: json.temp,
+                humidity: json.humidity,
+                pressurerel: json.pressurerel,
+                pressureabs: json.pressureabs,
+                windgust: json.windgust,
+                windspeed: json.windspeed,
+                winddir: json.winddir,
+                maxdailygust: json.maxdailygust,
+                solarradiation: json.solarradiation,
+                uv: json.uv,
+                rainrate: json.rainrate,
+                eventrain: json.eventrain,
+                hourlyrain: json.hourlyrain,
+                dailyrain: json.dailyrain,
+                weeklyrain: json.weeklyrain,
+                monthlyrain: json.monthlyrain,
+                totalrain: json.totalrain,
                 place: 'Marianka'
             };
+        });
+        fetch('/getTrendData/station').then(data => data.json()).then(json => {
+            this.model.stationTrendData.timestamp = json.timestamp;
+            this.model.stationTrendData.tempin = json.tempin;
+            this.model.stationTrendData.humidityin = json.humidityin;
+            this.model.stationTrendData.temp = json.temp;
+            this.model.stationTrendData.humidity = json.humidity;
+            this.model.stationTrendData.pressurerel = json.pressurerel;
+            this.model.stationTrendData.windgust = json.windgust;
+            this.model.stationTrendData.windspeed = json.windspeed;
+            this.model.stationTrendData.winddir = json.winddir;
+            this.model.stationTrendData.solarradiation = json.solarradiation;
+            this.model.stationTrendData.uv = json.uv;
+            this.model.stationTrendData.rainrate = json.rainrate;
         });
     }
 }  

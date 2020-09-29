@@ -1,48 +1,55 @@
 
-const { Pool } = require('pg');
 const express = require('express');
 const bodyParser = require('body-parser');
-const storeData = require('./storedata.js');
-
+const pollData = require('./pollData.js');
 const app = express();
-const fs = require("fs");
-
 const redis = require("redis");
 const redisClient = redis.createClient();
 
 app.use(express.static(__dirname));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-storeData.storeData();
-setInterval(storeData.storeData, 60000);
+let stationTrend = new Map();
 
-async function store(data) {
-    const pool = new Pool({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'postgres',
-        password: 'postgres',
-        port: 5432
-    });
-
-    const client = await pool.connect();
-    try {
-        console.log('connected ' + data.timestamp);
-        await client.query('BEGIN');
-
-        let table = 'stanica';
-        let queryText = 'insert into ' + table + '(timestamp, tempin, humidityin, pressurerel, pressureabs, temp, humidity, winddir, windspeed, windgust, rainrate, solarradiation, uv, eventrain, hourlyrain) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)';
-        let res = await client.query(queryText, [data.timestamp, data.tempin, data.humidityin, data.pressurerel, data.pressureabs, data.temp, data.humidity, data.winddir, data.windspeed, data.windgust, data.rainrate, data.solarradiation, data.uv, data.eventrain, data.hourlyrain]);
-        console.log(data.timestamp + ' inserted ' + table);
-
-        await client.query('COMMIT');
-    } catch (e) {
-        await client.query('ROLLBACK');
-        throw e;
-    } finally {
-        client.end();
+function removeOld(value, key, map) {
+    const now = Date.now();
+    if (now - key > 3600000) {
+        map.delete(key);
+        console.log('delete ' + key);
     }
+    console.log('size ' + map.size);
 }
+
+function trend() {
+    stationTrend.forEach(removeOld);
+    redisClient.get('station', function (err, reply) {
+        console.log('err ' + err);
+        console.log(reply);
+        const last = JSON.parse(reply);
+        console.log('trend ' + stationTrend);
+        const timestamp = new Date(last.timestamp);
+        const now = new Date();
+        const diff = now - timestamp;
+        console.log('diff ' + diff);
+        if (diff < 3600000) {
+            stationTrend.set(timestamp.getTime(), last);
+            console.log('set ' + timestamp.getTime());
+        }
+
+        redisClient.set('stationTrend', 1);
+    });
+}
+
+setInterval(trend, 60000);
+
+async function poll() {
+    const data = await pollData.pollData();
+    //    console.log(data);
+    redisClient.set('dom', JSON.stringify(data));
+}
+
+poll();
+setInterval(poll, 60000);
 
 /*
 { PASSKEY: '33564A0851CC0C0D15FE3353FB8D8B47',
@@ -78,10 +85,10 @@ const TO_HPA = 33.8639;
 
 function decodeStationData(data) {
     data.timestamp = new Date(data.dateutc + ' UTC');
-    data.tempin = (5/9) * (data.tempinf - 32);
+    data.tempin = (5 / 9) * (data.tempinf - 32);
     data.pressurerel = data.baromrelin * TO_HPA;
     data.pressureabs = data.baromabsin * TO_HPA;
-    data.temp = (5/9) * (data.tempf - 32);
+    data.temp = (5 / 9) * (data.tempf - 32);
     data.windspeed = data.windspeedmph * TO_KM;
     data.windgust = data.windgustmph * TO_KM;
     data.maxdailygustmph = data.maxdailygust;
@@ -104,8 +111,7 @@ function decodeStationData(data) {
 app.post('/setData', function (req, res) {
     const last = decodeStationData(req.body);
     redisClient.set('station', JSON.stringify(last));
-    store(last);
-    console.log(last);
+    //    console.log(last);
     res.sendStatus(200);
 })
 
@@ -115,9 +121,42 @@ app.get('/', function (req, res) {
 
 app.get('/getLastData/:uuid', function (req, res) {
     res.type('application/json');
-    const last = redisClient.get(req.params.uuid, function(err, reply){
+    const last = redisClient.get(req.params.uuid, function (err, reply) {
         return res.json(JSON.parse(reply));
     });
+})
+
+app.get('/getTrendData/:uuid', function (req, res) {
+    res.type('application/json');
+    //    const last = redisClient.get(req.params.uuid, function (err, reply) {
+    const tmp = {};
+    tmp.timestamp = [];
+    tmp.tempin = [];
+    tmp.humidityin = [];
+    tmp.temp = [];
+    tmp.humidity = [];
+    tmp.pressurerel = [];
+    tmp.windgust = [];
+    tmp.windspeed = [];
+    tmp.winddir = [];
+    tmp.solarradiation = [];
+    tmp.uv = [];
+    tmp.rainrate = [];
+    stationTrend.forEach(function (value, key, map) {
+        tmp.timestamp.push(value.timestamp);
+        tmp.tempin.push(value.tempin);
+        tmp.humidityin.push(value.humidityin);
+        tmp.temp.push(value.temp);
+        tmp.humidity.push(value.humidity);
+        tmp.pressurerel.push(value.pressurerel);
+        tmp.windgust.push(value.windgust);
+        tmp.windspeed.push(value.windspeed);
+        tmp.winddir.push(value.winddir);
+        tmp.solarradiation.push(value.solarradiation);
+        tmp.uv.push(value.uv);
+        tmp.rainrate.push(value.rainrate);
+    });
+    return res.json(tmp);
 })
 
 app.get('/getData/vonku/:time', function (req, res) {
@@ -138,30 +177,3 @@ var server = app.listen(8082, function () {
 
     console.log("Listening at http://%s:%s", host, port);
 })
-
-async function getData(table, time) {
-    const pool = new Pool({
-        user: 'postgres',
-        host: 'localhost',
-        database: 'postgres',
-        password: 'postgres',
-        port: 5432
-    });
-
-    const client = await pool.connect();
-    console.log('connected ' + table);
-    try {
-        console.log(time);
-        const to = new Date(time).toISOString().slice(0, 19).replace('T', ' ');
-        const from = (new Date(time - 86400000)).toISOString().slice(0, 19).replace('T', ' ');
-        console.log(from);
-        console.log(to);
-        const res = await client.query('SELECT * FROM ' + table + ' where timestamp > \'' + from + 'UTC\' and timestamp <= \'' + to + 'UTC\' order by timestamp desc;');
-        return res.rows;
-    } catch (e) {
-        console.log(e);
-    } finally {
-        client.end();
-    }
-}
-

@@ -3,19 +3,16 @@ import './style.scss';
 
 type DataProps = {
     name: string,
-    value: number,
-    unit: string,
-    fix: number
+    value: string
 }
 
-function Data(props: DataProps) {
+function Text(props: DataProps) {
     return (
         <div className='text-left'>
             <div className='small text-info'>{props.name}</div>
-            <span className='h4 mr-1'>{props.value?.toFixed(props.fix)}</span>
-            <span className='small'>{props.unit}</span>
+            <span className='h4 mr-1'>{props.value}</span>
         </div>
     );
 };
 
-export default Data;
+export default Text;

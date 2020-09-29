@@ -1,5 +1,6 @@
 import React from 'react';
 import Data from '../data/data';
+import Text from '../text/text';
 import Room from '../room/room';
 import { DomModel } from '../../models/model';
 import { observer } from 'mobx-react';
@@ -27,10 +28,10 @@ export class Dom extends React.Component<{}, {}> {
           </Row>
           <Row>
             <Col xs={6}>
-              <Data name='Date' value={this.model.domData.date} unit='' ></Data>
+              <Text name='Date' value={this.model.domData.date} ></Text>
             </Col>
             <Col xs={6}>
-              <Data name='Time' value={this.model.domData.time} unit='' ></Data>
+              <Text name='Time' value={this.model.domData.time} ></Text>
             </Col>
           </Row>
         </Container>
@@ -38,13 +39,13 @@ export class Dom extends React.Component<{}, {}> {
           <div className='text-left'>OUT</div>
           <Row>
             <Col xs={4}>
-              <Data name='Temperature' value={this.model.domData.temp} unit='°C' ></Data>
+              <Data name='Temperature' value={this.model.domData.temp} unit='°C' fix={1}></Data>
             </Col>
             <Col xs={4}>
-              <Data name='Humidity' value={this.model.domData.humidity} unit='%' ></Data>
+              <Data name='Humidity' value={this.model.domData.humidity} unit='%' fix={0}></Data>
             </Col>
             <Col xs={4}>
-              <Data name='Rain' value={this.model.domData.rain} unit='' ></Data>
+              <Data name='Rain' value={this.model.domData.rain} unit='' fix={0}></Data>
             </Col>
           </Row>
         </Container>
