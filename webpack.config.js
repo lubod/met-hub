@@ -1,9 +1,11 @@
 const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
-const configure = (devMode) => ({
+const frontConfig = {
+  target: 'web',
   entry: './src/index.tsx',
-  devtool: devMode ? 'eval-source-map' : 'nosources-source-map',
+//  devtool: devMode ? 'eval-source-map' : 'nosources-source-map',
   module: {
     rules: [
       {
@@ -23,7 +25,7 @@ const configure = (devMode) => ({
         use: [
           'file-loader',
         ],
-      },
+      }, 
     ],
   },
   resolve: {
@@ -52,10 +54,52 @@ const configure = (devMode) => ({
       'Access-Control-Allow-Headers': 'x-ijt',
     },
   },
-})
-
-module.exports = (env, options) => {
-  const { mode } = options;
-  const devMode = mode === 'development';
-  return configure(devMode)
 };
+
+const backConfigMain = {
+  target: 'node',
+  entry: './server/main.js',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  output: {
+    filename: 'main.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  externals: [nodeExternals()],
+};
+
+const backConfigStore = {
+  target: 'node',
+  entry: './server/store.js',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  output: {
+    filename: 'store.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  externals: [nodeExternals()],
+};
+
+module.exports = [frontConfig, backConfigMain, backConfigStore];
+
+

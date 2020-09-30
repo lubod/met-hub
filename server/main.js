@@ -116,7 +116,11 @@ app.post('/setData', function (req, res) {
 })
 
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + "/" + "index.htm");
+    res.sendFile('/home/zaloha/pgclient/dist/index.html');
+})
+
+app.get('/:file', function (req, res) {
+    res.sendFile('/home/zaloha/pgclient/dist/' + req.params.file);
 })
 
 app.get('/getLastData/:uuid', function (req, res) {
@@ -157,18 +161,6 @@ app.get('/getTrendData/:uuid', function (req, res) {
         tmp.rainrate.push(value.rainrate);
     });
     return res.json(tmp);
-})
-
-app.get('/getData/vonku/:time', function (req, res) {
-    res.type('application/json');
-    const data = getData('vonku', parseInt(req.params.time)).then(data => res.send(data));
-})
-
-app.get('/getData/:room/:time', function (req, res) {
-    console.log(req.params.room);
-    console.log(req.params.time);
-    res.type('application/json');
-    const data = getData(req.params.room, parseInt(req.params.time)).then(data => res.send(data));
 })
 
 var server = app.listen(8082, function () {
