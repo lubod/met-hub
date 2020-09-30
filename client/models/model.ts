@@ -1,10 +1,10 @@
 import { observable, action } from 'mobx';
 
 export class StationData {
-    timestamp: string = '';
-    time: string = '';
-    date: string = '';
-    place: string = '';
+    timestamp: string;
+    time: string;
+    date: string;
+    place: string;
     tempin: number;
     humidityin: number;
     temp: number;
@@ -24,6 +24,61 @@ export class StationData {
     weeklyrain: number;
     monthlyrain: number;
     totalrain: number;
+}
+
+/*
+{ PASSKEY: '33564A0851CC0C0D15FE3353FB8D8B47',
+  stationtype: 'EasyWeatherV1.5.2',
+  dateutc: '2020-08-13 06:16:31',
+  tempinf: '74.1',
+  humidityin: '62',
+  baromrelin: '30.189',
+  baromabsin: '29.442',
+  tempf: '71.4',
+  humidity: '72',
+  winddir: '69',
+  windspeedmph: '0.4',
+  windgustmph: '1.1',
+  maxdailygust: '3.4',
+  rainratein: '0.000',
+  eventrainin: '0.000',
+  hourlyrainin: '0.000',
+  dailyrainin: '0.000',
+  weeklyrainin: '0.000',
+  monthlyrainin: '0.201',
+  totalrainin: '0.201',
+  solarradiation: '19.45',
+  uv: '0',
+  wh65batt: '0',
+  freq: '868M',
+  model: 'WS2900_V2.01.10' }
+*/
+export class StationDataRaw {
+    PASSKEY: string;
+    stationtype: string;
+    dateutc: string;
+    tempinf: number;
+    humidityin: number;
+    baromrelin: number;
+    baromabsin: number;
+    tempf: number;
+    humidity: number;
+    winddir: number;
+    windspeedmph: number;
+    windgustmph: number;
+    maxdailygust: number;
+    rainratein: number;
+    eventrainin: number;
+    hourlyrainin: number;
+    dailyrainin: number;
+    weeklyrainin: number;
+    monthlyrainin: number;
+    totalrainin: number;
+    solarradiation: number;
+    uv: number;
+    wh65batt: number;
+    freq: string;
+    model: string;
 }
 
 export class StationTrendData {

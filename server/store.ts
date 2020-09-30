@@ -1,9 +1,11 @@
-const { Pool } = require('pg');
+import { DomData, StationData } from "../client/models/model";
+import { Pool } from 'pg';
+
 var redis = require('redis');
 var redisClientSub = redis.createClient();
 var redisClient = redis.createClient();
 
-async function storeStation(data) {
+async function storeStation(data: StationData) {
     const pool = new Pool({
         user: 'postgres',
         host: 'localhost',
@@ -27,11 +29,11 @@ async function storeStation(data) {
         await client.query('ROLLBACK');
         throw e;
     } finally {
-        client.end();
+        client.release();
     }
 }
 
-async function storeDom(data) {
+async function storeDom(data: any) {
     const pool = new Pool({
         user: 'postgres',
         host: 'localhost',
@@ -71,7 +73,7 @@ async function storeDom(data) {
         await client.query('ROLLBACK');
         throw e;
     } finally {
-        client.end();
+        client.release();
     }
 }
 
@@ -79,12 +81,12 @@ redisClientSub.config('set', 'notify-keyspace-events', 'KEA');
 
 redisClientSub.subscribe('__keyevent@0__:set');
 
-redisClientSub.on('message', function (channel, key) {
+redisClientSub.on('message', function (channel: string, key: string) {
     console.log('msg ' + channel + ' ' + key);
 
     if (key === 'station') {
         console.log('station');
-        redisClient.get(key, function (err, reply) {
+        redisClient.get(key, function (err: any, reply: any) {
             console.log('err' + err);
             console.log('get ' + reply);
             storeStation(JSON.parse(reply));
@@ -92,7 +94,7 @@ redisClientSub.on('message', function (channel, key) {
     }
     else if (key === 'dom') {
         console.log('dom');
-        redisClient.get(key, function (err, reply) {
+        redisClient.get(key, function (err: any, reply: any) {
             console.log('err' + err);
             console.log('get ' + reply);
             storeDom(JSON.parse(reply));

@@ -4,7 +4,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 
 const frontConfig = {
   target: 'web',
-  entry: './src/index.tsx',
+  entry: './client/index.tsx',
 //  devtool: devMode ? 'eval-source-map' : 'nosources-source-map',
   module: {
     rules: [
@@ -43,7 +43,7 @@ const frontConfig = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: './src/index.html',
+      template: './client/index.html',
       filename: path.resolve(__dirname, 'dist', 'index.html'),
       xhtml: true,
     }),
@@ -58,7 +58,7 @@ const frontConfig = {
 
 const backConfigMain = {
   target: 'node',
-  entry: './server/main.js',
+  entry: './server/main.ts',
   module: {
     rules: [
       {
@@ -80,7 +80,7 @@ const backConfigMain = {
 
 const backConfigStore = {
   target: 'node',
-  entry: './server/store.js',
+  entry: './server/store.ts',
   module: {
     rules: [
       {
