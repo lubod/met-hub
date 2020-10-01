@@ -5,7 +5,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const frontConfig = {
   target: 'web',
   entry: './client/index.tsx',
-//  devtool: devMode ? 'eval-source-map' : 'nosources-source-map',
+//  devtool: 'eval-source-map',
   module: {
     rules: [
       {
