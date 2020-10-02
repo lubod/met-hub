@@ -136,6 +136,47 @@ export class DomData {
     petra_low: number;
 }
 
+export class DomTrendData {
+    timestamp: Array<string> = new Array<string>();
+    temp: Array<number> = new Array<number>();
+    humidity: Array<number> = new Array<number>();
+    rain: Array<number> = new Array<number>();
+    obyvacka_vzduch: Array<number> = new Array<number>();
+    obyvacka_podlaha: Array<number> = new Array<number>();
+    pracovna_vzduch: Array<number> = new Array<number>();
+    pracovna_podlaha: Array<number> = new Array<number>();
+    spalna_vzduch: Array<number> = new Array<number>();
+    spalna_podlaha: Array<number> = new Array<number>();
+    chalani_vzduch: Array<number> = new Array<number>();
+    chalani_podlaha: Array<number> = new Array<number>();
+    petra_vzduch: Array<number> = new Array<number>();
+    petra_podlaha: Array<number> = new Array<number>();
+}
+
+export class DomExternalData {
+    temp: number;
+    humidity: number;
+    rain: number;
+    text: string;
+}
+
+export class DomRoomData {
+    temp: number;
+    req: number;
+    reqall: number;
+    useroffset: number;
+    maxoffset: number;
+    kuri: number;
+    low: number;
+    leto: number;
+    text: string;
+}
+
+export class DomTarifData {
+    tarif: number;
+    text: string;
+}
+
 export class StationModel {
     @observable stationData = new StationData();
     @observable stationTrendData = new StationTrendData();
@@ -143,4 +184,5 @@ export class StationModel {
 
 export class DomModel {
     @observable domData = new DomData();
+    @observable domTrendData = new DomTrendData();
 }

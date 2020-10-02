@@ -100,6 +100,28 @@ const backConfigStore = {
   externals: [nodeExternals()],
 };
 
-module.exports = [frontConfig, backConfigMain, backConfigStore];
+const backConfigPoll = {
+  target: 'node',
+  entry: './server/poll.ts',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  output: {
+    filename: 'poll.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  externals: [nodeExternals()],
+};
+
+module.exports = [frontConfig, backConfigMain, backConfigStore, backConfigPoll];
 
 

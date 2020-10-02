@@ -1,4 +1,10 @@
-const fetch = require("node-fetch");
+import redis from 'redis';
+import fetch from 'node-fetch';
+import { DomExternalData, DomRoomData, DomTarifData } from '../client/models/model';
+import axios from 'axios';
+import { exception } from 'console';
+
+const redisClient = redis.createClient();
 
 const POS_ACTUALTEMP = 14,
     POS_REQUIRED = 19,
@@ -13,7 +19,7 @@ const POS_ACTUALTEMP = 14,
     POS_LETO = 43,
     POS_S_CHLADI = 44;
 
-const tables = {
+const tables: any = {
     10: 'obyvacka_vzduch',
     0: 'obyvacka_podlaha',
     11: 'zadverie_vzduch',
@@ -37,75 +43,75 @@ const tables = {
     //    20: 'vonku',
 };
 
-const request = {
+const postRequest = {
     'credentials': 'omit',
     'headers': {
         'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0',
-        'Accept': 'text/plain, */*; q=0.01',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.5',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Upgrade-Insecure-Requests': '1',
         'X-Requested-With': 'XMLHttpRequest',
         'Cache-Control': 'max-age=0'
     },
-    'referrer': 'http://192.168.1.113/h_inforoom.html',
     'method': 'POST',
-    'mode': 'cors'
+    'mode': 'cors',
+    'body': '',
+    'referrer': ''
 }
 
-function login() {
-    return fetch('http://192.168.1.113/menu.html', {
-        'credentials': 'omit',
-        'headers': {
-            'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Upgrade-Insecure-Requests': '1'
-        },
-        'referrer': 'http://192.168.1.113/login.html?btnRelogin=Znovu+p%C5%99ihl%C3%A1sit',
-        'body': 'loginName=admin&passwd=1234',
-        'method': 'POST',
-        'mode': 'cors'
-    });
+async function login() {
+    postRequest.referrer = 'http://192.168.1.113/login.html?btnRelogin=Znovu+p%C5%99ihl%C3%A1sit';
+    postRequest.body = 'loginName=admin&passwd=1234';
+    const res = await fetch('http://192.168.1.113/menu.html', postRequest);
+    return await res.text();
 }
 
-function getTarif() {
-    request.body = 'param+';
-    return fetch("http://192.168.1.113/loadHDO", request)
-        .then(res => res.text());
+async function getTarif() {
+    postRequest.referrer = 'http://192.168.1.113/h_inforoom.html';
+    postRequest.body = 'param+';
+    const res = await fetch("http://192.168.1.113/loadHDO", postRequest);
+    return await res.text();
 }
 
-function getCount() {
-    request.body = 'param+';
-    return fetch('http://192.168.1.113/numOfRooms', request)
-        .then(res => res.text());
+async function getCount() {
+    postRequest.referrer = 'http://192.168.1.113/h_inforoom.html';
+    postRequest.body = 'param+';
+    const res = await fetch('http://192.168.1.113/numOfRooms', postRequest);
+    return await res.text();
 }
 
-function getData(param) {
-    request.body = 'param=' + param;
-    return fetch('http://192.168.1.113/wholeRoom', request)
-        .then(res => res.text());
+async function getData(param: number) {
+    postRequest.referrer = 'http://192.168.1.113/h_inforoom.html';
+    postRequest.body = 'param=' + param;
+    const res = await fetch('http://192.168.1.113/wholeRoom', postRequest);
+    return await res.text();
 }
 
-
-function getExternalData() {
-    return fetch("http://192.168.1.5/getTH", {
-        "credentials": "include",
-        "headers": {
-            "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Upgrade-Insecure-Requests": "1",
-            "If-None-Match": "W/\"1b-gSBrGQ+usH2f39nYMJVnOGR8ATM\"",
-            "Cache-Control": "max-age=0"
-        },
-        "method": "GET",
-        "mode": "cors"
-    }).then(res => res.text());
+async function getExternalData() {
+    try {
+        const res = await axios.get('http://192.168.1.5/getTH');
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-function decode(text) {
-    const data = {};
+async function postData(data: any) {
+    try {
+        const res = axios.post('http://192.168.1.199:8082/setDomData', data, {
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            }
+        });
+        return res;
+    } catch (error) {
+        console.error(error);
+    };
+}
+
+function decode(text: string) {
+    const data = new DomRoomData();
     if (text.length === 45) {
         data.temp = parseFloat(text.substr(POS_ACTUALTEMP, 5));
         data.req = parseFloat(text.substr(POS_REQUIRED, 3));
@@ -115,43 +121,43 @@ function decode(text) {
         data.kuri = parseInt(text.substr(POS_S_TOPI, 1));
         data.low = parseInt(text.substr(POS_LOW, 1));
         data.leto = parseInt(text.substr(POS_LETO, 1));
-        data.text = text;
+        //        data.text = text;
         return data;
     }
-    return null;
+    throw 'Cannot decode ' + text;
 }
 
-function decodeTarif(text) {
-    const data = {};
+function decodeTarif(text: string) {
+    const data = new DomTarifData();
     if (text.length === 1) {
         data.tarif = parseInt(text);
-        data.text = text;
+        //        data.text = text;
         return data;
     }
     return null;
 }
 
-function decodeExternal(text) {
-    const data = {};
+function decodeExternal(text: string) {
+    const data = new DomExternalData();
     if (text !== '') {
         const th = text.match(/Temp=(.*)\*  Humidity=(.*)%\nRain=(.*\n)/);
         data.temp = parseFloat(th[1]);
         data.humidity = parseFloat(th[2]);
         data.rain = parseInt(th[3]);
-        data.text = text;
+        //        data.text = text;
     }
     return data;
 }
 
 async function pollData() {
-    const data = {};
+    const data: any = {};
 
     console.log('pollData start');
     let res = await login();
     //    console.log(res);
     const count = await getCount();
     //    console.log(count);
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < parseInt(count); i++) {
         const res = await getData(i);
         const decoded = decode(res);
         data[tables[i]] = decoded;
@@ -169,5 +175,14 @@ async function pollData() {
     return data;
 }
 
-module.exports = { pollData }
+async function poll() {
+    const data = await pollData();
+    console.log(data);
+    const res = await postData(data);
+//    console.log(res);
+}
+
+poll();
+setInterval(poll, 60000);
+
 

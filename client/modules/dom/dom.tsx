@@ -7,6 +7,7 @@ import { observer } from 'mobx-react';
 import { DomController } from '../../controllers/dom-controller';
 import { Container, Row, Col } from 'react-bootstrap';
 import './style.scss';
+import Trend from '../trend/trend';
 
 @observer
 export class Dom extends React.Component<{}, {}> {
@@ -40,12 +41,15 @@ export class Dom extends React.Component<{}, {}> {
           <Row>
             <Col xs={4}>
               <Data name='Temperature' value={this.model.domData.temp} unit='°C' fix={1}></Data>
+              <Trend data={this.model.domTrendData.temp} range={2}></Trend>
             </Col>
             <Col xs={4}>
               <Data name='Humidity' value={this.model.domData.humidity} unit='%' fix={0}></Data>
+              <Trend data={this.model.domTrendData.humidity} range={10}></Trend>
             </Col>
             <Col xs={4}>
               <Data name='Rain' value={this.model.domData.rain} unit='' fix={0}></Data>
+              <Trend data={this.model.domTrendData.rain} range={1}></Trend>
             </Col>
           </Row>
         </Container>
@@ -60,11 +64,11 @@ export class Dom extends React.Component<{}, {}> {
             <Col xs={2}>HSL
             </Col>
           </Row>
-          <Room room='Living room' air={this.model.domData.obyvacka_vzduch} floor={this.model.domData.obyvacka_podlaha} required={this.model.domData.obyvacka_req} heat={this.model.domData.obyvacka_kuri} summer={this.model.domData.obyvacka_leto} low={this.model.domData.obyvacka_low} />
-          <Room room='Guest room' air={this.model.domData.pracovna_vzduch} floor={this.model.domData.pracovna_podlaha} required={this.model.domData.pracovna_req} heat={this.model.domData.pracovna_kuri} summer={this.model.domData.pracovna_leto} low={this.model.domData.pracovna_low} />
-          <Room room='Bed room' air={this.model.domData.spalna_vzduch} floor={this.model.domData.spalna_podlaha} required={this.model.domData.spalna_req} heat={this.model.domData.spalna_kuri} summer={this.model.domData.spalna_leto} low={this.model.domData.spalna_low} />
-          <Room room='Boys' air={this.model.domData.chalani_vzduch} floor={this.model.domData.chalani_podlaha} required={this.model.domData.chalani_req} heat={this.model.domData.chalani_kuri} summer={this.model.domData.chalani_leto} low={this.model.domData.chalani_low} />
-          <Room room='Petra' air={this.model.domData.petra_vzduch} floor={this.model.domData.petra_podlaha} required={this.model.domData.petra_req} heat={this.model.domData.petra_kuri} summer={this.model.domData.petra_leto} low={this.model.domData.petra_low} />
+          <Room room='Living room' floorTrend={this.model.domTrendData.obyvacka_podlaha} airTrend={this.model.domTrendData.obyvacka_vzduch} air={this.model.domData.obyvacka_vzduch} floor={this.model.domData.obyvacka_podlaha} required={this.model.domData.obyvacka_req} heat={this.model.domData.obyvacka_kuri} summer={this.model.domData.obyvacka_leto} low={this.model.domData.obyvacka_low} />
+          <Room room='Guest room' floorTrend={this.model.domTrendData.pracovna_podlaha} airTrend={this.model.domTrendData.pracovna_vzduch} air={this.model.domData.pracovna_vzduch} floor={this.model.domData.pracovna_podlaha} required={this.model.domData.pracovna_req} heat={this.model.domData.pracovna_kuri} summer={this.model.domData.pracovna_leto} low={this.model.domData.pracovna_low} />
+          <Room room='Bed room' floorTrend={this.model.domTrendData.spalna_podlaha} airTrend={this.model.domTrendData.spalna_vzduch} air={this.model.domData.spalna_vzduch} floor={this.model.domData.spalna_podlaha} required={this.model.domData.spalna_req} heat={this.model.domData.spalna_kuri} summer={this.model.domData.spalna_leto} low={this.model.domData.spalna_low} />
+          <Room room='Boys' floorTrend={this.model.domTrendData.chalani_podlaha} airTrend={this.model.domTrendData.chalani_vzduch} air={this.model.domData.chalani_vzduch} floor={this.model.domData.chalani_podlaha} required={this.model.domData.chalani_req} heat={this.model.domData.chalani_kuri} summer={this.model.domData.chalani_leto} low={this.model.domData.chalani_low} />
+          <Room room='Petra' floorTrend={this.model.domTrendData.petra_podlaha} airTrend={this.model.domTrendData.petra_vzduch} air={this.model.domData.petra_vzduch} floor={this.model.domData.petra_podlaha} required={this.model.domData.petra_req} heat={this.model.domData.petra_kuri} summer={this.model.domData.petra_leto} low={this.model.domData.petra_low} />
         </Container>
       </div >
     );
