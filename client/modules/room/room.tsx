@@ -33,7 +33,7 @@ function Room(props: RoomProps) {
                     <Data name='' value={props.required} unit='°C' fix={1}></Data>
                 </Col>
                 <Col xs={2}>
-                    <Text name='' value={'' + props.heat?.toFixed(0) + props.summer?.toFixed(0) + props.low?.toFixed(0)} ></Text>
+                    <Text name='' value={'' + (props.heat != null ? props.heat.toFixed(0) : '') + (props.summer != null? props.summer.toFixed(0) : '') + (props.low != null ? props.low.toFixed(0) : '')} ></Text>
                 </Col>
             </Row>
         </div>

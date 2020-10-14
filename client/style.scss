@@ -3,8 +3,8 @@ $enable-shadows: true;
 $primary: red;
 
 .bg-very-dark {
-    opacity: 0.9;
-    background-color: #1a1b1c;
+//    opacity: 0.5;
+    background-color:rgba(0,0,0,0.5);
 //    background-color: 'linear-gradient(to down, #1a1b1c, red)';
 }
 

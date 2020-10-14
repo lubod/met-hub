@@ -13,7 +13,7 @@ export class DomController {
     getData() {
         fetch('/getLastData/dom').then(data => data.json()).then(json => {
             this.model.domData = {
-                timestamp: new Date(json.timestamp).toLocaleString('sk-SK'),
+                timestamp: json.timestamp,
                 time: new Date(json.timestamp).toLocaleTimeString('sk-SK'),
                 date: new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', ''),
                 temp: json.vonku.temp,

@@ -13,7 +13,7 @@ function Data(props: DataProps) {
         <div className='text-left'>
             <div className='small text-info'>{props.name}</div>
             <span className='h4 mr-1'>{props.value?.toFixed(props.fix)}</span>
-            <span className='small'>{props.unit}</span>
+            <span className='small'>{props.value ? props.unit : ''}</span>
         </div>
     );
 };
