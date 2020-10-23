@@ -29,7 +29,7 @@ export class Station extends React.Component<{}, {}> {
     }
     return (
       <div className='main'>
-        <Container className='text-center text-light my-4 py-2 mx-auto border-primary bg-very-dark rounded shadow'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-primary bg-very-dark rounded shadow'>
           <Row>
             <Col xs={12}>
               <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-primary mb-2 bg-gradient-primary shadow'>{this.model.stationData.place}</button>
@@ -44,7 +44,7 @@ export class Station extends React.Component<{}, {}> {
             </Col>
           </Row>
         </Container>
-        <Container className='text-center text-light my-4 py-2 mx-auto border-secondary bg-very-dark rounded'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <WindRose
             gustTrend={this.model.stationTrendData.windgust}
             speedTrend={this.model.stationTrendData.windspeed}
@@ -54,11 +54,11 @@ export class Station extends React.Component<{}, {}> {
             gust={oldData ? null : this.model.stationData.windgust}
             dailyGust={oldData ? null : this.model.stationData.maxdailygust}></WindRose>
         </Container>
-        <Container className='text-center text-light my-4 py-2 mx-auto border-secondary bg-very-dark rounded'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <Row>
             <Col xs={4}>
               <Data name='Temperature' value={oldData ? null : this.model.stationData.temp} unit='°C' fix={1}></Data>
-              <Trend data={this.model.stationTrendData.temp} range={2}></Trend>
+              <Trend data={this.model.stationTrendData.temp} range={1.5}></Trend>
             </Col>
             <Col xs={4}>
               <Data name='Humidity' value={oldData ? null : this.model.stationData.humidity} unit='%' fix={0}></Data>
@@ -76,7 +76,7 @@ export class Station extends React.Component<{}, {}> {
             </Col>
             <Col xs={4}>
               <Data name='UV' value={oldData ? null : this.model.stationData.uv} unit='' fix={0}></Data>
-              <Trend data={this.model.stationTrendData.uv} range={1}></Trend>
+              <Trend data={this.model.stationTrendData.uv} range={3}></Trend>
             </Col>
             <Col xs={4}>
               <Data name='Rain Rate' value={oldData ? null : this.model.stationData.rainrate} unit='mm/h' fix={1}></Data>
@@ -106,12 +106,12 @@ export class Station extends React.Component<{}, {}> {
             </Col>
           </Row>
         </Container>
-        <Container className='text-center text-light my-4 py-2 mx-auto border-secondary bg-very-dark rounded'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <div className='text-left'>IN</div>
           <Row>
             <Col xs={6}>
               <Data name='Temperature' value={oldData ? null : this.model.stationData.tempin} unit='°C' fix={1}></Data>
-              <Trend data={this.model.stationTrendData.tempin} range={2}></Trend>
+              <Trend data={this.model.stationTrendData.tempin} range={1.5}></Trend>
             </Col>
             <Col xs={6}>
               <Data name='Humidity' value={oldData ? null : this.model.stationData.humidityin} unit='%' fix={0}></Data>

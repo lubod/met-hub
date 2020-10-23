@@ -23,11 +23,11 @@ function Room(props: RoomProps) {
             <Row className='text-light'>
                 <Col xs={3}>
                     <Data name='' value={props.air} unit='°C' fix={1}></Data>
-                    <Trend data={props.airTrend} range={2}></Trend>
+                    <Trend data={props.airTrend} range={1.5}></Trend>
                 </Col>
                 <Col xs={3}>
                     <Data name='' value={props.floor} unit='°C' fix={1}></Data>
-                    <Trend data={props.floorTrend} range={2}></Trend>
+                    <Trend data={props.floorTrend} range={1.5}></Trend>
                 </Col>
                 <Col xs={3}>
                     <Data name='' value={props.required} unit='°C' fix={1}></Data>

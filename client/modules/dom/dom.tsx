@@ -28,7 +28,7 @@ export class Dom extends React.Component<{}, {}> {
     }
     return (
       <div className='main'>
-        <Container className='text-center text-light my-4 py-2 mx-auto border-secondary bg-very-dark rounded'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <Row>
             <Col xs={12}>
               <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-primary mb-2'>{this.model.domData.place}</button>
@@ -43,7 +43,7 @@ export class Dom extends React.Component<{}, {}> {
             </Col>
           </Row>
         </Container>
-        <Container className='text-center text-light my-4 py-2 mx-auto border-secondary bg-very-dark rounded'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <div className='text-left'>OUT</div>
           <Row>
             <Col xs={4}>
@@ -60,7 +60,7 @@ export class Dom extends React.Component<{}, {}> {
             </Col>
           </Row>
         </Container>
-        <Container className='text-center text-light my-4 py-2 mx-auto border-secondary bg-very-dark rounded'>
+        <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <Row className='text-left text-info'>
             <Col xs={3}>Air
             </Col>

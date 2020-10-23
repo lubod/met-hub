@@ -17,7 +17,7 @@ function Trend(props: TrendData) {
     const ctx = canvas.getContext('2d');
     if (max - min < trend.range) {
       min = min;
-      max = max + trend.range;
+      max = min + trend.range;
     }
     const k = (canvas.height - 1) / (max - min);
     const s = 1 - min * k;

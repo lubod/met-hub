@@ -27,7 +27,7 @@
             const urlParams = new URLSearchParams(queryString);
             const uuid = urlParams.get('uuid');
             const hash = urlParams.get('hash');
-            document.getElementById('iframe').src = "http://192.168.1.199:3000/d/" + hash + "/" + uuid + "?orgId=1&from=now-24h&to=now";
+            document.getElementById('iframe').src = "/charts/d/" + hash + "/" + uuid + "?orgId=1&from=now-24h&to=now";
         };
     </script>
     <div class="col text-right">
