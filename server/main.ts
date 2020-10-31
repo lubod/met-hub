@@ -1,9 +1,9 @@
 
 import express from 'express';
-import bodyParser from 'body-parser';
 import redis from 'redis';
 import { AddressInfo } from 'net';
 import { DomTrendData, StationData, StationDataRaw, StationTrendData } from '../client/models/model';
+import axios from 'axios';
 
 
 const app = express();
@@ -25,9 +25,7 @@ function removeOld(value: any, key: number, map: any) {
     const now = Date.now();
     if (now - key > 3600000) {
         map.delete(key);
-        console.log('delete ' + key);
     }
-    console.log('size ' + map.size);
 }
 
 function trend() {
@@ -76,36 +74,58 @@ function decodeStationData(data: StationDataRaw) {
 
 app.post('/setData', function (req: any, res: any) {
     console.log(req.body);
-    const last = decodeStationData(req.body);
-    const timestamp = new Date(last.timestamp);
-    const now = Date.now();
-    const diff = now - timestamp.getTime();
-    if (diff < 3600000) {
-        stationTrend.set(timestamp.getTime(), last);
-        redisClient.set('station', JSON.stringify(last));
+    if (req.body.PASSKEY === '33564A0851CC0C0D15FE3353FB8D8B47') {
+        const last = decodeStationData(req.body);
+        const timestamp = new Date(last.timestamp);
+        const now = Date.now();
+        const diff = now - timestamp.getTime();
+        if (diff < 3600000) {
+            stationTrend.set(timestamp.getTime(), last);
+            redisClient.set('station', JSON.stringify(last));
+        }
+        try {
+            if (!req.body.forward) {
+                req.body.forward = true;
+                const res = axios.post('https://www.met-hub.com/setData', req.body, {
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8"
+                    }
+                });
+            }
+        } catch (error) {
+            console.error(error);
+        };
+    } else {
+        console.error('Wrong PASSKEY' + req.body.PASSKEY);
     }
     res.sendStatus(200);
 })
 
 app.post('/setDomData', function (req: any, res: any) {
     console.log(req.body);
-    const last = req.body;
-    const timestamp = new Date(last.timestamp);
-    const now = Date.now();
-    const diff = now - timestamp.getTime();
-    if (diff < 3600000) {
-        domTrend.set(timestamp.getTime(), last);
-        redisClient.set('dom', JSON.stringify(last));
+    if (req.body.PASSKEY === '7d060d4d-c95f-4774-a0ec-a85c8952b9d9') {
+        const last = req.body;
+        const timestamp = new Date(last.timestamp);
+        const now = Date.now();
+        const diff = now - timestamp.getTime();
+        if (diff < 3600000) {
+            domTrend.set(timestamp.getTime(), last);
+            redisClient.set('dom', JSON.stringify(last));
+        }
+    } else {
+        console.error('Wrong PASSKEY' + req.body.PASSKEY);
     }
     res.sendStatus(200);
 })
 
 app.get('/', function (req: any, res: any) {
-    res.sendFile('/home/zaloha/pgclient/dist/index.html');
+    res.sendFile('/home/ubuntu/dist/index.html');
 })
 
+///home/zaloha/pgclient/dist/
+
 app.get('/:file', function (req: any, res: any) {
-    res.sendFile('/home/zaloha/pgclient/dist/' + req.params.file);
+    res.sendFile('/home/ubuntu/dist/' + req.params.file);
 })
 
 app.get('/getLastData/:uuid', function (req: any, res: any) {

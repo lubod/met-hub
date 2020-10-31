@@ -44,7 +44,7 @@ export class Dom extends React.Component<{}, {}> {
           </Row>
         </Container>
         <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
-          <div className='text-left'>OUT</div>
+          <div className='text-left'>GARDEN HOUSE</div>
           <Row>
             <Col xs={4}>
               <Data name='Temperature' value={oldData ? null : this.model.domData.temp} unit='°C' fix={1}></Data>

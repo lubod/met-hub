@@ -2,7 +2,6 @@ import redis from 'redis';
 import fetch from 'node-fetch';
 import { DomExternalData, DomRoomData, DomTarifData } from '../client/models/model';
 import axios from 'axios';
-import { exception } from 'console';
 
 const redisClient = redis.createClient();
 
@@ -99,12 +98,16 @@ async function getExternalData() {
 
 async function postData(data: any) {
     try {
-        const res = axios.post('http://192.168.1.199:8082/setDomData', data, {
+        let res = axios.post('http://192.168.1.199:8082/setDomData', data, {
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             }
         });
-        return res;
+        res = axios.post('https://www.met-hub.com/setDomData', data, {
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            }
+        });
     } catch (error) {
         console.error(error);
     };
@@ -177,6 +180,7 @@ async function pollData() {
 
 async function poll() {
     const data = await pollData();
+    data.PASSKEY = '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';
     console.log(data);
     const res = await postData(data);
 //    console.log(res);
