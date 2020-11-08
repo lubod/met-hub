@@ -1,7 +1,6 @@
 import React from 'react';
 import Data from '../data/data';
 import { Row, Col } from 'react-bootstrap';
-import './style.scss';
 import Trend from '../trend/trend';
 
 type Wind = {

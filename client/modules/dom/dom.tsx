@@ -6,7 +6,6 @@ import { DomModel } from '../../models/model';
 import { observer } from 'mobx-react';
 import { DomController } from '../../controllers/dom-controller';
 import { Container, Row, Col } from 'react-bootstrap';
-import './style.scss';
 import Trend from '../trend/trend';
 
 @observer

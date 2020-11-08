@@ -1,22 +1,51 @@
 import React from 'react';
-import { Station } from './modules/station/station';
-import { Container, Row, Col } from 'react-bootstrap';
-import { Dom } from './modules/dom/dom';
 import './style.scss';
+import { Protected } from './protected';
+import Callback from './callback';
+import { Route } from 'react-router-dom';
+import { withRouter } from 'react-router';
 
-export class App extends React.Component<{}, {}> {
-  public render(): JSX.Element {
+function HomePage(props: any) {
+  const { authenticated } = props;
+
+  const logout = () => {
+    props.auth.logout();
+    props.history.push('/');
+  };
+
+  if (authenticated) {
+    const { name } = props.auth.getProfile();
     return (
-      <Container>
-        <Row>
-          <Col sm={6} className='px-2'>
-            <Station />
-          </Col>
-          <Col sm={6} className='px-2'>
-            <Dom />
-          </Col>
-        </Row>
-      </Container>
+      <Protected />
     );
   }
+  window.location.replace('https://met-hub.auth.eu-central-1.amazoncognito.com/login?client_id=vn2mg0efils48lijdpc6arvl9&response_type=code&scope=aws.cognito.signin.user.admin&redirect_uri=https://www.met-hub.com/callback');
+  return (
+    <div className='h4 text-warning text-center'>
+      Not authenticated: redirecting ...
+    </div >
+  );
 }
+
+function App(props: any) {
+  const authenticated = props.auth.isAuthenticated();
+
+  console.log('App', authenticated);
+  return (
+    <div className="App">
+      <Route exact path='/callback' render={() => (
+        <Callback auth={props.auth} />
+      )} />
+      <Route exact path='/' render={() => (
+        <HomePage
+          authenticated={authenticated}
+          auth={props.auth}
+          history={props.history}
+        />)
+      } />
+    </div>
+  );
+}
+
+export default withRouter(App);
+

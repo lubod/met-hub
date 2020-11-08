@@ -4,7 +4,7 @@ import redis from 'redis';
 import { AddressInfo } from 'net';
 import { DomTrendData, StationData, StationDataRaw, StationTrendData } from '../client/models/model';
 import axios from 'axios';
-
+import { CognitoUserPool } from 'amazon-cognito-identity-js';
 
 const app = express();
 const redisClient = redis.createClient();
@@ -14,9 +14,16 @@ app.use(
     express.urlencoded({
         extended: true
     })
-)
+);
 
-app.use(express.json())
+app.use(express.json());
+
+const poolData = {
+    UserPoolId: 'eu-central-1_nfxOuSnih',
+    ClientId: '6ell867gonr0sp2pqo0vdf8sgu'
+};
+
+const userPool = new CognitoUserPool(poolData);
 
 let stationTrend = new Map();
 let domTrend = new Map();
@@ -73,7 +80,7 @@ function decodeStationData(data: StationDataRaw) {
 }
 
 app.post('/setData', function (req: any, res: any) {
-    console.log(req.body);
+    //console.log(req.body);
     if (req.body.PASSKEY === '33564A0851CC0C0D15FE3353FB8D8B47') {
         const last = decodeStationData(req.body);
         const timestamp = new Date(last.timestamp);
@@ -102,7 +109,7 @@ app.post('/setData', function (req: any, res: any) {
 })
 
 app.post('/setDomData', function (req: any, res: any) {
-    console.log(req.body);
+    //    console.log(req.body);
     if (req.body.PASSKEY === '7d060d4d-c95f-4774-a0ec-a85c8952b9d9') {
         const last = req.body;
         const timestamp = new Date(last.timestamp);
@@ -118,8 +125,20 @@ app.post('/setDomData', function (req: any, res: any) {
     res.sendStatus(200);
 })
 
-app.get('/', function (req: any, res: any) {
+app.get('/login', function (req: any, res: any) {
     res.sendFile('/home/ubuntu/dist/index.html');
+})
+
+app.get('/callback', function (req: any, res: any) {
+    res.sendFile('/home/ubuntu/dist/index.html');
+})
+
+app.get('/', function (req: any, res: any) {
+//    if (!req.session || !req.session.accessToken) {
+  //      res.redirect('https://met-hub.auth.eu-central-1.amazoncognito.com/login?client_id=vn2mg0efils48lijdpc6arvl9&response_type=code&scope=aws.cognito.signin.user.admin&redirect_uri=https://www.met-hub.com/login');
+    //} else {
+        res.sendFile('/home/ubuntu/dist/index.html');
+    //}
 })
 
 ///home/zaloha/pgclient/dist/

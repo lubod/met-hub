@@ -186,3 +186,4 @@ export class DomModel {
     @observable domData = new DomData();
     @observable domTrendData = new DomTrendData();
 }
+

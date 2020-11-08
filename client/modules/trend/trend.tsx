@@ -1,6 +1,5 @@
 import React from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import './style.scss';
 
 type TrendData = {
   range: number,

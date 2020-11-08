@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Data from '../data/data';
 import Text from '../text/text';
 import { Row, Col } from 'react-bootstrap';
-import './style.scss';
 import Trend from '../trend/trend';
 
 type RoomProps = {

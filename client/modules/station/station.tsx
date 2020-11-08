@@ -7,7 +7,6 @@ import { StationModel } from '../../models/model';
 import { observer } from 'mobx-react';
 import { StationController } from '../../controllers/station-controller';
 import { Container, Row, Col } from 'react-bootstrap';
-import './style.scss';
 
 @observer
 export class Station extends React.Component<{}, {}> {
