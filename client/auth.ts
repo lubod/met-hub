@@ -3,12 +3,12 @@ import axios from 'axios';
 export default class Auth {
     profile: string;
     expiresAt: number;
-    idToken: string;
+    token: string;
 
     constructor() {
         this.profile = null;
         this.expiresAt = null;
-        this.idToken = null;
+        this.token = null;
     }
 
     getProfile() {
@@ -16,6 +16,10 @@ export default class Auth {
     }
 
     getToken() {
+        return this.token;
+    }
+
+    fetchToken() {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const code = urlParams.get('code')
@@ -37,15 +41,15 @@ export default class Auth {
         console.log('handle auth');
 
         return new Promise((resolve, reject) => {
-            this.getToken()
+            this.fetchToken()
                 .then(res => {
                     console.info(res.data.expires_in);
-                    this.idToken = res.data.access_token;
+                    this.token = res.data.access_token;
                     this.expiresAt = res.data.expires_in * 1000 + new Date().getTime();
                     this.profile = 'user';
                     resolve();
                 }).catch(err => {
-                    this.idToken = null;
+                    this.token = null;
                     this.expiresAt = null;
                     this.profile = null;
                     console.error(err);
@@ -66,7 +70,8 @@ export default class Auth {
 
     logout() {
         // clear id token and expiration
-        this.idToken = null;
+        this.token = null;
         this.expiresAt = null;
+        this.profile = null;
     }
 }

@@ -2,7 +2,7 @@ import { StationModel } from '../models/model';
 
 export class StationController {
 
-    constructor(private model: StationModel) {
+    constructor(private model: StationModel, private token: string) {
         this.getData();
 
         setInterval(() => {
@@ -11,7 +11,11 @@ export class StationController {
     }
 
     getData() {
-        fetch('/getLastData/station').then(data => data.json()).then(json => {
+        fetch('/getLastData/station', {
+            headers: {
+                Authorization: `Bearer ${this.token}`,
+            }
+        }).then(data => data.json()).then(json => {
             if (json != null) {
                 this.model.stationData = {
                     timestamp: json.timestamp,
@@ -40,7 +44,11 @@ export class StationController {
                 }
             };
         });
-        fetch('/getTrendData/station').then(data => data.json()).then(json => {
+        fetch('/getTrendData/station', {
+            headers: {
+                Authorization: `Bearer ${this.token}`,
+            }
+        }).then(data => data.json()).then(json => {
             if (json != null) {
                 this.model.stationTrendData.timestamp = json.timestamp;
                 this.model.stationTrendData.tempin = json.tempin;

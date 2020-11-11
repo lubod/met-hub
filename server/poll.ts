@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import { DomExternalData, DomRoomData, DomTarifData } from '../client/models/model';
 import axios from 'axios';
 
-const redisClient = redis.createClient();
+const DOM_PASSKEY=process.env.DOM_PASSKEY || '';
 
 const POS_ACTUALTEMP = 14,
     POS_REQUIRED = 19,
@@ -180,7 +180,7 @@ async function pollData() {
 
 async function poll() {
     const data = await pollData();
-    data.PASSKEY = '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';
+    data.PASSKEY = DOM_PASSKEY;
     console.log(data);
     const res = await postData(data);
 //    console.log(res);

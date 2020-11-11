@@ -7,11 +7,22 @@ import { observer } from 'mobx-react';
 import { DomController } from '../../controllers/dom-controller';
 import { Container, Row, Col } from 'react-bootstrap';
 import Trend from '../trend/trend';
+import Auth from '../../auth';
+
+interface IProps {
+  auth: Auth;
+}
 
 @observer
-export class Dom extends React.Component<{}, {}> {
-  private model = new DomModel();
-  private controller = new DomController(this.model);
+export class Dom extends React.Component<IProps, {}> {
+  private model:DomModel;
+  private controller: DomController;
+
+  constructor(props: IProps) {
+    super(props);
+    this.model = new DomModel();
+    this.controller = new DomController(this.model, props.auth.getToken());
+  }
 
   handleClick() {
     window.location.href = "grafana.html?hash=80t3t_HGk&uuid=dom";

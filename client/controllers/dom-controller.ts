@@ -2,7 +2,7 @@ import { DomModel } from '../models/model';
 
 export class DomController {
 
-    constructor(private model: DomModel) {
+    constructor(private model: DomModel, private token: string) {
         this.getData();
 
         setInterval(() => {
@@ -11,7 +11,11 @@ export class DomController {
     }
 
     getData() {
-        fetch('/getLastData/dom').then(data => data.json()).then(json => {
+        fetch('/getLastData/dom', {
+            headers: {
+                Authorization: `Bearer ${this.token}`,
+            }
+        }).then(data => data.json()).then(json => {
             if (json != null) {
                 this.model.domData = {
                     timestamp: json.timestamp,
@@ -54,7 +58,11 @@ export class DomController {
                 }
             };
         });
-        fetch('/getTrendData/dom').then(data => data.json()).then(json => {
+        fetch('/getTrendData/dom', {
+            headers: {
+                Authorization: `Bearer ${this.token}`,
+            }
+        }).then(data => data.json()).then(json => {
             if (json != null) {
                 this.model.domTrendData.timestamp = json.timestamp;
                 this.model.domTrendData.temp = json.temp;

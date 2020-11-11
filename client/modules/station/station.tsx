@@ -7,11 +7,22 @@ import { StationModel } from '../../models/model';
 import { observer } from 'mobx-react';
 import { StationController } from '../../controllers/station-controller';
 import { Container, Row, Col } from 'react-bootstrap';
+import Auth from '../../auth';
+
+interface IProps {
+  auth: Auth;
+}
 
 @observer
-export class Station extends React.Component<{}, {}> {
-  private model = new StationModel();
-  private controller = new StationController(this.model);
+export class Station extends React.Component<IProps, {}> {
+  private model: StationModel;
+  private controller: StationController;
+
+  constructor(props: IProps) {
+    super(props);
+    this.model = new StationModel();
+    this.controller = new StationController(this.model, props.auth.getToken());
+  }
 
   handleClick() {
     window.location.href = "grafana.html?hash=-LNB7_HGk&uuid=stanica";

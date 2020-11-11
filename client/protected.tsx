@@ -5,23 +5,21 @@ import { Dom } from './modules/dom/dom';
 
 import './style.scss';
 
-export class Protected extends React.Component<{}, {}> {
+function Protected(props: any) {
+  console.log('protected', props.auth.getToken());
 
-  public render(): JSX.Element {
-    console.log('protected');
-
-    return (
-      <Container>
-        <Row>
+  return (
+    <Container>
+      <Row>
+        <Col sm={6} className='px-2'>
+          <Station auth={props.auth} />
+        </Col>
           <Col sm={6} className='px-2'>
-            <Station />
+            <Dom auth={props.auth} />
           </Col>
-          <Col sm={6} className='px-2'>
-            <Dom />
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
+      </Row>
+    </Container>
+  );
 }
 
+export default Protected;

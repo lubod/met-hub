@@ -4,10 +4,19 @@ import redis from 'redis';
 import { AddressInfo } from 'net';
 import { DomTrendData, StationData, StationDataRaw, StationTrendData } from '../client/models/model';
 import axios from 'axios';
-import { CognitoUserPool } from 'amazon-cognito-identity-js';
+
+const jwt = require('jsonwebtoken');
+const jwkToPem = require('jwk-to-pem');
+const jwk = JSON.parse(process.env.JWK) || {};
+const pem = jwkToPem(jwk.keys[1]);
 
 const app = express();
 const redisClient = redis.createClient();
+
+const CLIENT_ID=process.env.CLIENT_ID || '';
+const USERNAME=process.env.USERNAME || '';
+const STATION_PASSKEY=process.env.STATION_PASSKEY || '';
+const DOM_PASSKEY=process.env.DOM_PASSKEY || '';
 
 app.use(express.static(__dirname));
 app.use(
@@ -18,12 +27,26 @@ app.use(
 
 app.use(express.json());
 
-const poolData = {
-    UserPoolId: 'eu-central-1_nfxOuSnih',
-    ClientId: '6ell867gonr0sp2pqo0vdf8sgu'
-};
-
-const userPool = new CognitoUserPool(poolData);
+function verifyToken(authorization: any) {
+    if (authorization) {
+        try {
+            const decodedToken = jwt.verify(authorization.substr(7), pem, { algorithms: ['RS256'] });
+            if (decodedToken.client_id !== CLIENT_ID) {
+                console.error('client_id');
+                return false;
+            }
+            if (decodedToken.username !== USERNAME) {
+                console.error('username');
+                return false;
+            }
+            return true;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
+    return false;
+}
 
 let stationTrend = new Map();
 let domTrend = new Map();
@@ -80,8 +103,8 @@ function decodeStationData(data: StationDataRaw) {
 }
 
 app.post('/setData', function (req: any, res: any) {
-    //console.log(req.body);
-    if (req.body.PASSKEY === '33564A0851CC0C0D15FE3353FB8D8B47') {
+    console.info('/setData');
+    if (req.body.PASSKEY === STATION_PASSKEY) {
         const last = decodeStationData(req.body);
         const timestamp = new Date(last.timestamp);
         const now = Date.now();
@@ -109,8 +132,8 @@ app.post('/setData', function (req: any, res: any) {
 })
 
 app.post('/setDomData', function (req: any, res: any) {
-    //    console.log(req.body);
-    if (req.body.PASSKEY === '7d060d4d-c95f-4774-a0ec-a85c8952b9d9') {
+    console.info('/setDomData');
+    if (req.body.PASSKEY === DOM_PASSKEY) {
         const last = req.body;
         const timestamp = new Date(last.timestamp);
         const now = Date.now();
@@ -125,77 +148,84 @@ app.post('/setDomData', function (req: any, res: any) {
     res.sendStatus(200);
 })
 
-app.get('/login', function (req: any, res: any) {
-    res.sendFile('/home/ubuntu/dist/index.html');
-})
-
 app.get('/callback', function (req: any, res: any) {
+    console.info('/callback');
     res.sendFile('/home/ubuntu/dist/index.html');
 })
 
 app.get('/', function (req: any, res: any) {
-//    if (!req.session || !req.session.accessToken) {
-  //      res.redirect('https://met-hub.auth.eu-central-1.amazoncognito.com/login?client_id=vn2mg0efils48lijdpc6arvl9&response_type=code&scope=aws.cognito.signin.user.admin&redirect_uri=https://www.met-hub.com/login');
-    //} else {
-        res.sendFile('/home/ubuntu/dist/index.html');
-    //}
+    console.info('/');
+    res.sendFile('/home/ubuntu/dist/index.html');
 })
 
 ///home/zaloha/pgclient/dist/
 
 app.get('/:file', function (req: any, res: any) {
+    console.info('/' + req.params.file);
     res.sendFile('/home/ubuntu/dist/' + req.params.file);
 })
 
 app.get('/getLastData/:uuid', function (req: any, res: any) {
-    res.type('application/json');
-    const last = redisClient.get(req.params.uuid, function (err: any, reply: any) {
-        return res.json(JSON.parse(reply));
-    });
+    console.info('/getLastData/' + req.params.uuid);
+    if (verifyToken(req.headers.authorization) === true) {
+        res.type('application/json');
+        const last = redisClient.get(req.params.uuid, function (err: any, reply: any) {
+            return res.json(JSON.parse(reply));
+        });
+    }
+    else {
+        res.status(401).body('auth issue');
+    }
 })
 
 app.get('/getTrendData/:uuid', function (req: any, res: any) {
-    res.type('application/json');
-    //    const last = redisClient.get(req.params.uuid, function (err, reply) {
-    if (req.params.uuid === 'station') {
-        const tmp = new StationTrendData();
-        stationTrend.forEach(function (value, key, map) {
-            tmp.timestamp.push(value.timestamp);
-            tmp.tempin.push(value.tempin);
-            tmp.humidityin.push(value.humidityin);
-            tmp.temp.push(value.temp);
-            tmp.humidity.push(value.humidity);
-            tmp.pressurerel.push(value.pressurerel);
-            tmp.windgust.push(value.windgust);
-            tmp.windspeed.push(value.windspeed);
-            tmp.winddir.push(value.winddir);
-            tmp.solarradiation.push(value.solarradiation);
-            tmp.uv.push(value.uv);
-            tmp.rainrate.push(value.rainrate);
-        });
-        return res.json(tmp);
+    console.info('/getTrendData/' + req.params.uuid);
+    if (verifyToken(req.headers.authorization) === true) {
+        res.type('application/json');
+        //    const last = redisClient.get(req.params.uuid, function (err, reply) {
+        if (req.params.uuid === 'station') {
+            const tmp = new StationTrendData();
+            stationTrend.forEach(function (value, key, map) {
+                tmp.timestamp.push(value.timestamp);
+                tmp.tempin.push(value.tempin);
+                tmp.humidityin.push(value.humidityin);
+                tmp.temp.push(value.temp);
+                tmp.humidity.push(value.humidity);
+                tmp.pressurerel.push(value.pressurerel);
+                tmp.windgust.push(value.windgust);
+                tmp.windspeed.push(value.windspeed);
+                tmp.winddir.push(value.winddir);
+                tmp.solarradiation.push(value.solarradiation);
+                tmp.uv.push(value.uv);
+                tmp.rainrate.push(value.rainrate);
+            });
+            return res.json(tmp);
+        }
+        else if (req.params.uuid === 'dom') {
+            const tmp = new DomTrendData();
+            domTrend.forEach(function (value, key, map) {
+                tmp.timestamp.push(value.timestamp);
+                tmp.temp.push(value.vonku.temp);
+                tmp.humidity.push(value.vonku.humidity);
+                tmp.rain.push(value.vonku.rain);
+                tmp.obyvacka_vzduch.push(value.obyvacka_vzduch.temp);
+                tmp.obyvacka_podlaha.push(value.obyvacka_podlaha.temp);
+                tmp.pracovna_vzduch.push(value.pracovna_vzduch.temp);
+                tmp.pracovna_podlaha.push(value.pracovna_podlaha.temp);
+                tmp.spalna_vzduch.push(value.spalna_vzduch.temp);
+                tmp.spalna_podlaha.push(value.spalna_podlaha.temp);
+                tmp.chalani_vzduch.push(value.chalani_vzduch.temp);
+                tmp.chalani_podlaha.push(value.chalani_podlaha.temp);
+                tmp.petra_vzduch.push(value.petra_vzduch.temp);
+                tmp.petra_podlaha.push(value.petra_podlaha.temp);
+            });
+            return res.json(tmp);
+        }
+        return res.json();
     }
-    else if (req.params.uuid === 'dom') {
-        const tmp = new DomTrendData();
-        domTrend.forEach(function (value, key, map) {
-            tmp.timestamp.push(value.timestamp);
-            tmp.temp.push(value.vonku.temp);
-            tmp.humidity.push(value.vonku.humidity);
-            tmp.rain.push(value.vonku.rain);
-            tmp.obyvacka_vzduch.push(value.obyvacka_vzduch.temp);
-            tmp.obyvacka_podlaha.push(value.obyvacka_podlaha.temp);
-            tmp.pracovna_vzduch.push(value.pracovna_vzduch.temp);
-            tmp.pracovna_podlaha.push(value.pracovna_podlaha.temp);
-            tmp.spalna_vzduch.push(value.spalna_vzduch.temp);
-            tmp.spalna_podlaha.push(value.spalna_podlaha.temp);
-            tmp.chalani_vzduch.push(value.chalani_vzduch.temp);
-            tmp.chalani_podlaha.push(value.chalani_podlaha.temp);
-            tmp.petra_vzduch.push(value.petra_vzduch.temp);
-            tmp.petra_podlaha.push(value.petra_podlaha.temp);
-        });
-        return res.json(tmp);
+    else {
+        res.status(401).body('auth issue');
     }
-    return res.json();
 })
 
 var server = app.listen(8082, function () {

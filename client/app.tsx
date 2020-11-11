@@ -1,6 +1,6 @@
 import React from 'react';
 import './style.scss';
-import { Protected } from './protected';
+import Protected from './protected';
 import Callback from './callback';
 import { Route } from 'react-router-dom';
 import { withRouter } from 'react-router';
@@ -16,7 +16,7 @@ function HomePage(props: any) {
   if (authenticated) {
     const { name } = props.auth.getProfile();
     return (
-      <Protected />
+      <Protected auth={props.auth} />
     );
   }
   window.location.replace('https://met-hub.auth.eu-central-1.amazoncognito.com/login?client_id=vn2mg0efils48lijdpc6arvl9&response_type=code&scope=aws.cognito.signin.user.admin&redirect_uri=https://www.met-hub.com/callback');
