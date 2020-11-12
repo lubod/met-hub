@@ -8,6 +8,7 @@ import { observer } from 'mobx-react';
 import { StationController } from '../../controllers/station-controller';
 import { Container, Row, Col } from 'react-bootstrap';
 import Auth from '../../auth';
+import Iframe from 'react-iframe';
 
 interface IProps {
   auth: Auth;
@@ -24,10 +25,6 @@ export class Station extends React.Component<IProps, {}> {
     this.controller = new StationController(this.model, props.auth.getToken());
   }
 
-  handleClick() {
-    window.location.href = "grafana.html?hash=-LNB7_HGk&uuid=stanica";
-  }
-
   public render(): JSX.Element {
     //    console.log(this.model.stationTrendData);
     const timestamp = new Date(this.model.stationData.timestamp);
@@ -37,19 +34,18 @@ export class Station extends React.Component<IProps, {}> {
     if (diff > 120000) {
       oldData = true;
     }
+
     return (
       <div className='main'>
         <Container className='text-center text-light my-2 py-2 mx-auto border-primary bg-very-dark rounded shadow'>
-          <Row>
-            <Col xs={12}>
-              <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-primary mb-2 bg-gradient-primary shadow'>{this.model.stationData.place}</button>
-            </Col>
-          </Row>
           <Row className={oldData ? 'text-danger' : ''}>
-            <Col xs={6}>
+            <Col xs={4}>
+              <Text name='Place' value={this.model.stationData.place} ></Text>
+            </Col>
+            <Col xs={4}>
               <Text name='Date' value={this.model.stationData.date} ></Text>
             </Col>
-            <Col xs={6}>
+            <Col xs={4}>
               <Text name='Time' value={this.model.stationData.time} ></Text>
             </Col>
           </Row>

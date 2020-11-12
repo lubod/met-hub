@@ -15,17 +15,13 @@ interface IProps {
 
 @observer
 export class Dom extends React.Component<IProps, {}> {
-  private model:DomModel;
+  private model: DomModel;
   private controller: DomController;
 
   constructor(props: IProps) {
     super(props);
     this.model = new DomModel();
     this.controller = new DomController(this.model, props.auth.getToken());
-  }
-
-  handleClick() {
-    window.location.href = "grafana.html?hash=80t3t_HGk&uuid=dom";
   }
 
   public render(): JSX.Element {
@@ -39,16 +35,14 @@ export class Dom extends React.Component<IProps, {}> {
     return (
       <div className='main'>
         <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
-          <Row>
-            <Col xs={12}>
-              <button onClick={this.handleClick} type='button' id='history' className='btn-block text-left btn btn-primary mb-2'>{this.model.domData.place}</button>
-            </Col>
-          </Row>
           <Row className={oldData ? 'text-danger' : ''}>
-            <Col xs={6}>
+            <Col xs={4}>
+              <Text name='Place' value={this.model.domData.place} ></Text>
+            </Col>
+            <Col xs={4}>
               <Text name='Date' value={this.model.domData.date} ></Text>
             </Col>
-            <Col xs={6}>
+            <Col xs={4}>
               <Text name='Time' value={this.model.domData.time} ></Text>
             </Col>
           </Row>

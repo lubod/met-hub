@@ -17,10 +17,13 @@ export class StationController {
             }
         }).then(data => data.json()).then(json => {
             if (json != null) {
+                const sdate = new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
+                const stime = new Date(json.timestamp).toLocaleTimeString('sk-SK');
+
                 this.model.stationData = {
                     timestamp: json.timestamp,
-                    time: new Date(json.timestamp).toLocaleTimeString('sk-SK'),
-                    date: new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', ''),
+                    time: stime.substring(0, stime.length - 3),
+                    date: sdate.substring(0, sdate.length - 6),
                     tempin: json.tempin,
                     humidityin: json.humidityin,
                     temp: json.temp,
