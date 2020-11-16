@@ -11,7 +11,7 @@ export class DomController {
     }
 
     getData() {
-        fetch('/getLastData/dom', {
+        fetch('/api/getLastData/dom', {
             headers: {
                 Authorization: `Bearer ${this.token}`,
             }
@@ -61,7 +61,7 @@ export class DomController {
                 }
             };
         });
-        fetch('/getTrendData/dom', {
+        fetch('/api/getTrendData/dom', {
             headers: {
                 Authorization: `Bearer ${this.token}`,
             }

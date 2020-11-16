@@ -29,7 +29,7 @@ function Protected(props: any) {
           {
             !toggleStation &&
             <Container className='bg-very-dark px-0 py-0'>
-              <Iframe url='/charts/d/-LNB7_HGk/stanica?orgId=1&from=now-24h&to=now' width='100%' height='700px' />
+              <Iframe url={'/charts/d/-LNB7_HGk/stanica?orgId=1&from=now-24h&to=now&token=' + props.auth.getToken()} width='100%' height='700px' />
             </Container>
           }
         </Col>
@@ -44,7 +44,7 @@ function Protected(props: any) {
           {
             !toggleDom &&
             <Container className='bg-very-dark px-0 py-0'>
-              <Iframe url='/charts/d/80t3t_HGk/dom?orgId=1&from=now-24h&to=now' width='100%' height='700px' />
+              <Iframe url={'/charts/d/80t3t_HGk/dom?orgId=1&from=now-24h&to=now&token=' + props.auth.getToken()} width='100%' height='700px' />
             </Container>
           }
         </Col>

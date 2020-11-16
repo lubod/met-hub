@@ -4,6 +4,7 @@ import redis from 'redis';
 import { AddressInfo } from 'net';
 import { DomTrendData, StationData, StationDataRaw, StationTrendData } from '../client/models/model';
 import axios from 'axios';
+var proxy = require('express-http-proxy');
 
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
@@ -13,10 +14,13 @@ const pem = jwkToPem(jwk.keys[1]);
 const app = express();
 const redisClient = redis.createClient();
 
-const CLIENT_ID=process.env.CLIENT_ID || '';
-const USERNAME=process.env.USERNAME || '';
-const STATION_PASSKEY=process.env.STATION_PASSKEY || '';
-const DOM_PASSKEY=process.env.DOM_PASSKEY || '';
+const CLIENT_ID = process.env.CLIENT_ID || '';
+const USERNAME = process.env.USERNAME || '';
+const STATION_PASSKEY = process.env.STATION_PASSKEY || '';
+const DOM_PASSKEY = process.env.DOM_PASSKEY || '';
+
+//const frameguard = require('frameguard')
+//app.use(frameguard({ action: 'SAMEORIGIN' }))
 
 app.use(express.static(__dirname));
 app.use(
@@ -26,18 +30,29 @@ app.use(
 );
 
 app.use(express.json());
+app.use('/charts', proxy('localhost:3000/charts', {
+    filter: function (req: any, res: any) {
+        if (req.query.token) {
+            return verifyToken(req.query.token) === true;
+        }
 
-function verifyToken(authorization: any) {
-    if (authorization) {
+        const urlParams = new URLSearchParams(req.headers.referer);
+        const token = urlParams.get('token')
+        return verifyToken(token) === true;
+    }
+}));
+
+function verifyToken(token: any) {
+    if (token) {
         try {
-            const decodedToken = jwt.verify(authorization.substr(7), pem, { algorithms: ['RS256'] });
+            const decodedToken = jwt.verify(token, pem, { algorithms: ['RS256'] });
             if (decodedToken.client_id !== CLIENT_ID) {
                 console.error('client_id');
                 return false;
             }
             if (decodedToken.username !== USERNAME) {
                 console.error('username');
-//                return false;
+                //                return false;
             }
             return true;
         } catch (err) {
@@ -148,39 +163,22 @@ app.post('/setDomData', function (req: any, res: any) {
     res.sendStatus(200);
 })
 
-app.get('/callback', function (req: any, res: any) {
-    console.info('/callback');
-    res.sendFile('/home/ubuntu/dist/index.html');
-})
-
-app.get('/', function (req: any, res: any) {
-    console.info('/');
-    res.sendFile('/home/ubuntu/dist/index.html');
-})
-
-///home/zaloha/pgclient/dist/
-
-app.get('/:file', function (req: any, res: any) {
-    console.info('/' + req.params.file);
-    res.sendFile('/home/ubuntu/dist/' + req.params.file);
-})
-
-app.get('/getLastData/:uuid', function (req: any, res: any) {
+app.get('/api/getLastData/:uuid', function (req: any, res: any) {
     console.info('/getLastData/' + req.params.uuid);
-    if (verifyToken(req.headers.authorization) === true) {
+    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) === true) {
         res.type('application/json');
         const last = redisClient.get(req.params.uuid, function (err: any, reply: any) {
             return res.json(JSON.parse(reply));
         });
     }
     else {
-        res.status(401).body('auth issue');
+        res.status(401).send('auth issue');
     }
 })
 
-app.get('/getTrendData/:uuid', function (req: any, res: any) {
+app.get('/api/getTrendData/:uuid', function (req: any, res: any) {
     console.info('/getTrendData/' + req.params.uuid);
-    if (verifyToken(req.headers.authorization) === true) {
+    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) === true) {
         res.type('application/json');
         //    const last = redisClient.get(req.params.uuid, function (err, reply) {
         if (req.params.uuid === 'station') {
@@ -224,7 +222,7 @@ app.get('/getTrendData/:uuid', function (req: any, res: any) {
         return res.json();
     }
     else {
-        res.status(401).body('auth issue');
+        res.status(401).send('auth issue');
     }
 })
 

@@ -11,7 +11,7 @@ export class StationController {
     }
 
     getData() {
-        fetch('/getLastData/station', {
+        fetch('/api/getLastData/station', {
             headers: {
                 Authorization: `Bearer ${this.token}`,
             }
@@ -47,7 +47,7 @@ export class StationController {
                 }
             };
         });
-        fetch('/getTrendData/station', {
+        fetch('/api/getTrendData/station', {
             headers: {
                 Authorization: `Bearer ${this.token}`,
             }
