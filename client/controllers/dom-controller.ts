@@ -1,8 +1,9 @@
+import Auth from '../auth';
 import { DomModel } from '../models/model';
 
 export class DomController {
 
-    constructor(private model: DomModel, private token: string) {
+    constructor(private model: DomModel, private auth: Auth) {
         this.getData();
 
         setInterval(() => {
@@ -13,9 +14,15 @@ export class DomController {
     getData() {
         fetch('/api/getLastData/dom', {
             headers: {
-                Authorization: `Bearer ${this.token}`,
+                Authorization: `Bearer ${this.auth.getToken()}`,
             }
-        }).then(data => data.json()).then(json => {
+        }).then(data => {
+            if (data.status === 401) {
+                console.info('auth 401');
+                this.auth.login();
+            }
+            return data.json();
+        }).then(json => {
             if (json != null) {
                 const sdate = new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
                 const stime = new Date(json.timestamp).toLocaleTimeString('sk-SK');
@@ -60,12 +67,21 @@ export class DomController {
                     petra_low: json.petra_podlaha.low
                 }
             };
+        }).catch(err => {
+            console.error(err);
         });
+
         fetch('/api/getTrendData/dom', {
             headers: {
-                Authorization: `Bearer ${this.token}`,
+                Authorization: `Bearer ${this.auth.getToken()}`,
             }
-        }).then(data => data.json()).then(json => {
+        }).then(data => {
+            if (data.status === 401) {
+                console.info('auth 401');
+                this.auth.login();
+            }
+            return data.json();
+        }).then(json => {
             if (json != null) {
                 this.model.domTrendData.timestamp = json.timestamp;
                 this.model.domTrendData.temp = json.temp;
@@ -82,6 +98,8 @@ export class DomController {
                 this.model.domTrendData.petra_vzduch = json.petra_vzduch;
                 this.model.domTrendData.petra_podlaha = json.petra_podlaha;
             }
+        }).catch(err => {
+            console.error(err);
         });
     }
 }  

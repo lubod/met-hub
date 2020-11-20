@@ -1,8 +1,9 @@
+import Auth from '../auth';
 import { StationModel } from '../models/model';
 
 export class StationController {
 
-    constructor(private model: StationModel, private token: string) {
+    constructor(private model: StationModel, private auth: Auth) {
         this.getData();
 
         setInterval(() => {
@@ -13,9 +14,15 @@ export class StationController {
     getData() {
         fetch('/api/getLastData/station', {
             headers: {
-                Authorization: `Bearer ${this.token}`,
+                Authorization: `Bearer ${this.auth.getToken()}`,
             }
-        }).then(data => data.json()).then(json => {
+        }).then(data => {
+            if (data.status === 401) {
+                console.info('auth 401');
+                this.auth.login();
+            }
+            return data.json();
+        }).then(json => {
             if (json != null) {
                 const sdate = new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
                 const stime = new Date(json.timestamp).toLocaleTimeString('sk-SK');
@@ -46,12 +53,21 @@ export class StationController {
                     place: 'Marianka'
                 }
             };
+        }).catch(err => {
+            console.error(err);
         });
+        
         fetch('/api/getTrendData/station', {
             headers: {
-                Authorization: `Bearer ${this.token}`,
+                Authorization: `Bearer ${this.auth.getToken()   }`,
             }
-        }).then(data => data.json()).then(json => {
+        }).then(data => {
+            if (data.status === 401) {
+                console.info('auth 401');
+                this.auth.login();
+            }
+            return data.json();
+        }).then(json => {
             if (json != null) {
                 this.model.stationTrendData.timestamp = json.timestamp;
                 this.model.stationTrendData.tempin = json.tempin;
@@ -66,6 +82,8 @@ export class StationController {
                 this.model.stationTrendData.uv = json.uv;
                 this.model.stationTrendData.rainrate = json.rainrate;
             }
+        }).catch(err => {
+            console.error(err);
         });
     }
 }  

@@ -22,7 +22,7 @@ export class Station extends React.Component<IProps, {}> {
   constructor(props: IProps) {
     super(props);
     this.model = new StationModel();
-    this.controller = new StationController(this.model, props.auth.getToken());
+    this.controller = new StationController(this.model, props.auth);
   }
 
   public render(): JSX.Element {
@@ -31,7 +31,7 @@ export class Station extends React.Component<IProps, {}> {
     const now = Date.now();
     const diff = now - timestamp.getTime();
     let oldData = false;
-    if (diff > 120000) {
+    if (diff > 180000) {
       oldData = true;
     }
 
