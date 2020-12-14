@@ -1,51 +1,71 @@
 import React, { useState } from 'react';
 import { Station } from './modules/station/station';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Dom } from './modules/dom/dom';
-
-import './style.scss';
 import Iframe from 'react-iframe';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import './style.scss';
 
 function Protected(props: any) {
-  const [toggleStation, setToggleStation] = useState(true);
-  const toggleCheckedStation = () => setToggleStation(toggleStation => !toggleStation);
+  const [valueStation, setValueStation] = useState('current');
+  const handleChangeStation = (val: any) => setValueStation(val);
 
-  const [toggleDom, setToggleDom] = useState(true);
-  const toggleCheckedDom = () => setToggleDom(toggleDom => !toggleDom);
-
-  console.log('protected');
+  const [valueDom, setValueDom] = useState('current');
+  const handleChangeDom = (val: any) => setValueDom(val);
 
   return (
     <Container className='container-max-width text-center py-2'>
       <Row>
         <Col sm={6} className='px-2'>
-          <button type='button' onClick={toggleCheckedStation} id='toggleStation' className='btn-block text-left btn btn-primary mb-2'>
-            Toggle History/Current
-          </button>
+          <ToggleButtonGroup className='btn-block' type='radio' name='options' defaultValue={'current'} onChange={handleChangeStation}>
+            <ToggleButton value={'current'}>Current</ToggleButton>
+            <ToggleButton value={'history'}>History</ToggleButton>
+            <ToggleButton value={'map'}>Map</ToggleButton>
+          </ToggleButtonGroup>
           {
-            toggleStation &&
-            <Station auth={props.auth} />
+            valueStation === 'current' && <Station auth={props.auth} />
           }
           {
-            !toggleStation &&
-            <Container className='bg-very-dark px-0 py-0'>
+            valueStation === 'history' &&
+            <Container className='bg-very-dark mx-auto my-2 py-2'>
               <Iframe url={'/charts/d/-LNB7_HGk/stanica?orgId=1&from=now-24h&to=now&token=' + props.auth.getToken()} width='100%' height='700px' />
+            </Container>
+          }
+          {
+            valueStation === 'map' &&
+            <Container className='bg-very-dark mx-auto my-2 py-2'>
+              <MapContainer center={[48.2482, 17.0589]} zoom={13} scrollWheelZoom={false}>
+                <TileLayer
+                  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker position={[48.2482, 17.0589]}>
+                  <Popup>
+                    A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+                </Marker>
+              </MapContainer>
             </Container>
           }
         </Col>
         <Col sm={6} className='px-2'>
-          <button type='button' onClick={toggleCheckedDom} id='toggleDom' className='btn-block text-left btn btn-primary mb-2'>
-            Toggle History/Current
-          </button>
+          <ToggleButtonGroup className='btn-block' type='radio' name='options' defaultValue={'current'} onChange={handleChangeDom}>
+            <ToggleButton value={'current'}>Current</ToggleButton>
+            <ToggleButton value={'history'}>History</ToggleButton>
+            <ToggleButton value={'map'}>Map</ToggleButton>
+          </ToggleButtonGroup>
           {
-            toggleDom &&
+            valueDom === 'current' &&
             <Dom auth={props.auth} />
           }
           {
-            !toggleDom &&
-            <Container className='bg-very-dark px-0 py-0'>
+            valueDom === 'history' &&
+            <Container className='bg-very-dark mx-auto my-2 py-2'>
               <Iframe url={'/charts/d/80t3t_HGk/dom?orgId=1&from=now-24h&to=now&token=' + props.auth.getToken()} width='100%' height='700px' />
             </Container>
+          }
+          {
+            valueDom === 'map' && <div />
           }
         </Col>
       </Row>
