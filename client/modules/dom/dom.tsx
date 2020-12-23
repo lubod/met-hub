@@ -4,28 +4,23 @@ import Text from '../text/text';
 import Room from '../room/room';
 import { DomModel } from '../../models/model';
 import { observer } from 'mobx-react';
-import { DomController } from '../../controllers/dom-controller';
 import { Container, Row, Col } from 'react-bootstrap';
 import Trend from '../trend/trend';
-import Auth from '../../auth';
 
 interface IProps {
-  auth: Auth;
+  model: DomModel
 }
 
 @observer
 export class Dom extends React.Component<IProps, {}> {
-  private model: DomModel;
-  private controller: DomController;
 
   constructor(props: IProps) {
     super(props);
-    this.model = new DomModel();
-    this.controller = new DomController(this.model, props.auth);
+    console.info('create dom');
   }
 
   public render(): JSX.Element {
-    const timestamp = new Date(this.model.domData.timestamp);
+    const timestamp = new Date(this.props.model.domData.timestamp);
     const now = Date.now();
     const diff = now - timestamp.getTime();
     let oldData = false;
@@ -37,13 +32,13 @@ export class Dom extends React.Component<IProps, {}> {
         <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
           <Row className={oldData ? 'text-danger' : ''}>
             <Col xs={4}>
-              <Text name='Place' value={this.model.domData.place} ></Text>
+              <Text name='Place' value={this.props.model.domData.place} ></Text>
             </Col>
             <Col xs={4}>
-              <Text name='Date' value={this.model.domData.date} ></Text>
+              <Text name='Date' value={this.props.model.domData.date} ></Text>
             </Col>
             <Col xs={4}>
-              <Text name='Time' value={this.model.domData.time} ></Text>
+              <Text name='Time' value={this.props.model.domData.time} ></Text>
             </Col>
           </Row>
         </Container>
@@ -51,16 +46,16 @@ export class Dom extends React.Component<IProps, {}> {
           <div className='text-left'>GARDEN HOUSE</div>
           <Row>
             <Col xs={4}>
-              <Data name='Temperature' value={oldData ? null : this.model.domData.temp} unit='°C' fix={1}></Data>
-              <Trend data={this.model.domTrendData.temp} range={2}></Trend>
+              <Data name='Temperature' value={oldData ? null : this.props.model.domData.temp} unit='°C' fix={1}></Data>
+              <Trend data={this.props.model.domTrendData.temp} range={2}></Trend>
             </Col>
             <Col xs={4}>
-              <Data name='Humidity' value={oldData ? null : this.model.domData.humidity} unit='%' fix={0}></Data>
-              <Trend data={this.model.domTrendData.humidity} range={10}></Trend>
+              <Data name='Humidity' value={oldData ? null : this.props.model.domData.humidity} unit='%' fix={0}></Data>
+              <Trend data={this.props.model.domTrendData.humidity} range={10}></Trend>
             </Col>
             <Col xs={4}>
-              <Data name='Rain' value={oldData ? null : this.model.domData.rain} unit='' fix={0}></Data>
-              <Trend data={this.model.domTrendData.rain} range={1}></Trend>
+              <Data name='Rain' value={oldData ? null : this.props.model.domData.rain} unit='' fix={0}></Data>
+              <Trend data={this.props.model.domTrendData.rain} range={1}></Trend>
             </Col>
           </Row>
         </Container>
@@ -76,50 +71,50 @@ export class Dom extends React.Component<IProps, {}> {
             </Col>
           </Row>
           <Room room='Living room'
-            floorTrend={this.model.domTrendData.obyvacka_podlaha}
-            airTrend={this.model.domTrendData.obyvacka_vzduch}
-            air={oldData ? null : this.model.domData.obyvacka_vzduch}
-            floor={oldData ? null : this.model.domData.obyvacka_podlaha}
-            required={oldData ? null : this.model.domData.obyvacka_req}
-            heat={oldData ? null : this.model.domData.obyvacka_kuri}
-            summer={oldData ? null : this.model.domData.obyvacka_leto}
-            low={oldData ? null : this.model.domData.obyvacka_low} />
+            floorTrend={this.props.model.domTrendData.obyvacka_podlaha}
+            airTrend={this.props.model.domTrendData.obyvacka_vzduch}
+            air={oldData ? null : this.props.model.domData.obyvacka_vzduch}
+            floor={oldData ? null : this.props.model.domData.obyvacka_podlaha}
+            required={oldData ? null : this.props.model.domData.obyvacka_req}
+            heat={oldData ? null : this.props.model.domData.obyvacka_kuri}
+            summer={oldData ? null : this.props.model.domData.obyvacka_leto}
+            low={oldData ? null : this.props.model.domData.obyvacka_low} />
           <Room room='Guest room'
-            floorTrend={this.model.domTrendData.pracovna_podlaha}
-            airTrend={this.model.domTrendData.pracovna_vzduch}
-            air={oldData ? null : this.model.domData.pracovna_vzduch}
-            floor={oldData ? null : this.model.domData.pracovna_podlaha}
-            required={oldData ? null : this.model.domData.pracovna_req}
-            heat={oldData ? null : this.model.domData.pracovna_kuri}
-            summer={oldData ? null : this.model.domData.pracovna_leto}
-            low={oldData ? null : this.model.domData.pracovna_low} />
+            floorTrend={this.props.model.domTrendData.pracovna_podlaha}
+            airTrend={this.props.model.domTrendData.pracovna_vzduch}
+            air={oldData ? null : this.props.model.domData.pracovna_vzduch}
+            floor={oldData ? null : this.props.model.domData.pracovna_podlaha}
+            required={oldData ? null : this.props.model.domData.pracovna_req}
+            heat={oldData ? null : this.props.model.domData.pracovna_kuri}
+            summer={oldData ? null : this.props.model.domData.pracovna_leto}
+            low={oldData ? null : this.props.model.domData.pracovna_low} />
           <Room room='Bed room'
-            floorTrend={this.model.domTrendData.spalna_podlaha}
-            airTrend={this.model.domTrendData.spalna_vzduch}
-            air={oldData ? null : this.model.domData.spalna_vzduch}
-            floor={oldData ? null : this.model.domData.spalna_podlaha}
-            required={oldData ? null : this.model.domData.spalna_req}
-            heat={oldData ? null : this.model.domData.spalna_kuri}
-            summer={oldData ? null : this.model.domData.spalna_leto}
-            low={oldData ? null : this.model.domData.spalna_low} />
+            floorTrend={this.props.model.domTrendData.spalna_podlaha}
+            airTrend={this.props.model.domTrendData.spalna_vzduch}
+            air={oldData ? null : this.props.model.domData.spalna_vzduch}
+            floor={oldData ? null : this.props.model.domData.spalna_podlaha}
+            required={oldData ? null : this.props.model.domData.spalna_req}
+            heat={oldData ? null : this.props.model.domData.spalna_kuri}
+            summer={oldData ? null : this.props.model.domData.spalna_leto}
+            low={oldData ? null : this.props.model.domData.spalna_low} />
           <Room room='Boys'
-            floorTrend={this.model.domTrendData.chalani_podlaha}
-            airTrend={this.model.domTrendData.chalani_vzduch}
-            air={oldData ? null : this.model.domData.chalani_vzduch}
-            floor={oldData ? null : this.model.domData.chalani_podlaha}
-            required={oldData ? null : this.model.domData.chalani_req}
-            heat={oldData ? null : this.model.domData.chalani_kuri}
-            summer={oldData ? null : this.model.domData.chalani_leto}
-            low={oldData ? null : this.model.domData.chalani_low} />
+            floorTrend={this.props.model.domTrendData.chalani_podlaha}
+            airTrend={this.props.model.domTrendData.chalani_vzduch}
+            air={oldData ? null : this.props.model.domData.chalani_vzduch}
+            floor={oldData ? null : this.props.model.domData.chalani_podlaha}
+            required={oldData ? null : this.props.model.domData.chalani_req}
+            heat={oldData ? null : this.props.model.domData.chalani_kuri}
+            summer={oldData ? null : this.props.model.domData.chalani_leto}
+            low={oldData ? null : this.props.model.domData.chalani_low} />
           <Room room='Petra'
-            floorTrend={this.model.domTrendData.petra_podlaha}
-            airTrend={this.model.domTrendData.petra_vzduch}
-            air={oldData ? null : this.model.domData.petra_vzduch}
-            floor={oldData ? null : this.model.domData.petra_podlaha}
-            required={oldData ? null : this.model.domData.petra_req}
-            heat={oldData ? null : this.model.domData.petra_kuri}
-            summer={oldData ? null : this.model.domData.petra_leto}
-            low={oldData ? null : this.model.domData.petra_low} />
+            floorTrend={this.props.model.domTrendData.petra_podlaha}
+            airTrend={this.props.model.domTrendData.petra_vzduch}
+            air={oldData ? null : this.props.model.domData.petra_vzduch}
+            floor={oldData ? null : this.props.model.domData.petra_podlaha}
+            required={oldData ? null : this.props.model.domData.petra_req}
+            heat={oldData ? null : this.props.model.domData.petra_kuri}
+            summer={oldData ? null : this.props.model.domData.petra_leto}
+            low={oldData ? null : this.props.model.domData.petra_low} />
         </Container>
       </div >
     );

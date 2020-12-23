@@ -4,7 +4,9 @@ import redis from 'redis';
 import { AddressInfo } from 'net';
 import { DomTrendData, StationData, StationDataRaw, StationTrendData } from '../client/models/model';
 import axios from 'axios';
-var proxy = require('express-http-proxy');
+import * as socketio from "socket.io";
+
+let proxy = require('express-http-proxy');
 
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
@@ -19,8 +21,16 @@ const USERNAME = process.env.USERNAME || '';
 const STATION_PASSKEY = process.env.STATION_PASSKEY || '';
 const DOM_PASSKEY = process.env.DOM_PASSKEY || '';
 
-//const frameguard = require('frameguard')
-//app.use(frameguard({ action: 'SAMEORIGIN' }))
+let http = require("http").Server(app);
+// set up socket.io and bind it to our
+// http server.
+let io = require("socket.io")(http);
+
+let sockets: any[] = [];
+
+io.on("connection", function (socket: any) {
+    console.log("a user connected");
+});
 
 app.use(express.static(__dirname));
 app.use(
@@ -127,7 +137,13 @@ app.post('/setData', function (req: any, res: any) {
         if (diff < 3600000) {
             stationTrend.set(timestamp.getTime(), last);
             redisClient.set('station', JSON.stringify(last));
+            sockets.forEach(socket => {
+                //            console.info(socket);
+                socket.emit('station', last);
+                socket.emit('stationTrend', transformStationTrendData());
+            });
         }
+
         try {
             if (!req.body.forward) {
                 req.body.forward = true;
@@ -156,6 +172,11 @@ app.post('/setDomData', function (req: any, res: any) {
         if (diff < 3600000) {
             domTrend.set(timestamp.getTime(), last);
             redisClient.set('dom', JSON.stringify(last));
+            sockets.forEach(socket => {
+                //            console.info(socket);
+                socket.emit('dom', last);
+                socket.emit('domTrend', transformDomTrendData());
+            });
         }
     } else {
         console.error('Wrong PASSKEY' + req.body.PASSKEY);
@@ -176,48 +197,56 @@ app.get('/api/getLastData/:uuid', function (req: any, res: any) {
     }
 })
 
+function transformStationTrendData() {
+    const tmp = new StationTrendData();
+    stationTrend.forEach(function (value, key, map) {
+        tmp.timestamp.push(value.timestamp);
+        tmp.tempin.push(value.tempin);
+        tmp.humidityin.push(value.humidityin);
+        tmp.temp.push(value.temp);
+        tmp.humidity.push(value.humidity);
+        tmp.pressurerel.push(value.pressurerel);
+        tmp.windgust.push(value.windgust);
+        tmp.windspeed.push(value.windspeed);
+        tmp.winddir.push(value.winddir);
+        tmp.solarradiation.push(value.solarradiation);
+        tmp.uv.push(value.uv);
+        tmp.rainrate.push(value.rainrate);
+    });
+    return tmp;
+}
+
+function transformDomTrendData() {
+    const tmp = new DomTrendData();
+    domTrend.forEach(function (value, key, map) {
+        tmp.timestamp.push(value.timestamp);
+        tmp.temp.push(value.vonku.temp);
+        tmp.humidity.push(value.vonku.humidity);
+        tmp.rain.push(value.vonku.rain);
+        tmp.obyvacka_vzduch.push(value.obyvacka_vzduch.temp);
+        tmp.obyvacka_podlaha.push(value.obyvacka_podlaha.temp);
+        tmp.pracovna_vzduch.push(value.pracovna_vzduch.temp);
+        tmp.pracovna_podlaha.push(value.pracovna_podlaha.temp);
+        tmp.spalna_vzduch.push(value.spalna_vzduch.temp);
+        tmp.spalna_podlaha.push(value.spalna_podlaha.temp);
+        tmp.chalani_vzduch.push(value.chalani_vzduch.temp);
+        tmp.chalani_podlaha.push(value.chalani_podlaha.temp);
+        tmp.petra_vzduch.push(value.petra_vzduch.temp);
+        tmp.petra_podlaha.push(value.petra_podlaha.temp);
+    });
+    return tmp;
+}
+
 app.get('/api/getTrendData/:uuid', function (req: any, res: any) {
     console.info('/getTrendData/' + req.params.uuid);
     if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) === true) {
         res.type('application/json');
         //    const last = redisClient.get(req.params.uuid, function (err, reply) {
         if (req.params.uuid === 'station') {
-            const tmp = new StationTrendData();
-            stationTrend.forEach(function (value, key, map) {
-                tmp.timestamp.push(value.timestamp);
-                tmp.tempin.push(value.tempin);
-                tmp.humidityin.push(value.humidityin);
-                tmp.temp.push(value.temp);
-                tmp.humidity.push(value.humidity);
-                tmp.pressurerel.push(value.pressurerel);
-                tmp.windgust.push(value.windgust);
-                tmp.windspeed.push(value.windspeed);
-                tmp.winddir.push(value.winddir);
-                tmp.solarradiation.push(value.solarradiation);
-                tmp.uv.push(value.uv);
-                tmp.rainrate.push(value.rainrate);
-            });
-            return res.json(tmp);
+            return res.json(transformStationTrendData());
         }
         else if (req.params.uuid === 'dom') {
-            const tmp = new DomTrendData();
-            domTrend.forEach(function (value, key, map) {
-                tmp.timestamp.push(value.timestamp);
-                tmp.temp.push(value.vonku.temp);
-                tmp.humidity.push(value.vonku.humidity);
-                tmp.rain.push(value.vonku.rain);
-                tmp.obyvacka_vzduch.push(value.obyvacka_vzduch.temp);
-                tmp.obyvacka_podlaha.push(value.obyvacka_podlaha.temp);
-                tmp.pracovna_vzduch.push(value.pracovna_vzduch.temp);
-                tmp.pracovna_podlaha.push(value.pracovna_podlaha.temp);
-                tmp.spalna_vzduch.push(value.spalna_vzduch.temp);
-                tmp.spalna_podlaha.push(value.spalna_podlaha.temp);
-                tmp.chalani_vzduch.push(value.chalani_vzduch.temp);
-                tmp.chalani_podlaha.push(value.chalani_podlaha.temp);
-                tmp.petra_vzduch.push(value.petra_vzduch.temp);
-                tmp.petra_podlaha.push(value.petra_podlaha.temp);
-            });
-            return res.json(tmp);
+            return res.json(transformDomTrendData());
         }
         return res.json();
     }
@@ -226,7 +255,35 @@ app.get('/api/getTrendData/:uuid', function (req: any, res: any) {
     }
 })
 
-var server = app.listen(8082, function () {
+io.on('connection', function (socket: any) {
+    console.log('a user connected', socket.id);
+
+    socket.on('message', function (message: any) {
+        console.log(message);
+    });
+
+    socket.on('disconnect', function () {
+        const index = sockets.indexOf(socket);
+        if (index > -1) {
+            sockets.splice(index, 1);
+        }
+        console.log('A user disconnected', socket.id);
+    });
+
+    console.info('emit latest data');
+    socket.emit('message', 'WELCOME');
+    sockets.push(socket);
+    redisClient.get('station', function (err: any, reply: any) {
+        socket.emit('station', JSON.parse(reply));
+        socket.emit('stationTrend', transformStationTrendData());
+    });
+    redisClient.get('dom', function (err: any, reply: any) {
+        socket.emit('dom', JSON.parse(reply));
+        socket.emit('domTrend', transformDomTrendData());
+    });
+});
+
+var server = http.listen(8082, function () {
     //    const host = server.address().address;
     const { port } = server.address() as AddressInfo;
 

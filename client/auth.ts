@@ -29,7 +29,7 @@ export default class Auth {
         params.append('code', code);
         params.append('redirect_uri', 'https://www.met-hub.com/callback');
 
-        console.log('get token');
+//        console.log('get token');
         return axios.post('https://met-hub.auth.eu-central-1.amazoncognito.com/oauth2/token', params, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -38,12 +38,12 @@ export default class Auth {
     }
 
     handleAuthentication() {
-        console.log('handle auth');
+//        console.log('handle auth');
 
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             this.fetchToken()
                 .then(res => {
-                    console.info(res.data.expires_in);
+//                    console.info(res.data.expires_in);
                     this.token = res.data.access_token;
                     this.expiresAt = res.data.expires_in * 1000 + new Date().getTime();
                     this.profile = 'user';
@@ -59,12 +59,12 @@ export default class Auth {
     }
 
     isAuthenticated() {
-        console.info(this.expiresAt, new Date().getTime() < this.expiresAt);
+//        console.info(this.expiresAt, new Date().getTime() < this.expiresAt);
         return new Date().getTime() < this.expiresAt;
     }
 
     login() {
-        console.log('login');
+//        console.log('login');
         window.location.replace('https://met-hub.auth.eu-central-1.amazoncognito.com/login?client_id=vn2mg0efils48lijdpc6arvl9&response_type=code&scope=aws.cognito.signin.user.admin&redirect_uri=https://www.met-hub.com/callback');
     }
 

@@ -41,11 +41,11 @@ function WindRose(props: Wind) {
     }
   }
 
-  function drawSpeedTrend(ctx: any, canvas: any) {
+  function drawSpeedTrend(wind: Wind, ctx: any, canvas: any) {
     const height = 15;
     const width = 60;
-    let max = Math.max(...props.speedTrend);
-    let min = Math.min(...props.speedTrend);
+    let max = Math.max(...wind.speedTrend);
+    let min = Math.min(...wind.speedTrend);
     const range = 5;
 
     if (max - min < range) {
@@ -58,25 +58,61 @@ function WindRose(props: Wind) {
     ctx.beginPath();
     ctx.lineWidth = 1;
     ctx.strokeStyle = '#17A2B8';
-    for (let i = 0; i < props.speedTrend.length; i++) {
+    for (let i = 0; i < wind.speedTrend.length; i++) {
       ctx.moveTo(i + canvas.width / 2 - width / 2, height + canvas.height / 2 + 10);
-      const y = Math.round(height - (props.speedTrend[i] * k + s));
+      const y = Math.round(height - (wind.speedTrend[i] * k + s));
       ctx.lineTo(i + canvas.width / 2 - width / 2, y + canvas.height / 2 + 10);
     }
     ctx.stroke();
   }
 
-  function drawDirTrend(dirTrendMax: number, dirTrend: Map<number, number>, radius: number, ctx: any) {
+  function drawDirTrend(wind: Wind, radius: number, ctx: any) {
+    const dirTrendMap = new Map();
+    let dirTrendMaxCount = 1;
+    let prev = -1;
+    wind.dirTrend.forEach(function (val) {
+      if (dirTrendMap.has(val)) {
+        const count = dirTrendMap.get(val) + 1;
+        dirTrendMap.set(val, count);
+        if (count > dirTrendMaxCount) {
+          dirTrendMaxCount = count;
+        }
+      }
+      else {
+        dirTrendMap.set(val, 1);
+      }
+      if (prev === -1) {
+        prev = val;
+      }
+      else {
+        if (Math.abs(val - prev) < 180) {
+          let min = val;
+          let max = prev;
+          if (val > prev) {
+            min = prev;
+            max = val;
+          }
+          for (let i = min + 1; i < max; i++) {
+            if (dirTrendMap.has(i) === false) {
+              dirTrendMap.set(i, 1);
+            }
+          }
+        }
+      }
+    });
+
+//    console.log(dirTrendMap);
+
     ctx.beginPath();
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.strokeStyle = '#17A2B8';
-    dirTrend.forEach(function (val, key, map) {
+    dirTrendMap.forEach(function (val, key, map) {
       const cos = Math.cos((key) * Math.PI / 180 - Math.PI / 2);
       const sin = Math.sin((key) * Math.PI / 180 - Math.PI / 2);
       const x0 = radius + 69 * cos;
       const y0 = radius + 69 * sin;
-      const x1 = radius + (69 - val * 15 / dirTrendMax) * cos;
-      const y1 = radius + (69 - val * 15 / dirTrendMax) * sin;
+      const x1 = radius + (68 - val * 15 / dirTrendMaxCount) * cos;
+      const y1 = radius + (68 - val * 15 / dirTrendMaxCount) * sin;
       ctx.moveTo(x0, y0);
       ctx.lineTo(x1, y1);
     });
@@ -165,35 +201,21 @@ function WindRose(props: Wind) {
     ctx.fillText("Speed", canvas.width / 2, canvas.height / 2 - 30);
   }
 
-  function draw(canvas: any, wind: Wind) {
+  function draw(wind: Wind, canvas: any) {
     const ctx = canvas.getContext('2d');
     const radius = canvas.width / 2;
-    let dirTrendMax = 1;
-    let dirTrend = new Map();
-    props.dirTrend.forEach(function (val) {
-      if (dirTrend.has(val)) {
-        const count = dirTrend.get(val) + 1;
-        dirTrend.set(val, count);
-        if (count > dirTrendMax) {
-          dirTrendMax = count;
-        }
-      }
-      else {
-        dirTrend.set(val, 1);
-      }
-    });
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawWindRose(radius, ctx, canvas);
     drawSpeed(wind.speed, ctx, canvas);
-    drawDirTrend(dirTrendMax, dirTrend, radius, ctx);
-    drawSpeedTrend(ctx, canvas);
+    drawDirTrend(props, radius, ctx);
+    drawSpeedTrend(props, ctx, canvas);
     drawDirArrow(wind.dir, radius, ctx);
   }
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
-    draw(canvas, props);
+    draw(props, canvas);
   });
 
   return (

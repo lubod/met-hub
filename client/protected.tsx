@@ -5,13 +5,23 @@ import { Dom } from './modules/dom/dom';
 import Iframe from 'react-iframe';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import './style.scss';
+import { DomModel, StationModel } from './models/model';
+import Auth from './auth';
 
-function Protected(props: any) {
+type ProtectedProps = {
+  stationModel: StationModel,
+  domModel: DomModel,
+  auth: Auth
+}
+
+function Protected(props: ProtectedProps) {
   const [valueStation, setValueStation] = useState('current');
   const handleChangeStation = (val: any) => setValueStation(val);
 
   const [valueDom, setValueDom] = useState('current');
   const handleChangeDom = (val: any) => setValueDom(val);
+
+  console.info('Protected render');
 
   return (
     <Container className='container-max-width text-center py-2'>
@@ -23,7 +33,7 @@ function Protected(props: any) {
             <ToggleButton value={'map'}>Map</ToggleButton>
           </ToggleButtonGroup>
           {
-            valueStation === 'current' && <Station auth={props.auth} />
+            valueStation === 'current' && <Station model={props.stationModel} />
           }
           {
             valueStation === 'history' &&
@@ -56,7 +66,7 @@ function Protected(props: any) {
           </ToggleButtonGroup>
           {
             valueDom === 'current' &&
-            <Dom auth={props.auth} />
+            <Dom model={props.domModel}/>
           }
           {
             valueDom === 'history' &&

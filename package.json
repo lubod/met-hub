@@ -29,6 +29,8 @@
     "@types/react-leaflet": "^2.5.2",
     "@types/react-router-dom": "^5.1.6",
     "@types/redis": "^2.8.27",
+    "@types/socket.io": "^2.1.12",
+    "@types/socket.io-client": "^1.4.34",
     "@types/terser-webpack-plugin": "^4.1.0",
     "@types/webpack-env": "^1.15.2",
     "@typescript-eslint/eslint-plugin": "^3.9.1",
@@ -78,6 +80,8 @@
     "react-leaflet": "^3.0.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "redis": "^3.0.2"
+    "redis": "^3.0.2",
+    "socket.io": "^3.0.4",
+    "socket.io-client": "^3.0.4"
   }
 }

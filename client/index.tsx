@@ -7,6 +7,8 @@ import Auth from './auth';
 const auth = new Auth();
 
 function render() {
+  console.info('Index render');
+
   const appContainer = document.getElementById('app');
   ReactDOM.render(
     <BrowserRouter>

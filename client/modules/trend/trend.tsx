@@ -11,26 +11,28 @@ function Trend(props: TrendData) {
   let max = Math.max(...props.data);
   let min = Math.min(...props.data);
 
-  function draw(canvas: any, trend: any) {
-//    console.log(trend.data);
-    const ctx = canvas.getContext('2d');
-    if (max - min < trend.range) {
-      min = min;
-      max = min + trend.range;
-    }
-    const k = (canvas.height - 1) / (max - min);
-    const s = 1 - min * k;
+  function draw(canvas: any, trend: TrendData) {
+    //    console.log(trend.data);
+    if (trend.data != null) {
+      const ctx = canvas.getContext('2d');
+      if (max - min < trend.range) {
+        min = min;
+        max = min + trend.range;
+      }
+      const k = (canvas.height - 1) / (max - min);
+      const s = 1 - min * k;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = '#17A2B8';
-    for (let i = 0; i < trend.data.length; i++) {
-      ctx.moveTo(i, canvas.height);
-      const y = Math.round(canvas.height - (trend.data[i] * k + s));
-      ctx.lineTo(i, y);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#17A2B8';
+      for (let i = 0; i < trend.data.length; i++) {
+        ctx.moveTo(i, canvas.height);
+        const y = Math.round(canvas.height - (trend.data[i] * k + s));
+        ctx.lineTo(i, y);
+      }
+      ctx.stroke();
     }
-    ctx.stroke();
   }
 
   React.useEffect(() => {
