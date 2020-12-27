@@ -68,20 +68,22 @@ export class DomController {
     processTrendData(json: any) {
         console.info(json);
         if (json != null) {
-            this.model.domTrendData.timestamp = json.timestamp;
-            this.model.domTrendData.temp = json.temp;
-            this.model.domTrendData.humidity = json.humidity;
-            this.model.domTrendData.rain = json.rain;
-            this.model.domTrendData.obyvacka_vzduch = json.obyvacka_vzduch;
-            this.model.domTrendData.obyvacka_podlaha = json.obyvacka_podlaha;
-            this.model.domTrendData.pracovna_vzduch = json.pracovna_vzduch;
-            this.model.domTrendData.pracovna_podlaha = json.pracovna_podlaha;
-            this.model.domTrendData.spalna_vzduch = json.spalna_vzduch;
-            this.model.domTrendData.spalna_podlaha = json.spalna_podlaha;
-            this.model.domTrendData.chalani_vzduch = json.chalani_vzduch;
-            this.model.domTrendData.chalani_podlaha = json.chalani_podlaha;
-            this.model.domTrendData.petra_vzduch = json.petra_vzduch;
-            this.model.domTrendData.petra_podlaha = json.petra_podlaha;
+            this.model.domTrendData = {
+                timestamp: json.timestamp,
+                temp: json.temp,
+                humidity: json.humidity,
+                rain: json.rain,
+                obyvacka_vzduch: json.obyvacka_vzduch,
+                obyvacka_podlaha: json.obyvacka_podlaha,
+                pracovna_vzduch: json.pracovna_vzduch,
+                pracovna_podlaha: json.pracovna_podlaha,
+                spalna_vzduch: json.spalna_vzduch,
+                spalna_podlaha: json.spalna_podlaha,
+                chalani_vzduch: json.chalani_vzduch,
+                chalani_podlaha: json.chalani_podlaha,
+                petra_vzduch: json.petra_vzduch,
+                petra_podlaha: json.petra_podlaha
+            }
         }
     }
 
