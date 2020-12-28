@@ -18,7 +18,7 @@ export class DomController {
     }
 
     processData(json: any) {
-        console.info(json);
+//        console.info(json);
         if (json != null) {
             const sdate = new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
             const stime = new Date(json.timestamp).toLocaleTimeString('sk-SK');
@@ -66,7 +66,7 @@ export class DomController {
     }
 
     processTrendData(json: any) {
-        console.info(json);
+//        console.info(json);
         if (json != null) {
             this.model.domTrendData = {
                 timestamp: json.timestamp,

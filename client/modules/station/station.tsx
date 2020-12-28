@@ -21,7 +21,7 @@ export class Station extends React.Component<IProps, {}> {
 
   public render(): JSX.Element {
     //    console.log(model.stationTrendData);
-    console.info('station render', this.props.model.stationData, this.props.model.stationTrendData);
+//    console.info('station render', this.props.model.stationData, this.props.model.stationTrendData);
     const timestamp = new Date(this.props.model.stationData.timestamp);
     const now = Date.now();
     const diff = now - timestamp.getTime();

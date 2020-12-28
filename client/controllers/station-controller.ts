@@ -18,7 +18,7 @@ export class StationController {
     }
 
     processData(json: any) {
-        console.info(json);
+//        console.info(json);
         if (json != null) {
             const sdate = new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
             const stime = new Date(json.timestamp).toLocaleTimeString('sk-SK');
@@ -52,7 +52,7 @@ export class StationController {
     }
 
     processTrendData(json: any) {
-        console.info(json);
+//        console.info(json);
         if (json != null) {
             this.model.stationTrendData = {
                 timestamp: json.timestamp,

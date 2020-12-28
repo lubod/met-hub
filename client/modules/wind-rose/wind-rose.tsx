@@ -98,10 +98,28 @@ function WindRose(props: Wind) {
             }
           }
         }
+        else {
+          let min = val;
+          let max = prev;
+          if (val > prev) {
+            min = prev;
+            max = val;
+          }
+          for (let i = min - 1; i >= 0; i--) {
+            if (dirTrendMap.has(i) === false) {
+              dirTrendMap.set(i, 1);
+            }
+          }
+          for (let i = max; i < 360; i++) {
+            if (dirTrendMap.has(i) === false) {
+              dirTrendMap.set(i, 1);
+            }
+          }
+        }
       }
     });
 
-//    console.log(dirTrendMap);
+    //    console.log(dirTrendMap);
 
     ctx.beginPath();
     ctx.lineWidth = 2;

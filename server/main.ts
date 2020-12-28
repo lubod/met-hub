@@ -4,7 +4,6 @@ import redis from 'redis';
 import { AddressInfo } from 'net';
 import { DomTrendData, StationData, StationDataRaw, StationTrendData } from '../client/models/model';
 import axios from 'axios';
-import * as socketio from "socket.io";
 
 let proxy = require('express-http-proxy');
 
@@ -28,9 +27,11 @@ let io = require("socket.io")(http);
 
 let sockets: any[] = [];
 
-io.on("connection", function (socket: any) {
-    console.log("a user connected");
-});
+function socketEmitData(channel: string, data: any) {
+    sockets.forEach(socket => {
+        socket.emit(channel, data);
+    });
+}
 
 app.use(express.static(__dirname));
 app.use(
@@ -72,25 +73,6 @@ function verifyToken(token: any) {
     }
     return false;
 }
-
-let stationTrend = new Map();
-let domTrend = new Map();
-
-function removeOld(value: any, key: number, map: any) {
-    const now = Date.now();
-    if (now - key > 3600000) {
-        map.delete(key);
-    }
-}
-
-function trend() {
-    stationTrend.forEach(removeOld);
-    redisClient.set('stationTrend', JSON.stringify(Array.from(stationTrend.entries())));
-    domTrend.forEach(removeOld);
-    redisClient.set('domTrend', JSON.stringify(Array.from(domTrend.entries())));
-}
-
-setInterval(trend, 60000);
 
 function decodeStationData(data: StationDataRaw) {
     const TO_MM = 25.4;
@@ -135,12 +117,12 @@ app.post('/setData', function (req: any, res: any) {
         const now = Date.now();
         const diff = now - timestamp.getTime();
         if (diff < 3600000) {
-            stationTrend.set(timestamp.getTime(), last);
+            socketEmitData('station', last);
             redisClient.set('station', JSON.stringify(last));
-            sockets.forEach(socket => {
-                //            console.info(socket);
-                socket.emit('station', last);
-                socket.emit('stationTrend', transformStationTrendData());
+            redisClient.zadd('station-os', timestamp.getTime(), JSON.stringify(last));
+            redisClient.zremrangebyscore('station-os', 0, now - 3600000);
+            redisClient.zrangebyscore('station-os', now - 3600000, now, function (err, result) {
+                socketEmitData('stationTrend', transformStationTrendData(result));
             });
         }
 
@@ -170,12 +152,12 @@ app.post('/setDomData', function (req: any, res: any) {
         const now = Date.now();
         const diff = now - timestamp.getTime();
         if (diff < 3600000) {
-            domTrend.set(timestamp.getTime(), last);
+            socketEmitData('dom', last);
             redisClient.set('dom', JSON.stringify(last));
-            sockets.forEach(socket => {
-                //            console.info(socket);
-                socket.emit('dom', last);
-                socket.emit('domTrend', transformDomTrendData());
+            redisClient.zadd('dom-os', timestamp.getTime(), JSON.stringify(last));
+            redisClient.zremrangebyscore('dom-os', 0, now - 3600000);
+            redisClient.zrangebyscore('dom-os', now - 3600000, now, function (err, result) {
+                socketEmitData('domTrend', transformDomTrendData(result));
             });
         }
     } else {
@@ -197,9 +179,10 @@ app.get('/api/getLastData/:uuid', function (req: any, res: any) {
     }
 })
 
-function transformStationTrendData() {
+function transformStationTrendData(data: any) {
     const tmp = new StationTrendData();
-    stationTrend.forEach(function (value, key, map) {
+    data.forEach((item: any) => {
+        let value = JSON.parse(item);
         tmp.timestamp.push(value.timestamp);
         tmp.tempin.push(value.tempin);
         tmp.humidityin.push(value.humidityin);
@@ -216,9 +199,10 @@ function transformStationTrendData() {
     return tmp;
 }
 
-function transformDomTrendData() {
+function transformDomTrendData(data: any) {
     const tmp = new DomTrendData();
-    domTrend.forEach(function (value, key, map) {
+    data.forEach((item: any) => {
+        let value = JSON.parse(item);
         tmp.timestamp.push(value.timestamp);
         tmp.temp.push(value.vonku.temp);
         tmp.humidity.push(value.vonku.humidity);
@@ -243,10 +227,10 @@ app.get('/api/getTrendData/:uuid', function (req: any, res: any) {
         res.type('application/json');
         //    const last = redisClient.get(req.params.uuid, function (err, reply) {
         if (req.params.uuid === 'station') {
-            return res.json(transformStationTrendData());
+            //            return res.json(transformStationTrendData());
         }
         else if (req.params.uuid === 'dom') {
-            return res.json(transformDomTrendData());
+            //            return res.json(transformDomTrendData());
         }
         return res.json();
     }
@@ -273,14 +257,21 @@ io.on('connection', function (socket: any) {
     console.info('emit latest data');
     socket.emit('message', 'WELCOME');
     sockets.push(socket);
+    const now = Date.now();
     redisClient.get('station', function (err: any, reply: any) {
         socket.emit('station', JSON.parse(reply));
-        socket.emit('stationTrend', transformStationTrendData());
+        redisClient.zrangebyscore('station-os', now - 3600000, now, function (err, result) {
+            socket.emit('stationTrend', transformStationTrendData(result));
+        });
     });
     redisClient.get('dom', function (err: any, reply: any) {
         socket.emit('dom', JSON.parse(reply));
-        socket.emit('domTrend', transformDomTrendData());
+        redisClient.zrangebyscore('dom-os', now - 3600000, now, function (err, result) {
+            socket.emit('domTrend', transformDomTrendData(result));
+        });
     });
+
+    console.info('sockets', sockets.length);
 });
 
 var server = http.listen(8082, function () {
