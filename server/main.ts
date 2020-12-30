@@ -118,11 +118,16 @@ app.post('/setData', function (req: any, res: any) {
         const diff = now - timestamp.getTime();
         if (diff < 3600000) {
             socketEmitData('station', last);
-            redisClient.set('station', JSON.stringify(last));
-            redisClient.zadd('station-os', timestamp.getTime(), JSON.stringify(last));
-            redisClient.zremrangebyscore('station-os', 0, now - 3600000);
-            redisClient.zrangebyscore('station-os', now - 3600000, now, function (err, result) {
-                socketEmitData('stationTrend', transformStationTrendData(result));
+            const multi = redisClient.multi();
+            multi.set('station', JSON.stringify(last));
+            multi.zadd('station-store', timestamp.getTime(), JSON.stringify(last));
+            multi.zadd('station-os', timestamp.getTime(), JSON.stringify(last));
+            multi.zremrangebyscore('station-os', 0, now - 3600000);
+            multi.exec(function (err, replies) {
+                console.log(replies); // 101, 51
+                redisClient.zrangebyscore('station-os', now - 3600000, now, function (err, result) {
+                    socketEmitData('stationTrend', transformStationTrendData(result));
+                });
             });
         }
 
@@ -153,11 +158,16 @@ app.post('/setDomData', function (req: any, res: any) {
         const diff = now - timestamp.getTime();
         if (diff < 3600000) {
             socketEmitData('dom', last);
-            redisClient.set('dom', JSON.stringify(last));
-            redisClient.zadd('dom-os', timestamp.getTime(), JSON.stringify(last));
-            redisClient.zremrangebyscore('dom-os', 0, now - 3600000);
-            redisClient.zrangebyscore('dom-os', now - 3600000, now, function (err, result) {
-                socketEmitData('domTrend', transformDomTrendData(result));
+            const multi = redisClient.multi();
+            multi.set('dom', JSON.stringify(last));
+            multi.zadd('dom-store', timestamp.getTime(), JSON.stringify(last));
+            multi.zadd('dom-os', timestamp.getTime(), JSON.stringify(last));
+            multi.zremrangebyscore('dom-os', 0, now - 3600000);
+            multi.exec(function (err, replies) {
+                console.log(replies); // 101, 51
+                redisClient.zrangebyscore('dom-os', now - 3600000, now, function (err, result) {
+                    socketEmitData('domTrend', transformDomTrendData(result));
+                });
             });
         }
     } else {
@@ -181,20 +191,26 @@ app.get('/api/getLastData/:uuid', function (req: any, res: any) {
 
 function transformStationTrendData(data: any) {
     const tmp = new StationTrendData();
+    let prev = 0;
     data.forEach((item: any) => {
-        let value = JSON.parse(item);
-        tmp.timestamp.push(value.timestamp);
-        tmp.tempin.push(value.tempin);
-        tmp.humidityin.push(value.humidityin);
-        tmp.temp.push(value.temp);
-        tmp.humidity.push(value.humidity);
-        tmp.pressurerel.push(value.pressurerel);
-        tmp.windgust.push(value.windgust);
-        tmp.windspeed.push(value.windspeed);
-        tmp.winddir.push(value.winddir);
-        tmp.solarradiation.push(value.solarradiation);
-        tmp.uv.push(value.uv);
-        tmp.rainrate.push(value.rainrate);
+        let value: StationData = JSON.parse(item);
+        let date = new Date(value.timestamp);
+        let time = date.getTime();
+        if (time - prev >= 60000) {
+            tmp.timestamp.push(value.timestamp);
+            tmp.tempin.push(value.tempin);
+            tmp.humidityin.push(value.humidityin);
+            tmp.temp.push(value.temp);
+            tmp.humidity.push(value.humidity);
+            tmp.pressurerel.push(value.pressurerel);
+            tmp.windgust.push(value.windgust);
+            tmp.windspeed.push(value.windspeed);
+            tmp.winddir.push(value.winddir);
+            tmp.solarradiation.push(value.solarradiation);
+            tmp.uv.push(value.uv);
+            tmp.rainrate.push(value.rainrate);
+            prev = time;
+        }
     });
     return tmp;
 }
@@ -252,11 +268,13 @@ io.on('connection', function (socket: any) {
             sockets.splice(index, 1);
         }
         console.log('A user disconnected', socket.id);
+        console.info('sockets', sockets.length);
     });
 
     console.info('emit latest data');
     socket.emit('message', 'WELCOME');
     sockets.push(socket);
+
     const now = Date.now();
     redisClient.get('station', function (err: any, reply: any) {
         socket.emit('station', JSON.parse(reply));

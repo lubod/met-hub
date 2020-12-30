@@ -25,7 +25,7 @@ export class DomController {
 
             this.model.domData = {
                 timestamp: json.timestamp,
-                time: stime.substring(0, stime.length - 3),
+                time: stime,
                 date: sdate.substring(0, sdate.length - 6),
                 temp: json.vonku.temp,
                 humidity: json.vonku.humidity,

@@ -25,7 +25,7 @@ export class StationController {
 
             this.model.stationData = {
                 timestamp: json.timestamp,
-                time: stime.substring(0, stime.length - 3),
+                time: stime,
                 date: sdate.substring(0, sdate.length - 6),
                 tempin: json.tempin,
                 humidityin: json.humidityin,

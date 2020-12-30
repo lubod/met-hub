@@ -2,7 +2,7 @@ import { DomData, StationData } from "../client/models/model";
 import { Pool } from 'pg';
 
 var redis = require('redis');
-var redisClientSub = redis.createClient();
+//var redisClientSub = redis.createClient();
 var redisClient = redis.createClient();
 
 const PG_PORT = parseInt(process.env.PG_PORT) || 5432;
@@ -87,25 +87,154 @@ async function storeDom(data: any) {
     }
 }
 
-redisClientSub.config('set', 'notify-keyspace-events', 'KEA');
+//redisClientSub.config('set', 'notify-keyspace-events', 'KEA');
 
-redisClientSub.subscribe('__keyevent@0__:set');
+//redisClientSub.subscribe('__keyevent@0__:set');
 
-redisClientSub.on('message', function (channel: string, key: string) {
-    console.log('msg ' + channel + ' ' + key);
+//redisClientSub.on('message', function (channel: string, key: string) {
 
-    if (key === 'station') {
-        console.log('station');
-        redisClient.get(key, function (err: any, reply: any) {
-            console.error('err' + err);
-            storeStation(JSON.parse(reply));
-        });
+function agregateAndStoreMinuteData(data: any) {
+
+    const deg2rad = (degrees: number) => {
+        return degrees * (Math.PI / 180);
     }
-    else if (key === 'dom') {
-        console.log('dom');
-        redisClient.get(key, function (err: any, reply: any) {
-            console.error('err' + err);
-            storeDom(JSON.parse(reply));
-        });
+
+    const rad2deg = (radians: number) => {
+        return radians * (180 / Math.PI);
     }
-});
+
+    const avgWind = (directions: number[]) => {
+        let sinSum = 0;
+        let cosSum = 0;
+        directions.forEach(value => {
+            sinSum += Math.sin(deg2rad(value));
+            cosSum += Math.cos(deg2rad(value));
+        });
+        return round((rad2deg(Math.atan2(sinSum, cosSum)) + 360) % 360, 0);
+    }
+
+    const round = (value: number, precision: number) => {
+        var multiplier = Math.pow(10, precision || 0);
+        return Math.round(value * multiplier) / multiplier;
+    }
+
+    const reducer = (sum: StationData, item: StationData) => {
+        sum.timestamp = item.timestamp;
+        sum.tempin += item.tempin;
+        sum.humidityin += item.humidityin;
+        sum.temp += item.temp;
+        sum.humidity += item.humidity;
+        sum.pressurerel += item.pressurerel;
+        sum.pressureabs += item.pressureabs;
+        sum.windgust += item.windgust;
+        sum.windspeed += item.windspeed;
+//        sum.winddir += item.winddir;
+        sum.solarradiation += item.solarradiation;
+        sum.uv += item.uv;
+        sum.rainrate += item.rainrate;
+        sum.maxdailygust = item.maxdailygust;
+        sum.eventrain = item.eventrain;
+        sum.hourlyrain = item.hourlyrain;
+        sum.dailyrain = item.dailyrain;
+        sum.weeklyrain = item.weeklyrain;
+        sum.monthlyrain = item.monthlyrain;
+        sum.totalrain = item.totalrain;
+        return sum;
+    };
+
+    const average = (sum: StationData, count: number) => {
+        const avg = sum;
+        avg.tempin = round(sum.tempin / count, 1);
+        avg.temp = round(sum.temp / count, 1);
+        avg.pressurerel = round(sum.pressurerel / count, 1);
+        avg.pressureabs = round(sum.pressureabs / count, 1);
+        avg.windgust = round(sum.windgust / count, 1);
+        avg.windspeed = round(sum.windspeed / count, 1);
+        avg.rainrate = round(sum.rainrate / count, 1);
+        avg.solarradiation = round(sum.solarradiation / count, 0);
+        avg.uv = round(sum.uv / count, 0);
+        avg.humidityin = round(sum.humidityin / count, 0);
+        avg.humidity = round(sum.humidity / count, 0);
+        avg.winddir = round(sum.winddir / count, 0);
+        return avg;
+    };
+
+    const initWithZeros = (init: StationData) => {
+        init.tempin = 0;
+        init.temp = 0;
+        init.pressurerel = 0;
+        init.pressureabs = 0;
+        init.windgust = 0;
+        init.windspeed = 0;
+        init.rainrate = 0;
+        init.solarradiation = 0;
+        init.uv = 0;
+        init.humidityin = 0;
+        init.humidity = 0;
+        init.winddir = 0;
+        return init;
+    };
+
+    const map = new Map();
+
+    data.forEach((item: any) => {
+        const sdata: StationData = JSON.parse(item);
+        const sdate = new Date(sdata.timestamp);
+        const minute = sdate.getTime() - sdate.getTime() % 60000;
+        if (map.has(minute)) {
+            const mdata = map.get(minute);
+            mdata.push(sdata);
+        }
+        else {
+            const mdata = [sdata];
+            map.set(minute, mdata);
+        }
+    });
+
+    map.forEach(function (value, key) {
+        const date = new Date(key).toISOString();
+        console.log(key, date, value);
+        const init = initWithZeros(new StationData());
+        const sum = value.reduce(reducer, init);
+        const avg = average(sum, value.length);
+        avg.timestamp = date;
+        const windDir: number[] = [];
+        value.forEach((element: StationData) => {
+            windDir.push(element.winddir);
+        });
+        avg.winddir = avgWind(windDir);
+        console.info(avg);
+        storeStation(avg);
+    });
+}
+
+const now = Date.now();
+console.info('start', now);
+const toMinute = now % 60000;
+
+setTimeout(store, 60000 - toMinute);
+
+function store() {
+    console.log('store');
+
+    console.log('station-store');
+    redisClient.zrangebyscore('station-store', 0, Number.MAX_VALUE, function (err: any, result: any) {
+        console.error('err', err);
+
+        agregateAndStoreMinuteData(result);
+        redisClient.zremrangebyscore('station-store', 0, Number.MAX_VALUE);
+    });
+
+    console.log('dom-store');
+    redisClient.zrangebyscore('dom-store', 0, Number.MAX_VALUE, function (err: any, result: any) {
+        console.error('err', err);
+
+        result.forEach((item: any) => {
+            storeDom(JSON.parse(item));
+        });
+
+        redisClient.zremrangebyscore('dom-store', 0, Number.MAX_VALUE);
+    });
+
+    setTimeout(store, 60000);
+}

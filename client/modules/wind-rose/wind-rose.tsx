@@ -56,7 +56,7 @@ function WindRose(props: Wind) {
     const s = 1 - min * k;
 
     ctx.beginPath();
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.strokeStyle = '#17A2B8';
     for (let i = 0; i < wind.speedTrend.length; i++) {
       ctx.moveTo(i + canvas.width / 2 - width / 2, height + canvas.height / 2 + 10);
