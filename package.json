@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "amazon-cognito-identity-js": "^4.5.3",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.5.2",
     "express-http-proxy": "^1.6.2",
     "frameguard": "^3.1.0",
