@@ -18,7 +18,7 @@ type RoomProps = {
 
 function Room(props: RoomProps) {
     return (
-        <div className='text-left small text-info'>{props.room}
+        <div className='text-left small text-info font-weight-bold'>{props.room}
             <Row className='text-light'>
                 <Col xs={3}>
                     <Data name='' value={props.air} unit='°C' fix={1}></Data>

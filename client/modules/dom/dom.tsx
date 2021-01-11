@@ -43,7 +43,7 @@ export class Dom extends React.Component<IProps, {}> {
           </Row>
         </Container>
         <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
-          <div className='text-left'>GARDEN HOUSE</div>
+          <div className='text-left font-weight-bold'>GARDEN HOUSE</div>
           <Row>
             <Col xs={4}>
               <Data name='Temperature' value={oldData ? null : this.props.model.domData.temp} unit='°C' fix={1}></Data>
@@ -60,7 +60,7 @@ export class Dom extends React.Component<IProps, {}> {
           </Row>
         </Container>
         <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
-          <Row className='text-left text-info'>
+          <Row className='text-left text-info font-weight-bold'>
             <Col xs={3}>Air
             </Col>
             <Col xs={3}>Floor

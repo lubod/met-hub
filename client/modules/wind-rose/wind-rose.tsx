@@ -213,7 +213,7 @@ function WindRose(props: Wind) {
     ctx.textAlign = "center";
     ctx.fillText("NW", 36, 46);
 
-    ctx.font = "13px Arial";
+    ctx.font = "bold 13px Arial";
     ctx.fillStyle = "#17A2B8";
     ctx.textAlign = "center";
     ctx.fillText("Speed", canvas.width / 2, canvas.height / 2 - 30);

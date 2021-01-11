@@ -108,7 +108,7 @@ export class Station extends React.Component<IProps, {}> {
           </Row>
         </Container>
         <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
-          <div className='text-left'>IN</div>
+          <div className='text-left font-weight-bold'>IN</div>
           <Row>
             <Col xs={6}>
               <Data name='Temperature' value={oldData ? null : this.props.model.stationData.tempin} unit='°C' fix={1}></Data>

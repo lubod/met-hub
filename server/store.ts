@@ -128,7 +128,7 @@ function agregateAndStoreMinuteData(data: any) {
         sum.pressureabs += item.pressureabs;
         sum.windgust += item.windgust;
         sum.windspeed += item.windspeed;
-//        sum.winddir += item.winddir;
+        //        sum.winddir += item.winddir;
         sum.solarradiation += item.solarradiation;
         sum.uv += item.uv;
         sum.rainrate += item.rainrate;
@@ -236,5 +236,7 @@ function store() {
         redisClient.zremrangebyscore('dom-store', 0, Number.MAX_VALUE);
     });
 
-    setTimeout(store, 60000);
+    const now = Date.now();
+    const toMinute = now % 60000;
+    setTimeout(store, 60000 - toMinute);
 }
