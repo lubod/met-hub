@@ -121,11 +121,9 @@ app.post('/setData', function (req: any, res: any) {
             const multi = redisClient.multi();
             multi.set('station', JSON.stringify(last));
             multi.zadd('station-store', timestamp.getTime(), JSON.stringify(last));
-            multi.zadd('station-os', timestamp.getTime(), JSON.stringify(last));
-            multi.zremrangebyscore('station-os', 0, now - 3600000);
             multi.exec(function (err, replies) {
                 console.log(replies); // 101, 51
-                redisClient.zrangebyscore('station-os', now - 3600000, now, function (err, result) {
+                redisClient.zrangebyscore('station-trend', now - 3600000, now, function (err, result) {
                     socketEmitData('stationTrend', transformStationTrendData(result));
                 });
             });
@@ -278,7 +276,7 @@ io.on('connection', function (socket: any) {
     const now = Date.now();
     redisClient.get('station', function (err: any, reply: any) {
         socket.emit('station', JSON.parse(reply));
-        redisClient.zrangebyscore('station-os', now - 3600000, now, function (err, result) {
+        redisClient.zrangebyscore('station-trend', now - 3600000, now, function (err, result) {
             socket.emit('stationTrend', transformStationTrendData(result));
         });
     });

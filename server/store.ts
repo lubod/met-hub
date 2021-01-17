@@ -191,8 +191,10 @@ function agregateAndStoreMinuteData(data: any) {
         }
     });
 
+    const now = Date.now();
     map.forEach(function (value, key) {
-        const date = new Date(key).toISOString();
+        const minute = new Date(key);
+        const date = minute.toISOString();
         console.log(key, date, value);
         const init = initWithZeros(new StationData());
         const sum = value.reduce(reducer, init);
@@ -204,6 +206,8 @@ function agregateAndStoreMinuteData(data: any) {
         });
         avg.winddir = avgWind(windDir);
         console.info(avg);
+        redisClient.zadd('station-trend', minute.getTime(), JSON.stringify(avg));
+        redisClient.zremrangebyscore('station-trend', 0, now - 3600000);
         storeStation(avg);
     });
 }
