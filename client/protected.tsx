@@ -7,11 +7,12 @@ import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import './style.scss';
 import { DomModel, StationModel } from './models/model';
 import Auth from './auth';
+import Socket from './socket';
 
 type ProtectedProps = {
-  stationModel: StationModel,
   domModel: DomModel,
-  auth: Auth
+  auth: Auth,
+  socket: Socket
 }
 
 function Protected(props: ProtectedProps) {
@@ -33,7 +34,7 @@ function Protected(props: ProtectedProps) {
             <ToggleButton value={'map'}>Map</ToggleButton>
           </ToggleButtonGroup>
           {
-            valueStation === 'current' && <Station model={props.stationModel} />
+            valueStation === 'current' && <Station socket={props.socket} />
           }
           {
             valueStation === 'history' &&

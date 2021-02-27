@@ -258,10 +258,21 @@ app.get('/api/getTrendData/:uuid', function (req: any, res: any) {
 })
 
 io.on('connection', function (socket: any) {
+    function emitLastestStationData() {
+        const now = Date.now();
+        redisClient.get('station', function (err: any, reply: any) {
+            socket.emit('station', JSON.parse(reply));
+            redisClient.zrangebyscore('station-trend', now - 3600000, now, function (err, result) {
+                socket.emit('stationTrend', transformStationTrendData(result));
+            });
+        });
+    }
+
     console.log('a user connected', socket.id);
 
-    socket.on('message', function (message: any) {
-        console.log(message);
+    socket.on('station', function (message: any) {
+        console.info('station', message, 'emit latest data', socket.id);
+        emitLastestStationData();
     });
 
     socket.on('disconnect', function () {
@@ -273,17 +284,10 @@ io.on('connection', function (socket: any) {
         console.info('sockets', sockets.length);
     });
 
-    console.info('emit latest data');
-    socket.emit('message', 'WELCOME');
+    console.info('emit latest dom data');
     sockets.push(socket);
 
     const now = Date.now();
-    redisClient.get('station', function (err: any, reply: any) {
-        socket.emit('station', JSON.parse(reply));
-        redisClient.zrangebyscore('station-trend', now - 3600000, now, function (err, result) {
-            socket.emit('stationTrend', transformStationTrendData(result));
-        });
-    });
     redisClient.get('dom', function (err: any, reply: any) {
         socket.emit('dom', JSON.parse(reply));
         redisClient.zrangebyscore('dom-os', now - 3600000, now, function (err, result) {

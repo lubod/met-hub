@@ -50,7 +50,7 @@ export default class Auth {
         return new Promise<void>((resolve, reject) => {
             this.fetchToken()
                 .then(res => {
-                    console.info(res.data);
+                    //console.info(res.data);
                     this.token = res.data.access_token;
                     this.expiresAt = res.data.expires_in * 1000 + new Date().getTime();
                     this.profile = 'user';
@@ -70,7 +70,7 @@ export default class Auth {
         return new Promise<void>((resolve, reject) => {
             this.fetchProfile()
                 .then(res => {
-                    console.info(res);
+                    //console.info(res);
                     resolve();
                 }).catch(err => {
                     console.error(err);
