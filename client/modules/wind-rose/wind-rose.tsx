@@ -85,7 +85,7 @@ function WindRose(props: Wind) {
       }
     });
 
-    console.log(dirTrendMap);
+    //console.log(dirTrendMap);
 
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#17A2B8';

@@ -3,7 +3,6 @@ import express from 'express';
 import redis from 'redis';
 import { AddressInfo } from 'net';
 import { DomTrendData, StationData, StationDataRaw, StationTrendData } from '../client/models/model';
-import axios from 'axios';
 
 let proxy = require('express-http-proxy');
 
@@ -44,12 +43,12 @@ app.use(express.json());
 app.use('/charts', proxy('localhost:3000/charts', {
     filter: function (req: any, res: any) {
         if (req.query.token) {
-            return verifyToken(req.query.token) === true;
+            return verifyToken(req.query.token) !== null;
         }
 
         const urlParams = new URLSearchParams(req.headers.referer);
         const token = urlParams.get('token')
-        return verifyToken(token) === true;
+        return verifyToken(token) !== null;
     }
 }));
 
@@ -59,19 +58,20 @@ function verifyToken(token: any) {
             const decodedToken = jwt.verify(token, pem, { algorithms: ['RS256'] });
             if (decodedToken.client_id !== CLIENT_ID) {
                 console.error('client_id');
-                return false;
+                return null;
             }
             if (decodedToken.username !== USERNAME) {
                 console.error('username');
                 //                return false;
             }
-            return true;
+            console.info(decodedToken);
+            return decodedToken.username;
         } catch (err) {
             console.error(err);
-            return false;
+            return null;
         }
     }
-    return false;
+    return null;
 }
 
 function decodeStationData(data: StationDataRaw) {
@@ -128,19 +128,6 @@ app.post('/setData', function (req: any, res: any) {
                 });
             });
         }
-
-        try {
-            if (!req.body.forward) {
-                req.body.forward = true;
-                const res = axios.post('https://www.met-hub.com/setData', req.body, {
-                    headers: {
-                        "Content-Type": "application/json; charset=utf-8"
-                    }
-                });
-            }
-        } catch (error) {
-            console.error(error);
-        };
     } else {
         console.error('Wrong PASSKEY' + req.body.PASSKEY);
     }
@@ -174,9 +161,26 @@ app.post('/setDomData', function (req: any, res: any) {
     res.sendStatus(200);
 })
 
+app.get('/api/getUserProfile', function (req: any, res: any) {
+    console.info('/getUserProfile');
+    if (req.headers.authorization) {
+        const user = verifyToken(req.headers.authorization.substr(7));
+        if (user !== null) {
+            res.type('application/json');
+            return res.json(user);
+        }
+        else {
+            res.status(401).send('auth issue');
+        }
+    }
+    else {
+        res.status(401).send('auth issue');
+    }
+})
+
 app.get('/api/getLastData/:uuid', function (req: any, res: any) {
     console.info('/getLastData/' + req.params.uuid);
-    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) === true) {
+    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
         res.type('application/json');
         const last = redisClient.get(req.params.uuid, function (err: any, reply: any) {
             return res.json(JSON.parse(reply));
@@ -237,7 +241,7 @@ function transformDomTrendData(data: any) {
 
 app.get('/api/getTrendData/:uuid', function (req: any, res: any) {
     console.info('/getTrendData/' + req.params.uuid);
-    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) === true) {
+    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
         res.type('application/json');
         //    const last = redisClient.get(req.params.uuid, function (err, reply) {
         if (req.params.uuid === 'station') {
