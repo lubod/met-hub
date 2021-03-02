@@ -5,12 +5,10 @@ import { Dom } from './modules/dom/dom';
 import Iframe from 'react-iframe';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import './style.scss';
-import { DomModel, StationModel } from './models/model';
 import Auth from './auth';
 import Socket from './socket';
 
 type ProtectedProps = {
-  domModel: DomModel,
   auth: Auth,
   socket: Socket
 }
@@ -66,8 +64,7 @@ function Protected(props: ProtectedProps) {
             <ToggleButton value={'map'}>Map</ToggleButton>
           </ToggleButtonGroup>
           {
-            valueDom === 'current' &&
-            <Dom model={props.domModel}/>
+            valueDom === 'current' && <Dom socket={props.socket} />
           }
           {
             valueDom === 'history' &&

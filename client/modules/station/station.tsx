@@ -3,7 +3,7 @@ import WindRose from '../wind-rose/wind-rose';
 import Data from '../data/data';
 import Text from '../text/text';
 import Trend from '../trend/trend';
-import { StationData, StationModel, StationTrendData } from '../../models/model';
+import { StationData, StationTrendData } from '../../models/model';
 import { Container, Row, Col } from 'react-bootstrap';
 import Socket from '../../socket';
 
