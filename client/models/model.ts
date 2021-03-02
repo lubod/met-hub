@@ -1,5 +1,3 @@
-import { observable, action } from 'mobx';
-
 export class StationData {
     timestamp: string;
     time: string;
@@ -175,15 +173,5 @@ export class DomRoomData {
 export class DomTarifData {
     tarif: number;
     text: string;
-}
-
-export class StationModel {
-    @observable stationData = new StationData();
-    @observable stationTrendData = new StationTrendData();
-}
-
-export class DomModel {
-    @observable domData = new DomData();
-    @observable domTrendData = new DomTrendData();
 }
 
