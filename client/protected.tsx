@@ -32,7 +32,7 @@ function Protected(props: ProtectedProps) {
             <ToggleButton value={'map'}>Map</ToggleButton>
           </ToggleButtonGroup>
           {
-            valueStation === 'current' && <Station socket={props.socket} />
+            valueStation === 'current' && <Station auth={props.auth} socket={props.socket} />
           }
           {
             valueStation === 'history' &&

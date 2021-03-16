@@ -28,7 +28,7 @@ export function HomePage(props: any) {
     <Container className='container-max-width text-center py-2'>
       <Row>
         <Col sm={6} className='px-2'>
-          <Station socket={socket} />
+          <Station auth={props.auth} socket={socket} />
         </Col>
         <Col sm={6} className='px-2'>
           <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>

@@ -6,23 +6,68 @@ import Trend from '../trend/trend';
 import { StationData, StationTrendData } from '../../models/model';
 import { Container, Row, Col } from 'react-bootstrap';
 import Socket from '../../socket';
+import Auth from '../../auth';
 
 type StationProps = {
+  auth: Auth,
   socket: Socket
 }
 
 export function Station(props: StationProps) {
   const [stationData, setStationData] = useState<StationData>(new StationData());
   const [stationTrendData, setTrendStationData] = useState<StationTrendData>(new StationTrendData());
+  const [ctime, setCtime] = useState<Date>(new Date());
+  const [oldData, setOldData] = useState<boolean>(false);
 
-  const timestamp = new Date(stationData.timestamp);
-  const now = Date.now();
-  const diff = now - timestamp.getTime();
-  let oldData = false;
+  function fetchData(url: string, processFnc: any) {
+    console.info(url);
+    fetch(url, {
+      headers: {
+        Authorization: `Bearer ${props.auth.getToken()}`,
+      }
+    }).then(data => {
+      if (data.status === 401) {
+        console.info('auth 401');
+        props.auth.login();
+      }
+      return data.json();
+    }).then(json => {
+      processFnc(json);
+    }).catch(err => {
+      console.error(err);
+    });
 
-  if (diff > 180000) {
-    oldData = true;
   }
+
+  function calculateOldData() {
+    const timestamp = new Date(stationData.timestamp);
+    const diff = ctime.getTime() - timestamp.getTime();
+    if (diff > 180000) {
+      setOldData(true);
+    }
+    else {
+      setOldData(false);
+    }
+    console.info('cal old data', oldData);
+  }
+
+  useEffect(() => {
+    var timer = setInterval(() => {
+      setCtime(new Date());
+      calculateOldData();
+
+      if (oldData) {
+        if (props.auth.isAuthenticated()) {
+          fetchData('/api/getLastData/station', processData);
+          fetchData('/api/getTrendData/station', processTrendData);
+        }
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [ctime]);
 
   useEffect(() => {
     console.info('mount station');
@@ -32,6 +77,7 @@ export function Station(props: StationProps) {
       props.socket.getSocket().on('stationTrend', processTrendData);
       props.socket.getSocket().emit('station', 'getLastData');
     }
+
     return () => {
       props.socket.getSocket().off('station', processData);
       props.socket.getSocket().off('stationTrend', processTrendData);
@@ -40,8 +86,8 @@ export function Station(props: StationProps) {
   }, [props.socket]);
 
   function processData(json: any) {
-    //        console.info(json);
     if (json != null) {
+      //console.info(json);
       const sdate = new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
       const stime = new Date(json.timestamp).toLocaleTimeString('sk-SK');
 
@@ -70,6 +116,8 @@ export function Station(props: StationProps) {
         totalrain: json.totalrain,
         place: 'Marianka'
       });
+
+      calculateOldData();
     }
   }
 
@@ -104,7 +152,7 @@ export function Station(props: StationProps) {
             <Text name='Date' value={stationData.date} ></Text>
           </Col>
           <Col xs={4}>
-            <Text name='Time' value={stationData.time} ></Text>
+            <Text name={'Time ' + ctime.toLocaleTimeString('sk-SK')} value={stationData.time} ></Text>
           </Col>
         </Row>
       </Container>

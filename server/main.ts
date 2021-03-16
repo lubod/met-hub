@@ -182,7 +182,7 @@ app.get('/api/getLastData/:uuid', function (req: any, res: any) {
     console.info('/getLastData/' + req.params.uuid);
     if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
         res.type('application/json');
-        const last = redisClient.get(req.params.uuid, function (err: any, reply: any) {
+        redisClient.get(req.params.uuid, function (err: any, reply: any) {
             return res.json(JSON.parse(reply));
         });
     }
@@ -243,14 +243,17 @@ app.get('/api/getTrendData/:uuid', function (req: any, res: any) {
     console.info('/getTrendData/' + req.params.uuid);
     if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
         res.type('application/json');
-        //    const last = redisClient.get(req.params.uuid, function (err, reply) {
+        const now = Date.now();
         if (req.params.uuid === 'station') {
-            //            return res.json(transformStationTrendData());
+            redisClient.zrangebyscore('station-trend', now - 3600000, now, function (err, result) {
+                return res.json(transformStationTrendData(result));
+            });
         }
         else if (req.params.uuid === 'dom') {
-            //            return res.json(transformDomTrendData());
+            redisClient.zrangebyscore('dom-os', now - 3600000, now, function (err, result) {
+                return res.json(transformDomTrendData(result));
+            });
         }
-        return res.json();
     }
     else {
         res.status(401).send('auth issue');
