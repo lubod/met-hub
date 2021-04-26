@@ -33,7 +33,7 @@ export function HomePage(props: any) {
         <Col sm={6} className='px-2'>
           <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>
             <h1 className='text-info'>met-hub.com</h1>
-            <p>This is a free side for non-professional meteorological stations.
+            <p>This is a free site for non-professional meteorological stations.
             Currenly you can see data from GoGEN ME 3900</p>
           </Container >
           <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>

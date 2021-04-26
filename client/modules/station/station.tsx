@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import WindRose from '../wind-rose/wind-rose';
 import Data from '../data/data';
 import Text from '../text/text';
