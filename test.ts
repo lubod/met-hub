@@ -31,7 +31,7 @@ function generateData(d: Date) {
   data.wh65batt = 0;
   data.freq = '868M';
   data.model = 'WS2900_V2.01.10';
-  data.dateutc = d.toISOString().replace('T', ' ').replace('.000Z', '');;
+  data.dateutc = d.toISOString().replace('T', ' ').replace('.000Z', '');
   data.tempinf = round(random(60, 80), 1);
   data.humidityin = round(random(40, 60), 0);
   data.baromrelin = round(random(25, 35), 3);
@@ -51,6 +51,36 @@ function generateData(d: Date) {
   data.totalrainin = round(random(data.monthlyrainin, 10), 3);
   data.solarradiation = round(random(0, 1000), 2);
   data.uv = round(data.solarradiation / 100, 0);
+  return data;
+}
+
+function generateOffsetData(cdata: StationDataRaw, offset: number) {
+  const data = new StationDataRaw();
+  data.PASSKEY = cdata.PASSKEY;
+  data.stationtype = cdata.stationtype;
+  data.wh65batt = cdata.wh65batt;
+  data.freq = cdata.freq;
+  data.model = cdata.model;
+  data.dateutc = cdata.dateutc;
+  data.tempinf = round(cdata.tempinf + offset, 1);
+  data.humidityin = round(cdata.humidityin + offset, 0);
+  data.baromrelin = round(cdata.baromrelin + offset, 3);
+  data.baromabsin = round(cdata.baromabsin + offset, 3);
+  data.tempf = round(cdata.tempf + offset, 1);
+  data.humidity = round(cdata.humidity + offset, 0);
+  data.winddir = round((cdata.winddir + offset) % 360, 0);
+  data.windspeedmph = round(cdata.windspeedmph + offset, 1);
+  data.windgustmph = round(cdata.windgustmph + offset, 1);
+  data.maxdailygust = cdata.maxdailygust;
+  data.rainratein = cdata.rainratein;
+  data.eventrainin = cdata.eventrainin;
+  data.hourlyrainin = cdata.hourlyrainin;
+  data.dailyrainin = cdata.dailyrainin;
+  data.weeklyrainin = cdata.weeklyrainin;
+  data.monthlyrainin = cdata.monthlyrainin;
+  data.totalrainin = cdata.totalrainin;
+  data.solarradiation = round(cdata.solarradiation + offset, 2);
+  data.uv = round(cdata.solarradiation / 100, 0);
   return data;
 }
 
@@ -217,8 +247,11 @@ export function decodeStationData(data: StationDataRaw) {
 }
 
 const data1 = generateData(new Date());
-//console.info(data1);
-const decodedData1 = decodeStationData(data1);
+const data2 = generateOffsetData(data1, 5);
+const data3 = generateOffsetData(data1, -5);
+console.info(data1);
+console.info(data2);
+console.info(data3);
 //console.log(decodedData1);
 
 const d = new Date();
@@ -231,7 +264,9 @@ console.info('Now, Timestamp, Redis, pgtime, Pg', d, data1.dateutc, pgtime);
 
 
 postData(data1);
-setTimeout(() => fetchData(decodedData1), 1000);
-//setTimeout(() => postData(data2), 2000);
-//setTimeout(() => fetchData(redisData1), 3000);
-setTimeout(() => loadStation(decodedData1), 61000);
+setTimeout(() => fetchData(decodeStationData(data1)), 1000);
+setTimeout(() => postData(data2), 2000);
+setTimeout(() => fetchData(decodeStationData(data2)), 3000);
+setTimeout(() => postData(data3), 4000);
+setTimeout(() => fetchData(decodeStationData(data3)), 5000);
+setTimeout(() => loadStation(decodeStationData(data1)), 61000);
