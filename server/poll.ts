@@ -1,9 +1,8 @@
-import redis from 'redis';
 import fetch from 'node-fetch';
 import { DomExternalData, DomRoomData, DomTarifData } from '../client/models/model';
 import axios from 'axios';
 
-const DOM_PASSKEY=process.env.DOM_PASSKEY || '';
+const DOM_PASSKEY=process.env.DOM_PASSKEY || '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';
 
 const POS_ACTUALTEMP = 14,
     POS_REQUIRED = 19,
@@ -98,12 +97,7 @@ async function getExternalData() {
 
 async function postData(data: any) {
     try {
-        let res = axios.post('http://192.168.1.199:8082/setDomData', data, {
-            headers: {
-                "Content-Type": "application/json; charset=utf-8"
-            }
-        });
-        res = axios.post('https://www.met-hub.com/setDomData', data, {
+        axios.post('https://www.met-hub.com/setDomData', data, {
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             }

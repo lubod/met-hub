@@ -4,10 +4,10 @@ import fetch from 'node-fetch';
 import { Pool } from 'pg';
 import { StationData, StationDataRaw } from './client/models/model';
 
-const PG_PORT = parseInt(process.env.PG_PORT) || 5432;
+const PG_PORT = parseInt(process.env.PG_PORT) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';
 const PG_DB = process.env.PG_DB || 'postgres';
-const PG_HOST = process.env.PG_HOST || 'localhost';
+const PG_HOST = process.env.PG_HOST || '192.168.1.199';
 const PG_USER = process.env.PG_USER || 'postgres';
 
 console.info('PG: ' + PG_HOST);
@@ -127,52 +127,30 @@ async function postData(data: any) {
   }
 }
 
-function fetchData(redisData: any) {
+async function fetchStationData() {
   const url = 'http://localhost:8082/api/getLastData/station';
   console.info(url);
-  fetch(url, {
-    headers: {
-      Authorization: `Bearer 1`,
-    },
-  })
-    .then((data) => {
-      if (data.status === 401) {
-        console.info('auth 401');
-      }
-      return data.json();
-    })
-    .then((json) => {
-      const sd = new StationData();
-      sd.dailyrain = json.dailyrain;
-      sd.eventrain = json.eventrain;
-      sd.hourlyrain = json.hourlyrain;
-      sd.humidity = json.humidity;
-      sd.humidityin = json.humidityin;
-      sd.maxdailygust = json.maxdailygust;
-      sd.monthlyrain = json.monthlyrain;
-      sd.pressureabs = json.pressureabs;
-      sd.pressurerel = json.pressurerel;
-      sd.rainrate = json.rainrate;
-      sd.solarradiation = json.solarradiation;
-      sd.temp = json.temp;
-      sd.tempin = json.tempin;
-      sd.timestamp = json.timestamp;
-      sd.totalrain = json.totalrain;
-      sd.uv = json.uv;
-      sd.weeklyrain = json.weeklyrain;
-      sd.winddir = json.winddir;
-      sd.windgust = json.windgust;
-      sd.windspeed = json.windspeed;
 
-      assert.deepStrictEqual(sd, redisData);
-      console.info('Redis OK');
-    })
-    .catch((err) => {
-      console.error(err);
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer 1`,
+      },
     });
+    if (res.status === 401) {
+      console.error('auth 401');
+    }
+    else {
+      const json = await res.json();
+      return json;
+    }
+  }
+  catch (error) {
+    console.error(error);
+  }
 }
 
-async function loadStation(data: StationData) {
+async function loadStationData() {
   const pool = new Pool({
     user: PG_USER,
     host: PG_HOST,
@@ -181,33 +159,15 @@ async function loadStation(data: StationData) {
     port: PG_PORT,
   });
 
-  const pgData = {
-    timestamp: new Date(data.timestamp.substr(0, 17) + '00' + data.timestamp.substr(19)),
-    tempin: data.tempin.toFixed(1),
-    humidityin: data.humidityin.toFixed(0),
-    pressurerel: data.pressurerel.toFixed(1),
-    pressureabs: data.pressureabs.toFixed(1),
-    temp: data.temp.toFixed(1),
-    humidity: data.humidity.toFixed(0),
-    winddir: data.winddir.toFixed(0),
-    windspeed: data.windspeed.toFixed(1),
-    windgust: data.windgust.toFixed(1),
-    rainrate: data.rainrate.toFixed(1),
-    solarradiation: data.solarradiation.toFixed(1),
-    uv: data.uv.toFixed(0),
-    eventrain: data.eventrain.toFixed(1),
-    hourlyrain: data.hourlyrain.toFixed(1),
-  };
-
   const client = await pool.connect();
   try {
-    console.info('connected');
+    console.info('connected', new Date());
 
     let table = 'stanica';
-    let queryText = 'select * from ' + table + ' where timestamp=\'' + pgtime + '\'';
+    let queryText = 'select * from ' + table + ' where timestamp=\'' + pgtime + ':00+00\'';
     let res = await client.query(queryText);
-    assert.deepStrictEqual(res.rows[0], pgData);
-    console.info('PG OK');
+//    console.log('rows', queryText, res.rows[0]);
+    return res.rows[0];
   } catch (e) {
     console.error(e);
   } finally {
@@ -222,36 +182,40 @@ export function decodeStationData(data: StationDataRaw) {
   const TO_HPA = 33.8639;
 
   //    console.log(data);
-  let decoded = new StationData();
-  decoded.timestamp = new Date(data.dateutc + ' UTC').toISOString();
-  decoded.tempin = round((5 / 9) * (data.tempinf - 32), 1);
-  decoded.pressurerel = round(data.baromrelin * TO_HPA, 1);
-  decoded.pressureabs = round(data.baromabsin * TO_HPA, 1);
-  decoded.temp = round((5 / 9) * (data.tempf - 32), 1);
-  decoded.windspeed = round(data.windspeedmph * TO_KM, 1);
-  decoded.windgust = round(data.windgustmph * TO_KM, 1);
-  decoded.maxdailygust = round(data.maxdailygust * TO_KM, 1);
-  decoded.rainrate = round(data.rainratein * TO_MM, 1);
-  decoded.eventrain = round(data.eventrainin * TO_MM, 1);
-  decoded.hourlyrain = round(data.hourlyrainin * TO_MM, 1);
-  decoded.dailyrain = round(data.dailyrainin * TO_MM, 1);
-  decoded.weeklyrain = round(data.weeklyrainin * TO_MM, 1);
-  decoded.monthlyrain = round(data.monthlyrainin * TO_MM, 1);
-  decoded.totalrain = round(data.totalrainin * TO_MM, 1);
-  decoded.solarradiation = round(data.solarradiation * 1.0, 0);
-  decoded.uv = round(data.uv * 1.0, 0);
-  decoded.humidity = round(data.humidity * 1.0, 0);
-  decoded.humidityin = round(data.humidityin * 1.0, 0);
-  decoded.winddir = round(data.winddir * 1.0, 0);
+  const decoded: StationData = {
+    timestamp: new Date(data.dateutc + ' UTC').toISOString(),
+    tempin: round((5 / 9) * (data.tempinf - 32), 1),
+    pressurerel: round(data.baromrelin * TO_HPA, 1),
+    pressureabs: round(data.baromabsin * TO_HPA, 1),
+    temp: round((5 / 9) * (data.tempf - 32), 1),
+    windspeed: round(data.windspeedmph * TO_KM, 1),
+    windgust: round(data.windgustmph * TO_KM, 1),
+    maxdailygust: round(data.maxdailygust * TO_KM, 1),
+    rainrate: round(data.rainratein * TO_MM, 1),
+    eventrain: round(data.eventrainin * TO_MM, 1),
+    hourlyrain: round(data.hourlyrainin * TO_MM, 1),
+    dailyrain: round(data.dailyrainin * TO_MM, 1),
+    weeklyrain: round(data.weeklyrainin * TO_MM, 1),
+    monthlyrain: round(data.monthlyrainin * TO_MM, 1),
+    totalrain: round(data.totalrainin * TO_MM, 1),
+    solarradiation: round(data.solarradiation * 1.0, 0),
+    uv: round(data.uv * 1.0, 0),
+    humidity: round(data.humidity * 1.0, 0),
+    humidityin: round(data.humidityin * 1.0, 0),
+    winddir: round(data.winddir * 1.0, 0),
+    time: null,
+    date: null,
+    place: null,
+  };
   return decoded;
 }
 
 const data1 = generateData(new Date());
 const data2 = generateOffsetData(data1, 5);
 const data3 = generateOffsetData(data1, -5);
-console.info(data1);
-console.info(data2);
-console.info(data3);
+//console.info(data1);
+//console.info(data2);
+//console.info(data3);
 //console.log(decodedData1);
 
 const d = new Date();
@@ -262,11 +226,45 @@ data1.dateutc = pgtime + ':' + d.getUTCSeconds();
 
 console.info('Now, Timestamp, Redis, pgtime, Pg', d, data1.dateutc, pgtime);
 
+const data = decodeStationData(data1);
+const pgData = {
+  eventrain: data.eventrain.toFixed(1),
+  hourlyrain: data.hourlyrain.toFixed(1),
+  humidity: data.humidity.toFixed(0),
+  humidityin: data.humidityin.toFixed(0),
+  pressureabs: data.pressureabs.toFixed(1),
+  pressurerel: data.pressurerel.toFixed(1),
+  rainrate: data.rainrate.toFixed(1),
+  solarradiation: data.solarradiation.toFixed(1),
+  temp: data.temp.toFixed(1),
+  tempin: data.tempin.toFixed(1),
+  timestamp: new Date(data.timestamp.substr(0, 17) + '00' + data.timestamp.substr(19)),
+  uv: data.uv.toFixed(0),
+  winddir: data.winddir.toFixed(0),
+  windgust: data.windgust.toFixed(1),
+  windspeed: data.windspeed.toFixed(1),
+};
 
 postData(data1);
-setTimeout(() => fetchData(decodeStationData(data1)), 1000);
+setTimeout(async () => {
+  const sd = await fetchStationData();
+  assert.deepStrictEqual(sd, decodeStationData(data1));
+  console.info('Redis1 OK');
+}, 1000);
 setTimeout(() => postData(data2), 2000);
-setTimeout(() => fetchData(decodeStationData(data2)), 3000);
+setTimeout(async () => {
+  const sd = await fetchStationData();
+  assert.deepStrictEqual(sd, decodeStationData(data2));
+  console.info('Redis2 OK');
+}, 3000);
 setTimeout(() => postData(data3), 4000);
-setTimeout(() => fetchData(decodeStationData(data3)), 5000);
-setTimeout(() => loadStation(decodeStationData(data1)), 61000);
+setTimeout(async () => {
+  const sd = await fetchStationData();
+  assert.deepStrictEqual(sd, decodeStationData(data3));
+  console.info('Redis3 OK');
+}, 5000);
+setTimeout(async () => {
+  const rows = await loadStationData();
+  assert.deepStrictEqual(rows, pgData);
+  console.info('PG OK');
+}, 61000);

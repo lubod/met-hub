@@ -1,4 +1,4 @@
-export class StationData {
+export interface StationData {
     timestamp: string;
     time: string;
     date: string;

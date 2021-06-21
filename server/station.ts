@@ -73,27 +73,31 @@ export function decodeStationData(data: StationDataRaw) {
     }
 
     //    console.log(data);
-    let decoded = new StationData();
-    decoded.timestamp = new Date(data.dateutc + ' UTC').toISOString();
-    decoded.tempin = round((5 / 9) * (data.tempinf - 32), 1);
-    decoded.pressurerel = round(data.baromrelin * TO_HPA, 1);
-    decoded.pressureabs = round(data.baromabsin * TO_HPA, 1);
-    decoded.temp = round((5 / 9) * (data.tempf - 32), 1);
-    decoded.windspeed = round(data.windspeedmph * TO_KM, 1);
-    decoded.windgust = round(data.windgustmph * TO_KM, 1);
-    decoded.maxdailygust = round(data.maxdailygust * TO_KM, 1);
-    decoded.rainrate = round(data.rainratein * TO_MM, 1);
-    decoded.eventrain = round(data.eventrainin * TO_MM, 1);
-    decoded.hourlyrain = round(data.hourlyrainin * TO_MM, 1);
-    decoded.dailyrain = round(data.dailyrainin * TO_MM, 1);
-    decoded.weeklyrain = round(data.weeklyrainin * TO_MM, 1);
-    decoded.monthlyrain = round(data.monthlyrainin * TO_MM, 1);
-    decoded.totalrain = round(data.totalrainin * TO_MM, 1);
-    decoded.solarradiation = round(data.solarradiation * 1.0, 0);
-    decoded.uv = round(data.uv * 1.0, 0);
-    decoded.humidity = round(data.humidity * 1.0, 0);
-    decoded.humidityin = round(data.humidityin * 1.0, 0);
-    decoded.winddir = round(data.winddir * 1.0, 0);
+    const decoded: StationData = {
+        timestamp: new Date(data.dateutc + ' UTC').toISOString(),
+        tempin: round((5 / 9) * (data.tempinf - 32), 1),
+        pressurerel: round(data.baromrelin * TO_HPA, 1),
+        pressureabs: round(data.baromabsin * TO_HPA, 1),
+        temp: round((5 / 9) * (data.tempf - 32), 1),
+        windspeed: round(data.windspeedmph * TO_KM, 1),
+        windgust: round(data.windgustmph * TO_KM, 1),
+        maxdailygust: round(data.maxdailygust * TO_KM, 1),
+        rainrate: round(data.rainratein * TO_MM, 1),
+        eventrain: round(data.eventrainin * TO_MM, 1),
+        hourlyrain: round(data.hourlyrainin * TO_MM, 1),
+        dailyrain: round(data.dailyrainin * TO_MM, 1),
+        weeklyrain: round(data.weeklyrainin * TO_MM, 1),
+        monthlyrain: round(data.monthlyrainin * TO_MM, 1),
+        totalrain: round(data.totalrainin * TO_MM, 1),
+        solarradiation: round(data.solarradiation * 1.0, 0),
+        uv: round(data.uv * 1.0, 0),
+        humidity: round(data.humidity * 1.0, 0),
+        humidityin: round(data.humidityin * 1.0, 0),
+        winddir: round(data.winddir * 1.0, 0),
+        time: null,
+        date: null,
+        place: null,
+    };
     return decoded;
 }
 

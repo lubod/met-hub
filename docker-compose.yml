@@ -32,6 +32,8 @@ services:
   postgres:
     image: postgres
     container_name: postgres
-    network_mode: host
+    ports: 
+      - "15432:5432"
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
+    command: ["postgres", "-c", "log_statement=all"]

@@ -159,19 +159,32 @@ function agregateAndStoreMinuteData(data: any) {
         return avg;
     };
 
-    const initWithZeros = (init: StationData) => {
-        init.tempin = 0;
-        init.temp = 0;
-        init.pressurerel = 0;
-        init.pressureabs = 0;
-        init.windgust = 0;
-        init.windspeed = 0;
-        init.rainrate = 0;
-        init.solarradiation = 0;
-        init.uv = 0;
-        init.humidityin = 0;
-        init.humidity = 0;
-        init.winddir = 0;
+    const initWithZeros = () => {
+        const init: StationData = {
+            tempin: 0,
+            temp: 0,
+            pressurerel: 0,
+            pressureabs: 0,
+            windgust: 0,
+            windspeed: 0,
+            rainrate: 0,
+            solarradiation: 0,
+            uv: 0,
+            humidityin: 0,
+            humidity: 0,
+            winddir: 0,
+            timestamp: null,
+            time: null,
+            date: null,
+            place: null,
+            maxdailygust: null,
+            eventrain: null,
+            hourlyrain: null,
+            dailyrain: null,
+            weeklyrain: null,
+            monthlyrain: null,
+            totalrain: null,
+        };
         return init;
     };
 
@@ -196,7 +209,7 @@ function agregateAndStoreMinuteData(data: any) {
         const minute = new Date(key);
         const date = minute.toISOString();
         console.log(key, date, value);
-        const init = initWithZeros(new StationData());
+        const init: StationData = initWithZeros();
         const sum = value.reduce(reducer, init);
         const avg = average(sum, value.length);
         avg.timestamp = date;

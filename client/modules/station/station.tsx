@@ -14,7 +14,7 @@ type StationProps = {
 }
 
 export function Station(props: StationProps) {
-  const [stationData, setStationData] = useState<StationData>(new StationData());
+  const [stationData, setStationData] = useState<StationData>({} as StationData);
   const [stationTrendData, setTrendStationData] = useState<StationTrendData>(new StationTrendData());
   const [ctime, setCtime] = useState<Date>(new Date());
   const [oldData, setOldData] = useState<boolean>(false);
