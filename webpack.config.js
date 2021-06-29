@@ -33,7 +33,7 @@ const frontConfig = {
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/fe'),
   },
   optimization: {
     runtimeChunk: 'single',
@@ -44,7 +44,7 @@ const frontConfig = {
   plugins: [
     new HtmlWebPackPlugin({
       template: './client/index.html',
-      filename: path.resolve(__dirname, 'dist', 'index.html'),
+      filename: path.resolve(__dirname, 'dist/fe', 'index.html'),
       xhtml: true,
     }),
   ],
@@ -73,7 +73,7 @@ const backConfigMain = {
   },
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/be'),
   },
   externals: [nodeExternals()],
 };
@@ -95,7 +95,7 @@ const backConfigStore = {
   },
   output: {
     filename: 'store.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/be'),
   },
   externals: [nodeExternals()],
 };
@@ -117,7 +117,7 @@ const backConfigPoll = {
   },
   output: {
     filename: 'poll.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/be'),
   },
   externals: [nodeExternals()],
 };
@@ -139,7 +139,7 @@ const testConfig = {
   },
   output: {
     filename: 'test.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/test'),
   },
   externals: [nodeExternals()],
 };

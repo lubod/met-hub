@@ -17,7 +17,7 @@ export function Station(props: StationProps) {
   const [stationData, setStationData] = useState<StationData>({} as StationData);
   const [stationTrendData, setTrendStationData] = useState<StationTrendData>(new StationTrendData());
   const [ctime, setCtime] = useState<Date>(new Date());
-  const [oldData, setOldData] = useState<boolean>(false);
+  let oldData = true;
 
   function fetchData(url: string, processFnc: any) {
     console.info(url);
@@ -39,24 +39,32 @@ export function Station(props: StationProps) {
 
   }
 
-  function calculateOldData() {
-    const timestamp = new Date(stationData.timestamp);
-    const diff = ctime.getTime() - timestamp.getTime();
-    if (diff > 180000) {
-      setOldData(true);
+  function isOldData() {
+    console.info('timestamp', stationData.timestamp, 'ctime', ctime);
+    if (stationData.timestamp) {
+      const timestamp = new Date(stationData.timestamp);
+      const diff = ctime.getTime() - timestamp.getTime();
+      if (diff > 180000) {
+        console.info('oldData = true');
+        return true;
+      }
+      else {
+        console.info('oldData = false');
+        return false;
+      }
     }
     else {
-      setOldData(false);
+      console.info('oldData = true');
+      return true;
     }
-    console.info('cal old data', oldData);
   }
 
   useEffect(() => {
     var timer = setInterval(() => {
       setCtime(new Date());
-      calculateOldData();
-
-      if (oldData) {
+      console.info('ctime', ctime);
+  
+      if (isOldData()) {
         if (props.auth.isAuthenticated()) {
           fetchData('/api/getLastData/station', processData);
           fetchData('/api/getTrendData/station', processTrendData);
@@ -91,6 +99,7 @@ export function Station(props: StationProps) {
       const sdate = new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
       const stime = new Date(json.timestamp).toLocaleTimeString('sk-SK');
 
+      console.info('process data', sdate, stime, json.timestamp);
       setStationData({
         timestamp: json.timestamp,
         time: stime,
@@ -116,8 +125,6 @@ export function Station(props: StationProps) {
         totalrain: json.totalrain,
         place: 'Marianka'
       });
-
-      calculateOldData();
     }
   }
 
@@ -140,6 +147,8 @@ export function Station(props: StationProps) {
       });
     }
   }
+
+  oldData = isOldData();
 
   return (
     <div className='main'>

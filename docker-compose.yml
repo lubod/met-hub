@@ -13,12 +13,12 @@ services:
     env_file:
       - met-hub.env
     network_mode: host
-  store:
+  met-hub-store:
     build:
       context: .
-      target: store
-    image: store
-    container_name: store
+      target: met-hub-store
+    image: met-hub-store
+    container_name: met-hub-store
     depends_on:
       - redis
       - postgres
@@ -37,3 +37,12 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     command: ["postgres", "-c", "log_statement=all"]
+  nginx:
+    build:
+      context: .
+      target: met-hub-nginx
+    image: met-hub-nginx
+    container_name: met-hub-nginx
+    network_mode: host
+    
+  
