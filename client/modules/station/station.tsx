@@ -13,11 +13,13 @@ type StationProps = {
   socket: Socket
 }
 
+let maxDiff = 1000;
+
 export function Station(props: StationProps) {
   const [stationData, setStationData] = useState<StationData>({} as StationData);
   const [stationTrendData, setTrendStationData] = useState<StationTrendData>(new StationTrendData());
   const [ctime, setCtime] = useState<Date>(new Date());
-  let oldData = true;
+  const [lastCall, setLastCall] = useState(0);
 
   function fetchData(url: string, processFnc: any) {
     console.info(url);
@@ -40,21 +42,21 @@ export function Station(props: StationProps) {
   }
 
   function isOldData() {
-    console.info('timestamp', stationData.timestamp, 'ctime', ctime);
+    //console.info('timestamp', stationData.timestamp, 'ctime', ctime);
     if (stationData.timestamp) {
       const timestamp = new Date(stationData.timestamp);
       const diff = ctime.getTime() - timestamp.getTime();
       if (diff > 180000) {
-        console.info('oldData = true');
+      //  console.info('oldData = true');
         return true;
       }
       else {
-        console.info('oldData = false');
+        //console.info('oldData = false');
         return false;
       }
     }
     else {
-      console.info('oldData = true');
+      //console.info('oldData = true');
       return true;
     }
   }
@@ -62,13 +64,22 @@ export function Station(props: StationProps) {
   useEffect(() => {
     var timer = setInterval(() => {
       setCtime(new Date());
-      console.info('ctime', ctime);
+      //console.info('ctime', ctime);
   
       if (isOldData()) {
-        if (props.auth.isAuthenticated()) {
+        const now = new Date();
+        if (now.getTime() - lastCall >= maxDiff) {
+//        if (props.auth.isAuthenticated()) {
+          console.info('call', lastCall, maxDiff, now.getTime() - lastCall);
           fetchData('/api/getLastData/station', processData);
           fetchData('/api/getTrendData/station', processTrendData);
+          setLastCall(now.getTime());
+          maxDiff *= 2;
+//        }
         }
+      }
+      else {
+        maxDiff = 1000;
       }
     }, 1000);
 
@@ -93,38 +104,17 @@ export function Station(props: StationProps) {
     };
   }, [props.socket]);
 
-  function processData(json: any) {
-    if (json != null) {
-      //console.info(json);
-      const sdate = new Date(json.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
-      const stime = new Date(json.timestamp).toLocaleTimeString('sk-SK');
+  function processData(stationData: StationData) {
+    if (stationData != null) {
+      //console.info(stationData);
+      const sdate = new Date(stationData.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
+      const stime = new Date(stationData.timestamp).toLocaleTimeString('sk-SK');
 
-      console.info('process data', sdate, stime, json.timestamp);
-      setStationData({
-        timestamp: json.timestamp,
-        time: stime,
-        date: sdate.substring(0, sdate.length - 6),
-        tempin: json.tempin,
-        humidityin: json.humidityin,
-        temp: json.temp,
-        humidity: json.humidity,
-        pressurerel: json.pressurerel,
-        pressureabs: json.pressureabs,
-        windgust: json.windgust,
-        windspeed: json.windspeed,
-        winddir: json.winddir,
-        maxdailygust: json.maxdailygust,
-        solarradiation: json.solarradiation,
-        uv: json.uv,
-        rainrate: json.rainrate,
-        eventrain: json.eventrain,
-        hourlyrain: json.hourlyrain,
-        dailyrain: json.dailyrain,
-        weeklyrain: json.weeklyrain,
-        monthlyrain: json.monthlyrain,
-        totalrain: json.totalrain,
-        place: 'Marianka'
-      });
+      console.info('process data', sdate, stime, stationData.timestamp);
+      stationData.time = stime;
+      stationData.date = sdate.substring(0, sdate.length - 6);
+      stationData.place = 'Marianka';
+      setStationData(stationData);
     }
   }
 
@@ -148,7 +138,7 @@ export function Station(props: StationProps) {
     }
   }
 
-  oldData = isOldData();
+  const oldData = isOldData();
 
   return (
     <div className='main'>

@@ -341,7 +341,7 @@ CREATE TABLE public.stanica (
     windgust numeric(4,1),
     rainrate numeric(5,1),
     solarradiation numeric(6,1),
-    uv numeric(1,0),
+    uv numeric(2,0),
     eventrain numeric(5,1),
     hourlyrain numeric(5,1)
 );

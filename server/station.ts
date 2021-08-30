@@ -37,29 +37,29 @@ export function setStationData(req: any, res: any) {
 
 export function getStationLastData(req: any, res: any) {
     console.info('/getLastData/station');
-    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
+//    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
         res.type('application/json');
         redisClient.get('station', function (err: any, reply: any) {
             return res.json(JSON.parse(reply));
         });
-    }
-    else {
-        res.status(401).send('auth issue');
-    }
+//    }
+//    else {
+//        res.status(401).send('auth issue');
+//    }
 }
 
 export function getStationTrendData(req: any, res: any) {
     console.info('/getStationTrendData/' + req.params.uuid);
-    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
+//    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
         res.type('application/json');
         const now = Date.now();
         redisClient.zrangebyscore('station-trend', now - 3600000, now, function (err, result) {
             return res.json(transformStationTrendData(result));
         });
-    }
-    else {
-        res.status(401).send('auth issue');
-    }
+//    }
+//    else {
+//        res.status(401).send('auth issue');
+//    }
 }
 
 export function decodeStationData(data: StationDataRaw) {
