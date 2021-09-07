@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { DomExternalData, DomRoomData, DomTarifData } from '../client/models/model';
+import { IDomExternalData, IDomRoomData, IDomTarifData } from '../client/models/domModel';
 import axios from 'axios';
 
 const DOM_PASSKEY=process.env.DOM_PASSKEY || '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';
@@ -108,7 +108,7 @@ async function postData(data: any) {
 }
 
 function decode(text: string) {
-    const data = new DomRoomData();
+    const data = {} as IDomRoomData;
     if (text.length === 45) {
         data.temp = parseFloat(text.substr(POS_ACTUALTEMP, 5));
         data.req = parseFloat(text.substr(POS_REQUIRED, 3));
@@ -125,7 +125,7 @@ function decode(text: string) {
 }
 
 function decodeTarif(text: string) {
-    const data = new DomTarifData();
+    const data = {} as IDomTarifData;
     if (text.length === 1) {
         data.tarif = parseInt(text);
         //        data.text = text;
@@ -135,7 +135,7 @@ function decodeTarif(text: string) {
 }
 
 function decodeExternal(text: string) {
-    const data = new DomExternalData();
+    const data = {} as IDomExternalData;
     if (text !== '') {
         const th = text.match(/Temp=(.*)\*  Humidity=(.*)%\nRain=(.*\n)/);
         data.temp = parseFloat(th[1]);

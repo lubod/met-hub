@@ -1,4 +1,3 @@
-import { DomTrendData, StationData, StationDataRaw, StationTrendData } from "../client/models/model";
 
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');

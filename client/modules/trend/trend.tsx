@@ -7,9 +7,10 @@ type TrendData = {
 }
 
 function Trend(props: TrendData) {
+  
   const canvasRef = React.useRef(null);
-  let max = Math.max(...props.data);
-  let min = Math.min(...props.data);
+  let max = props.data != null ? Math.max(...props.data) : null;
+  let min = props.data != null ? Math.min(...props.data) : null;
 
   function draw(canvas: any, trend: TrendData) {
     //    console.log(trend.data);
@@ -40,8 +41,9 @@ function Trend(props: TrendData) {
     draw(canvas, props);
   });
 
+  console.info('render trend');
   return (
-    <OverlayTrigger overlay={<Tooltip id="tooltip">({min.toFixed(1)}, {max.toFixed(1)})</Tooltip>}>
+    <OverlayTrigger overlay={<Tooltip id="tooltip">({min?.toFixed(1)}, {max?.toFixed(1)})</Tooltip>}>
       <div className='text-left'>
         <canvas width='60' height='15' id='myCanvas' ref={canvasRef} >
           <p>Your browser doesn't support canvas. Boo hoo!</p>

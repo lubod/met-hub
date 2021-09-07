@@ -32,7 +32,7 @@ const frontConfig = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist/fe'),
   },
   optimization: {
@@ -122,9 +122,9 @@ const backConfigPoll = {
   externals: [nodeExternals()],
 };
 
-const testConfig = {
+const testConfigStation = {
   target: 'node',
-  entry: './test.ts',
+  entry: './testStation.ts',
   module: {
     rules: [
       {
@@ -138,12 +138,34 @@ const testConfig = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: 'test.js',
+    filename: 'testStation.js',
     path: path.resolve(__dirname, 'dist/test'),
   },
   externals: [nodeExternals()],
 };
 
-module.exports = [frontConfig, backConfigMain, backConfigStore, backConfigPoll, testConfig];
+const testConfigDom = {
+  target: 'node',
+  entry: './testDom.ts',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  output: {
+    filename: 'testDom.js',
+    path: path.resolve(__dirname, 'dist/test'),
+  },
+  externals: [nodeExternals()],
+};
+
+module.exports = [frontConfig, backConfigMain, backConfigStore, backConfigPoll, testConfigStation, testConfigDom];
 
 

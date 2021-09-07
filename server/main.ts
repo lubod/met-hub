@@ -77,7 +77,7 @@ io.on('connection', function (socket: any) {
     const now = Date.now();
     redisClient.get('dom', function (err: any, reply: any) {
         socket.emit('dom', JSON.parse(reply));
-        redisClient.zrangebyscore('dom-os', now - 3600000, now, function (err, result) {
+        redisClient.zrangebyscore('dom-trend', now - 3600000, now, function (err, result) {
             socket.emit('domTrend', transformDomTrendData(result));
         });
     });

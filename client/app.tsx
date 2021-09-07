@@ -1,24 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Callback from './callback';
 import { Route, withRouter } from 'react-router-dom';
 import { HomePage } from './homepage';
 import './style.scss';
+import { AppContextP } from '.';
 
 function App(props: any) {
-  const authenticated = props.auth.isAuthenticated();
+  const appContext = useContext(AppContextP);
 
-  console.info('App render', authenticated);
+  console.info('App render', appContext.auth.isAuthenticated());
   return (
     <div className="App">
       <Route exact path='/callback' render={() => (
-        <Callback auth={props.auth} />
+        <Callback />
       )} />
       <Route exact path='/' render={() => (
         <HomePage
-          authenticated={authenticated}
-          auth={props.auth}
-          history={props.history}
-        />)
+          history={props.history} />)
       } />
     </div>
   );

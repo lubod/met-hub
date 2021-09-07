@@ -1,26 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Station } from './modules/station/station';
 import { Container, Row, Col, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Dom } from './modules/dom/dom';
 import Iframe from 'react-iframe';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import './style.scss';
-import Auth from './auth';
-import Socket from './socket';
+import { AppContextP } from '.';
 
-type ProtectedProps = {
-  auth: Auth,
-  socket: Socket
-}
-
-function Protected(props: ProtectedProps) {
+function Protected() {
+  console.info('Protected render');
   const [valueStation, setValueStation] = useState('current');
   const handleChangeStation = (val: any) => setValueStation(val);
 
   const [valueDom, setValueDom] = useState('current');
   const handleChangeDom = (val: any) => setValueDom(val);
 
-  console.info('Protected render');
+  const appContext = useContext(AppContextP);
 
   return (
     <Container className='container-max-width text-center py-2'>
@@ -32,12 +27,12 @@ function Protected(props: ProtectedProps) {
             <ToggleButton value={'map'}>Map</ToggleButton>
           </ToggleButtonGroup>
           {
-            valueStation === 'current' && <Station auth={props.auth} socket={props.socket} />
+            valueStation === 'current' && <Station />
           }
           {
             valueStation === 'history' &&
             <Container className='bg-very-dark mx-auto my-2 py-2'>
-              <Iframe url={'/charts/d/-LNB7_HGk/stanica?orgId=1&from=now-24h&to=now&token=' + props.auth.getToken()} width='100%' height='700px' />
+              <Iframe url={'/charts/d/-LNB7_HGk/stanica?orgId=1&from=now-24h&to=now&token=' + appContext.auth.getToken()} width='100%' height='700px' />
             </Container>
           }
           {
@@ -51,7 +46,7 @@ function Protected(props: ProtectedProps) {
                 <Marker position={[48.2482, 17.0589]}>
                   <Popup>
                     A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
+                  </Popup>
                 </Marker>
               </MapContainer>
             </Container>
@@ -64,12 +59,12 @@ function Protected(props: ProtectedProps) {
             <ToggleButton value={'map'}>Map</ToggleButton>
           </ToggleButtonGroup>
           {
-            valueDom === 'current' && <Dom socket={props.socket} />
+            valueDom === 'current' && <Dom />
           }
           {
             valueDom === 'history' &&
             <Container className='bg-very-dark mx-auto my-2 py-2'>
-              <Iframe url={'/charts/d/80t3t_HGk/dom?orgId=1&from=now-24h&to=now&token=' + props.auth.getToken()} width='100%' height='700px' />
+              <Iframe url={'/charts/d/80t3t_HGk/dom?orgId=1&from=now-24h&to=now&token=' + appContext.auth.getToken()} width='100%' height='700px' />
             </Container>
           }
           {

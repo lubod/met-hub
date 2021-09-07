@@ -3,8 +3,28 @@ import ReactDOM from 'react-dom';
 import App from './app';
 import { BrowserRouter } from 'react-router-dom';
 import Auth from './auth';
+import MySocket from './socket';
+import { StationData } from './modules/station/stationData';
+import { StationCtrl } from './modules/station/stationCtrl';
+import { DomData } from './modules/dom/domData';
+import { DomCtrl } from './modules/dom/domCtrl';
 
-const auth = new Auth();
+class AppContext {
+  auth = new Auth();
+}
+
+const socket = new MySocket();
+const appContext = new AppContext();
+
+const stationData = new StationData();
+const stationCtrl = new StationCtrl(socket, stationData);
+
+const domData = new DomData();
+const domCtrl = new DomCtrl(socket, domData);
+
+export const AppContextP = React.createContext(appContext);
+export const StationDataP = React.createContext<StationData>(stationData);
+export const DomDataP = React.createContext<DomData>(domData);
 
 function render() {
   console.info('Index render');
@@ -12,7 +32,9 @@ function render() {
   const appContainer = document.getElementById('app');
   ReactDOM.render(
     <BrowserRouter>
-      <App auth={auth} />
+      <AppContextP.Provider value={appContext}>
+        <App />
+      </AppContextP.Provider>
     </BrowserRouter >,
     appContainer);
 }

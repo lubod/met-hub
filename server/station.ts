@@ -1,4 +1,4 @@
-import { StationData, StationDataRaw, StationTrendData } from "../client/models/model";
+import { IStationData, IStationDataRaw, IStationTrendData } from "../client/models/stationModel";
 import { socketEmitData } from "./main";
 import redis from 'redis';
 import { verifyToken } from "./utils";
@@ -37,32 +37,32 @@ export function setStationData(req: any, res: any) {
 
 export function getStationLastData(req: any, res: any) {
     console.info('/getLastData/station');
-//    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
-        res.type('application/json');
-        redisClient.get('station', function (err: any, reply: any) {
-            return res.json(JSON.parse(reply));
-        });
-//    }
-//    else {
-//        res.status(401).send('auth issue');
-//    }
+    //    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
+    res.type('application/json');
+    redisClient.get('station', function (err: any, reply: any) {
+        return res.json(JSON.parse(reply));
+    });
+    //    }
+    //    else {
+    //        res.status(401).send('auth issue');
+    //    }
 }
 
 export function getStationTrendData(req: any, res: any) {
-    console.info('/getStationTrendData/' + req.params.uuid);
-//    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
-        res.type('application/json');
-        const now = Date.now();
-        redisClient.zrangebyscore('station-trend', now - 3600000, now, function (err, result) {
-            return res.json(transformStationTrendData(result));
-        });
-//    }
-//    else {
-//        res.status(401).send('auth issue');
-//    }
+    console.info('/getDomTrendData/station');
+    //    if (req.headers.authorization && verifyToken(req.headers.authorization.substr(7)) !== null) {
+    res.type('application/json');
+    const now = Date.now();
+    redisClient.zrangebyscore('station-trend', now - 3600000, now, function (err, result) {
+        return res.json(transformStationTrendData(result));
+    });
+    //    }
+    //    else {
+    //        res.status(401).send('auth issue');
+    //    }
 }
 
-export function decodeStationData(data: StationDataRaw) {
+export function decodeStationData(data: IStationDataRaw) {
     const TO_MM = 25.4;
     const TO_KM = 1.6;
     const TO_HPA = 33.8639;
@@ -72,8 +72,8 @@ export function decodeStationData(data: StationDataRaw) {
         return Math.round(value * multiplier) / multiplier;
     }
 
-    //    console.log(data);
-    const decoded: StationData = {
+    //    console.log(data)
+    const decoded: IStationData = {
         timestamp: new Date(data.dateutc + ' UTC').toISOString(),
         tempin: round((5 / 9) * (data.tempinf - 32), 1),
         pressurerel: round(data.baromrelin * TO_HPA, 1),
@@ -96,16 +96,28 @@ export function decodeStationData(data: StationDataRaw) {
         winddir: round(data.winddir * 1.0, 0),
         time: null,
         date: null,
-        place: null,
+        place: 'Marianka',
     };
     return decoded;
 }
 
 export function transformStationTrendData(data: any) {
-    const tmp = new StationTrendData();
+    const tmp = {} as IStationTrendData;
+    tmp.timestamp = [];
+    tmp.tempin = [];
+    tmp.humidityin = [];
+    tmp.temp = [];
+    tmp.humidity = [];
+    tmp.pressurerel = [];
+    tmp.windgust = [];
+    tmp.windspeed = [];
+    tmp.winddir = [];
+    tmp.solarradiation = [];
+    tmp.uv = [];
+    tmp.rainrate = [];
     let prev = 0;
     data.forEach((item: any) => {
-        let value: StationData = JSON.parse(item);
+        let value: IStationData = JSON.parse(item);
         let date = new Date(value.timestamp);
         let time = date.getTime();
         if (time - prev >= 60000) {

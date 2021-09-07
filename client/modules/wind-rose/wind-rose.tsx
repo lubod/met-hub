@@ -41,62 +41,65 @@ function WindRose(props: Wind) {
     }
   }
 
-  function drawSpeedTrend(wind: Wind, ctx: any, canvas: any) {
-    const height = 15;
-    const width = 60;
-    let max = Math.max(...wind.speedTrend);
-    let min = Math.min(...wind.speedTrend);
-    const range = 5;
+  function drawSpeedTrend(windSpeedTrend: Array<number>, ctx: any, canvas: any) {
+    if (windSpeedTrend != null) {
+      const height = 15;
+      const width = 60;
+      let max = Math.max(...windSpeedTrend);
+      let min = Math.min(...windSpeedTrend);
+      const range = 5;
 
-    if (max - min < range) {
-      min = min;
-      max = max + range;
-    }
-    const k = (height - 1) / (max - min);
-    const s = 1 - min * k;
+      if (max - min < range) {
+        min = min;
+        max = max + range;
+      }
+      const k = (height - 1) / (max - min);
+      const s = 1 - min * k;
 
-    ctx.beginPath();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#17A2B8';
-    for (let i = 0; i < wind.speedTrend.length; i++) {
-      ctx.moveTo(i + canvas.width / 2 - width / 2, height + canvas.height / 2 + 10);
-      const y = Math.round(height - (wind.speedTrend[i] * k + s));
-      ctx.lineTo(i + canvas.width / 2 - width / 2, y + canvas.height / 2 + 10);
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#17A2B8';
+      for (let i = 0; i < windSpeedTrend.length; i++) {
+        ctx.moveTo(i + canvas.width / 2 - width / 2, height + canvas.height / 2 + 10);
+        const y = Math.round(height - (windSpeedTrend[i] * k + s));
+        ctx.lineTo(i + canvas.width / 2 - width / 2, y + canvas.height / 2 + 10);
+      }
+      ctx.stroke();
     }
-    ctx.stroke();
   }
 
-  function drawDirTrend(wind: Wind, radius: number, ctx: any, canvas: any) {
-    const dirTrendMap = new Map();
+  function drawDirTrend(windDirTrend: Array<number>, radius: number, ctx: any, canvas: any) {
+    if (windDirTrend != null) {
+      const dirTrendMap = new Map();
+      let dirTrendMaxCount = 1;
+      windDirTrend.forEach(val => {
+        let diri = Math.floor((Math.floor(val / 22.5) + 1) / 2) % 8;
 
-    let dirTrendMaxCount = 1;
-    wind.dirTrend.forEach(val => {
-      let diri = Math.floor((Math.floor(val / 22.5) + 1) / 2) % 8;
-
-      if (dirTrendMap.has(diri)) {
-        const count = dirTrendMap.get(diri) + 1;
-        dirTrendMap.set(diri, count);
-        if (count > dirTrendMaxCount) {
-          dirTrendMaxCount = count;
+        if (dirTrendMap.has(diri)) {
+          const count = dirTrendMap.get(diri) + 1;
+          dirTrendMap.set(diri, count);
+          if (count > dirTrendMaxCount) {
+            dirTrendMaxCount = count;
+          }
         }
-      }
-      else {
-        dirTrendMap.set(diri, 1);
-      }
-    });
+        else {
+          dirTrendMap.set(diri, 1);
+        }
+      });
 
-    //console.log(dirTrendMap);
+      //console.log(dirTrendMap);
 
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#17A2B8';
-    dirTrendMap.forEach(function (count, diri, map) {
-      const num = Math.floor(count / 4) + 1;
-      for (let i = 0; i < num; i++) {
-        ctx.beginPath();
-        ctx.arc(canvas.width / 2, canvas.height / 2, radius - 34 - i, (diri * 45 - 22.5 - 90) * (Math.PI / 180), (diri * 45 + 22.5 - 90) * (Math.PI / 180), false);
-        ctx.stroke();
-      }
-    });
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#17A2B8';
+      dirTrendMap.forEach(function (count, diri, map) {
+        const num = Math.floor(count / 4) + 1;
+        for (let i = 0; i < num; i++) {
+          ctx.beginPath();
+          ctx.arc(canvas.width / 2, canvas.height / 2, radius - 34 - i, (diri * 45 - 22.5 - 90) * (Math.PI / 180), (diri * 45 + 22.5 - 90) * (Math.PI / 180), false);
+          ctx.stroke();
+        }
+      });
+    }
   }
 
   function drawSpeed(speed: number, ctx: any, canvas: any) {
@@ -188,8 +191,8 @@ function WindRose(props: Wind) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawWindRose(radius, ctx, canvas);
     drawSpeed(wind.speed, ctx, canvas);
-    drawDirTrend(props, radius, ctx, canvas);
-    drawSpeedTrend(props, ctx, canvas);
+    drawDirTrend(wind.dirTrend, radius, ctx, canvas);
+    drawSpeedTrend(wind.speedTrend, ctx, canvas);
     drawDirArrow(wind.dir, radius, ctx);
   }
 
@@ -198,6 +201,7 @@ function WindRose(props: Wind) {
     draw(props, canvas);
   });
 
+  console.info('render windrose', props);
   return (
     <Row>
       <Col xs={8}>

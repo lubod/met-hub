@@ -2,7 +2,7 @@ import assert from 'assert';
 import axios from 'axios';
 import fetch from 'node-fetch';
 import { Pool } from 'pg';
-import { StationData, StationDataRaw } from './client/models/model';
+import { IStationData, IStationDataRaw } from './client/models/stationModel';
 
 const PG_PORT = parseInt(process.env.PG_PORT) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';
@@ -25,7 +25,7 @@ function round(value: number, precision: number) {
 
 function generateData(d: Date) {
   d.setUTCMilliseconds(0);
-  const data = new StationDataRaw();
+  const data = {} as IStationDataRaw;
   data.PASSKEY = '33564A0851CC0C0D15FE3353FB8D8B47';
   data.stationtype = 'EasyWeatherV1.5.2';
   data.wh65batt = 0;
@@ -54,8 +54,8 @@ function generateData(d: Date) {
   return data;
 }
 
-function generateOffsetData(cdata: StationDataRaw, offset: number) {
-  const data = new StationDataRaw();
+function generateOffsetData(cdata: IStationDataRaw, offset: number) {
+  const data = {} as IStationDataRaw;
   data.PASSKEY = cdata.PASSKEY;
   data.stationtype = cdata.stationtype;
   data.wh65batt = cdata.wh65batt;
@@ -176,13 +176,13 @@ async function loadStationData() {
   }
 }
 
-export function decodeStationData(data: StationDataRaw) {
+export function decodeStationData(data: IStationDataRaw) {
   const TO_MM = 25.4;
   const TO_KM = 1.6;
   const TO_HPA = 33.8639;
 
   //    console.log(data);
-  const decoded: StationData = {
+  const decoded: IStationData = {
     timestamp: new Date(data.dateutc + ' UTC').toISOString(),
     tempin: round((5 / 9) * (data.tempinf - 32), 1),
     pressurerel: round(data.baromrelin * TO_HPA, 1),
@@ -205,7 +205,7 @@ export function decodeStationData(data: StationDataRaw) {
     winddir: round(data.winddir * 1.0, 0),
     time: null,
     date: null,
-    place: null,
+    place: 'Marianka',
   };
   return decoded;
 }
@@ -223,8 +223,12 @@ d.setUTCMilliseconds(0);
 const pgtime = d.getUTCFullYear() + '-' + (d.getUTCMonth() + 1) + '-' + d.getUTCDate() + ' ' + d.getUTCHours() + ':' + d.getUTCMinutes();
 
 data1.dateutc = pgtime + ':' + d.getUTCSeconds();
+data2.dateutc = pgtime + ':' + (d.getUTCSeconds() + 2);
+data3.dateutc = pgtime + ':' + (d.getUTCSeconds() + 4);
 
 console.info('Now, Timestamp, Redis, pgtime, Pg', d, data1.dateutc, pgtime);
+console.info('Now, Timestamp, Redis, pgtime, Pg', d, data2.dateutc, pgtime);
+console.info('Now, Timestamp, Redis, pgtime, Pg', d, data3.dateutc, pgtime);
 
 const data = decodeStationData(data1);
 const pgData = {

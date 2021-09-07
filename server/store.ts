@@ -1,4 +1,5 @@
-import { DomData, StationData } from "../client/models/model";
+import { IDomData, IDomDataRaw, IDomRoomData } from "../client/models/domModel";
+import { IStationData } from "../client/models/stationModel";
 import { Pool } from 'pg';
 
 var redis = require('redis');
@@ -13,7 +14,7 @@ const PG_USER = process.env.PG_USER || 'postgres';
 
 console.info('PG: ' + PG_HOST);
 
-async function storeStation(data: StationData) {
+async function storeStation(data: IStationData) {
     const pool = new Pool({
         user: PG_USER,
         host: PG_HOST,
@@ -42,7 +43,7 @@ async function storeStation(data: StationData) {
     }
 }
 
-async function storeDom(data: any) {
+async function storeDom(data: IDomDataRaw) {
     const pool = new Pool({
         user: PG_USER,
         host: PG_HOST,
@@ -51,32 +52,48 @@ async function storeDom(data: any) {
         port: PG_PORT
     });
 
+    async function storeRoomData(table: string, data: IDomRoomData, timestamp: string) {
+        const queryText = 'insert into ' + table + '(timestamp, temp, req, reqall, useroffset, maxoffset, kuri, low, leto) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)'
+        const res = await client.query(queryText, [timestamp, data.temp, data.req, data.reqall, data.useroffset, data.maxoffset, data.kuri, data.low, data.leto])
+        console.info(timestamp + ' inserted ' + table);
+        return res;
+    }
+
     const client = await pool.connect();
     try {
-        const now = data.timestamp;
-        console.info('connected ' + now);
+        const timestamp = data.timestamp;
+        console.info('connected ' + timestamp);
         await client.query('BEGIN');
 
         let table = 'vonku';
         let queryText = 'insert into ' + table + '(timestamp, temp, humidity, rain) values ($1, $2, $3, $4)';
-        let res = await client.query(queryText, [now, data[table].temp, data[table].humidity, data[table].rain]);
+        let res = await client.query(queryText, [timestamp, data.vonku.temp, data.vonku.humidity, data.vonku.rain]);
         console.info(data.timestamp + ' inserted ' + table);
 
         table = 'tarif';
         queryText = 'insert into ' + table + '(timestamp, tarif) values ($1, $2)';
-        res = await client.query(queryText, [now, data[table].tarif]);
+        res = await client.query(queryText, [timestamp, data.tarif.tarif]);
         console.info(data.timestamp + ' inserted ' + table);
 
-        for (let table in data) {
-            if (table === 'vonku' || table === 'tarif' || table === 'timestamp' || table === 'dateutc' || table === 'PASSKEY') {
-                continue;
-            }
-            if (data[table] !== null) {
-                queryText = 'insert into ' + table + '(timestamp, temp, req, reqall, useroffset, maxoffset, kuri, low, leto) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)'
-                res = await client.query(queryText, [now, data[table].temp, data[table].req, data[table].reqall, data[table].useroffset, data[table].maxoffset, data[table].kuri, data[table].low, data[table].leto])
-                console.info(data.timestamp + ' inserted ' + table);
-            }
-        }
+        res = await storeRoomData('obyvacka_vzduch', data.obyvacka_vzduch, timestamp);
+        res = await storeRoomData('obyvacka_podlaha', data.obyvacka_podlaha, timestamp);
+        res = await storeRoomData('pracovna_vzduch', data.pracovna_vzduch, timestamp);
+        res = await storeRoomData('pracovna_podlaha', data.pracovna_podlaha, timestamp);
+        res = await storeRoomData('spalna_vzduch', data.spalna_vzduch, timestamp);
+        res = await storeRoomData('spalna_podlaha', data.spalna_podlaha, timestamp);
+        res = await storeRoomData('chalani_vzduch', data.chalani_vzduch, timestamp);
+        res = await storeRoomData('chalani_podlaha', data.chalani_podlaha, timestamp);
+        res = await storeRoomData('petra_vzduch', data.petra_vzduch, timestamp);
+        res = await storeRoomData('petra_podlaha', data.petra_podlaha, timestamp);
+        res = await storeRoomData('zadverie_vzduch', data.zadverie_vzduch, timestamp);
+        res = await storeRoomData('zadverie_podlaha', data.zadverie_podlaha, timestamp);
+        res = await storeRoomData('chodba_vzduch', data.chodba_vzduch, timestamp);
+        res = await storeRoomData('chodba_podlaha', data.chodba_podlaha, timestamp);
+        res = await storeRoomData('satna_vzduch', data.satna_vzduch, timestamp);
+        res = await storeRoomData('satna_podlaha', data.satna_podlaha, timestamp);
+        res = await storeRoomData('kupelna_hore', data.kupelna_hore, timestamp);
+        res = await storeRoomData('kupelna_dole', data.kupelna_dole, timestamp);
+
         await client.query('COMMIT');
     } catch (e) {
         await client.query('ROLLBACK');
@@ -86,6 +103,7 @@ async function storeDom(data: any) {
         console.info('released');
     }
 }
+
 
 //redisClientSub.config('set', 'notify-keyspace-events', 'KEA');
 
@@ -118,7 +136,7 @@ function agregateAndStoreMinuteData(data: any) {
         return Math.round(value * multiplier) / multiplier;
     }
 
-    const reducer = (sum: StationData, item: StationData) => {
+    const reducer = (sum: IStationData, item: IStationData) => {
         sum.timestamp = item.timestamp;
         sum.tempin += item.tempin;
         sum.humidityin += item.humidityin;
@@ -142,7 +160,7 @@ function agregateAndStoreMinuteData(data: any) {
         return sum;
     };
 
-    const average = (sum: StationData, count: number) => {
+    const average = (sum: IStationData, count: number) => {
         const avg = sum;
         avg.tempin = round(sum.tempin / count, 1);
         avg.temp = round(sum.temp / count, 1);
@@ -160,7 +178,7 @@ function agregateAndStoreMinuteData(data: any) {
     };
 
     const initWithZeros = () => {
-        const init: StationData = {
+        const init: IStationData = {
             tempin: 0,
             temp: 0,
             pressurerel: 0,
@@ -191,7 +209,7 @@ function agregateAndStoreMinuteData(data: any) {
     const map = new Map();
 
     data.forEach((item: any) => {
-        const sdata: StationData = JSON.parse(item);
+        const sdata: IStationData = JSON.parse(item);
         const sdate = new Date(sdata.timestamp);
         const minute = sdate.getTime() - sdate.getTime() % 60000;
         if (map.has(minute)) {
@@ -209,12 +227,12 @@ function agregateAndStoreMinuteData(data: any) {
         const minute = new Date(key);
         const date = minute.toISOString();
         console.log(key, date, value);
-        const init: StationData = initWithZeros();
+        const init: IStationData = initWithZeros();
         const sum = value.reduce(reducer, init);
         const avg = average(sum, value.length);
         avg.timestamp = date;
         const windDir: number[] = [];
-        value.forEach((element: StationData) => {
+        value.forEach((element: IStationData) => {
             windDir.push(element.winddir);
         });
         avg.winddir = avgWind(windDir);
@@ -232,24 +250,17 @@ const toMinute = now % 60000;
 setTimeout(store, 60000 - toMinute);
 
 function store() {
-    console.log('store');
-
     console.log('station-store');
     redisClient.zrangebyscore('station-store', 0, Number.MAX_VALUE, function (err: any, result: any) {
-        console.error('err', err);
-
         agregateAndStoreMinuteData(result);
         redisClient.zremrangebyscore('station-store', 0, Number.MAX_VALUE);
     });
 
     console.log('dom-store');
     redisClient.zrangebyscore('dom-store', 0, Number.MAX_VALUE, function (err: any, result: any) {
-        console.error('err', err);
-
         result.forEach((item: any) => {
             storeDom(JSON.parse(item));
         });
-
         redisClient.zremrangebyscore('dom-store', 0, Number.MAX_VALUE);
     });
 

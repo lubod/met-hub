@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { withRouter } from 'react-router';
+import { AppContextP } from '.';
 
 function Callback(props: any) {
-    props.auth.handleAuthentication().then(() => {
+    console.info('Callback render');
+    const appContext = useContext(AppContextP);
+    appContext.auth.handleAuthentication().then(() => {
         //        console.info(props.auth.isAuthenticated());
-        props.auth.handleProfile().then(() => {
+        appContext.auth.handleProfile().then(() => {
             props.history.push('/');
         });
     });
