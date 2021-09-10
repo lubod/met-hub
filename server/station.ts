@@ -1,4 +1,4 @@
-import { IStationData, IStationDataRaw, IStationTrendData } from "../client/models/stationModel";
+import { IStationData, IStationDataRaw, IStationTrendData } from "../common/models/stationModel";
 import { socketEmitData } from "./main";
 import redis from 'redis';
 import { verifyToken } from "./utils";

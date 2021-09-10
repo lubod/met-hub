@@ -5,7 +5,7 @@ import Room from '../room/room';
 import { Container, Row, Col } from 'react-bootstrap';
 import Trend from '../trend/trend';
 import { observer } from 'mobx-react';
-import { DomDataP } from '../..';
+import { DomDataP } from '..';
 
 export const Dom = observer(() => {
   console.info('dom render');

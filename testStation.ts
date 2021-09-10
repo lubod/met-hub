@@ -2,7 +2,7 @@ import assert from 'assert';
 import axios from 'axios';
 import fetch from 'node-fetch';
 import { Pool } from 'pg';
-import { IStationData, IStationDataRaw } from './client/models/stationModel';
+import { IStationData, IStationDataRaw } from './common/models/stationModel';
 
 const PG_PORT = parseInt(process.env.PG_PORT) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';

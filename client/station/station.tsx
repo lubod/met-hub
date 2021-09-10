@@ -5,7 +5,7 @@ import Text from '../text/text';
 import Trend from '../trend/trend';
 import { Container, Row, Col } from 'react-bootstrap';
 import { observer } from 'mobx-react';
-import { AppContextP, StationDataP } from '../..';
+import { AppContextP, StationDataP } from '..';
 
 let maxDiff = 1000;
 

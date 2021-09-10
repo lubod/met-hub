@@ -3,7 +3,7 @@ import axios from 'axios';
 import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 import fetch from 'node-fetch';
 import { Pool } from 'pg';
-import { IDomData, IDomDataRaw, IDomExternalData, IDomRoomData, IDomTarifData } from './client/models/domModel';
+import { IDomData, IDomDataRaw, IDomExternalData, IDomRoomData, IDomTarifData } from './common/models/domModel';
 
 const PG_PORT = parseInt(process.env.PG_PORT) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';

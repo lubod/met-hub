@@ -1,3 +1,4 @@
+import { IStationData, IStationTrendData } from '../../common/models/stationModel';
 import { StationData } from './stationData';
 
 export class StationCtrl {
@@ -7,8 +8,8 @@ export class StationCtrl {
         this.stationData = stationData;
         this.fetchData();
         this.fetchTrendData();
-        mySocket.getSocket().on('station', stationData.processData);
-        mySocket.getSocket().on('stationTrend', stationData.processTrendData);
+        mySocket.getSocket().on('station', (newData:IStationData) => stationData.processData(newData));
+        mySocket.getSocket().on('stationTrend', (newTrendData:IStationTrendData) => stationData.processTrendData(newTrendData));
         //props.socket.getSocket().emit('station', 'getLastData');
     }
 

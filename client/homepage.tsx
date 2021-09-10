@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import './style.scss';
 import Protected from './protected';
 import { Button, Col, Container, Row } from 'react-bootstrap';
-import { Station } from './modules/station/station';
+import { Station } from './station/station';
 import { AppContextP } from '.';
-import { Dom } from './modules/dom/dom';
+import { Dom } from './dom/dom';
 
 export function HomePage(props: any) {
   console.info('Homepage render');
@@ -38,7 +38,6 @@ export function HomePage(props: any) {
             <p>Login to see more stations and historical data</p>
             <Button variant='primary' onClick={appContext.auth.login}>Login</Button>
           </Container >
-          <Dom />
         </Col>
       </Row>
     </Container >

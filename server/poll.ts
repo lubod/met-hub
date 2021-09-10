@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { IDomExternalData, IDomRoomData, IDomTarifData } from '../client/models/domModel';
+import { IDomExternalData, IDomRoomData, IDomTarifData } from '../common/models/domModel';
 import axios from 'axios';
 
 const DOM_PASSKEY=process.env.DOM_PASSKEY || '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';

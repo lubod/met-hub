@@ -4,10 +4,10 @@ import App from './app';
 import { BrowserRouter } from 'react-router-dom';
 import Auth from './auth';
 import MySocket from './socket';
-import { StationData } from './modules/station/stationData';
-import { StationCtrl } from './modules/station/stationCtrl';
-import { DomData } from './modules/dom/domData';
-import { DomCtrl } from './modules/dom/domCtrl';
+import { StationData } from './station/stationData';
+import { StationCtrl } from './station/stationCtrl';
+import { DomData } from './dom/domData';
+import { DomCtrl } from './dom/domCtrl';
 
 class AppContext {
   auth = new Auth();

@@ -1,5 +1,5 @@
-import { IDomData, IDomDataRaw, IDomRoomData } from "../client/models/domModel";
-import { IStationData } from "../client/models/stationModel";
+import { IDomData, IDomDataRaw, IDomRoomData } from "../common/models/domModel";
+import { IStationData } from "../common/models/stationModel";
 import { Pool } from 'pg';
 
 var redis = require('redis');

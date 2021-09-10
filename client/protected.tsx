@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
-import { Station } from './modules/station/station';
+import { Station } from './station/station';
 import { Container, Row, Col, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
-import { Dom } from './modules/dom/dom';
+import { Dom } from './dom/dom';
 import Iframe from 'react-iframe';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import './style.scss';

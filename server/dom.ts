@@ -1,5 +1,5 @@
 import redis from 'redis';
-import { IDomTrendData, IDomData, IDomDataRaw } from '../client/models/domModel';
+import { IDomTrendData, IDomData, IDomDataRaw } from '../common/models/domModel';
 import { socketEmitData } from './main';
 import { verifyToken } from "./utils";
 

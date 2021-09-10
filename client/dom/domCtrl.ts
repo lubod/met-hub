@@ -1,3 +1,4 @@
+import { IDomData, IDomTrendData } from '../../common/models/domModel';
 import { DomData } from './domData';
 
 export class DomCtrl {
@@ -7,8 +8,8 @@ export class DomCtrl {
         this.domData = domData;
         this.fetchData();
         this.fetchTrendData();
-        mySocket.getSocket().on('dom', domData.processData);
-        mySocket.getSocket().on('domTrend', domData.processTrendData);
+        mySocket.getSocket().on('dom', (newData: IDomData) => domData.processData(newData));
+        mySocket.getSocket().on('domTrend', (newTrendData: IDomTrendData) => domData.processTrendData(newTrendData));
         //props.socket.getSocket().emit('dom', 'getLastData');
     }
 
