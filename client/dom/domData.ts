@@ -19,13 +19,15 @@ export class DomData {
         petra_vzduch: new Array<number>(),
         petra_podlaha: new Array<number>(),
     } as IDomTrendData;
+    ctime: Date = new Date();
 
     constructor() {
         makeObservable(this, {
             data: observable,
             trendData: observable,
             processData: action,
-            processTrendData: action
+            processTrendData: action,
+            setTime: action
         });
     }
 
@@ -46,5 +48,9 @@ export class DomData {
         if (newTrendData != null) {
             this.trendData = newTrendData;
         }
+    }
+
+    setTime(newTime: Date) {
+        this.ctime = newTime;
     }
 }

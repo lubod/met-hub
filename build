@@ -1,0 +1,3 @@
+time npm run build
+time sudo docker-compose build
+time sudo docker-compose up

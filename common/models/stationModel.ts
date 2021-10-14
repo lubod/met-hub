@@ -1,3 +1,13 @@
+export class StationCfg {
+    TABLE = 'stanica';
+    SOCKET_CHANNEL = 'station';
+    SOCKET_TREND_CHANNEL = 'station-trend';
+    REDIS_LAST_DATA_KEY = 'station-last';
+    REDIS_MINUTE_DATA_KEY = 'station-minute-data';
+    REDIS_STORE_CHANNEL = 'station-store-pubsub';
+    REDIS_TREND_KEY = 'station-trend';
+}
+
 export interface IStationData {
     timestamp: string;
     time: string;

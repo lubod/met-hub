@@ -22,14 +22,14 @@ function WindRose(props: Wind) {
       const sin = Math.sin((dir) * Math.PI / 180 - Math.PI / 2);
       const x0 = radius + 70 * cos;
       const y0 = radius + 70 * sin;
-      const x1 = radius + 50 * cos;
-      const y1 = radius + 50 * sin;
-      const x2 = radius + 60 * Math.cos((dir - 7) * Math.PI / 180 - Math.PI / 2);
-      const y2 = radius + 60 * Math.sin((dir - 7) * Math.PI / 180 - Math.PI / 2);
-      const x3 = radius + 60 * Math.cos((dir + 7) * Math.PI / 180 - Math.PI / 2);
-      const y3 = radius + 60 * Math.sin((dir + 7) * Math.PI / 180 - Math.PI / 2);
+      const x1 = radius + 40 * cos;
+      const y1 = radius + 40 * sin;
+      const x2 = radius + 55 * Math.cos((dir - 7) * Math.PI / 180 - Math.PI / 2);
+      const y2 = radius + 55 * Math.sin((dir - 7) * Math.PI / 180 - Math.PI / 2);
+      const x3 = radius + 55 * Math.cos((dir + 7) * Math.PI / 180 - Math.PI / 2);
+      const y3 = radius + 55 * Math.sin((dir + 7) * Math.PI / 180 - Math.PI / 2);
       ctx.beginPath();
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3;
       ctx.strokeStyle = 'white';
       ctx.moveTo(x0, y0);
       ctx.lineTo(x1, y1);
@@ -181,7 +181,7 @@ function WindRose(props: Wind) {
     ctx.font = "bold 13px Arial";
     ctx.fillStyle = "#17A2B8";
     ctx.textAlign = "center";
-    ctx.fillText("Speed", canvas.width / 2, canvas.height / 2 - 30);
+    ctx.fillText("Wind Dir", canvas.width / 2, canvas.height / 2 + 3);
   }
 
   function draw(wind: Wind, canvas: any) {
@@ -190,9 +190,9 @@ function WindRose(props: Wind) {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawWindRose(radius, ctx, canvas);
-    drawSpeed(wind.speed, ctx, canvas);
+    //drawSpeed(wind.speed, ctx, canvas);
     drawDirTrend(wind.dirTrend, radius, ctx, canvas);
-    drawSpeedTrend(wind.speedTrend, ctx, canvas);
+    //drawSpeedTrend(wind.speedTrend, ctx, canvas);
     drawDirArrow(wind.dir, radius, ctx);
   }
 
@@ -210,7 +210,8 @@ function WindRose(props: Wind) {
         </canvas>
       </Col>
       <Col xs={4} className='text-left'>
-        <Data name='Wind Dir' value={props.dir} unit='°' fix={0}></Data>
+        <Data name='Wind Speed' value={props.speed} unit='km/h' fix={0}></Data>
+        <Trend data={props.speedTrend} range={5}></Trend>
         <Data name='Wind Gust' value={props.gust} unit='km/h' fix={1}></Data>
         <Trend data={props.gustTrend} range={5}></Trend>
         <Data name='Daily Gust' value={props.dailyGust} unit='km/h' fix={1}></Data>
