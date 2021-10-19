@@ -201,7 +201,7 @@ function WindRose(props: Wind) {
     draw(props, canvas);
   });
 
-  console.info('render windrose', props);
+  //console.info('render windrose', props);
   return (
     <Row>
       <Col xs={8}>

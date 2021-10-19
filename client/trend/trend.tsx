@@ -41,7 +41,7 @@ function Trend(props: TrendData) {
     draw(canvas, props);
   });
 
-  console.info('render trend');
+  //console.info('render trend');
   return (
     <OverlayTrigger overlay={<Tooltip id="tooltip">({min?.toFixed(1)}, {max?.toFixed(1)})</Tooltip>}>
       <div className='text-left'>

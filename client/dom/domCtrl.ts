@@ -1,15 +1,17 @@
-import { IDomData, IDomTrendData } from '../../common/models/domModel';
+import { DomCfg, IDomData, IDomTrendData } from '../../common/models/domModel';
 import { DomData } from './domData';
 
 export class DomCtrl {
     domData: DomData;
+    domCfg: DomCfg;
 
     constructor(mySocket: any, domData: DomData) {
         this.domData = domData;
+        this.domCfg = new DomCfg();
         this.fetchData();
         this.fetchTrendData();
-        mySocket.getSocket().on('dom', (newData: IDomData) => domData.processData(newData));
-        mySocket.getSocket().on('domTrend', (newTrendData: IDomTrendData) => domData.processTrendData(newTrendData));
+        mySocket.getSocket().on(this.domCfg.SOCKET_CHANNEL, (newData: IDomData) => domData.processData(newData));
+        mySocket.getSocket().on(this.domCfg.SOCKET_TREND_CHANNEL, (newTrendData: IDomTrendData) => domData.processTrendData(newTrendData));
         //props.socket.getSocket().emit('dom', 'getLastData');
     }
 

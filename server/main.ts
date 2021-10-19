@@ -45,7 +45,7 @@ app.use(router);
 export function socketEmitData(channel: string, data: any) {
     sockets.forEach(socket => {
         socket.emit(channel, data);
-        console.log('emit', channel)
+        console.log('emit', channel, socket.id)
     });
 }
 

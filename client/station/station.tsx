@@ -11,6 +11,7 @@ let maxDiff = 1000;
 
 export const Station = observer(() => {
   console.info('station render');
+
   /*
     useEffect(() => {
       var timer = setInterval(() => {

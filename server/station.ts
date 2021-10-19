@@ -243,7 +243,7 @@ export class Station implements IMeasurement {
         map.forEach(function (value, key) {
             const minute = new Date(key);
             const date = minute.toISOString();
-            console.log(key, date, value);
+            //console.log(key, date, value);
             const init: IStationData = initWithZeros();
             const sum = value.reduce(reducer, init);
             const avg = average(sum, value.length);
@@ -253,9 +253,9 @@ export class Station implements IMeasurement {
                 windDir.push(element.winddir);
             });
             avg.winddir = avgWind(windDir);
-            console.info(avg);
+            //console.info(avg);
             result.set(minute.getTime(), avg);
-            console.info('Agregated minute', minute);
+            console.info('Agregated station minute', minute);
         });
         return result;
     }

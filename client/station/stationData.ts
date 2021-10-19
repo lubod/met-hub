@@ -3,7 +3,7 @@ import { action, computed, makeAutoObservable, makeObservable, observable, runIn
 
 export class StationData {
     data: IStationData = {
-        timestamp: ""
+        timestamp: ''
     } as IStationData;
     trendData: IStationTrendData = {
         timestamp: new Array<string>(),

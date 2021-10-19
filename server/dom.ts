@@ -248,7 +248,7 @@ export class Dom implements IMeasurement {
         date.setUTCSeconds(0);
         deepCopy.timestamp = date.toISOString();
         map.set(date.getTime(), deepCopy);
-        console.info('Agregated minute', deepCopy.timestamp);
+        console.info('Agregated dom minute', deepCopy.timestamp);
         return map;
     }
 }
