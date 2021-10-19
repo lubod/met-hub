@@ -98,8 +98,15 @@ function agregator() {
     console.log(dom.getRedisMinuteDataKey());
     redisClient.zrangebyscore(dom.getRedisMinuteDataKey(), 0, Number.MAX_VALUE, function (err: any, result: any) {
         if (result.length > 0) {
-            agregateMinuteData(dom, JSON.parse(result));
-            redisClient.zremrangebyscore(dom.getRedisMinuteDataKey(), 0, Number.MAX_VALUE);
+            //console.info(result);
+            try {
+                agregateMinuteData(dom, JSON.parse(result));
+            } catch (e) {
+                console.error(e, result);
+            }
+            finally {
+                redisClient.zremrangebyscore(dom.getRedisMinuteDataKey(), 0, Number.MAX_VALUE);
+            }
         }
     });
 

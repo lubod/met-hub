@@ -1,26 +1,29 @@
 import { IDomTrendData, IDomData, IDomDataRaw, DomCfg } from '../common/models/domModel';
 import { IMeasurement } from './measurement';
+const cloneDeep = require('lodash.clonedeep');
 
-const OBYVACKA_VZDUCH = 'obyvacka_vzduch';
-const OBYVACKA_PODLAHA = 'obyvacka_podlaha';
-const PRACOVNA_VZDUCH = 'pracovna_vzduch';
-const PRACOVNA_PODLAHA = 'pracovna_podlaha';
-const SPALNA_VZDUCH = 'spalna_vzduch';
-const SPALNA_PODLAHA = 'spalna_podlaha';
-const CHALANI_VZDUCH = 'chalani_vzduch';
-const CHALANI_PODLAHA = 'chalani_podlaha';
-const PETRA_VZDUCH = 'petra_vzduch';
-const PETRA_PODLAHA = 'petra_podlaha';
-const ZADVERIE_VZDUCH = 'zadverie_vzduch';
-const ZADVERIE_PODLAHA = 'zadverie_podlaha';
-const CHODBA_VZDUCH = 'chodba_vzduch';
-const CHODBA_PODLAHA = 'chodba_podlaha';
-const SATNA_VZDUCH = 'satna_vzduch';
-const SATNA_PODLAHA = 'satna_podlaha';
-const KUPELNA_HORE = 'kupelna_hore';
-const KUPELNA_DOLE = 'kupelna_dole';
-const VONKU = 'vonku';
-const TARIF = 'tarif';
+export enum TABLES {
+    OBYVACKA_VZDUCH = 'obyvacka_vzduch',
+    OBYVACKA_PODLAHA = 'obyvacka_podlaha',
+    PRACOVNA_VZDUCH = 'pracovna_vzduch',
+    PRACOVNA_PODLAHA = 'pracovna_podlaha',
+    SPALNA_VZDUCH = 'spalna_vzduch',
+    SPALNA_PODLAHA = 'spalna_podlaha',
+    CHALANI_VZDUCH = 'chalani_vzduch',
+    CHALANI_PODLAHA = 'chalani_podlaha',
+    PETRA_VZDUCH = 'petra_vzduch',
+    PETRA_PODLAHA = 'petra_podlaha',
+    ZADVERIE_VZDUCH = 'zadverie_vzduch',
+    ZADVERIE_PODLAHA = 'zadverie_podlaha',
+    CHODBA_VZDUCH = 'chodba_vzduch',
+    CHODBA_PODLAHA = 'chodba_podlaha',
+    SATNA_VZDUCH = 'satna_vzduch',
+    SATNA_PODLAHA = 'satna_podlaha',
+    KUPELNA_HORE = 'kupelna_hore',
+    KUPELNA_DOLE = 'kupelna_dole',
+    VONKU = 'vonku',
+    TARIF = 'tarif',
+}
 
 const PASSKEY = process.env.DOM_PASSKEY || '';
 
@@ -57,97 +60,100 @@ export class Dom implements IMeasurement {
 
     getQueryArray(table: string, data: IDomDataRaw) {
         switch (table) {
-            case OBYVACKA_VZDUCH:
-                return [data.timestamp, data[OBYVACKA_VZDUCH].temp, data[OBYVACKA_VZDUCH].req, data[OBYVACKA_VZDUCH].reqall, data[OBYVACKA_VZDUCH].useroffset, data[OBYVACKA_VZDUCH].maxoffset, data[OBYVACKA_VZDUCH].kuri, data[OBYVACKA_VZDUCH].low, data[OBYVACKA_VZDUCH].leto];
-            case OBYVACKA_PODLAHA:
-                return [data.timestamp, data[OBYVACKA_PODLAHA].temp, data[OBYVACKA_PODLAHA].req, data[OBYVACKA_PODLAHA].reqall, data[OBYVACKA_PODLAHA].useroffset, data[OBYVACKA_PODLAHA].maxoffset, data[OBYVACKA_PODLAHA].kuri, data[OBYVACKA_PODLAHA].low, data[OBYVACKA_PODLAHA].leto];
-            case PRACOVNA_VZDUCH:
-                return [data.timestamp, data[PRACOVNA_VZDUCH].temp, data[PRACOVNA_VZDUCH].req, data[PRACOVNA_VZDUCH].reqall, data[PRACOVNA_VZDUCH].useroffset, data[PRACOVNA_VZDUCH].maxoffset, data[PRACOVNA_VZDUCH].kuri, data[PRACOVNA_VZDUCH].low, data[PRACOVNA_VZDUCH].leto];
-            case PRACOVNA_PODLAHA:
-                return [data.timestamp, data[PRACOVNA_PODLAHA].temp, data[PRACOVNA_PODLAHA].req, data[PRACOVNA_PODLAHA].reqall, data[PRACOVNA_PODLAHA].useroffset, data[PRACOVNA_PODLAHA].maxoffset, data[PRACOVNA_PODLAHA].kuri, data[PRACOVNA_PODLAHA].low, data[PRACOVNA_PODLAHA].leto];
-            case SPALNA_VZDUCH:
-                return [data.timestamp, data[SPALNA_VZDUCH].temp, data[SPALNA_VZDUCH].req, data[SPALNA_VZDUCH].reqall, data[SPALNA_VZDUCH].useroffset, data[SPALNA_VZDUCH].maxoffset, data[SPALNA_VZDUCH].kuri, data[SPALNA_VZDUCH].low, data[SPALNA_VZDUCH].leto];
-            case SPALNA_PODLAHA:
-                return [data.timestamp, data[SPALNA_PODLAHA].temp, data[SPALNA_PODLAHA].req, data[SPALNA_PODLAHA].reqall, data[SPALNA_PODLAHA].useroffset, data[SPALNA_PODLAHA].maxoffset, data[SPALNA_PODLAHA].kuri, data[SPALNA_PODLAHA].low, data[SPALNA_PODLAHA].leto];
-            case CHALANI_VZDUCH:
-                return [data.timestamp, data[CHALANI_VZDUCH].temp, data[CHALANI_VZDUCH].req, data[CHALANI_VZDUCH].reqall, data[CHALANI_VZDUCH].useroffset, data[CHALANI_VZDUCH].maxoffset, data[CHALANI_VZDUCH].kuri, data[CHALANI_VZDUCH].low, data[CHALANI_VZDUCH].leto];
-            case CHALANI_PODLAHA:
-                return [data.timestamp, data[CHALANI_PODLAHA].temp, data[CHALANI_PODLAHA].req, data[CHALANI_PODLAHA].reqall, data[CHALANI_PODLAHA].useroffset, data[CHALANI_PODLAHA].maxoffset, data[CHALANI_PODLAHA].kuri, data[CHALANI_PODLAHA].low, data[CHALANI_PODLAHA].leto];
-            case PETRA_VZDUCH:
-                return [data.timestamp, data[PETRA_VZDUCH].temp, data[PETRA_VZDUCH].req, data[PETRA_VZDUCH].reqall, data[PETRA_VZDUCH].useroffset, data[PETRA_VZDUCH].maxoffset, data[PETRA_VZDUCH].kuri, data[PETRA_VZDUCH].low, data[PETRA_VZDUCH].leto];
-            case PETRA_PODLAHA:
-                return [data.timestamp, data[PETRA_PODLAHA].temp, data[PETRA_PODLAHA].req, data[PETRA_PODLAHA].reqall, data[PETRA_PODLAHA].useroffset, data[PETRA_PODLAHA].maxoffset, data[PETRA_PODLAHA].kuri, data[PETRA_PODLAHA].low, data[PETRA_PODLAHA].leto];
-            case ZADVERIE_VZDUCH:
-                return [data.timestamp, data[ZADVERIE_VZDUCH].temp, data[ZADVERIE_VZDUCH].req, data[ZADVERIE_VZDUCH].reqall, data[ZADVERIE_VZDUCH].useroffset, data[ZADVERIE_VZDUCH].maxoffset, data[ZADVERIE_VZDUCH].kuri, data[ZADVERIE_VZDUCH].low, data[ZADVERIE_VZDUCH].leto];
-            case ZADVERIE_PODLAHA:
-                return [data.timestamp, data[ZADVERIE_PODLAHA].temp, data[ZADVERIE_PODLAHA].req, data[ZADVERIE_PODLAHA].reqall, data[ZADVERIE_PODLAHA].useroffset, data[ZADVERIE_PODLAHA].maxoffset, data[ZADVERIE_PODLAHA].kuri, data[ZADVERIE_PODLAHA].low, data[ZADVERIE_PODLAHA].leto];
-            case CHODBA_VZDUCH:
-                return [data.timestamp, data[CHODBA_VZDUCH].temp, data[CHODBA_VZDUCH].req, data[CHODBA_VZDUCH].reqall, data[CHODBA_VZDUCH].useroffset, data[CHODBA_VZDUCH].maxoffset, data[CHODBA_VZDUCH].kuri, data[CHODBA_VZDUCH].low, data[CHODBA_VZDUCH].leto];
-            case CHODBA_PODLAHA:
-                return [data.timestamp, data[CHODBA_PODLAHA].temp, data[CHODBA_PODLAHA].req, data[CHODBA_PODLAHA].reqall, data[CHODBA_PODLAHA].useroffset, data[CHODBA_PODLAHA].maxoffset, data[CHODBA_PODLAHA].kuri, data[CHODBA_PODLAHA].low, data[CHODBA_PODLAHA].leto];
-            case SATNA_VZDUCH:
-                return [data.timestamp, data[SATNA_VZDUCH].temp, data[SATNA_VZDUCH].req, data[SATNA_VZDUCH].reqall, data[SATNA_VZDUCH].useroffset, data[SATNA_VZDUCH].maxoffset, data[SATNA_VZDUCH].kuri, data[SATNA_VZDUCH].low, data[SATNA_VZDUCH].leto];
-            case SATNA_PODLAHA:
-                return [data.timestamp, data[SATNA_PODLAHA].temp, data[SATNA_PODLAHA].req, data[SATNA_PODLAHA].reqall, data[SATNA_PODLAHA].useroffset, data[SATNA_PODLAHA].maxoffset, data[SATNA_PODLAHA].kuri, data[SATNA_PODLAHA].low, data[SATNA_PODLAHA].leto];
-            case KUPELNA_HORE:
-                return [data.timestamp, data[KUPELNA_HORE].temp, data[KUPELNA_HORE].req, data[KUPELNA_HORE].reqall, data[KUPELNA_HORE].useroffset, data[KUPELNA_HORE].maxoffset, data[KUPELNA_HORE].kuri, data[KUPELNA_HORE].low, data[KUPELNA_HORE].leto];
-            case KUPELNA_DOLE:
-                return [data.timestamp, data[KUPELNA_DOLE].temp, data[KUPELNA_DOLE].req, data[KUPELNA_DOLE].reqall, data[KUPELNA_DOLE].useroffset, data[KUPELNA_DOLE].maxoffset, data[KUPELNA_DOLE].kuri, data[KUPELNA_DOLE].low, data[KUPELNA_DOLE].leto];
-            case VONKU:
-                return [data.timestamp, data[VONKU].temp, data[VONKU].humidity, data[VONKU].rain];
-            case TARIF:
-                return [data.timestamp, data[TARIF].tarif];
+            case TABLES.OBYVACKA_VZDUCH:
+                return [data.timestamp, data[TABLES.OBYVACKA_VZDUCH].temp, data[TABLES.OBYVACKA_VZDUCH].req, data[TABLES.OBYVACKA_VZDUCH].reqall, data[TABLES.OBYVACKA_VZDUCH].useroffset, data[TABLES.OBYVACKA_VZDUCH].maxoffset, data[TABLES.OBYVACKA_VZDUCH].kuri, data[TABLES.OBYVACKA_VZDUCH].low, data[TABLES.OBYVACKA_VZDUCH].leto];
+            case TABLES.OBYVACKA_PODLAHA:
+                return [data.timestamp, data[TABLES.OBYVACKA_PODLAHA].temp, data[TABLES.OBYVACKA_PODLAHA].req, data[TABLES.OBYVACKA_PODLAHA].reqall, data[TABLES.OBYVACKA_PODLAHA].useroffset, data[TABLES.OBYVACKA_PODLAHA].maxoffset, data[TABLES.OBYVACKA_PODLAHA].kuri, data[TABLES.OBYVACKA_PODLAHA].low, data[TABLES.OBYVACKA_PODLAHA].leto];
+            case TABLES.PRACOVNA_VZDUCH:
+                return [data.timestamp, data[TABLES.PRACOVNA_VZDUCH].temp, data[TABLES.PRACOVNA_VZDUCH].req, data[TABLES.PRACOVNA_VZDUCH].reqall, data[TABLES.PRACOVNA_VZDUCH].useroffset, data[TABLES.PRACOVNA_VZDUCH].maxoffset, data[TABLES.PRACOVNA_VZDUCH].kuri, data[TABLES.PRACOVNA_VZDUCH].low, data[TABLES.PRACOVNA_VZDUCH].leto];
+            case TABLES.PRACOVNA_PODLAHA:
+                return [data.timestamp, data[TABLES.PRACOVNA_PODLAHA].temp, data[TABLES.PRACOVNA_PODLAHA].req, data[TABLES.PRACOVNA_PODLAHA].reqall, data[TABLES.PRACOVNA_PODLAHA].useroffset, data[TABLES.PRACOVNA_PODLAHA].maxoffset, data[TABLES.PRACOVNA_PODLAHA].kuri, data[TABLES.PRACOVNA_PODLAHA].low, data[TABLES.PRACOVNA_PODLAHA].leto];
+            case TABLES.SPALNA_VZDUCH:
+                return [data.timestamp, data[TABLES.SPALNA_VZDUCH].temp, data[TABLES.SPALNA_VZDUCH].req, data[TABLES.SPALNA_VZDUCH].reqall, data[TABLES.SPALNA_VZDUCH].useroffset, data[TABLES.SPALNA_VZDUCH].maxoffset, data[TABLES.SPALNA_VZDUCH].kuri, data[TABLES.SPALNA_VZDUCH].low, data[TABLES.SPALNA_VZDUCH].leto];
+            case TABLES.SPALNA_PODLAHA:
+                return [data.timestamp, data[TABLES.SPALNA_PODLAHA].temp, data[TABLES.SPALNA_PODLAHA].req, data[TABLES.SPALNA_PODLAHA].reqall, data[TABLES.SPALNA_PODLAHA].useroffset, data[TABLES.SPALNA_PODLAHA].maxoffset, data[TABLES.SPALNA_PODLAHA].kuri, data[TABLES.SPALNA_PODLAHA].low, data[TABLES.SPALNA_PODLAHA].leto];
+            case TABLES.CHALANI_VZDUCH:
+                return [data.timestamp, data[TABLES.CHALANI_VZDUCH].temp, data[TABLES.CHALANI_VZDUCH].req, data[TABLES.CHALANI_VZDUCH].reqall, data[TABLES.CHALANI_VZDUCH].useroffset, data[TABLES.CHALANI_VZDUCH].maxoffset, data[TABLES.CHALANI_VZDUCH].kuri, data[TABLES.CHALANI_VZDUCH].low, data[TABLES.CHALANI_VZDUCH].leto];
+            case TABLES.CHALANI_PODLAHA:
+                return [data.timestamp, data[TABLES.CHALANI_PODLAHA].temp, data[TABLES.CHALANI_PODLAHA].req, data[TABLES.CHALANI_PODLAHA].reqall, data[TABLES.CHALANI_PODLAHA].useroffset, data[TABLES.CHALANI_PODLAHA].maxoffset, data[TABLES.CHALANI_PODLAHA].kuri, data[TABLES.CHALANI_PODLAHA].low, data[TABLES.CHALANI_PODLAHA].leto];
+            case TABLES.PETRA_VZDUCH:
+                return [data.timestamp, data[TABLES.PETRA_VZDUCH].temp, data[TABLES.PETRA_VZDUCH].req, data[TABLES.PETRA_VZDUCH].reqall, data[TABLES.PETRA_VZDUCH].useroffset, data[TABLES.PETRA_VZDUCH].maxoffset, data[TABLES.PETRA_VZDUCH].kuri, data[TABLES.PETRA_VZDUCH].low, data[TABLES.PETRA_VZDUCH].leto];
+            case TABLES.PETRA_PODLAHA:
+                return [data.timestamp, data[TABLES.PETRA_PODLAHA].temp, data[TABLES.PETRA_PODLAHA].req, data[TABLES.PETRA_PODLAHA].reqall, data[TABLES.PETRA_PODLAHA].useroffset, data[TABLES.PETRA_PODLAHA].maxoffset, data[TABLES.PETRA_PODLAHA].kuri, data[TABLES.PETRA_PODLAHA].low, data[TABLES.PETRA_PODLAHA].leto];
+            case TABLES.ZADVERIE_VZDUCH:
+                return [data.timestamp, data[TABLES.ZADVERIE_VZDUCH].temp, data[TABLES.ZADVERIE_VZDUCH].req, data[TABLES.ZADVERIE_VZDUCH].reqall, data[TABLES.ZADVERIE_VZDUCH].useroffset, data[TABLES.ZADVERIE_VZDUCH].maxoffset, data[TABLES.ZADVERIE_VZDUCH].kuri, data[TABLES.ZADVERIE_VZDUCH].low, data[TABLES.ZADVERIE_VZDUCH].leto];
+            case TABLES.ZADVERIE_PODLAHA:
+                return [data.timestamp, data[TABLES.ZADVERIE_PODLAHA].temp, data[TABLES.ZADVERIE_PODLAHA].req, data[TABLES.ZADVERIE_PODLAHA].reqall, data[TABLES.ZADVERIE_PODLAHA].useroffset, data[TABLES.ZADVERIE_PODLAHA].maxoffset, data[TABLES.ZADVERIE_PODLAHA].kuri, data[TABLES.ZADVERIE_PODLAHA].low, data[TABLES.ZADVERIE_PODLAHA].leto];
+            case TABLES.CHODBA_VZDUCH:
+                return [data.timestamp, data[TABLES.CHODBA_VZDUCH].temp, data[TABLES.CHODBA_VZDUCH].req, data[TABLES.CHODBA_VZDUCH].reqall, data[TABLES.CHODBA_VZDUCH].useroffset, data[TABLES.CHODBA_VZDUCH].maxoffset, data[TABLES.CHODBA_VZDUCH].kuri, data[TABLES.CHODBA_VZDUCH].low, data[TABLES.CHODBA_VZDUCH].leto];
+            case TABLES.CHODBA_PODLAHA:
+                return [data.timestamp, data[TABLES.CHODBA_PODLAHA].temp, data[TABLES.CHODBA_PODLAHA].req, data[TABLES.CHODBA_PODLAHA].reqall, data[TABLES.CHODBA_PODLAHA].useroffset, data[TABLES.CHODBA_PODLAHA].maxoffset, data[TABLES.CHODBA_PODLAHA].kuri, data[TABLES.CHODBA_PODLAHA].low, data[TABLES.CHODBA_PODLAHA].leto];
+            case TABLES.SATNA_VZDUCH:
+                return [data.timestamp, data[TABLES.SATNA_VZDUCH].temp, data[TABLES.SATNA_VZDUCH].req, data[TABLES.SATNA_VZDUCH].reqall, data[TABLES.SATNA_VZDUCH].useroffset, data[TABLES.SATNA_VZDUCH].maxoffset, data[TABLES.SATNA_VZDUCH].kuri, data[TABLES.SATNA_VZDUCH].low, data[TABLES.SATNA_VZDUCH].leto];
+            case TABLES.SATNA_PODLAHA:
+                return [data.timestamp, data[TABLES.SATNA_PODLAHA].temp, data[TABLES.SATNA_PODLAHA].req, data[TABLES.SATNA_PODLAHA].reqall, data[TABLES.SATNA_PODLAHA].useroffset, data[TABLES.SATNA_PODLAHA].maxoffset, data[TABLES.SATNA_PODLAHA].kuri, data[TABLES.SATNA_PODLAHA].low, data[TABLES.SATNA_PODLAHA].leto];
+            case TABLES.KUPELNA_HORE:
+                return [data.timestamp, data[TABLES.KUPELNA_HORE].temp, data[TABLES.KUPELNA_HORE].req, data[TABLES.KUPELNA_HORE].reqall, data[TABLES.KUPELNA_HORE].useroffset, data[TABLES.KUPELNA_HORE].maxoffset, data[TABLES.KUPELNA_HORE].kuri, data[TABLES.KUPELNA_HORE].low, data[TABLES.KUPELNA_HORE].leto];
+            case TABLES.KUPELNA_DOLE:
+                return [data.timestamp, data[TABLES.KUPELNA_DOLE].temp, data[TABLES.KUPELNA_DOLE].req, data[TABLES.KUPELNA_DOLE].reqall, data[TABLES.KUPELNA_DOLE].useroffset, data[TABLES.KUPELNA_DOLE].maxoffset, data[TABLES.KUPELNA_DOLE].kuri, data[TABLES.KUPELNA_DOLE].low, data[TABLES.KUPELNA_DOLE].leto];
+            case TABLES.VONKU:
+                return [data.timestamp, data[TABLES.VONKU].temp, data[TABLES.VONKU].humidity, data[TABLES.VONKU].rain];
+            case TABLES.TARIF:
+                return [data.timestamp, data[TABLES.TARIF].tarif];
         }
     }
 
     getQueryText(table: string) {
         switch (table) {
-            case OBYVACKA_VZDUCH:
-            case OBYVACKA_PODLAHA:
-            case PRACOVNA_VZDUCH:
-            case PRACOVNA_PODLAHA:
-            case SPALNA_VZDUCH:
-            case SPALNA_PODLAHA:
-            case CHALANI_VZDUCH:
-            case CHALANI_PODLAHA:
-            case PETRA_VZDUCH:
-            case PETRA_PODLAHA:
-            case ZADVERIE_VZDUCH:
-            case ZADVERIE_PODLAHA:
-            case CHODBA_VZDUCH:
-            case CHODBA_PODLAHA:
-            case SATNA_VZDUCH:
-            case SATNA_PODLAHA:
-            case KUPELNA_HORE:
-            case KUPELNA_DOLE:
+            case TABLES.OBYVACKA_VZDUCH:
+            case TABLES.OBYVACKA_PODLAHA:
+            case TABLES.PRACOVNA_VZDUCH:
+            case TABLES.PRACOVNA_PODLAHA:
+            case TABLES.SPALNA_VZDUCH:
+            case TABLES.SPALNA_PODLAHA:
+            case TABLES.CHALANI_VZDUCH:
+            case TABLES.CHALANI_PODLAHA:
+            case TABLES.PETRA_VZDUCH:
+            case TABLES.PETRA_PODLAHA:
+            case TABLES.ZADVERIE_VZDUCH:
+            case TABLES.ZADVERIE_PODLAHA:
+            case TABLES.CHODBA_VZDUCH:
+            case TABLES.CHODBA_PODLAHA:
+            case TABLES.SATNA_VZDUCH:
+            case TABLES.SATNA_PODLAHA:
+            case TABLES.KUPELNA_HORE:
+            case TABLES.KUPELNA_DOLE:
                 return 'insert into ' + table + '(timestamp, temp, req, reqall, useroffset, maxoffset, kuri, low, leto) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
-            case VONKU:
+            case TABLES.VONKU:
                 return 'insert into ' + table + '(timestamp, temp, humidity, rain) values ($1, $2, $3, $4)';
-            case TARIF: 'insert into ' + table + '(timestamp, tarif) values ($1, $2)';
+            case TABLES.TARIF:
+                return 'insert into ' + table + '(timestamp, tarif) values ($1, $2)';
 
         }
     }
 
     getTables() {
         return [
-            OBYVACKA_VZDUCH,
-            OBYVACKA_PODLAHA,
-            PRACOVNA_VZDUCH,
-            PRACOVNA_PODLAHA,
-            SPALNA_VZDUCH,
-            SPALNA_PODLAHA,
-            CHALANI_VZDUCH,
-            CHALANI_PODLAHA,
-            PETRA_VZDUCH,
-            PETRA_PODLAHA,
-            ZADVERIE_VZDUCH,
-            ZADVERIE_PODLAHA,
-            CHODBA_VZDUCH,
-            CHODBA_PODLAHA,
-            SATNA_VZDUCH,
-            SATNA_PODLAHA,
-            KUPELNA_HORE,
-            KUPELNA_DOLE,
+            TABLES.OBYVACKA_VZDUCH,
+            TABLES.OBYVACKA_PODLAHA,
+            TABLES.PRACOVNA_VZDUCH,
+            TABLES.PRACOVNA_PODLAHA,
+            TABLES.SPALNA_VZDUCH,
+            TABLES.SPALNA_PODLAHA,
+            TABLES.CHALANI_VZDUCH,
+            TABLES.CHALANI_PODLAHA,
+            TABLES.PETRA_VZDUCH,
+            TABLES.PETRA_PODLAHA,
+            TABLES.ZADVERIE_VZDUCH,
+            TABLES.ZADVERIE_PODLAHA,
+            TABLES.CHODBA_VZDUCH,
+            TABLES.CHODBA_PODLAHA,
+            TABLES.SATNA_VZDUCH,
+            TABLES.SATNA_PODLAHA,
+            TABLES.KUPELNA_HORE,
+            TABLES.KUPELNA_DOLE,
+            TABLES.VONKU,
+            TABLES.TARIF
         ];
     }
 
@@ -170,21 +176,21 @@ export class Dom implements IMeasurement {
         tmp.petra_podlaha = [];
 
         data.forEach((item: any) => {
-            let value: IDomData = JSON.parse(item);
+            let value: IDomDataRaw = JSON.parse(item);
             tmp.timestamp.push(value.timestamp);
-            tmp.temp.push(value.temp);
-            tmp.humidity.push(value.humidity);
-            tmp.rain.push(value.rain);
-            tmp.obyvacka_vzduch.push(value.obyvacka_vzduch);
-            tmp.obyvacka_podlaha.push(value.obyvacka_podlaha);
-            tmp.pracovna_vzduch.push(value.pracovna_vzduch);
-            tmp.pracovna_podlaha.push(value.pracovna_podlaha);
-            tmp.spalna_vzduch.push(value.spalna_vzduch);
-            tmp.spalna_podlaha.push(value.spalna_podlaha);
-            tmp.chalani_vzduch.push(value.chalani_vzduch);
-            tmp.chalani_podlaha.push(value.chalani_podlaha);
-            tmp.petra_vzduch.push(value.petra_vzduch);
-            tmp.petra_podlaha.push(value.petra_podlaha);
+            tmp.temp.push(value.vonku.temp);
+            tmp.humidity.push(value.vonku.humidity);
+            tmp.rain.push(value.vonku.rain);
+            tmp.obyvacka_vzduch.push(value.obyvacka_vzduch.temp);
+            tmp.obyvacka_podlaha.push(value.obyvacka_podlaha.temp);
+            tmp.pracovna_vzduch.push(value.pracovna_vzduch.temp);
+            tmp.pracovna_podlaha.push(value.pracovna_podlaha.temp);
+            tmp.spalna_vzduch.push(value.spalna_vzduch.temp);
+            tmp.spalna_podlaha.push(value.spalna_podlaha.temp);
+            tmp.chalani_vzduch.push(value.chalani_vzduch.temp);
+            tmp.chalani_podlaha.push(value.chalani_podlaha.temp);
+            tmp.petra_vzduch.push(value.petra_vzduch.temp);
+            tmp.petra_podlaha.push(value.petra_podlaha.temp);
         });
         return tmp;
     }
@@ -237,8 +243,12 @@ export class Dom implements IMeasurement {
 
     agregateMinuteData(data: any) {
         const map = new Map();
-        map.set(new Date().getTime(), data);
-        console.info(data);
+        const deepCopy = cloneDeep(data);
+        const date = new Date(deepCopy.timestamp);
+        date.setUTCSeconds(0);
+        deepCopy.timestamp = date.toISOString();
+        map.set(date.getTime(), deepCopy);
+        console.info('Agregated minute', deepCopy.timestamp);
         return map;
     }
 }

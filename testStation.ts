@@ -191,9 +191,11 @@ const d = new Date();
 d.setUTCMilliseconds(0);
 const pgtime = d.getUTCFullYear() + '-' + (d.getUTCMonth() + 1) + '-' + d.getUTCDate() + ' ' + d.getUTCHours() + ':' + d.getUTCMinutes();
 
+const toMinute = Date.now() % 60000;
+
 data1.dateutc = pgtime + ':' + d.getUTCSeconds();
-data2.dateutc = pgtime + ':' + (d.getUTCSeconds() + 2);
-data3.dateutc = pgtime + ':' + (d.getUTCSeconds() + 4);
+data2.dateutc = pgtime + ':' + (d.getUTCSeconds() + 1);
+data3.dateutc = pgtime + ':' + (d.getUTCSeconds() + 2);
 
 console.info('Now, Timestamp, Redis, pgtime, Pg', d, data1.dateutc, pgtime);
 console.info('Now, Timestamp, Redis, pgtime, Pg', d, data2.dateutc, pgtime);
@@ -224,20 +226,20 @@ setTimeout(async () => {
   assert.deepStrictEqual(sd, station.decodeData(data1).decoded);
   console.info('Redis1 OK');
 }, 1000);
-setTimeout(() => postData(data2), 2000);
+setTimeout(() => postData(data2), 1500);
 setTimeout(async () => {
   const sd = await fetchStationData();
   assert.deepStrictEqual(sd, station.decodeData(data2).decoded);
   console.info('Redis2 OK');
-}, 3000);
-setTimeout(() => postData(data3), 4000);
+}, 2000);
+setTimeout(() => postData(data3), 2500);
 setTimeout(async () => {
   const sd = await fetchStationData();
   assert.deepStrictEqual(sd, station.decodeData(data3).decoded);
   console.info('Redis3 OK');
-}, 5000);
+}, 3000);
 setTimeout(async () => {
   const rows = await loadStationData();
   assert.deepStrictEqual(rows, pgData);
   console.info('PG OK');
-}, 61000);
+}, 61000 - toMinute);

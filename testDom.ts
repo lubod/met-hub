@@ -2,7 +2,7 @@ import assert from 'assert';
 import axios from 'axios';
 import fetch from 'node-fetch';
 import { Pool } from 'pg';
-import { Dom } from './server/dom';
+import { Dom, TABLES } from './server/dom';
 import { IDomDataRaw, IDomExternalData, IDomRoomData, IDomTarifData } from './common/models/domModel';
 
 const PG_PORT = parseInt(process.env.PG_PORT) || 15432;
@@ -87,38 +87,6 @@ function generateData(d: Date) {
 
     return data;
 }
-
-/*
-function generateOffsetData(cdata: IStationDataRaw, offset: number) {
-  const data = {} as IStationDataRaw;
-  data.PASSKEY = cdata.PASSKEY;
-  data.stationtype = cdata.stationtype;
-  data.wh65batt = cdata.wh65batt;
-  data.freq = cdata.freq;
-  data.model = cdata.model;
-  data.dateutc = cdata.dateutc;
-  data.tempinf = round(cdata.tempinf + offset, 1);
-  data.humidityin = round(cdata.humidityin + offset, 0);
-  data.baromrelin = round(cdata.baromrelin + offset, 3);
-  data.baromabsin = round(cdata.baromabsin + offset, 3);
-  data.tempf = round(cdata.tempf + offset, 1);
-  data.humidity = round(cdata.humidity + offset, 0);
-  data.winddir = round((cdata.winddir + offset) % 360, 0);
-  data.windspeedmph = round(cdata.windspeedmph + offset, 1);
-  data.windgustmph = round(cdata.windgustmph + offset, 1);
-  data.maxdailygust = cdata.maxdailygust;
-  data.rainratein = cdata.rainratein;
-  data.eventrainin = cdata.eventrainin;
-  data.hourlyrainin = cdata.hourlyrainin;
-  data.dailyrainin = cdata.dailyrainin;
-  data.weeklyrainin = cdata.weeklyrainin;
-  data.monthlyrainin = cdata.monthlyrainin;
-  data.totalrainin = cdata.totalrainin;
-  data.solarradiation = round(cdata.solarradiation + offset, 2);
-  data.uv = round(cdata.solarradiation / 100, 0);
-  return data;
-}
-*/
 
 /*
 Sep 07 10:50:42 zaloha node[926]: { obyvacka_podlaha:
@@ -320,7 +288,7 @@ async function postData(data: any) {
     }
 }
 
-async function fetchStationData() {
+async function fetchDomData() {
     const url = 'http://localhost:8082/api/getLastData/dom';
     console.info(url);
 
@@ -356,11 +324,73 @@ async function loadDomData() {
     try {
         console.info('connected', new Date());
 
-        let table = 'stanica';
-        let queryText = 'select * from ' + table + ' where timestamp=\'' + pgtime + ':00+00\'';
-        let res = await client.query(queryText);
-        //    console.log('rows', queryText, res.rows[0]);
-        return res.rows[0];
+        const data = {} as IDomDataRaw;
+
+        async function loadRoomData(table: string) {
+            let queryText = 'select * from ' + table + ' where timestamp=\'' + pgtime + ':00+00\'';
+            let res = await client.query(queryText);
+            //console.log('rows', queryText, res.rows);
+            const room = {
+                kuri: res.rows[0].kuri ? 1 : 0,
+                leto: res.rows[0].leto ? 1 : 0,
+                low: res.rows[0].low ? 1 : 0,
+                maxoffset: parseInt(res.rows[0].maxoffset),
+                req: parseInt(res.rows[0].req),
+                reqall: parseInt(res.rows[0].reqall),
+                temp: parseFloat(res.rows[0].temp),
+                text: '',
+                useroffset: parseInt(res.rows[0].useroffset),
+            } as IDomRoomData;
+            return room;
+        }
+
+        async function loadExternalData(table: string) {
+            let queryText = 'select * from ' + table + ' where timestamp=\'' + pgtime + ':00+00\'';
+            let res = await client.query(queryText);
+            //console.log('rows', queryText, res.rows);
+            const room = {
+                temp: parseFloat(res.rows[0].temp),
+                humidity: parseFloat(res.rows[0].humidity),
+                rain: res.rows[0].rain ? 1 : 0,
+                text: '',
+            } as IDomExternalData;
+            return room;
+        }
+
+        async function loadTarifData(table: string) {
+            let queryText = 'select * from ' + table + ' where timestamp=\'' + pgtime + ':00+00\'';
+            let res = await client.query(queryText);
+            //console.log('rows', queryText, res.rows);
+            const room = {
+                tarif: parseInt(res.rows[0].tarif),
+                text: '',
+            } as IDomTarifData;
+            return room;
+        }
+
+        data[TABLES.OBYVACKA_VZDUCH] = await loadRoomData(TABLES.OBYVACKA_VZDUCH);
+        data[TABLES.OBYVACKA_PODLAHA] = await loadRoomData(TABLES.OBYVACKA_PODLAHA);
+        data[TABLES.PRACOVNA_VZDUCH] = await loadRoomData(TABLES.PRACOVNA_VZDUCH);
+        data[TABLES.PRACOVNA_PODLAHA] = await loadRoomData(TABLES.PRACOVNA_PODLAHA);
+        data[TABLES.SPALNA_VZDUCH] = await loadRoomData(TABLES.SPALNA_VZDUCH);
+        data[TABLES.SPALNA_PODLAHA] = await loadRoomData(TABLES.SPALNA_PODLAHA);
+        data[TABLES.CHALANI_VZDUCH] = await loadRoomData(TABLES.CHALANI_VZDUCH);
+        data[TABLES.CHALANI_PODLAHA] = await loadRoomData(TABLES.CHALANI_PODLAHA);
+        data[TABLES.PETRA_VZDUCH] = await loadRoomData(TABLES.PETRA_VZDUCH);
+        data[TABLES.PETRA_PODLAHA] = await loadRoomData(TABLES.PETRA_PODLAHA);
+        data[TABLES.ZADVERIE_VZDUCH] = await loadRoomData(TABLES.ZADVERIE_VZDUCH);
+        data[TABLES.ZADVERIE_PODLAHA] = await loadRoomData(TABLES.ZADVERIE_PODLAHA);
+        data[TABLES.CHODBA_VZDUCH] = await loadRoomData(TABLES.CHODBA_VZDUCH);
+        data[TABLES.CHODBA_PODLAHA] = await loadRoomData(TABLES.CHODBA_PODLAHA);
+        data[TABLES.SATNA_VZDUCH] = await loadRoomData(TABLES.SATNA_VZDUCH);
+        data[TABLES.SATNA_PODLAHA] = await loadRoomData(TABLES.SATNA_PODLAHA);
+        data[TABLES.KUPELNA_HORE] = await loadRoomData(TABLES.KUPELNA_HORE);
+        data[TABLES.KUPELNA_DOLE] = await loadRoomData(TABLES.KUPELNA_DOLE);
+        data[TABLES.VONKU] = await loadExternalData(TABLES.VONKU);
+        data[TABLES.TARIF] = await loadTarifData(TABLES.TARIF);
+        data.dateutc = pgtime + ':00';
+        //console.info(data);
+        return data;
     } catch (e) {
         console.error(e);
     } finally {
@@ -370,49 +400,36 @@ async function loadDomData() {
 }
 
 const data1 = generateData(new Date());
-//const data2 = generateOffsetData(data1, 5);
-//const data3 = generateOffsetData(data1, -5);
-//console.info(data1);
-//console.info(data2);
-//console.info(data3);
-//console.log(decodedData1);
 
 const d = new Date();
 d.setUTCMilliseconds(0);
-const pgtime = d.getUTCFullYear() + '-' + (d.getUTCMonth() + 1) + '-' + d.getUTCDate() + ' ' + d.getUTCHours() + ':' + d.getUTCMinutes();
+
+function addZero(val: number) {
+    if (val > 9) {
+        return val; 
+    }
+    return '0' + val;
+}
+const pgtime = d.getUTCFullYear() + '-' + addZero(d.getUTCMonth() + 1) + '-' + addZero(d.getUTCDate()) + ' ' + addZero(d.getUTCHours()) + ':' + addZero((d.getUTCMinutes()));
 
 data1.dateutc = pgtime + ':' + d.getUTCSeconds();
-//data2.dateutc = pgtime + ':' + (d.getUTCSeconds() + 2);
-//data3.dateutc = pgtime + ':' + (d.getUTCSeconds() + 4);
+const toMinute = Date.now() % 60000;
 
 console.info('Now, Timestamp, Redis, pgtime, Pg', d, data1.dateutc, pgtime);
-//console.info('Now, Timestamp, Redis, pgtime, Pg', d, data2.dateutc, pgtime);
-//console.info('Now, Timestamp, Redis, pgtime, Pg', d, data3.dateutc, pgtime);
 
 postData(data1);
 
 setTimeout(async () => {
-  const sd = await fetchStationData();
-  assert.deepStrictEqual(sd, dom.decodeData(data1).decoded);
-  console.info('Redis1 OK');
+    const sd = await fetchDomData();
+    assert.deepStrictEqual(sd, dom.decodeData(data1).decoded);
+    console.info('Redis1 OK');
 }, 1000);
 
-/*
-setTimeout(() => postData(data2), 2000);
 setTimeout(async () => {
-  const sd = await fetchStationData();
-  assert.deepStrictEqual(sd, decodeStationData(data2));
-  console.info('Redis2 OK');
-}, 3000);
-setTimeout(() => postData(data3), 4000);
-setTimeout(async () => {
-  const sd = await fetchStationData();
-  assert.deepStrictEqual(sd, decodeStationData(data3));
-  console.info('Redis3 OK');
-}, 5000);
-setTimeout(async () => {
-  const rows = await loadStationData();
-  assert.deepStrictEqual(rows, pgData);
-  console.info('PG OK');
-}, 61000);
-*/
+    const rows = await loadDomData();
+    rows.PASSKEY = '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';
+    data1.dateutc = pgtime + ':00';
+    rows.timestamp = d.toISOString();
+    assert.deepStrictEqual(rows, data1);
+    console.info('PG OK');
+}, 61000 - toMinute);

@@ -27,6 +27,7 @@ export function HomePage(props: any) {
       <Row>
         <Col sm={6} className='px-2'>
           <Station />
+          <Dom />
         </Col>
         <Col sm={6} className='px-2'>
           <Container className='text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded'>

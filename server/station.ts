@@ -255,6 +255,7 @@ export class Station implements IMeasurement {
             avg.winddir = avgWind(windDir);
             console.info(avg);
             result.set(minute.getTime(), avg);
+            console.info('Agregated minute', minute);
         });
         return result;
     }

@@ -26,9 +26,9 @@ const pool = new Pool({
 
 console.info('PG: ' + PG_HOST);
 redisClientSub.on('message', function (channel: string, msg: string) {
-    console.log(channel, msg); // 'message'
+    //console.log(channel, msg); // 'message'
     const data = JSON.parse(msg);
-    console.info(data);
+    //console.info(data);
 
     if (channel === station.getRedisStoreChannel()) {
         data.forEach((element: IStationData) => {
@@ -52,11 +52,11 @@ async function store(measurement: IMeasurement, data: IDomDataRaw | IStationData
 
         const tables = measurement.getTables();
         for (const table of tables) {
-            console.info(table);
+            //console.info(table);
             let queryText = measurement.getQueryText(table);
-            console.info(queryText);
+            //console.info(queryText);
             let queryArray = measurement.getQueryArray(table, data);
-            console.info(queryArray);
+            //console.info(queryArray);
             let res = await client.query(queryText, queryArray);
             console.info(data.timestamp, queryText);
         }
