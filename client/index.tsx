@@ -8,6 +8,7 @@ import { StationData } from './station/stationData';
 import { StationCtrl } from './station/stationCtrl';
 import { DomData } from './dom/domData';
 import { DomCtrl } from './dom/domCtrl';
+import { AppData } from './appData';
 
 class AppContext {
   auth = new Auth();
@@ -22,9 +23,12 @@ const stationCtrl = new StationCtrl(socket, stationData);
 const domData = new DomData();
 const domCtrl = new DomCtrl(socket, domData);
 
+const appData = new AppData();
+
 export const AppContextP = React.createContext(appContext);
 export const StationDataP = React.createContext<StationData>(stationData);
 export const DomDataP = React.createContext<DomData>(domData);
+export const AppDataP = React.createContext<AppData>(appData);
 
 function render() {
   console.info('Index render');

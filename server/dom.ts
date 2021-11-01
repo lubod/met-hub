@@ -243,7 +243,7 @@ export class Dom implements IMeasurement {
 
     agregateMinuteData(data: any) {
         const map = new Map();
-        const deepCopy = cloneDeep(data);
+        const deepCopy = cloneDeep(JSON.parse(data));
         const date = new Date(deepCopy.timestamp);
         date.setUTCSeconds(0);
         deepCopy.timestamp = date.toISOString();

@@ -3,7 +3,7 @@ import { Dom } from "./dom";
 import { Pool } from 'pg';
 import { Station } from "./station";
 import { createClient } from 'redis';
-import { IDomData, IDomDataRaw } from "../common/models/domModel";
+import { IDomDataRaw } from "../common/models/domModel";
 import { IMeasurement } from "./measurement";
 
 const PG_PORT = parseInt(process.env.PG_PORT) || 5432;

@@ -5,6 +5,7 @@ import { Button, Col, Container, Row } from 'react-bootstrap';
 import { Station } from './station/station';
 import { AppContextP } from '.';
 import { Dom } from './dom/dom';
+import Time from './time/time';
 
 export function HomePage(props: any) {
   console.info('Homepage render');
@@ -26,6 +27,7 @@ export function HomePage(props: any) {
     <Container className='container-max-width text-center py-2'>
       <Row>
         <Col sm={6} className='px-2'>
+          <Time />
           <Station />
         </Col>
         <Col sm={6} className='px-2'>

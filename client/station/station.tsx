@@ -71,7 +71,7 @@ export const Station = observer(() => {
             <Text name='Date' value={station.data.date} ></Text>
           </Col>
           <Col xs={4}>
-            <Text name={'Time ' + station.ctime.toLocaleTimeString('sk-SK')} value={station.data.time} ></Text>
+            <Text name={'Data time'} value={station.data.time} ></Text>
           </Col>
         </Row>
       </Container>
