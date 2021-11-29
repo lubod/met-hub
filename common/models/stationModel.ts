@@ -1,11 +1,17 @@
 export class StationCfg {
-    TABLE = 'stanica';
-    SOCKET_CHANNEL = 'station';
-    SOCKET_TREND_CHANNEL = 'station-trend';
-    REDIS_LAST_DATA_KEY = 'station-last';
-    REDIS_MINUTE_DATA_KEY = 'station-minute-data';
-    REDIS_STORE_CHANNEL = 'station-store-pubsub';
-    REDIS_TREND_KEY = 'station-trend';
+  TABLE = 'stanica';
+
+  SOCKET_CHANNEL = 'station';
+
+  SOCKET_TREND_CHANNEL = 'station-trend';
+
+  REDIS_LAST_DATA_KEY = 'station-last';
+
+  REDIS_MINUTE_DATA_KEY = 'station-minute-data';
+
+  REDIS_STORE_CHANNEL = 'station-store-pubsub';
+
+  REDIS_TREND_KEY = 'station-trend';
 }
 
 export interface IStationData {
@@ -32,34 +38,35 @@ export interface IStationData {
     weeklyrain: number;
     monthlyrain: number;
     totalrain: number;
+    minuterain: number;
 }
 
 /*
 curl --header "Content-Type: application/json" --request POST --data \
-'{ "PASSKEY": "33564A0851CC0C0D15FE3353FB8D8B47", 
+'{ "PASSKEY": "33564A0851CC0C0D15FE3353FB8D8B47",
   "stationtype": "EasyWeatherV1.5.2",
-  "dateutc": "2021-04-06 08:42:00", 
-  "tempinf": "74.1", 
-  "humidityin": "62", 
-  "baromrelin": "30.189", 
-  "baromabsin": "29.442", 
-  "tempf": "71.4", 
-  "humidity": "72", 
-  "winddir": "69", 
-  "windspeedmph": "0.4", 
-  "windgustmph": "1.1", 
-  "maxdailygust": "3.4", 
-  "rainratein": "0.000", 
-  "eventrainin": "0.000", 
-  "hourlyrainin": "0.000", 
-  "dailyrainin": "0.000", 
-  "weeklyrainin": "0.000", 
-  "monthlyrainin": "0.201", 
-  "totalrainin": "0.201", 
-  "solarradiation": "19.45", 
-  "uv": "0", 
-  "wh65batt": "0", 
-  "freq": "868M", 
+  "dateutc": "2021-04-06 08:42:00",
+  "tempinf": "74.1",
+  "humidityin": "62",
+  "baromrelin": "30.189",
+  "baromabsin": "29.442",
+  "tempf": "71.4",
+  "humidity": "72",
+  "winddir": "69",
+  "windspeedmph": "0.4",
+  "windgustmph": "1.1",
+  "maxdailygust": "3.4",
+  "rainratein": "0.000",
+  "eventrainin": "0.000",
+  "hourlyrainin": "0.000",
+  "dailyrainin": "0.000",
+  "weeklyrainin": "0.000",
+  "monthlyrainin": "0.201",
+  "totalrainin": "0.201",
+  "solarradiation": "19.45",
+  "uv": "0",
+  "wh65batt": "0",
+  "freq": "868M",
   "model": "WS2900_V2.01.10" }' \
   http://localhost:8082/setData
 */
@@ -104,6 +111,5 @@ export interface IStationTrendData {
     solarradiation: Array<number>;
     uv: Array<number>;
     rainrate: Array<number>;
+    minuterain: Array<number>;
 }
-
-

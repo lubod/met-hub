@@ -3,17 +3,17 @@ import axios from 'axios';
 import fetch from 'node-fetch';
 import { Pool } from 'pg';
 import { IStationDataRaw } from './common/models/stationModel';
-import { Station } from './server/station';
+import Station from './server/station';
 
-const PG_PORT = parseInt(process.env.PG_PORT) || 15432;
+const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';
 const PG_DB = process.env.PG_DB || 'postgres';
 const PG_HOST = process.env.PG_HOST || '192.168.1.199';
 const PG_USER = process.env.PG_USER || 'postgres';
 
-const station =new Station();
+const station = new Station();
 
-console.info('PG: ' + PG_HOST);
+console.info(`PG: ${PG_HOST}`);
 
 process.env.STATION_PASSKEY = '33564A0851CC0C0D15FE3353FB8D8B47';
 
@@ -22,7 +22,7 @@ function random(min: number, max: number) {
 }
 
 function round(value: number, precision: number) {
-  var multiplier = Math.pow(10, precision || 0);
+  const multiplier = 10 ** (precision || 0);
   return Math.round(value * multiplier) / multiplier;
 }
 
@@ -87,7 +87,6 @@ function generateOffsetData(cdata: IStationDataRaw, offset: number) {
   return data;
 }
 
-
 /*
 {
   PASSKEY: '33564A0851CC0C0D15FE3353FB8D8B47',
@@ -137,23 +136,22 @@ async function fetchStationData() {
   try {
     const res = await fetch(url, {
       headers: {
-        Authorization: `Bearer 1`,
+        Authorization: 'Bearer 1',
       },
     });
     if (res.status === 401) {
       console.error('auth 401');
-    }
-    else {
+    } else {
       const json = await res.json();
       return json;
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
   }
+  return null;
 }
 
-async function loadStationData() {
+async function loadStationData(time: string) {
   const pool = new Pool({
     user: PG_USER,
     host: PG_HOST,
@@ -166,10 +164,10 @@ async function loadStationData() {
   try {
     console.info('connected', new Date());
 
-    let table = 'stanica';
-    let queryText = 'select * from ' + table + ' where timestamp=\'' + pgtime + ':00+00\'';
-    let res = await client.query(queryText);
-//    console.log('rows', queryText, res.rows[0]);
+    const table = 'stanica';
+    const queryText = `select * from ${table} where timestamp='${time}:00+00'`;
+    const res = await client.query(queryText);
+    //    console.log('rows', queryText, res.rows[0]);
     return res.rows[0];
   } catch (e) {
     console.error(e);
@@ -177,25 +175,26 @@ async function loadStationData() {
     client.release();
     console.info('released');
   }
+  return null;
 }
 
 const data1 = generateData(new Date());
 const data2 = generateOffsetData(data1, 5);
 const data3 = generateOffsetData(data1, -5);
-//console.info(data1);
-//console.info(data2);
-//console.info(data3);
-//console.log(decodedData1);
+// console.info(data1);
+// console.info(data2);
+// console.info(data3);
+// console.log(decodedData1);
 
 const d = new Date();
 d.setUTCMilliseconds(0);
-const pgtime = d.getUTCFullYear() + '-' + (d.getUTCMonth() + 1) + '-' + d.getUTCDate() + ' ' + d.getUTCHours() + ':' + d.getUTCMinutes();
+const pgtime = `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()} ${d.getUTCHours()}:${d.getUTCMinutes()}`;
 
 const toMinute = Date.now() % 60000;
 
-data1.dateutc = pgtime + ':' + d.getUTCSeconds();
-data2.dateutc = pgtime + ':' + (d.getUTCSeconds() + 1);
-data3.dateutc = pgtime + ':' + (d.getUTCSeconds() + 2);
+data1.dateutc = `${pgtime}:${d.getUTCSeconds()}`;
+data2.dateutc = `${pgtime}:${d.getUTCSeconds() + 1}`;
+data3.dateutc = `${pgtime}:${d.getUTCSeconds() + 2}`;
 
 console.info('Now, Timestamp, Redis, pgtime, Pg', d, data1.dateutc, pgtime);
 console.info('Now, Timestamp, Redis, pgtime, Pg', d, data2.dateutc, pgtime);
@@ -213,7 +212,7 @@ const pgData = {
   solarradiation: decoded.solarradiation.toFixed(1),
   temp: decoded.temp.toFixed(1),
   tempin: decoded.tempin.toFixed(1),
-  timestamp: new Date(decoded.timestamp.substr(0, 17) + '00' + decoded.timestamp.substr(19)),
+  timestamp: new Date(`${decoded.timestamp.substr(0, 17)}00${decoded.timestamp.substr(19)}`),
   uv: decoded.uv.toFixed(0),
   winddir: decoded.winddir.toFixed(0),
   windgust: decoded.windgust.toFixed(1),
@@ -239,7 +238,7 @@ setTimeout(async () => {
   console.info('Redis3 OK');
 }, 3000);
 setTimeout(async () => {
-  const rows = await loadStationData();
+  const rows = await loadStationData(pgtime);
   assert.deepStrictEqual(rows, pgData);
   console.info('PG OK');
 }, 61000 - toMinute);

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export interface IMeasurement {
 
     getPasskey(): string;
@@ -26,8 +27,3 @@ export interface IMeasurement {
 
     agregateMinuteData(data: any): any;
 }
-
-
-
-
-

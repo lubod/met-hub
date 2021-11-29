@@ -1,11 +1,19 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
+
+const options = {
+  extensions: ['js', 'jsx'],
+  exclude: [
+    '/node_modules/',
+  ],
+};
 
 const frontConfig = {
   target: 'web',
   entry: './client/index.tsx',
-//  devtool: 'eval-source-map',
+  //  devtool: 'eval-source-map',
   module: {
     rules: [
       {
@@ -25,7 +33,7 @@ const frontConfig = {
         use: [
           'file-loader',
         ],
-      }, 
+      },
     ],
   },
   resolve: {
@@ -47,6 +55,7 @@ const frontConfig = {
       filename: path.resolve(__dirname, 'dist/fe', 'index.html'),
       xhtml: true,
     }),
+    new ESLintPlugin(options),
   ],
   devServer: {
     hot: true,
@@ -76,6 +85,7 @@ const backConfigMain = {
     path: path.resolve(__dirname, 'dist/be'),
   },
   externals: [nodeExternals()],
+  plugins: [new ESLintPlugin(options)],
 };
 
 const backConfigStore = {
@@ -98,6 +108,7 @@ const backConfigStore = {
     path: path.resolve(__dirname, 'dist/be'),
   },
   externals: [nodeExternals()],
+  plugins: [new ESLintPlugin(options)],
 };
 
 const backConfigPoll = {
@@ -120,6 +131,7 @@ const backConfigPoll = {
     path: path.resolve(__dirname, 'dist/be'),
   },
   externals: [nodeExternals()],
+  plugins: [new ESLintPlugin(options)],
 };
 
 const testConfigStation = {
@@ -142,6 +154,7 @@ const testConfigStation = {
     path: path.resolve(__dirname, 'dist/test'),
   },
   externals: [nodeExternals()],
+  plugins: [new ESLintPlugin(options)],
 };
 
 const testConfigDom = {
@@ -164,8 +177,14 @@ const testConfigDom = {
     path: path.resolve(__dirname, 'dist/test'),
   },
   externals: [nodeExternals()],
+  plugins: [new ESLintPlugin(options)],
 };
 
-module.exports = [frontConfig, backConfigMain, backConfigStore, backConfigPoll, testConfigStation, testConfigDom];
-
-
+module.exports = [
+  frontConfig,
+  backConfigMain,
+  backConfigStore,
+  backConfigPoll,
+  testConfigStation,
+  testConfigDom,
+];

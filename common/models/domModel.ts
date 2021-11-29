@@ -1,11 +1,17 @@
 export class DomCfg {
-    TABLE = 'dom';
-    SOCKET_CHANNEL = 'dom';
-    SOCKET_TREND_CHANNEL = 'dom-trend';
-    REDIS_LAST_DATA_KEY = 'dom-last';
-    REDIS_MINUTE_DATA_KEY = 'dom-minute-data';
-    REDIS_STORE_CHANNEL = 'dom-store-pubsub';
-    REDIS_TREND_KEY = 'dom-trend';
+  TABLE = 'dom';
+
+  SOCKET_CHANNEL = 'dom';
+
+  SOCKET_TREND_CHANNEL = 'dom-trend';
+
+  REDIS_LAST_DATA_KEY = 'dom-last';
+
+  REDIS_MINUTE_DATA_KEY = 'dom-minute-data';
+
+  REDIS_STORE_CHANNEL = 'dom-store-pubsub';
+
+  REDIS_TREND_KEY = 'dom-trend';
 }
 
 export interface IDomExternalData {
@@ -114,5 +120,3 @@ export interface IDomTrendData {
     petra_vzduch: Array<number>;
     petra_podlaha: Array<number>;
 }
-
-

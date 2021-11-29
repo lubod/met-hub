@@ -1,69 +1,83 @@
 import { IStationData, IStationTrendData, StationCfg } from '../../common/models/stationModel';
-import { StationData } from './stationData';
+import StationData from './stationData';
 
-export class StationCtrl {
-    stationData: StationData;
-    timer: NodeJS.Timer;
-    stationCfg: StationCfg;
+class StationCtrl {
+  stationData: StationData;
 
-    constructor(mySocket: any, stationData: StationData) {
-        this.stationData = stationData;
-        this.stationCfg = new StationCfg();
-        this.fetchData();
-        this.fetchTrendData();
-        mySocket.getSocket().on(this.stationCfg.SOCKET_CHANNEL, (newData: IStationData) => stationData.processData(newData));
-        mySocket.getSocket().on(this.stationCfg.SOCKET_TREND_CHANNEL, (newTrendData: IStationTrendData) => stationData.processTrendData(newTrendData));
-        //props.socket.getSocket().emit('station', 'getLastData');
-        this.timer = setInterval(() => {
-            stationData.setTime(new Date());
-            //stationData.setOldData(new Date());
-            //console.info('timer ++');
-        } , 1000);
+  socket: any;
+
+  timer: any;
+
+  stationCfg: StationCfg;
+
+  constructor(socket: any, stationData: StationData) {
+    this.stationData = stationData;
+    this.stationCfg = new StationCfg();
+    this.socket = socket;
+  }
+
+  start() {
+    this.fetchData();
+    this.fetchTrendData();
+    this.socket.getSocket().on(this.stationCfg.SOCKET_CHANNEL, (data: IStationData) => {
+      this.stationData.processData(data);
+    });
+    this.socket.getSocket().on(this.stationCfg.SOCKET_TREND_CHANNEL, (data: IStationTrendData) => {
+      this.stationData.processTrendData(data);
+    });
+    // props.socket.getSocket().emit('station', 'getLastData');
+    this.timer = setInterval(() => {
+      this.stationData.setTime(new Date());
+      // stationData.setOldData(new Date());
+      // console.info('timer ++');
+    }, 1000);
+  }
+
+  async fetchData() {
+    const url = '/api/getLastData/station';
+    console.info(url);
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          // Authorization: `Bearer ${props.auth.getToken()}`,
+        },
+      });
+
+      if (!response.ok) {
+        const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+      }
+
+      const newData = await response.json();
+      this.stationData.processData(newData);
+    } catch (e) {
+      console.error(e);
     }
+  }
 
-    async fetchData() {
-        const url = '/api/getLastData/station';
-        console.info(url);
+  async fetchTrendData() {
+    const url = '/api/getTrendData/station';
+    console.info(url);
 
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    //Authorization: `Bearer ${props.auth.getToken()}`,
-                }
-            });
+    try {
+      const response = await fetch(url, {
+        headers: {
+          // Authorization: `Bearer ${props.auth.getToken()}`,
+        },
+      });
 
-            if (!response.ok) {
-                const message = `An error has occured: ${response.status}`;
-                throw new Error(message);
-            }
+      if (!response.ok) {
+        const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+      }
 
-            const newData = await response.json();
-            this.stationData.processData(newData);
-        } catch (e) {
-            console.error(e);
-        }
+      const newData = await response.json();
+      this.stationData.processTrendData(newData);
+    } catch (e) {
+      console.error(e);
     }
-
-    async fetchTrendData() {
-        const url = '/api/getTrendData/station';
-        console.info(url);
-
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    //Authorization: `Bearer ${props.auth.getToken()}`,
-                }
-            });
-
-            if (!response.ok) {
-                const message = `An error has occured: ${response.status}`;
-                throw new Error(message);
-            }
-
-            const newData = await response.json();
-            this.stationData.processTrendData(newData);
-        } catch (e) {
-            console.error(e);
-        }
-    }
+  }
 }
+
+export default StationCtrl;

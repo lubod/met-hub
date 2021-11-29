@@ -1,20 +1,23 @@
 import { makeObservable, observable } from 'mobx';
 
-export class AppData {
-    ctime: Date = new Date();
-    timer: NodeJS.Timer;
+class AppData {
+  ctime: Date = new Date();
 
-    constructor() {
-        makeObservable(this, {
-            ctime: observable,
-        });
+  timer: any;
 
-        this.timer = setInterval(() => {
-            this.setTime(new Date());
-        } , 1000);
-    }
+  constructor() {
+    makeObservable(this, {
+      ctime: observable,
+    });
 
-    setTime(newTime: Date) {
-        this.ctime = newTime;
-    }
+    this.timer = setInterval(() => {
+      this.setTime(new Date());
+    }, 1000);
+  }
+
+  setTime(newTime: Date) {
+    this.ctime = newTime;
+  }
 }
+
+export default AppData;
