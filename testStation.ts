@@ -1,21 +1,21 @@
-import assert from 'assert';
-import axios from 'axios';
-import fetch from 'node-fetch';
-import { Pool } from 'pg';
-import { IStationDataRaw } from './common/models/stationModel';
-import Station from './server/station';
+import assert from "assert";
+import axios from "axios";
+import fetch from "node-fetch";
+import { Pool } from "pg";
+import { IStationDataRaw } from "./common/models/stationModel";
+import Station from "./server/station";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
-const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';
-const PG_DB = process.env.PG_DB || 'postgres';
-const PG_HOST = process.env.PG_HOST || '192.168.1.199';
-const PG_USER = process.env.PG_USER || 'postgres';
+const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
+const PG_DB = process.env.PG_DB || "postgres";
+const PG_HOST = process.env.PG_HOST || "192.168.1.199";
+const PG_USER = process.env.PG_USER || "postgres";
 
 const station = new Station();
 
 console.info(`PG: ${PG_HOST}`);
 
-process.env.STATION_PASSKEY = '33564A0851CC0C0D15FE3353FB8D8B47';
+process.env.STATION_PASSKEY = "33564A0851CC0C0D15FE3353FB8D8B47";
 
 function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
@@ -29,12 +29,12 @@ function round(value: number, precision: number) {
 function generateData(d: Date) {
   d.setUTCMilliseconds(0);
   const data = {} as IStationDataRaw;
-  data.PASSKEY = '33564A0851CC0C0D15FE3353FB8D8B47';
-  data.stationtype = 'EasyWeatherV1.5.2';
+  data.PASSKEY = "33564A0851CC0C0D15FE3353FB8D8B47";
+  data.stationtype = "EasyWeatherV1.5.2";
   data.wh65batt = 0;
-  data.freq = '868M';
-  data.model = 'WS2900_V2.01.10';
-  data.dateutc = d.toISOString().replace('T', ' ').replace('.000Z', '');
+  data.freq = "868M";
+  data.model = "WS2900_V2.01.10";
+  data.dateutc = d.toISOString().replace("T", " ").replace(".000Z", "");
   data.tempinf = round(random(60, 80), 1);
   data.humidityin = round(random(40, 60), 0);
   data.baromrelin = round(random(25, 35), 3);
@@ -119,9 +119,9 @@ function generateOffsetData(cdata: IStationDataRaw, offset: number) {
 
 async function postData(data: any) {
   try {
-    await axios.post('http://localhost:8082/setData', data, {
+    await axios.post("http://localhost:8082/setData", data, {
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
+        "Content-Type": "application/json; charset=utf-8",
       },
     });
   } catch (error) {
@@ -130,17 +130,17 @@ async function postData(data: any) {
 }
 
 async function fetchStationData() {
-  const url = 'http://localhost:8082/api/getLastData/station';
+  const url = "http://localhost:8082/api/getLastData/station";
   console.info(url);
 
   try {
     const res = await fetch(url, {
       headers: {
-        Authorization: 'Bearer 1',
+        Authorization: "Bearer 1",
       },
     });
     if (res.status === 401) {
-      console.error('auth 401');
+      console.error("auth 401");
     } else {
       const json = await res.json();
       return json;
@@ -162,9 +162,9 @@ async function loadStationData(time: string) {
 
   const client = await pool.connect();
   try {
-    console.info('connected', new Date());
+    console.info("connected", new Date());
 
-    const table = 'stanica';
+    const table = "stanica";
     const queryText = `select * from ${table} where timestamp='${time}:00+00'`;
     const res = await client.query(queryText);
     //    console.log('rows', queryText, res.rows[0]);
@@ -173,7 +173,7 @@ async function loadStationData(time: string) {
     console.error(e);
   } finally {
     client.release();
-    console.info('released');
+    console.info("released");
   }
   return null;
 }
@@ -188,7 +188,9 @@ const data3 = generateOffsetData(data1, -5);
 
 const d = new Date();
 d.setUTCMilliseconds(0);
-const pgtime = `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()} ${d.getUTCHours()}:${d.getUTCMinutes()}`;
+const pgtime = `${d.getUTCFullYear()}-${
+  d.getUTCMonth() + 1
+}-${d.getUTCDate()} ${d.getUTCHours()}:${d.getUTCMinutes()}`;
 
 const toMinute = Date.now() % 60000;
 
@@ -196,9 +198,9 @@ data1.dateutc = `${pgtime}:${d.getUTCSeconds()}`;
 data2.dateutc = `${pgtime}:${d.getUTCSeconds() + 1}`;
 data3.dateutc = `${pgtime}:${d.getUTCSeconds() + 2}`;
 
-console.info('Now, Timestamp, Redis, pgtime, Pg', d, data1.dateutc, pgtime);
-console.info('Now, Timestamp, Redis, pgtime, Pg', d, data2.dateutc, pgtime);
-console.info('Now, Timestamp, Redis, pgtime, Pg', d, data3.dateutc, pgtime);
+console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
+console.info("Now, Timestamp, Redis, pgtime, Pg", d, data2.dateutc, pgtime);
+console.info("Now, Timestamp, Redis, pgtime, Pg", d, data3.dateutc, pgtime);
 
 const { decoded } = station.decodeData(data1);
 const pgData = {
@@ -212,7 +214,9 @@ const pgData = {
   solarradiation: decoded.solarradiation.toFixed(1),
   temp: decoded.temp.toFixed(1),
   tempin: decoded.tempin.toFixed(1),
-  timestamp: new Date(`${decoded.timestamp.substr(0, 17)}00${decoded.timestamp.substr(19)}`),
+  timestamp: new Date(
+    `${decoded.timestamp.substr(0, 17)}00${decoded.timestamp.substr(19)}`
+  ),
   uv: decoded.uv.toFixed(0),
   winddir: decoded.winddir.toFixed(0),
   windgust: decoded.windgust.toFixed(1),
@@ -223,22 +227,22 @@ postData(data1);
 setTimeout(async () => {
   const sd = await fetchStationData();
   assert.deepStrictEqual(sd, station.decodeData(data1).decoded);
-  console.info('Redis1 OK');
+  console.info("Redis1 OK");
 }, 1000);
 setTimeout(() => postData(data2), 1500);
 setTimeout(async () => {
   const sd = await fetchStationData();
   assert.deepStrictEqual(sd, station.decodeData(data2).decoded);
-  console.info('Redis2 OK');
+  console.info("Redis2 OK");
 }, 2000);
 setTimeout(() => postData(data3), 2500);
 setTimeout(async () => {
   const sd = await fetchStationData();
   assert.deepStrictEqual(sd, station.decodeData(data3).decoded);
-  console.info('Redis3 OK');
+  console.info("Redis3 OK");
 }, 3000);
 setTimeout(async () => {
   const rows = await loadStationData(pgtime);
   assert.deepStrictEqual(rows, pgData);
-  console.info('PG OK');
+  console.info("PG OK");
 }, 61000 - toMinute);

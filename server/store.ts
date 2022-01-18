@@ -1,16 +1,16 @@
-import { Pool } from 'pg';
-import { createClient } from 'redis';
-import { IStationData } from '../common/models/stationModel';
-import { Dom } from './dom';
-import Station from './station';
-import { IDomDataRaw } from '../common/models/domModel';
-import { IMeasurement } from './measurement';
+import { Pool } from "pg";
+import { createClient } from "redis";
+import { IStationData } from "../common/models/stationModel";
+import { Dom } from "./dom";
+import Station from "./station";
+import { IDomDataRaw } from "../common/models/domModel";
+import { IMeasurement } from "./measurement";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 5432;
-const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';
-const PG_DB = process.env.PG_DB || 'postgres';
-const PG_HOST = process.env.PG_HOST || 'localhost';
-const PG_USER = process.env.PG_USER || 'postgres';
+const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
+const PG_DB = process.env.PG_DB || "postgres";
+const PG_HOST = process.env.PG_HOST || "localhost";
+const PG_USER = process.env.PG_USER || "postgres";
 
 const redisClientSub = createClient();
 const station = new Station();
@@ -24,11 +24,14 @@ const pool = new Pool({
   port: PG_PORT,
 });
 
-async function store(measurement: IMeasurement, data: IDomDataRaw | IStationData) {
+async function store(
+  measurement: IMeasurement,
+  data: IDomDataRaw | IStationData
+) {
   const client = await pool.connect();
   try {
     console.info(`connected ${data.timestamp}`);
-    await client.query('BEGIN');
+    await client.query("BEGIN");
 
     const tables = measurement.getTables();
     for (const table of tables) {
@@ -41,18 +44,18 @@ async function store(measurement: IMeasurement, data: IDomDataRaw | IStationData
       console.info(data.timestamp, queryText);
     }
 
-    await client.query('COMMIT');
+    await client.query("COMMIT");
   } catch (e) {
-    await client.query('ROLLBACK');
+    await client.query("ROLLBACK");
     throw e;
   } finally {
     client.release();
-    console.info('released');
+    console.info("released");
   }
 }
 
 console.info(`PG: ${PG_HOST}`);
-redisClientSub.on('message', (channel: string, msg: string) => {
+redisClientSub.on("message", (channel: string, msg: string) => {
   // console.log(channel, msg); // 'message'
   const data = JSON.parse(msg);
   // console.info(data);

@@ -1,8 +1,13 @@
-import fetch from 'node-fetch';
-import axios from 'axios';
-import { IDomExternalData, IDomRoomData, IDomTarifData } from '../common/models/domModel';
+import fetch from "node-fetch";
+import axios from "axios";
+import {
+  IDomExternalData,
+  IDomRoomData,
+  IDomTarifData,
+} from "../common/models/domModel";
 
-const DOM_PASSKEY = process.env.DOM_PASSKEY || '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';
+const DOM_PASSKEY =
+  process.env.DOM_PASSKEY || "7d060d4d-c95f-4774-a0ec-a85c8952b9d9";
 
 const POS_ACTUALTEMP = 14;
 const POS_REQUIRED = 19;
@@ -18,77 +23,80 @@ const POS_LETO = 43;
 // const POS_S_CHLADI = 44;
 
 const tables: any = {
-  10: 'obyvacka_vzduch',
-  0: 'obyvacka_podlaha',
-  11: 'zadverie_vzduch',
-  1: 'zadverie_podlaha',
-  12: 'pracovna_vzduch',
-  2: 'pracovna_podlaha',
-  13: 'chodba_vzduch',
-  3: 'chodba_podlaha',
-  14: 'satna_vzduch',
-  4: 'satna_podlaha',
-  15: 'petra_vzduch',
-  5: 'petra_podlaha',
-  16: 'chalani_vzduch',
-  6: 'chalani_podlaha',
-  17: 'spalna_vzduch',
-  7: 'spalna_podlaha',
-  8: 'kupelna_dole',
-  9: 'kupelna_hore',
+  10: "obyvacka_vzduch",
+  0: "obyvacka_podlaha",
+  11: "zadverie_vzduch",
+  1: "zadverie_podlaha",
+  12: "pracovna_vzduch",
+  2: "pracovna_podlaha",
+  13: "chodba_vzduch",
+  3: "chodba_podlaha",
+  14: "satna_vzduch",
+  4: "satna_podlaha",
+  15: "petra_vzduch",
+  5: "petra_podlaha",
+  16: "chalani_vzduch",
+  6: "chalani_podlaha",
+  17: "spalna_vzduch",
+  7: "spalna_podlaha",
+  8: "kupelna_dole",
+  9: "kupelna_hore",
   //    18: 'tarif',
   //    19: 'vonku',
   //    20: 'vonku',
 };
 
 const postRequest = {
-  credentials: 'omit',
+  credentials: "omit",
   headers: {
-    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0',
-    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-Language': 'en-US,en;q=0.5',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Upgrade-Insecure-Requests': '1',
-    'X-Requested-With': 'XMLHttpRequest',
-    'Cache-Control': 'max-age=0',
+    "User-Agent":
+      "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0",
+    Accept:
+      "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Upgrade-Insecure-Requests": "1",
+    "X-Requested-With": "XMLHttpRequest",
+    "Cache-Control": "max-age=0",
   },
-  method: 'POST',
-  mode: 'cors',
-  body: '',
-  referrer: '',
+  method: "POST",
+  mode: "cors",
+  body: "",
+  referrer: "",
 };
 
 async function login() {
-  postRequest.referrer = 'http://192.168.1.113/login.html?btnRelogin=Znovu+p%C5%99ihl%C3%A1sit';
-  postRequest.body = 'loginName=admin&passwd=1234';
-  const res = await fetch('http://192.168.1.113/menu.html', postRequest);
+  postRequest.referrer =
+    "http://192.168.1.113/login.html?btnRelogin=Znovu+p%C5%99ihl%C3%A1sit";
+  postRequest.body = "loginName=admin&passwd=1234";
+  const res = await fetch("http://192.168.1.113/menu.html", postRequest);
   return res.text();
 }
 
 async function getTarif() {
-  postRequest.referrer = 'http://192.168.1.113/h_inforoom.html';
-  postRequest.body = 'param+';
-  const res = await fetch('http://192.168.1.113/loadHDO', postRequest);
+  postRequest.referrer = "http://192.168.1.113/h_inforoom.html";
+  postRequest.body = "param+";
+  const res = await fetch("http://192.168.1.113/loadHDO", postRequest);
   return res.text();
 }
 
 async function getCount() {
-  postRequest.referrer = 'http://192.168.1.113/h_inforoom.html';
-  postRequest.body = 'param+';
-  const res = await fetch('http://192.168.1.113/numOfRooms', postRequest);
+  postRequest.referrer = "http://192.168.1.113/h_inforoom.html";
+  postRequest.body = "param+";
+  const res = await fetch("http://192.168.1.113/numOfRooms", postRequest);
   return res.text();
 }
 
 async function getData(param: number) {
-  postRequest.referrer = 'http://192.168.1.113/h_inforoom.html';
+  postRequest.referrer = "http://192.168.1.113/h_inforoom.html";
   postRequest.body = `param=${param}`;
-  const res = await fetch('http://192.168.1.113/wholeRoom', postRequest);
+  const res = await fetch("http://192.168.1.113/wholeRoom", postRequest);
   return res.text();
 }
 
 async function getExternalData() {
   try {
-    const res = await axios.get('http://192.168.1.5/getTH');
+    const res = await axios.get("http://192.168.1.5/getTH");
     return res.data;
   } catch (error) {
     console.log(error);
@@ -98,9 +106,9 @@ async function getExternalData() {
 
 async function postData(data: any) {
   try {
-    axios.post('https://www.met-hub.com/setDomData', data, {
+    axios.post("https://www.met-hub.com/setDomData", data, {
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
+        "Content-Type": "application/json; charset=utf-8",
       },
     });
   } catch (error) {
@@ -137,7 +145,7 @@ function decodeTarif(text: string) {
 
 function decodeExternal(text: string) {
   const data = {} as IDomExternalData;
-  if (text !== '') {
+  if (text !== "") {
     const th = text.match(/Temp=(.*)\* {2}Humidity=(.*)%\nRain=(.*\n)/);
     data.temp = parseFloat(th[1]);
     data.humidity = parseFloat(th[2]);
@@ -150,7 +158,7 @@ function decodeExternal(text: string) {
 async function pollData() {
   const data: any = {};
 
-  console.log('pollData start');
+  console.log("pollData start");
   let res = await login();
   //    console.log(res);
   const count = await getCount();
@@ -170,7 +178,9 @@ async function pollData() {
   data.tarif = decodeTarif(res);
   //    console.log(data['tarif']);
   data.timestamp = new Date();
-  data.dateutc = `${data.timestamp.getUTCFullYear()}-${data.timestamp.getUTCMonth() + 1}-${data.timestamp.getUTCDate()} ${data.timestamp.getUTCHours()}:${data.timestamp.getUTCMinutes()}:${data.timestamp.getUTCSeconds()}`;
+  data.dateutc = `${data.timestamp.getUTCFullYear()}-${
+    data.timestamp.getUTCMonth() + 1
+  }-${data.timestamp.getUTCDate()} ${data.timestamp.getUTCHours()}:${data.timestamp.getUTCMinutes()}:${data.timestamp.getUTCSeconds()}`;
   return data;
 }
 

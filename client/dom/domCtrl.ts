@@ -1,5 +1,5 @@
-import { DomCfg, IDomData, IDomTrendData } from '../../common/models/domModel';
-import DomData from './domData';
+import { DomCfg, IDomData, IDomTrendData } from "../../common/models/domModel";
+import DomData from "./domData";
 
 class DomCtrl {
   domData: DomData;
@@ -18,16 +18,20 @@ class DomCtrl {
   start() {
     this.fetchData();
     this.fetchTrendData();
-    this.mySocket.getSocket().on(this.domCfg.SOCKET_CHANNEL, (data: IDomData) => {
-      this.domData.processData(data);
-    });
-    this.mySocket.getSocket().on(this.domCfg.SOCKET_TREND_CHANNEL, (data: IDomTrendData) => {
-      this.domData.processTrendData(data);
-    });
+    this.mySocket
+      .getSocket()
+      .on(this.domCfg.SOCKET_CHANNEL, (data: IDomData) => {
+        this.domData.processData(data);
+      });
+    this.mySocket
+      .getSocket()
+      .on(this.domCfg.SOCKET_TREND_CHANNEL, (data: IDomTrendData) => {
+        this.domData.processTrendData(data);
+      });
   }
 
   async fetchData() {
-    const url = '/api/getLastData/dom';
+    const url = "/api/getLastData/dom";
     console.info(url);
 
     try {
@@ -50,7 +54,7 @@ class DomCtrl {
   }
 
   async fetchTrendData() {
-    const url = '/api/getTrendData/dom';
+    const url = "/api/getTrendData/dom";
     console.info(url);
 
     try {

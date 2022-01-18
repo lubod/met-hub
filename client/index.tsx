@@ -1,15 +1,15 @@
 /* eslint-disable import/no-import-module-exports */
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import App from './app';
-import Auth from './auth';
-import MySocket from './socket';
-import StationData from './station/stationData';
-import StationCtrl from './station/stationCtrl';
-import DomData from './dom/domData';
-import DomCtrl from './dom/domCtrl';
-import AppData from './appData';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import App from "./app";
+import Auth from "./auth";
+import MySocket from "./socket";
+import StationData from "./station/stationData";
+import StationCtrl from "./station/stationCtrl";
+import DomData from "./dom/domData";
+import DomCtrl from "./dom/domCtrl";
+import AppData from "./appData";
 
 class AppContext {
   auth = new Auth();
@@ -34,21 +34,21 @@ export const DomDataP = React.createContext<DomData>(domData);
 export const AppDataP = React.createContext<AppData>(appData);
 
 function render() {
-  console.info('Index render');
+  console.info("Index render");
 
-  const appContainer = document.getElementById('app');
+  const appContainer = document.getElementById("app");
   ReactDOM.render(
     <BrowserRouter>
       <AppContextP.Provider value={appContext}>
         <App />
       </AppContextP.Provider>
     </BrowserRouter>,
-    appContainer,
+    appContainer
   );
 }
 
 render();
 
 if (module.hot) {
-  module.hot.accept('./App', render);
+  module.hot.accept("./App", render);
 }

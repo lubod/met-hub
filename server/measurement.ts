@@ -1,29 +1,28 @@
 /* eslint-disable no-unused-vars */
 export interface IMeasurement {
+  getPasskey(): string;
 
-    getPasskey(): string;
+  getSocketChannel(): string;
 
-    getSocketChannel(): string;
+  getSocketTrendChannel(): string;
 
-    getSocketTrendChannel(): string;
+  getRedisLastDataKey(): string;
 
-    getRedisLastDataKey(): string;
+  getRedisMinuteDataKey(): string;
 
-    getRedisMinuteDataKey(): string;
+  getRedisStoreChannel(): string;
 
-    getRedisStoreChannel(): string;
+  getRedisTrendKey(): string;
 
-    getRedisTrendKey(): string;
+  getQueryArray(table: string, data: any): (string | number)[];
 
-    getQueryArray(table: string, data: any): (string | number)[];
+  getQueryText(table: string): string;
 
-    getQueryText(table: string): string;
+  getTables(): string[];
 
-    getTables(): string[];
+  transformTrendData(data: any): {};
 
-    transformTrendData(data: any): {};
+  decodeData(data: any): { date: Date; decoded: {}; toStore: {} };
 
-    decodeData(data: any): { date: Date, decoded: {}, toStore: {} };
-
-    agregateMinuteData(data: any): any;
+  agregateMinuteData(data: any): any;
 }

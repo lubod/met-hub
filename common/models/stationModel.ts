@@ -1,44 +1,44 @@
 export class StationCfg {
-  TABLE = 'stanica';
+  TABLE = "stanica";
 
-  SOCKET_CHANNEL = 'station';
+  SOCKET_CHANNEL = "station";
 
-  SOCKET_TREND_CHANNEL = 'station-trend';
+  SOCKET_TREND_CHANNEL = "station-trend";
 
-  REDIS_LAST_DATA_KEY = 'station-last';
+  REDIS_LAST_DATA_KEY = "station-last";
 
-  REDIS_MINUTE_DATA_KEY = 'station-minute-data';
+  REDIS_MINUTE_DATA_KEY = "station-minute-data";
 
-  REDIS_STORE_CHANNEL = 'station-store-pubsub';
+  REDIS_STORE_CHANNEL = "station-store-pubsub";
 
-  REDIS_TREND_KEY = 'station-trend';
+  REDIS_TREND_KEY = "station-trend";
 }
 
 export interface IStationData {
-    timestamp: string;
-    time: string;
-    date: string;
-    place: string;
-    tempin: number;
-    humidityin: number;
-    temp: number;
-    humidity: number;
-    pressurerel: number;
-    pressureabs: number;
-    windgust: number;
-    windspeed: number;
-    winddir: number;
-    maxdailygust: number;
-    solarradiation: number;
-    uv: number;
-    rainrate: number;
-    eventrain: number;
-    hourlyrain: number;
-    dailyrain: number;
-    weeklyrain: number;
-    monthlyrain: number;
-    totalrain: number;
-    minuterain: number;
+  timestamp: string;
+  time: string;
+  date: string;
+  place: string;
+  tempin: number;
+  humidityin: number;
+  temp: number;
+  humidity: number;
+  pressurerel: number;
+  pressureabs: number;
+  windgust: number;
+  windspeed: number;
+  winddir: number;
+  maxdailygust: number;
+  solarradiation: number;
+  uv: number;
+  rainrate: number;
+  eventrain: number;
+  hourlyrain: number;
+  dailyrain: number;
+  weeklyrain: number;
+  monthlyrain: number;
+  totalrain: number;
+  minuterain: number;
 }
 
 /*
@@ -71,45 +71,45 @@ curl --header "Content-Type: application/json" --request POST --data \
   http://localhost:8082/setData
 */
 export interface IStationDataRaw {
-    PASSKEY: string;
-    stationtype: string;
-    dateutc: string;
-    tempinf: number;
-    humidityin: number;
-    baromrelin: number;
-    baromabsin: number;
-    tempf: number;
-    humidity: number;
-    winddir: number;
-    windspeedmph: number;
-    windgustmph: number;
-    maxdailygust: number;
-    rainratein: number;
-    eventrainin: number;
-    hourlyrainin: number;
-    dailyrainin: number;
-    weeklyrainin: number;
-    monthlyrainin: number;
-    totalrainin: number;
-    solarradiation: number;
-    uv: number;
-    wh65batt: number;
-    freq: string;
-    model: string;
+  PASSKEY: string;
+  stationtype: string;
+  dateutc: string;
+  tempinf: number;
+  humidityin: number;
+  baromrelin: number;
+  baromabsin: number;
+  tempf: number;
+  humidity: number;
+  winddir: number;
+  windspeedmph: number;
+  windgustmph: number;
+  maxdailygust: number;
+  rainratein: number;
+  eventrainin: number;
+  hourlyrainin: number;
+  dailyrainin: number;
+  weeklyrainin: number;
+  monthlyrainin: number;
+  totalrainin: number;
+  solarradiation: number;
+  uv: number;
+  wh65batt: number;
+  freq: string;
+  model: string;
 }
 
 export interface IStationTrendData {
-    timestamp: Array<string>;
-    tempin: Array<number>;
-    humidityin: Array<number>;
-    temp: Array<number>;
-    humidity: Array<number>;
-    pressurerel: Array<number>;
-    windgust: Array<number>;
-    windspeed: Array<number>;
-    winddir: Array<number>;
-    solarradiation: Array<number>;
-    uv: Array<number>;
-    rainrate: Array<number>;
-    minuterain: Array<number>;
+  timestamp: Array<string>;
+  tempin: Array<number>;
+  humidityin: Array<number>;
+  temp: Array<number>;
+  humidity: Array<number>;
+  pressurerel: Array<number>;
+  windgust: Array<number>;
+  windspeed: Array<number>;
+  winddir: Array<number>;
+  solarradiation: Array<number>;
+  uv: Array<number>;
+  rainrate: Array<number>;
+  minuterain: Array<number>;
 }

@@ -32,7 +32,7 @@ services:
   postgres:
     image: postgres
     container_name: postgres
-    ports: 
+    ports:
       - "15432:5432"
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -44,5 +44,3 @@ services:
     image: met-hub-nginx
     container_name: met-hub-nginx
     network_mode: host
-    
-  

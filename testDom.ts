@@ -1,22 +1,25 @@
-import assert from 'assert';
-import axios from 'axios';
-import fetch from 'node-fetch';
-import { Pool } from 'pg';
-import { Dom, TABLES } from './server/dom';
+import assert from "assert";
+import axios from "axios";
+import fetch from "node-fetch";
+import { Pool } from "pg";
+import { Dom, TABLES } from "./server/dom";
 import {
-  IDomDataRaw, IDomExternalData, IDomRoomData, IDomTarifData,
-} from './common/models/domModel';
+  IDomDataRaw,
+  IDomExternalData,
+  IDomRoomData,
+  IDomTarifData,
+} from "./common/models/domModel";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
-const PG_PASSWORD = process.env.PG_PASSWORD || 'postgres';
-const PG_DB = process.env.PG_DB || 'postgres';
-const PG_HOST = process.env.PG_HOST || '192.168.1.199';
-const PG_USER = process.env.PG_USER || 'postgres';
+const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
+const PG_DB = process.env.PG_DB || "postgres";
+const PG_HOST = process.env.PG_HOST || "192.168.1.199";
+const PG_USER = process.env.PG_USER || "postgres";
 const dom = new Dom();
 
 console.info(`PG: ${PG_HOST}`);
 
-process.env.DOM_PASSKEY = '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';
+process.env.DOM_PASSKEY = "7d060d4d-c95f-4774-a0ec-a85c8952b9d9";
 
 function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
@@ -37,7 +40,7 @@ function generateRoomData() {
   data.req = 0;
   data.reqall = 0;
   data.temp = round(random(15, 30), 1);
-  data.text = '';
+  data.text = "";
   data.useroffset = 0;
   return data;
 }
@@ -48,14 +51,14 @@ function generateExternalData() {
   data.temp = round(random(15, 30), 1);
   data.humidity = round(random(40, 60), 0);
   data.rain = round(random(0, 1), 0);
-  data.text = '';
+  data.text = "";
   return data;
 }
 
 function generateTarifData() {
   const data = {} as IDomTarifData;
 
-  data.text = '';
+  data.text = "";
   data.tarif = 0;
   return data;
 }
@@ -63,8 +66,8 @@ function generateTarifData() {
 function generateData(d: Date) {
   d.setUTCMilliseconds(0);
   const data = {} as IDomDataRaw;
-  data.PASSKEY = '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';
-  data.dateutc = d.toISOString().replace('T', ' ').replace('.000Z', '');
+  data.PASSKEY = "7d060d4d-c95f-4774-a0ec-a85c8952b9d9";
+  data.dateutc = d.toISOString().replace("T", " ").replace(".000Z", "");
   data.timestamp = d.toISOString();
   data.tarif = generateTarifData();
   data.vonku = generateExternalData();
@@ -280,9 +283,9 @@ Sep 07 10:50:42 zaloha node[926]:   PASSKEY: '7d060d4d-c95f-4774-a0ec-a85c8952b9
 
 async function postData(data: any) {
   try {
-    await axios.post('http://localhost:8082/setDomData', data, {
+    await axios.post("http://localhost:8082/setDomData", data, {
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
+        "Content-Type": "application/json; charset=utf-8",
       },
     });
   } catch (error) {
@@ -291,17 +294,17 @@ async function postData(data: any) {
 }
 
 async function fetchDomData() {
-  const url = 'http://localhost:8082/api/getLastData/dom';
+  const url = "http://localhost:8082/api/getLastData/dom";
   console.info(url);
 
   try {
     const res = await fetch(url, {
       headers: {
-        Authorization: 'Bearer 1',
+        Authorization: "Bearer 1",
       },
     });
     if (res.status === 401) {
-      console.error('auth 401');
+      console.error("auth 401");
     } else {
       const json = await res.json();
       return json;
@@ -334,7 +337,7 @@ async function loadDomData(time: string) {
       req: parseInt(res.rows[0].req, 10),
       reqall: parseInt(res.rows[0].reqall, 10),
       temp: parseFloat(res.rows[0].temp),
-      text: '',
+      text: "",
       useroffset: parseInt(res.rows[0].useroffset, 10),
     } as IDomRoomData;
     return room;
@@ -348,7 +351,7 @@ async function loadDomData(time: string) {
       temp: parseFloat(res.rows[0].temp),
       humidity: parseFloat(res.rows[0].humidity),
       rain: res.rows[0].rain ? 1 : 0,
-      text: '',
+      text: "",
     } as IDomExternalData;
     return room;
   }
@@ -359,13 +362,13 @@ async function loadDomData(time: string) {
     // console.log('rows', queryText, res.rows);
     const room = {
       tarif: parseInt(res.rows[0].tarif, 10),
-      text: '',
+      text: "",
     } as IDomTarifData;
     return room;
   }
 
   try {
-    console.info('connected', new Date());
+    console.info("connected", new Date());
 
     const data = {} as IDomDataRaw;
 
@@ -396,7 +399,7 @@ async function loadDomData(time: string) {
     console.error(e);
   } finally {
     client.release();
-    console.info('released');
+    console.info("released");
   }
   return null;
 }
@@ -412,26 +415,28 @@ function addZero(val: number) {
   }
   return `0${val}`;
 }
-const pgtime = `${d.getUTCFullYear()}-${addZero(d.getUTCMonth() + 1)}-${addZero(d.getUTCDate())} ${addZero(d.getUTCHours())}:${addZero((d.getUTCMinutes()))}`;
+const pgtime = `${d.getUTCFullYear()}-${addZero(d.getUTCMonth() + 1)}-${addZero(
+  d.getUTCDate()
+)} ${addZero(d.getUTCHours())}:${addZero(d.getUTCMinutes())}`;
 
 data1.dateutc = `${pgtime}:${d.getUTCSeconds()}`;
 const toMinute = Date.now() % 60000;
 
-console.info('Now, Timestamp, Redis, pgtime, Pg', d, data1.dateutc, pgtime);
+console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
 
 postData(data1);
 
 setTimeout(async () => {
   const sd = await fetchDomData();
   assert.deepStrictEqual(sd, dom.decodeData(data1).decoded);
-  console.info('Redis1 OK');
+  console.info("Redis1 OK");
 }, 1000);
 
 setTimeout(async () => {
   const rows = await loadDomData(pgtime);
-  rows.PASSKEY = '7d060d4d-c95f-4774-a0ec-a85c8952b9d9';
+  rows.PASSKEY = "7d060d4d-c95f-4774-a0ec-a85c8952b9d9";
   data1.dateutc = `${pgtime}:00`;
   rows.timestamp = d.toISOString();
   assert.deepStrictEqual(rows, data1);
-  console.info('PG OK');
+  console.info("PG OK");
 }, 61000 - toMinute);

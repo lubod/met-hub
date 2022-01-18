@@ -1,36 +1,39 @@
 /* eslint-disable no-unused-vars */
 import {
-  IDomTrendData, IDomData, IDomDataRaw, DomCfg,
-} from '../common/models/domModel';
-import { IMeasurement } from './measurement';
+  IDomTrendData,
+  IDomData,
+  IDomDataRaw,
+  DomCfg,
+} from "../common/models/domModel";
+import { IMeasurement } from "./measurement";
 
-const cloneDeep = require('lodash.clonedeep');
+const cloneDeep = require("lodash.clonedeep");
 
 // eslint-disable-next-line no-shadow
 export enum TABLES {
-  OBYVACKA_VZDUCH = 'obyvacka_vzduch',
-  OBYVACKA_PODLAHA = 'obyvacka_podlaha',
-  PRACOVNA_VZDUCH = 'pracovna_vzduch',
-  PRACOVNA_PODLAHA = 'pracovna_podlaha',
-  SPALNA_VZDUCH = 'spalna_vzduch',
-  SPALNA_PODLAHA = 'spalna_podlaha',
-  CHALANI_VZDUCH = 'chalani_vzduch',
-  CHALANI_PODLAHA = 'chalani_podlaha',
-  PETRA_VZDUCH = 'petra_vzduch',
-  PETRA_PODLAHA = 'petra_podlaha',
-  ZADVERIE_VZDUCH = 'zadverie_vzduch',
-  ZADVERIE_PODLAHA = 'zadverie_podlaha',
-  CHODBA_VZDUCH = 'chodba_vzduch',
-  CHODBA_PODLAHA = 'chodba_podlaha',
-  SATNA_VZDUCH = 'satna_vzduch',
-  SATNA_PODLAHA = 'satna_podlaha',
-  KUPELNA_HORE = 'kupelna_hore',
-  KUPELNA_DOLE = 'kupelna_dole',
-  VONKU = 'vonku',
-  TARIF = 'tarif',
+  OBYVACKA_VZDUCH = "obyvacka_vzduch",
+  OBYVACKA_PODLAHA = "obyvacka_podlaha",
+  PRACOVNA_VZDUCH = "pracovna_vzduch",
+  PRACOVNA_PODLAHA = "pracovna_podlaha",
+  SPALNA_VZDUCH = "spalna_vzduch",
+  SPALNA_PODLAHA = "spalna_podlaha",
+  CHALANI_VZDUCH = "chalani_vzduch",
+  CHALANI_PODLAHA = "chalani_podlaha",
+  PETRA_VZDUCH = "petra_vzduch",
+  PETRA_PODLAHA = "petra_podlaha",
+  ZADVERIE_VZDUCH = "zadverie_vzduch",
+  ZADVERIE_PODLAHA = "zadverie_podlaha",
+  CHODBA_VZDUCH = "chodba_vzduch",
+  CHODBA_PODLAHA = "chodba_podlaha",
+  SATNA_VZDUCH = "satna_vzduch",
+  SATNA_PODLAHA = "satna_podlaha",
+  KUPELNA_HORE = "kupelna_hore",
+  KUPELNA_DOLE = "kupelna_dole",
+  VONKU = "vonku",
+  TARIF = "tarif",
 }
 
-const PASSKEY = process.env.DOM_PASSKEY || '';
+const PASSKEY = process.env.DOM_PASSKEY || "";
 
 export class Dom implements IMeasurement {
   cfg: DomCfg = new DomCfg();
@@ -289,10 +292,7 @@ export class Dom implements IMeasurement {
           data[TABLES.VONKU].rain,
         ];
       case TABLES.TARIF:
-        return [
-          data.timestamp,
-          data[TABLES.TARIF].tarif,
-        ];
+        return [data.timestamp, data[TABLES.TARIF].tarif];
       default:
         return null;
     }
@@ -430,7 +430,7 @@ export class Dom implements IMeasurement {
       petra_low: data.petra_podlaha.low,
       time: null,
       date: null,
-      place: 'Dom',
+      place: "Dom",
     };
     const date = new Date(decoded.timestamp);
     const toStore = data;
@@ -444,7 +444,7 @@ export class Dom implements IMeasurement {
     date.setUTCSeconds(0);
     deepCopy.timestamp = date.toISOString();
     map.set(date.getTime(), deepCopy);
-    console.info('Agregated dom minute', deepCopy.timestamp);
+    console.info("Agregated dom minute", deepCopy.timestamp);
     return map;
   }
 }

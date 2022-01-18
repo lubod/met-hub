@@ -1,5 +1,9 @@
-import { IStationData, IStationTrendData, StationCfg } from '../../common/models/stationModel';
-import StationData from './stationData';
+import {
+  IStationData,
+  IStationTrendData,
+  StationCfg,
+} from "../../common/models/stationModel";
+import StationData from "./stationData";
 
 class StationCtrl {
   stationData: StationData;
@@ -19,12 +23,16 @@ class StationCtrl {
   start() {
     this.fetchData();
     this.fetchTrendData();
-    this.socket.getSocket().on(this.stationCfg.SOCKET_CHANNEL, (data: IStationData) => {
-      this.stationData.processData(data);
-    });
-    this.socket.getSocket().on(this.stationCfg.SOCKET_TREND_CHANNEL, (data: IStationTrendData) => {
-      this.stationData.processTrendData(data);
-    });
+    this.socket
+      .getSocket()
+      .on(this.stationCfg.SOCKET_CHANNEL, (data: IStationData) => {
+        this.stationData.processData(data);
+      });
+    this.socket
+      .getSocket()
+      .on(this.stationCfg.SOCKET_TREND_CHANNEL, (data: IStationTrendData) => {
+        this.stationData.processTrendData(data);
+      });
     // props.socket.getSocket().emit('station', 'getLastData');
     this.timer = setInterval(() => {
       this.stationData.setTime(new Date());
@@ -34,7 +42,7 @@ class StationCtrl {
   }
 
   async fetchData() {
-    const url = '/api/getLastData/station';
+    const url = "/api/getLastData/station";
     console.info(url);
 
     try {
@@ -57,7 +65,7 @@ class StationCtrl {
   }
 
   async fetchTrendData() {
-    const url = '/api/getTrendData/station';
+    const url = "/api/getTrendData/station";
     console.info(url);
 
     try {

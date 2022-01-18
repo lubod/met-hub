@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-import { observer } from 'mobx-react';
-import Data from '../data/data';
-import Text from '../text/text';
-import Room from '../room/room';
-import Trend from '../trend/trend';
-import { DomDataP } from '..';
+import React, { useContext } from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import { observer } from "mobx-react";
+import Data from "../data/data";
+import Text from "../text/text";
+import Room from "../room/room";
+import Trend from "../trend/trend";
+import { DomDataP } from "..";
 
 const Dom = observer(() => {
-  console.info('dom render');
+  console.info("dom render");
 
   const oldData = false;
   const dom = useContext(DomDataP);
@@ -16,7 +16,7 @@ const Dom = observer(() => {
   return (
     <div className="main">
       <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
-        <Row className={oldData ? 'text-danger' : ''}>
+        <Row className={oldData ? "text-danger" : ""}>
           <Col xs={4}>
             <Text name="Place" value={dom.data.place} />
           </Col>
@@ -32,33 +32,40 @@ const Dom = observer(() => {
         <div className="text-left font-weight-bold">GARDEN HOUSE</div>
         <Row>
           <Col xs={4}>
-            <Data name="Temperature" value={oldData ? null : dom.data.temp} unit="°C" fix={1} />
-            <Trend data={dom.trendData.temp} range={2} />
+            <Data
+              name="Temperature"
+              value={oldData ? null : dom.data.temp}
+              unit="°C"
+              fix={1}
+            />
+            <Trend name="Temperature" data={dom.trendData.temp} range={2} />
           </Col>
           <Col xs={4}>
-            <Data name="Humidity" value={oldData ? null : dom.data.humidity} unit="%" fix={0} />
-            <Trend data={dom.trendData.humidity} range={10} />
+            <Data
+              name="Humidity"
+              value={oldData ? null : dom.data.humidity}
+              unit="%"
+              fix={0}
+            />
+            <Trend name="Humidity" data={dom.trendData.humidity} range={10} />
           </Col>
           <Col xs={4}>
-            <Data name="Rain" value={oldData ? null : dom.data.rain} unit="" fix={0} />
-            <Trend data={dom.trendData.rain} range={1} />
+            <Data
+              name="Rain"
+              value={oldData ? null : dom.data.rain}
+              unit=""
+              fix={0}
+            />
+            <Trend name="Rain" data={dom.trendData.rain} range={1} />
           </Col>
         </Row>
       </Container>
       <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
         <Row className="text-left text-info font-weight-bold">
-          <Col xs={3}>
-            Air
-          </Col>
-          <Col xs={3}>
-            Floor
-          </Col>
-          <Col xs={3}>
-            Req
-          </Col>
-          <Col xs={2}>
-            HSL
-          </Col>
+          <Col xs={3}>Air</Col>
+          <Col xs={3}>Floor</Col>
+          <Col xs={3}>Req</Col>
+          <Col xs={2}>HSL</Col>
         </Row>
         <Room
           room="Living room"

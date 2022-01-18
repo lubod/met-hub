@@ -1,5 +1,5 @@
-const { Pool } = require('pg')
-const fs = require('fs')
+const { Pool } = require("pg");
+const fs = require("fs");
 
 const POS_ACTUALTEMP = 14,
   POS_REQUIRED = 19,
@@ -63,8 +63,8 @@ function decode(data) {
 }
 
 function decodeTemp(data) {
-  let num = data.substr(POS_ACTUALTEMP, 5)
-  if (num.startsWith('0-')) {
+  let num = data.substr(POS_ACTUALTEMP, 5);
+  if (num.startsWith("0-")) {
     num = num.substr(1);
   }
   return parseFloat(num);
@@ -74,7 +74,7 @@ function decodeHumidity(data) {
   return parseFloat(data.substr(POS_ACTUALTEMP, 5));
 }
 
-//                     012345678901234567890123456789012345678901234 
+//                     012345678901234567890123456789012345678901234
 
 // 14.01.2020 23:59:01 1
 
@@ -107,64 +107,94 @@ function decodeHumidity(data) {
 
 function storeFileData(data, table, fileName) {
   const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'postgres',
-    password: 'postgres',
-    port: 5432
-  })
-    ; (async () => {
-      // note: we don't try/catch this because if connecting throws an exception
-      // we don't need to dispose of the client (it will be undefined)
-      const client = await pool.connect();
-      console.log('connected');
-      let i = 0;
-      try {
-        await client.query('BEGIN');
+    user: "postgres",
+    host: "localhost",
+    database: "postgres",
+    password: "postgres",
+    port: 5432,
+  });
+  (async () => {
+    // note: we don't try/catch this because if connecting throws an exception
+    // we don't need to dispose of the client (it will be undefined)
+    const client = await pool.connect();
+    console.log("connected");
+    let i = 0;
+    try {
+      await client.query("BEGIN");
 
-        for (i = 0; i < data.length; i++) {
-          if (table === 'tarif') {
-            queryText = 'insert into ' + table + '(timestamp, tarif) values ($1, $2) ON CONFLICT ON CONSTRAINT ' + table + '_pkey DO NOTHING';
-            res = await client.query(queryText, [data[i].timestamp, data[i].tarif]);
-          }
-          else if (table === 'vonku') {
-            queryText = 'insert into ' + table + '(timestamp, temp, humidity ) values ($1, $2, $3) ON CONFLICT ON CONSTRAINT ' + table + '_pkey DO NOTHING';
-            res = await client.query(queryText, [data[i].timestamp, data[i].temp, data[i].humidity]);
-          }
-          else {
-            queryText = 'insert into ' + table + '(timestamp, temp, req, reqall, useroffset, maxoffset, kuri, low, leto) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT ON CONSTRAINT ' + table + '_pkey DO NOTHING';
-            res = await client.query(queryText, [data[i].timestamp, data[i].temp, data[i].req, data[i].reqall, data[i].useroffset, data[i].maxoffset, data[i].kuri, data[i].low, data[i].leto]);
-          }
+      for (i = 0; i < data.length; i++) {
+        if (table === "tarif") {
+          queryText =
+            "insert into " +
+            table +
+            "(timestamp, tarif) values ($1, $2) ON CONFLICT ON CONSTRAINT " +
+            table +
+            "_pkey DO NOTHING";
+          res = await client.query(queryText, [
+            data[i].timestamp,
+            data[i].tarif,
+          ]);
+        } else if (table === "vonku") {
+          queryText =
+            "insert into " +
+            table +
+            "(timestamp, temp, humidity ) values ($1, $2, $3) ON CONFLICT ON CONSTRAINT " +
+            table +
+            "_pkey DO NOTHING";
+          res = await client.query(queryText, [
+            data[i].timestamp,
+            data[i].temp,
+            data[i].humidity,
+          ]);
+        } else {
+          queryText =
+            "insert into " +
+            table +
+            "(timestamp, temp, req, reqall, useroffset, maxoffset, kuri, low, leto) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT ON CONSTRAINT " +
+            table +
+            "_pkey DO NOTHING";
+          res = await client.query(queryText, [
+            data[i].timestamp,
+            data[i].temp,
+            data[i].req,
+            data[i].reqall,
+            data[i].useroffset,
+            data[i].maxoffset,
+            data[i].kuri,
+            data[i].low,
+            data[i].leto,
+          ]);
         }
-        await client.query('COMMIT');
-        console.log('inserted into' + table);
-
-        fs.unlinkSync(fileName);
-        if (table === 'vonku') {
-          fs.unlinkSync(fileName.replace('k_19_', 'k_20_'));
-        }
-      } catch (e) {
-        await client.query('ROLLBACK');
-        console.log(data[i]);
-        throw e;
-      } finally {
-        client.end();
       }
-    })().catch(e => console.error(e.stack))
+      await client.query("COMMIT");
+      console.log("inserted into" + table);
+
+      fs.unlinkSync(fileName);
+      if (table === "vonku") {
+        fs.unlinkSync(fileName.replace("k_19_", "k_20_"));
+      }
+    } catch (e) {
+      await client.query("ROLLBACK");
+      console.log(data[i]);
+      throw e;
+    } finally {
+      client.end();
+    }
+  })().catch((e) => console.error(e.stack));
 }
 
 async function getFileData(fileName, table) {
-  console.log(fileName + ' ' + table);
-  const data = fs.readFileSync(fileName, 'utf8');
+  console.log(fileName + " " + table);
+  const data = fs.readFileSync(fileName, "utf8");
 
-  const lines = data.split('\n');
+  const lines = data.split("\n");
   const all_data = [];
 
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i] != '') {
+    if (lines[i] != "") {
       const line_data = lines[i].substr(20);
       let decoded_line;
-      if (table === 'tarif') {
+      if (table === "tarif") {
         decoded_line = decodeTarif(line_data);
         if (!isNaN(decoded_line.tarif)) {
           decoded_line.timestamp = decodeTimestamp(lines[i]);
@@ -172,38 +202,39 @@ async function getFileData(fileName, table) {
           if (!isNaN(decoded_line.timestamp)) {
             all_data.push(decoded_line);
           }
-        }
-        else {
+        } else {
           console.log(line_data);
         }
-
       }
-      if (table === 'vonku') {
+      if (table === "vonku") {
         decoded_line = {};
-        if (fileName.includes('k_19_')) {
+        if (fileName.includes("k_19_")) {
           decoded_line.temp = decodeTemp(line_data);
         }
-        if (fileName.includes('k_20_')) {
+        if (fileName.includes("k_20_")) {
           decoded_line.humidity = decodeHumidity(line_data);
         }
         decoded_line.timestamp = decodeTimestamp(lines[i]);
         decoded_line.orig = lines[i];
         if (!isNaN(decoded_line.timestamp)) {
           all_data.push(decoded_line);
-        }
-        else {
+        } else {
           console.log(line_data);
         }
       } else {
         decoded_line = decode(line_data);
-        if (!isNaN(decoded_line.temp) && !isNaN(decoded_line.req) && !isNaN(decoded_line.leto) && decoded_line.low <= 1) {
+        if (
+          !isNaN(decoded_line.temp) &&
+          !isNaN(decoded_line.req) &&
+          !isNaN(decoded_line.leto) &&
+          decoded_line.low <= 1
+        ) {
           decoded_line.timestamp = decodeTimestamp(lines[i]);
           decoded_line.orig = lines[i];
           if (!isNaN(decoded_line.timestamp)) {
             all_data.push(decoded_line);
           }
-        }
-        else {
+        } else {
           console.log(line_data);
         }
       }
@@ -212,30 +243,34 @@ async function getFileData(fileName, table) {
   return all_data;
 }
 
-
-fs.readdir('/home/zaloha/.k/data2/', async function (err, files) {
+fs.readdir("/home/zaloha/.k/data2/", async function (err, files) {
   if (err) {
-    return console.log('Unable to scan directory: ' + err);
+    return console.log("Unable to scan directory: " + err);
   }
   for (let i = 0; i < files.length; i++) {
-    if (files[i].startsWith('k_19_')) {
-      const temp = await getFileData('/home/zaloha/.k/data2/' + files[i], 'vonku');
-      const humFile = files[i].replace('k_19_', 'k_20_');
-      const humidity = await getFileData('/home/zaloha/.k/data2/' + humFile, 'vonku');
+    if (files[i].startsWith("k_19_")) {
+      const temp = await getFileData(
+        "/home/zaloha/.k/data2/" + files[i],
+        "vonku"
+      );
+      const humFile = files[i].replace("k_19_", "k_20_");
+      const humidity = await getFileData(
+        "/home/zaloha/.k/data2/" + humFile,
+        "vonku"
+      );
       data = [];
       for (let k = 0; k < temp.length; k++) {
         temp[k].humidity = humidity[k].humidity;
         temp[k].humTimestamp = humidity[k].timestamp;
         temp[k].humOrig = humidity[k].orig;
         if (temp[k].timestamp.getTime() != temp[k].humTimestamp.getTime()) {
-          console.log('zle ' + temp[k].timestamp + ' ' + temp[k].humTimestamp);
+          console.log("zle " + temp[k].timestamp + " " + temp[k].humTimestamp);
         }
         data.push(temp[k]);
       }
       //      console.log(data);
-      await storeFileData(data, 'vonku', '/home/zaloha/.k/data2/' + files[i]);
+      await storeFileData(data, "vonku", "/home/zaloha/.k/data2/" + files[i]);
       return;
     }
   }
-})
-
+});

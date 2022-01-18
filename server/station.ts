@@ -1,9 +1,12 @@
 import {
-  IStationData, IStationDataRaw, IStationTrendData, StationCfg,
-} from '../common/models/stationModel';
-import { IMeasurement } from './measurement';
+  IStationData,
+  IStationDataRaw,
+  IStationTrendData,
+  StationCfg,
+} from "../common/models/stationModel";
+import { IMeasurement } from "./measurement";
 
-const PASSKEY = process.env.STATION_PASSKEY || '';
+const PASSKEY = process.env.STATION_PASSKEY || "";
 
 class Station implements IMeasurement {
   cfg: StationCfg = new StationCfg();
@@ -98,7 +101,7 @@ class Station implements IMeasurement {
       winddir: round(data.winddir * 1.0, 0),
       time: null,
       date: null,
-      place: 'Marianka',
+      place: "Marianka",
       minuterain: null,
     };
     const date = new Date(decoded.timestamp);
@@ -271,7 +274,7 @@ class Station implements IMeasurement {
       avg.winddir = avgWind(windDir);
       // console.info(avg);
       result.set(minute.getTime(), avg);
-      console.info('Agregated station minute', minute);
+      console.info("Agregated station minute", minute);
     });
     return result;
   }

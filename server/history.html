@@ -1,81 +1,94 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
 
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <div>
-        <p id="last_data" class="font-weight-bold text-center"></p>
-        <div class="row">
-            <div class="col text-right">
-                <button type="button" id="current" class="btn btn-secondary">Current</button>
-            </div>
-            <div class="col text-right">
-                <button type="button" id="prev" class="btn btn-primary">Prev</button>
-            </div>
-            <div class="col">
-                <select id="room" class="custom-select">
-                    <option id="stanica" value="stanica" selected>Stanica</option>
-                    <option id="vonku" value="vonku" selected>Vonku</option>
-                    <option id="obyvacka" value="obyvacka">Obyvacka</option>
-                    <option id="pracovna" value="pracovna">Pracovna</option>
-                    <option id="zadverie" value="zadverie">Zadverie</option>
-                    <option id="petra" value="petra">Petra</option>
-                    <option id="chalani" value="chalani">Chalani</option>
-                    <option id="spalna" value="spalna">Spalna</option>
-                    <option id="chodba" value="chodba">Chodba</option>
-                    <option id="satna" value="satna">Satna</option>
-                    <option id="kupelne" value="kupelne">Kupelne</option>
-                </select>
-            </div>
-            <div class="col text-left">
-                <button type="button" id="next" class="btn btn-primary">Next</button>
-            </div>
+      <p id="last_data" class="font-weight-bold text-center"></p>
+      <div class="row">
+        <div class="col text-right">
+          <button type="button" id="current" class="btn btn-secondary">
+            Current
+          </button>
         </div>
-        <p id="last1" class="font-weight-bold text-center"></p>
-        <div id="chart_div1"></div>
-        <p id="last2" class="font-weight-bold text-center"></p>
-        <div id="chart_div2"></div>
-        <p id="last3" class="font-weight-bold text-center"></p>
-        <div id="chart_div3"></div>
-        <p id="last4" class="font-weight-bold text-center"></p>
-        <div id="chart_div4"></div>
-        <p id="last5" class="font-weight-bold text-center"></p>
-        <div id="chart_div5"></div>
-        <p id="last6" class="font-weight-bold text-center"></p>
-        <div id="chart_div6"></div>
-        <p id="last7" class="font-weight-bold text-center"></p>
-        <div id="chart_div7"></div>
-        <p id="last8" class="font-weight-bold text-center"></p>
-        <div id="chart_div8"></div>
-        <p id="last9" class="font-weight-bold text-center"></p>
-        <div id="chart_div9"></div>
-        <p id="last10" class="font-weight-bold text-center"></p>
-        <div id="chart_div10"></div>
-        <p id="last11" class="font-weight-bold text-center"></p>
-        <div id="chart_div11"></div>
+        <div class="col text-right">
+          <button type="button" id="prev" class="btn btn-primary">Prev</button>
+        </div>
+        <div class="col">
+          <select id="room" class="custom-select">
+            <option id="stanica" value="stanica" selected>Stanica</option>
+            <option id="vonku" value="vonku" selected>Vonku</option>
+            <option id="obyvacka" value="obyvacka">Obyvacka</option>
+            <option id="pracovna" value="pracovna">Pracovna</option>
+            <option id="zadverie" value="zadverie">Zadverie</option>
+            <option id="petra" value="petra">Petra</option>
+            <option id="chalani" value="chalani">Chalani</option>
+            <option id="spalna" value="spalna">Spalna</option>
+            <option id="chodba" value="chodba">Chodba</option>
+            <option id="satna" value="satna">Satna</option>
+            <option id="kupelne" value="kupelne">Kupelne</option>
+          </select>
+        </div>
+        <div class="col text-left">
+          <button type="button" id="next" class="btn btn-primary">Next</button>
+        </div>
+      </div>
+      <p id="last1" class="font-weight-bold text-center"></p>
+      <div id="chart_div1"></div>
+      <p id="last2" class="font-weight-bold text-center"></p>
+      <div id="chart_div2"></div>
+      <p id="last3" class="font-weight-bold text-center"></p>
+      <div id="chart_div3"></div>
+      <p id="last4" class="font-weight-bold text-center"></p>
+      <div id="chart_div4"></div>
+      <p id="last5" class="font-weight-bold text-center"></p>
+      <div id="chart_div5"></div>
+      <p id="last6" class="font-weight-bold text-center"></p>
+      <div id="chart_div6"></div>
+      <p id="last7" class="font-weight-bold text-center"></p>
+      <div id="chart_div7"></div>
+      <p id="last8" class="font-weight-bold text-center"></p>
+      <div id="chart_div8"></div>
+      <p id="last9" class="font-weight-bold text-center"></p>
+      <div id="chart_div9"></div>
+      <p id="last10" class="font-weight-bold text-center"></p>
+      <div id="chart_div10"></div>
+      <p id="last11" class="font-weight-bold text-center"></p>
+      <div id="chart_div11"></div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-        crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
     <script type="text/javascript" src="history.js"></script>
-</body>
-
+  </body>
 </html>

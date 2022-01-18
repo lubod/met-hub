@@ -1,20 +1,20 @@
-import React from 'react';
-import { Row, Col } from 'react-bootstrap';
-import Data from '../data/data';
-import Text from '../text/text';
-import Trend from '../trend/trend';
+import React from "react";
+import { Row, Col } from "react-bootstrap";
+import Data from "../data/data";
+import Text from "../text/text";
+import Trend from "../trend/trend";
 
 type RoomProps = {
-  air: number,
-  floor: number,
-  required: number,
-  heat: number,
-  summer: number,
-  low: number,
-  room: string,
-  airTrend: Array<number>,
-  floorTrend: Array<number>
-}
+  air: number;
+  floor: number;
+  required: number;
+  heat: number;
+  summer: number;
+  low: number;
+  room: string;
+  airTrend: Array<number>;
+  floorTrend: Array<number>;
+};
 
 const Room = function ({
   air,
@@ -33,17 +33,22 @@ const Room = function ({
       <Row className="text-light">
         <Col xs={3}>
           <Data name="" value={air} unit="°C" fix={1} />
-          <Trend data={airTrend} range={1.5} />
+          <Trend name="Air" data={airTrend} range={1.5} />
         </Col>
         <Col xs={3}>
           <Data name="" value={floor} unit="°C" fix={1} />
-          <Trend data={floorTrend} range={1.5} />
+          <Trend name="Floor" data={floorTrend} range={1.5} />
         </Col>
         <Col xs={3}>
           <Data name="" value={required} unit="°C" fix={1} />
         </Col>
         <Col xs={2}>
-          <Text name="" value={`${heat != null ? heat.toFixed(0) : ''}${summer != null ? summer.toFixed(0) : ''}${low != null ? low.toFixed(0) : ''}`} />
+          <Text
+            name=""
+            value={`${heat != null ? heat.toFixed(0) : ""}${
+              summer != null ? summer.toFixed(0) : ""
+            }${low != null ? low.toFixed(0) : ""}`}
+          />
         </Col>
       </Row>
     </div>

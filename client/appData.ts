@@ -1,4 +1,4 @@
-import { makeObservable, observable } from 'mobx';
+import { makeObservable, observable } from "mobx";
 
 class AppData {
   ctime: Date = new Date();

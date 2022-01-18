@@ -1,23 +1,33 @@
-import React from 'react';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+import React from "react";
+import { Modal } from "react-bootstrap";
+import BTrend from "./bTrend";
 
 type TrendData = {
-  range: number,
-  data: Array<number>
-}
+  name: string;
+  range: number;
+  data: Array<number>;
+};
 
-const Trend = function ({
-  range,
-  data,
-}: TrendData) {
+const Trend = function ({ name, range, data }: TrendData) {
   const canvasRef = React.useRef(null);
   let max = data != null ? Math.max(...data) : null;
   const min = data != null ? Math.min(...data) : null;
+  const [modalShow, setModalShow] = React.useState(false);
+  const handleClose = () => {
+    console.info("close click");
+    setModalShow(false);
+  };
+  const handleShow = () => {
+    console.info("open click");
+    setModalShow(true);
+  };
 
   function draw(canvas: any) {
     //    console.log(trend.data);
     if (data != null) {
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (max - min < range) {
         max = min + range;
       }
@@ -26,8 +36,8 @@ const Trend = function ({
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = '#17A2B8';
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#17A2B8";
       for (let i = 0; i < data.length; i += 1) {
         ctx.moveTo(i, canvas.height);
         const y = Math.round(canvas.height - (data[i] * k + s));
@@ -44,22 +54,29 @@ const Trend = function ({
 
   // console.info('render trend');
   return (
-    <OverlayTrigger overlay={(
-      <Tooltip id="tooltip">
-        (
-        {min?.toFixed(1)}
-        ,
-        {max?.toFixed(1)}
-        )
-      </Tooltip>
-    )}
-    >
-      <div className="text-left">
-        <canvas width="60" height="15" id="myCanvas" ref={canvasRef}>
-          <p>Your browser doesn&apos;t support canvas. Boo hoo!</p>
-        </canvas>
+    <div className="text-left" onClick={handleShow}>
+      <canvas width="60" height="15" id="myCanvas" ref={canvasRef}>
+        <p>Your browser doesn&apos;t support canvas. Boo hoo!</p>
+      </canvas>
+      <div onClick={(e) => e.stopPropagation()}>
+        <Modal
+          show={modalShow}
+          onHide={handleClose}
+          size="xl"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          animation={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title id="contained-modal-title-vcenter">{name}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <BTrend range={range} data={data} />
+          </Modal.Body>
+          <Modal.Footer />
+        </Modal>
       </div>
-    </OverlayTrigger>
+    </div>
   );
 };
 

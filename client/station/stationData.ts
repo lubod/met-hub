@@ -1,11 +1,12 @@
+import { action, makeObservable, observable } from "mobx";
 import {
-  action, makeObservable, observable,
-} from 'mobx';
-import { IStationData, IStationTrendData } from '../../common/models/stationModel';
+  IStationData,
+  IStationTrendData,
+} from "../../common/models/stationModel";
 
 class StationData {
   data: IStationData = {
-    timestamp: '',
+    timestamp: "",
   } as IStationData;
 
   trendData: IStationTrendData = {
@@ -62,10 +63,12 @@ class StationData {
   }
 
   processData(newData: IStationData) {
-    console.info('process station data', newData, this);
+    console.info("process station data", newData, this);
     if (newData != null) {
-      const sdate = new Date(newData.timestamp).toLocaleDateString('sk-SK').replace(' ', '');
-      const stime = new Date(newData.timestamp).toLocaleTimeString('sk-SK');
+      const sdate = new Date(newData.timestamp)
+        .toLocaleDateString("sk-SK")
+        .replace(" ", "");
+      const stime = new Date(newData.timestamp).toLocaleTimeString("sk-SK");
 
       this.data = newData;
       this.data.time = stime;
@@ -75,7 +78,7 @@ class StationData {
   }
 
   processTrendData(newTrendData: IStationTrendData) {
-    console.info('process station trend data', newTrendData, this);
+    console.info("process station trend data", newTrendData, this);
     if (newTrendData != null) {
       this.trendData = newTrendData;
     }
