@@ -1,1 +1,1 @@
-time npx prettier --check . && time npm run build && time sudo docker-compose build && time sudo docker-compose up
+time npx prettier --write . && time npm run build && time sudo docker-compose build && time sudo docker-compose up

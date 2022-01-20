@@ -30,13 +30,19 @@ const Protected = function () {
           <ToggleButtonGroup
             className="btn-block"
             type="radio"
-            name="options"
+            name="stationOptions"
             defaultValue="current"
             onChange={handleChangeStation}
           >
-            <ToggleButton value="current">Current</ToggleButton>
-            <ToggleButton value="history">History</ToggleButton>
-            <ToggleButton value="map">Map</ToggleButton>
+            <ToggleButton id="stb1" value="current">
+              Current
+            </ToggleButton>
+            <ToggleButton id="stb2" value="history">
+              History
+            </ToggleButton>
+            <ToggleButton id="stb3" value="map">
+              Map
+            </ToggleButton>
           </ToggleButtonGroup>
           {valueStation === "current" && <Station />}
           {valueStation === "history" && (
@@ -72,13 +78,19 @@ const Protected = function () {
           <ToggleButtonGroup
             className="btn-block"
             type="radio"
-            name="options"
+            name="domOptions"
             defaultValue="current"
             onChange={handleChangeDom}
           >
-            <ToggleButton value="current">Current</ToggleButton>
-            <ToggleButton value="history">History</ToggleButton>
-            <ToggleButton value="map">Map</ToggleButton>
+            <ToggleButton id="dtb1" value="current">
+              Current
+            </ToggleButton>
+            <ToggleButton id="dtb2" value="history">
+              History
+            </ToggleButton>
+            <ToggleButton id="dtb3" value="map">
+              Map
+            </ToggleButton>
           </ToggleButtonGroup>
           {valueDom === "current" && <Dom />}
           {valueDom === "history" && (

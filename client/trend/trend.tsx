@@ -15,12 +15,11 @@ const Trend = function ({ name, range, data }: TrendData) {
   let max = data != null ? Math.max(...data) : null;
   const min = data != null ? Math.min(...data) : null;
   const [modalShow, setModalShow] = React.useState(false);
+
   const handleClose = () => {
-    console.info("close click");
     setModalShow(false);
   };
   const handleShow = () => {
-    console.info("open click");
     setModalShow(true);
   };
 

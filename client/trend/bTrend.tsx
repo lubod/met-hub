@@ -14,7 +14,7 @@ const BTrend = function ({ range, data }: TrendData) {
   const min = data != null ? Math.min(...data) : null;
 
   function draw(canvas: any) {
-    console.info(data, min, max, canvas);
+    // console.info(data, min, max, canvas);
     if (data != null) {
       const ctx = canvas.getContext("2d");
       if (max - min < range) {
@@ -26,7 +26,7 @@ const BTrend = function ({ range, data }: TrendData) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
       ctx.lineWidth = canvas.width / 61; // lineWidth centered
-      console.info(ctx.lineWidth);
+      // console.info(ctx.lineWidth);
       ctx.strokeStyle = "#17A2B8";
       for (let i = 0; i < data.length; i += 1) {
         ctx.moveTo(i * ctx.lineWidth + ctx.lineWidth / 2, canvas.height);

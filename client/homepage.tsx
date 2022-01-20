@@ -29,10 +29,10 @@ const HomePage = function () {
         </Col>
         <Col sm={6} className="px-2">
           <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
-            <h1 className="text-info">5 met-hub.com</h1>
+            <h1 className="text-info">met-hub.com</h1>
             <p>
               This is a free site for non-professional meteorological stations.
-              Currently you can see data from GoGEN ME 3900
+              Currently you can see data from GoGEN ME 3900 (b7)
             </p>
           </Container>
           <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
