@@ -195,9 +195,9 @@ const WindRose = function ({
       </Col>
       <Col xs={4} className="text-left">
         <Data name="Wind Speed" value={speed} unit="km/h" fix={0} />
-        <Trend name="Wind Speed" data={speedTrend} range={5} />
+        <Trend name="Wind Speed" data={speedTrend} />
         <Data name="Wind Gust" value={gust} unit="km/h" fix={1} />
-        <Trend name="Wind Gust" data={gustTrend} range={5} />
+        <Trend name="Wind Gust" data={gustTrend} />
         <Data name="Daily Gust" value={dailyGust} unit="km/h" fix={1} />
       </Col>
     </Row>

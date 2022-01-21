@@ -2,58 +2,55 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from "react";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 type TrendData = {
-  range: number;
-  data: Array<number>;
+  chdata: { minute: number; value: number }[];
+  max: number;
 };
 
-const BTrend = function ({ range, data }: TrendData) {
-  const canvasRef = React.useRef(null);
-  let max = data != null ? Math.max(...data) : null;
-  const min = data != null ? Math.min(...data) : null;
-
-  function draw(canvas: any) {
-    // console.info(data, min, max, canvas);
-    if (data != null) {
-      const ctx = canvas.getContext("2d");
-      if (max - min < range) {
-        max = min + range;
-      }
-      const k = (canvas.height - 1) / (max - min);
-      const s = 1 - min * k;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
-      ctx.lineWidth = canvas.width / 61; // lineWidth centered
-      // console.info(ctx.lineWidth);
-      ctx.strokeStyle = "#17A2B8";
-      for (let i = 0; i < data.length; i += 1) {
-        ctx.moveTo(i * ctx.lineWidth + ctx.lineWidth / 2, canvas.height);
-        const y = Math.round(canvas.height - (data[i] * k + s));
-        ctx.lineTo(i * ctx.lineWidth + ctx.lineWidth / 2, y);
-      }
-      ctx.stroke();
-    }
-  }
-
-  React.useEffect(() => {
-    const canvas = canvasRef.current;
-    // Make it visually fill the positioned parent
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    // ...then set the internal size to match
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    draw(canvas);
-  });
-
-  // console.info('render trend');
+const BTrend = function ({ chdata, max }: TrendData) {
+  // console.info("render trend", range);
+  // console.info(chdata);
   return (
     <div className="text-left">
-      <canvas id="myCanvas" ref={canvasRef}>
-        <p>Your browser doesn&apos;t support canvas. Boo hoo!</p>
-      </canvas>
+      <ResponsiveContainer width="100%" aspect={16.0 / 10.0}>
+        <AreaChart
+          data={chdata}
+          margin={{
+            top: 0,
+            right: 0,
+            left: max > 100 ? -10 : -20,
+            bottom: 0,
+          }}
+        >
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="black"
+            fillOpacity={1}
+            fill="url(#colorUv)"
+          />
+          <defs>
+            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#17A2B8" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#17A2B8" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid stroke="#ccc" vertical={false} />
+          <XAxis dataKey="minute" />
+          <YAxis />
+          <Tooltip />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 };

@@ -93,11 +93,7 @@ const Station = observer(() => {
               unit="°C"
               fix={1}
             />
-            <Trend
-              name="Temperature"
-              data={station.trendData.temp}
-              range={1.5}
-            />
+            <Trend name="Temperature" data={station.trendData.temp} />
           </Col>
           <Col xs={4}>
             <Data
@@ -106,11 +102,7 @@ const Station = observer(() => {
               unit="%"
               fix={0}
             />
-            <Trend
-              name="Humidity"
-              data={station.trendData.humidity}
-              range={10}
-            />
+            <Trend name="Humidity" data={station.trendData.humidity} />
           </Col>
           <Col xs={4}>
             <Data
@@ -119,11 +111,7 @@ const Station = observer(() => {
               unit="hPa"
               fix={1}
             />
-            <Trend
-              name="Pressure"
-              data={station.trendData.pressurerel}
-              range={1}
-            />
+            <Trend name="Pressure" data={station.trendData.pressurerel} />
           </Col>
         </Row>
         <Row>
@@ -134,11 +122,7 @@ const Station = observer(() => {
               unit="W/m2"
               fix={0}
             />
-            <Trend
-              name="Radiation"
-              data={station.trendData.solarradiation}
-              range={100}
-            />
+            <Trend name="Radiation" data={station.trendData.solarradiation} />
           </Col>
           <Col xs={4}>
             <Data
@@ -147,7 +131,7 @@ const Station = observer(() => {
               unit=""
               fix={0}
             />
-            <Trend name="UV" data={station.trendData.uv} range={3} />
+            <Trend name="UV" data={station.trendData.uv} />
           </Col>
           <Col xs={4}>
             <Data
@@ -156,11 +140,7 @@ const Station = observer(() => {
               unit="mm/h"
               fix={1}
             />
-            <Trend
-              name="Rain Rate"
-              data={station.trendData.rainrate}
-              range={1}
-            />
+            <Trend name="Rain Rate" data={station.trendData.rainrate} />
           </Col>
         </Row>
         <Row>
@@ -226,11 +206,7 @@ const Station = observer(() => {
               unit="°C"
               fix={1}
             />
-            <Trend
-              name="Temperature IN"
-              data={station.trendData.tempin}
-              range={1.5}
-            />
+            <Trend name="Temperature IN" data={station.trendData.tempin} />
           </Col>
           <Col xs={6}>
             <Data
@@ -239,11 +215,7 @@ const Station = observer(() => {
               unit="%"
               fix={0}
             />
-            <Trend
-              name="Humidity IN"
-              data={station.trendData.humidityin}
-              range={10}
-            />
+            <Trend name="Humidity IN" data={station.trendData.humidityin} />
           </Col>
         </Row>
       </Container>

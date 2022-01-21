@@ -38,7 +38,7 @@ const Dom = observer(() => {
               unit="°C"
               fix={1}
             />
-            <Trend name="Temperature" data={dom.trendData.temp} range={2} />
+            <Trend name="Temperature" data={dom.trendData.temp} />
           </Col>
           <Col xs={4}>
             <Data
@@ -47,7 +47,7 @@ const Dom = observer(() => {
               unit="%"
               fix={0}
             />
-            <Trend name="Humidity" data={dom.trendData.humidity} range={10} />
+            <Trend name="Humidity" data={dom.trendData.humidity} />
           </Col>
           <Col xs={4}>
             <Data
@@ -56,7 +56,7 @@ const Dom = observer(() => {
               unit=""
               fix={0}
             />
-            <Trend name="Rain" data={dom.trendData.rain} range={1} />
+            <Trend name="Rain" data={dom.trendData.rain} />
           </Col>
         </Row>
       </Container>

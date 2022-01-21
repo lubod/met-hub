@@ -2,18 +2,36 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from "react";
 import { Modal } from "react-bootstrap";
+import { Area, AreaChart } from "recharts";
 import BTrend from "./bTrend";
 
 type TrendData = {
   name: string;
-  range: number;
   data: Array<number>;
 };
 
-const Trend = function ({ name, range, data }: TrendData) {
-  const canvasRef = React.useRef(null);
-  let max = data != null ? Math.max(...data) : null;
-  const min = data != null ? Math.min(...data) : null;
+const Trend = function ({ name, data }: TrendData) {
+  let max: number = null;
+  let min: number = null;
+  let avg: number = null;
+  let sum: number = null;
+
+  for (let i = 0; i < data.length; i += 1) {
+    if (i === 0) {
+      // eslint-disable-next-line no-multi-assign
+      max = min = sum = data[i];
+    } else {
+      if (data[i] > max) {
+        max = data[i];
+      }
+      if (data[i] < min) {
+        min = data[i];
+      }
+      sum += data[i];
+    }
+  }
+  avg = sum / data.length;
+
   const [modalShow, setModalShow] = React.useState(false);
 
   const handleClose = () => {
@@ -23,40 +41,30 @@ const Trend = function ({ name, range, data }: TrendData) {
     setModalShow(true);
   };
 
-  function draw(canvas: any) {
-    //    console.log(trend.data);
-    if (data != null) {
-      const ctx = canvas.getContext("2d");
-      if (max - min < range) {
-        max = min + range;
-      }
-      const k = (canvas.height - 1) / (max - min);
-      const s = 1 - min * k;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "#17A2B8";
-      for (let i = 0; i < data.length; i += 1) {
-        ctx.moveTo(i, canvas.height);
-        const y = Math.round(canvas.height - (data[i] * k + s));
-        ctx.lineTo(i, y);
-      }
-      ctx.stroke();
-    }
+  const chdata = [];
+  for (let i = 0; i < data.length; i += 1) {
+    chdata.push({ minute: i, value: data[i] });
   }
-
-  React.useEffect(() => {
-    const canvas = canvasRef.current;
-    draw(canvas);
-  });
-
   // console.info('render trend');
   return (
-    <div className="text-left" onClick={handleShow}>
-      <canvas width="60" height="15" id="myCanvas" ref={canvasRef}>
-        <p>Your browser doesn&apos;t support canvas. Boo hoo!</p>
-      </canvas>
+    <div
+      className="text-center"
+      style={{ display: "flex", justifyContent: "center" }}
+      onClick={handleShow}
+    >
+      <AreaChart
+        width={60}
+        height={25}
+        data={chdata}
+        margin={{
+          top: 0,
+          right: 0,
+          left: 0,
+          bottom: 10,
+        }}
+      >
+        <Area type="monotone" dataKey="value" stroke="#17A2B8" fill="#17A2B8" />
+      </AreaChart>
       <div onClick={(e) => e.stopPropagation()}>
         <Modal
           show={modalShow}
@@ -67,12 +75,13 @@ const Trend = function ({ name, range, data }: TrendData) {
           animation={false}
         >
           <Modal.Header closeButton>
-            <Modal.Title id="contained-modal-title-vcenter">{name}</Modal.Title>
+            <Modal.Title id="contained-modal-title-vcenter">
+              {name}, min={min}, max={max}, avg={avg.toFixed(1)}
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <BTrend range={range} data={data} />
+            <BTrend chdata={chdata} max={max} />
           </Modal.Body>
-          <Modal.Footer />
         </Modal>
       </div>
     </div>

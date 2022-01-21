@@ -33,11 +33,11 @@ const Room = function ({
       <Row className="text-light">
         <Col xs={3}>
           <Data name="" value={air} unit="°C" fix={1} />
-          <Trend name="Air" data={airTrend} range={1.5} />
+          <Trend name="Air" data={airTrend} />
         </Col>
         <Col xs={3}>
           <Data name="" value={floor} unit="°C" fix={1} />
-          <Trend name="Floor" data={floorTrend} range={1.5} />
+          <Trend name="Floor" data={floorTrend} />
         </Col>
         <Col xs={3}>
           <Data name="" value={required} unit="°C" fix={1} />
