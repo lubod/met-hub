@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 import WindRose from "../wind-rose/wind-rose";
 import Data from "../data/data";
 import Text from "../text/text";
-import Trend from "../trend/trend";
 import { StationDataP } from "..";
+import DataWithTrend from "../dataWithTrend/dataWithTrend";
 
 const Station = observer(() => {
   console.info("station render");
@@ -87,60 +87,72 @@ const Station = observer(() => {
       <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
         <Row>
           <Col xs={4}>
-            <Data
+            <DataWithTrend
               name="Temperature"
               value={station.oldData ? null : station.data.temp}
               unit="°C"
               fix={1}
+              data={station.trendData.temp}
+              range={1.6}
+              couldBeNegative
             />
-            <Trend name="Temperature" data={station.trendData.temp} />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataWithTrend
               name="Humidity"
               value={station.oldData ? null : station.data.humidity}
               unit="%"
               fix={0}
+              data={station.trendData.humidity}
+              range={10}
+              couldBeNegative={false}
             />
-            <Trend name="Humidity" data={station.trendData.humidity} />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataWithTrend
               name="Pressure"
               value={station.oldData ? null : station.data.pressurerel}
               unit="hPa"
               fix={1}
+              data={station.trendData.pressurerel}
+              range={1}
+              couldBeNegative={false}
             />
-            <Trend name="Pressure" data={station.trendData.pressurerel} />
           </Col>
         </Row>
         <Row>
           <Col xs={4}>
-            <Data
+            <DataWithTrend
               name="Radiation"
               value={station.oldData ? null : station.data.solarradiation}
               unit="W/m2"
               fix={0}
+              data={station.trendData.solarradiation}
+              range={100}
+              couldBeNegative={false}
             />
-            <Trend name="Radiation" data={station.trendData.solarradiation} />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataWithTrend
               name="UV"
               value={station.oldData ? null : station.data.uv}
               unit=""
               fix={0}
+              data={station.trendData.uv}
+              range={3}
+              couldBeNegative={false}
             />
-            <Trend name="UV" data={station.trendData.uv} />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataWithTrend
               name="Rain Rate"
               value={station.oldData ? null : station.data.rainrate}
               unit="mm/h"
               fix={1}
+              data={station.trendData.rainrate}
+              range={1}
+              couldBeNegative={false}
             />
-            <Trend name="Rain Rate" data={station.trendData.rainrate} />
           </Col>
         </Row>
         <Row>
@@ -200,22 +212,26 @@ const Station = observer(() => {
         <div className="text-left font-weight-bold">IN</div>
         <Row>
           <Col xs={6}>
-            <Data
+            <DataWithTrend
               name="Temperature"
               value={station.oldData ? null : station.data.tempin}
               unit="°C"
               fix={1}
+              data={station.trendData.tempin}
+              range={1.6}
+              couldBeNegative
             />
-            <Trend name="Temperature IN" data={station.trendData.tempin} />
           </Col>
           <Col xs={6}>
-            <Data
+            <DataWithTrend
               name="Humidity"
               value={station.oldData ? null : station.data.humidityin}
               unit="%"
               fix={0}
+              data={station.trendData.humidityin}
+              range={10}
+              couldBeNegative={false}
             />
-            <Trend name="Humidity IN" data={station.trendData.humidityin} />
           </Col>
         </Row>
       </Container>

@@ -14,12 +14,13 @@ import {
 
 type TrendData = {
   chdata: { minute: number; value: number }[];
-  max: number;
+  domainMin: number;
+  domainMax: number;
 };
 
-const BTrend = function ({ chdata, max }: TrendData) {
+const BTrend = function ({ chdata, domainMin, domainMax }: TrendData) {
   // console.info("render trend", range);
-  // console.info(chdata);
+  // console.info(domainMin, domainMax, chdata);
   return (
     <div className="text-left">
       <ResponsiveContainer width="100%" aspect={16.0 / 10.0}>
@@ -28,7 +29,7 @@ const BTrend = function ({ chdata, max }: TrendData) {
           margin={{
             top: 0,
             right: 0,
-            left: max > 100 ? -10 : -20,
+            left: 0,
             bottom: 0,
           }}
         >
@@ -47,7 +48,7 @@ const BTrend = function ({ chdata, max }: TrendData) {
           </defs>
           <CartesianGrid stroke="#ccc" vertical={false} />
           <XAxis dataKey="minute" />
-          <YAxis />
+          <YAxis type="number" domain={[domainMin, domainMax]} />
           <Tooltip />
         </AreaChart>
       </ResponsiveContainer>

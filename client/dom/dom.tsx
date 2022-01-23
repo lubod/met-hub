@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
-import Data from "../data/data";
 import Text from "../text/text";
 import Room from "../room/room";
-import Trend from "../trend/trend";
 import { DomDataP } from "..";
+import DataWithTrend from "../dataWithTrend/dataWithTrend";
 
 const Dom = observer(() => {
   console.info("dom render");
@@ -32,31 +31,37 @@ const Dom = observer(() => {
         <div className="text-left font-weight-bold">GARDEN HOUSE</div>
         <Row>
           <Col xs={4}>
-            <Data
+            <DataWithTrend
               name="Temperature"
               value={oldData ? null : dom.data.temp}
               unit="°C"
               fix={1}
+              data={dom.trendData.temp}
+              range={1.6}
+              couldBeNegative
             />
-            <Trend name="Temperature" data={dom.trendData.temp} />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataWithTrend
               name="Humidity"
               value={oldData ? null : dom.data.humidity}
               unit="%"
               fix={0}
+              data={dom.trendData.humidity}
+              range={10}
+              couldBeNegative={false}
             />
-            <Trend name="Humidity" data={dom.trendData.humidity} />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataWithTrend
               name="Rain"
               value={oldData ? null : dom.data.rain}
               unit=""
               fix={0}
+              data={dom.trendData.rain}
+              range={1}
+              couldBeNegative={false}
             />
-            <Trend name="Rain" data={dom.trendData.rain} />
           </Col>
         </Row>
       </Container>

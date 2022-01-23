@@ -1,8 +1,8 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import Data from "../data/data";
+import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import Text from "../text/text";
-import Trend from "../trend/trend";
 
 type RoomProps = {
   air: number;
@@ -32,12 +32,26 @@ const Room = function ({
       {room}
       <Row className="text-light">
         <Col xs={3}>
-          <Data name="" value={air} unit="°C" fix={1} />
-          <Trend name="Air" data={airTrend} />
+          <DataWithTrend
+            name=""
+            value={air}
+            unit="°C"
+            fix={1}
+            data={airTrend}
+            range={1.6}
+            couldBeNegative
+          />
         </Col>
         <Col xs={3}>
-          <Data name="" value={floor} unit="°C" fix={1} />
-          <Trend name="Floor" data={floorTrend} />
+          <DataWithTrend
+            name=""
+            value={floor}
+            unit="°C"
+            fix={1}
+            data={floorTrend}
+            range={1.6}
+            couldBeNegative
+          />
         </Col>
         <Col xs={3}>
           <Data name="" value={required} unit="°C" fix={1} />

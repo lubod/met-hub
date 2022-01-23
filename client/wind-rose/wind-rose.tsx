@@ -1,7 +1,7 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import Data from "../data/data";
-import Trend from "../trend/trend";
+import DataWithTrend from "../dataWithTrend/dataWithTrend";
 
 type Wind = {
   speed: number;
@@ -194,10 +194,24 @@ const WindRose = function ({
         </canvas>
       </Col>
       <Col xs={4} className="text-left">
-        <Data name="Wind Speed" value={speed} unit="km/h" fix={0} />
-        <Trend name="Wind Speed" data={speedTrend} />
-        <Data name="Wind Gust" value={gust} unit="km/h" fix={1} />
-        <Trend name="Wind Gust" data={gustTrend} />
+        <DataWithTrend
+          name="Wind Speed"
+          value={speed}
+          unit="km/h"
+          fix={0}
+          data={speedTrend}
+          range={5}
+          couldBeNegative={false}
+        />
+        <DataWithTrend
+          name="Wind Gust"
+          value={gust}
+          unit="km/h"
+          fix={1}
+          data={gustTrend}
+          range={5}
+          couldBeNegative={false}
+        />
         <Data name="Daily Gust" value={dailyGust} unit="km/h" fix={1} />
       </Col>
     </Row>
