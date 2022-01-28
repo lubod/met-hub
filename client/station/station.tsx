@@ -95,6 +95,7 @@ const Station = observer(() => {
               data={station.trendData.temp}
               range={1.6}
               couldBeNegative
+              measurement="stanica:temp"
             />
           </Col>
           <Col xs={4}>
@@ -106,6 +107,7 @@ const Station = observer(() => {
               data={station.trendData.humidity}
               range={10}
               couldBeNegative={false}
+              measurement="stanica:humidity"
             />
           </Col>
           <Col xs={4}>
@@ -117,6 +119,7 @@ const Station = observer(() => {
               data={station.trendData.pressurerel}
               range={1}
               couldBeNegative={false}
+              measurement="stanica:pressurerel"
             />
           </Col>
         </Row>
@@ -130,6 +133,7 @@ const Station = observer(() => {
               data={station.trendData.solarradiation}
               range={100}
               couldBeNegative={false}
+              measurement="stanica:solarradiation"
             />
           </Col>
           <Col xs={4}>
@@ -141,6 +145,7 @@ const Station = observer(() => {
               data={station.trendData.uv}
               range={3}
               couldBeNegative={false}
+              measurement="stanica:uv"
             />
           </Col>
           <Col xs={4}>
@@ -152,6 +157,7 @@ const Station = observer(() => {
               data={station.trendData.rainrate}
               range={1}
               couldBeNegative={false}
+              measurement="stanica:rainrate"
             />
           </Col>
         </Row>
@@ -220,6 +226,7 @@ const Station = observer(() => {
               data={station.trendData.tempin}
               range={1.6}
               couldBeNegative
+              measurement="stanica:tempin"
             />
           </Col>
           <Col xs={6}>
@@ -231,6 +238,7 @@ const Station = observer(() => {
               data={station.trendData.humidityin}
               range={10}
               couldBeNegative={false}
+              measurement="stanica:humidityin"
             />
           </Col>
         </Row>

@@ -32,7 +32,7 @@ class DomCtrl {
 
   async fetchData() {
     const url = "/api/getLastData/dom";
-    console.info(url);
+    // console.info(url);
 
     try {
       const response = await fetch(url, {
@@ -55,7 +55,7 @@ class DomCtrl {
 
   async fetchTrendData() {
     const url = "/api/getTrendData/dom";
-    console.info(url);
+    // console.info(url);
 
     try {
       const response = await fetch(url, {

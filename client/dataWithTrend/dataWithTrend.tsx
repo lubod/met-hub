@@ -10,6 +10,7 @@ type DataWithTrendProps = {
   data: Array<number>;
   range: number;
   couldBeNegative: boolean;
+  measurement: string;
 };
 
 const DataWithTrend = function ({
@@ -20,6 +21,7 @@ const DataWithTrend = function ({
   data,
   range,
   couldBeNegative,
+  measurement,
 }: DataWithTrendProps) {
   return (
     <>
@@ -30,6 +32,7 @@ const DataWithTrend = function ({
         range={range}
         unit={unit}
         couldBeNegative={couldBeNegative}
+        measurement={measurement}
       />
     </>
   );

@@ -43,7 +43,7 @@ class StationCtrl {
 
   async fetchData() {
     const url = "/api/getLastData/station";
-    console.info(url);
+    // console.info(url);
 
     try {
       const response = await fetch(url, {
@@ -66,7 +66,7 @@ class StationCtrl {
 
   async fetchTrendData() {
     const url = "/api/getTrendData/station";
-    console.info(url);
+    // console.info(url);
 
     try {
       const response = await fetch(url, {

@@ -39,6 +39,7 @@ const Dom = observer(() => {
               data={dom.trendData.temp}
               range={1.6}
               couldBeNegative
+              measurement="vonku:temp"
             />
           </Col>
           <Col xs={4}>
@@ -50,6 +51,7 @@ const Dom = observer(() => {
               data={dom.trendData.humidity}
               range={10}
               couldBeNegative={false}
+              measurement="vonku:humidity"
             />
           </Col>
           <Col xs={4}>
@@ -61,6 +63,7 @@ const Dom = observer(() => {
               data={dom.trendData.rain}
               range={1}
               couldBeNegative={false}
+              measurement="vonku:rain"
             />
           </Col>
         </Row>
@@ -82,6 +85,8 @@ const Dom = observer(() => {
           heat={oldData ? null : dom.data.obyvacka_kuri}
           summer={oldData ? null : dom.data.obyvacka_leto}
           low={oldData ? null : dom.data.obyvacka_low}
+          measurementAir="obyvacka_vzduch:temp"
+          measurementFloor="obyvacka_podlaha:temp"
         />
         <Room
           room="Guest room"
@@ -93,6 +98,8 @@ const Dom = observer(() => {
           heat={oldData ? null : dom.data.pracovna_kuri}
           summer={oldData ? null : dom.data.pracovna_leto}
           low={oldData ? null : dom.data.pracovna_low}
+          measurementAir="pracovna_vzduch:temp"
+          measurementFloor="pracovna_podlaha:temp"
         />
         <Room
           room="Bed room"
@@ -104,6 +111,8 @@ const Dom = observer(() => {
           heat={oldData ? null : dom.data.spalna_kuri}
           summer={oldData ? null : dom.data.spalna_leto}
           low={oldData ? null : dom.data.spalna_low}
+          measurementAir="spalna_vzduch:temp"
+          measurementFloor="spalna_podlaha:temp"
         />
         <Room
           room="Boys"
@@ -115,6 +124,8 @@ const Dom = observer(() => {
           heat={oldData ? null : dom.data.chalani_kuri}
           summer={oldData ? null : dom.data.chalani_leto}
           low={oldData ? null : dom.data.chalani_low}
+          measurementAir="chalani_vzduch:temp"
+          measurementFloor="chalani_podlaha:temp"
         />
         <Room
           room="Petra"
@@ -126,6 +137,8 @@ const Dom = observer(() => {
           heat={oldData ? null : dom.data.petra_kuri}
           summer={oldData ? null : dom.data.petra_leto}
           low={oldData ? null : dom.data.petra_low}
+          measurementAir="petra_vzduch:temp"
+          measurementFloor="petra_podlaha:temp"
         />
       </Container>
     </div>

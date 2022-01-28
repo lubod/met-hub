@@ -14,6 +14,8 @@ type RoomProps = {
   room: string;
   airTrend: Array<number>;
   floorTrend: Array<number>;
+  measurementAir: string;
+  measurementFloor: string;
 };
 
 const Room = function ({
@@ -26,6 +28,8 @@ const Room = function ({
   room,
   airTrend,
   floorTrend,
+  measurementAir,
+  measurementFloor,
 }: RoomProps) {
   return (
     <div className="text-left small text-info font-weight-bold">
@@ -40,6 +44,7 @@ const Room = function ({
             data={airTrend}
             range={1.6}
             couldBeNegative
+            measurement={measurementAir}
           />
         </Col>
         <Col xs={3}>
@@ -51,6 +56,7 @@ const Room = function ({
             data={floorTrend}
             range={1.6}
             couldBeNegative
+            measurement={measurementFloor}
           />
         </Col>
         <Col xs={3}>

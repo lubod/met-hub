@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React from "react";
-import { Modal } from "react-bootstrap";
+import React, { useContext } from "react";
 import { Area, AreaChart, YAxis } from "recharts";
-import BTrend from "./bTrend";
+import { AppContextP } from "..";
+import MyModal from "./mymodal";
 
 type TrendData = {
   name: string;
@@ -11,6 +11,7 @@ type TrendData = {
   range: number;
   unit: string;
   couldBeNegative: boolean;
+  measurement: string;
 };
 
 const Trend = function ({
@@ -19,7 +20,11 @@ const Trend = function ({
   range,
   unit,
   couldBeNegative,
+  measurement,
 }: TrendData) {
+  const [modalShow, setModalShow] = React.useState(false);
+  const appContext = useContext(AppContextP);
+
   let max: number = null;
   let min: number = null;
   let avg: number = null;
@@ -56,20 +61,21 @@ const Trend = function ({
     domainMin = 0;
   }
 
-  const [modalShow, setModalShow] = React.useState(false);
-
   const handleClose = () => {
     setModalShow(false);
   };
   const handleShow = () => {
-    setModalShow(true);
+    if (appContext.auth.isAuthenticated()) {
+      setModalShow(true);
+    }
   };
 
   const chdata = [];
   for (let i = 0; i < data.length; i += 1) {
     chdata.push({ minute: i, value: data[i] });
   }
-  // console.info('render trend');
+
+  // console.info("render trend");
   return (
     <div
       className="text-center"
@@ -91,35 +97,14 @@ const Trend = function ({
         <YAxis hide type="number" domain={[domainMin, domainMax]} />
       </AreaChart>
       <div onClick={(e) => e.stopPropagation()}>
-        <Modal
-          show={modalShow}
-          onHide={handleClose}
-          size="xl"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-          animation={false}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title id="contained-modal-title-vcenter">
-              {name} {unit}
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <BTrend
-              chdata={chdata}
-              domainMin={domainMin}
-              domainMax={domainMax}
-            />
-          </Modal.Body>
-          <Modal.Footer
-            style={{
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            Min:{min}, Max:{max}, Avg:{avg.toFixed(1)}
-          </Modal.Footer>
-        </Modal>
+        <MyModal
+          modalShow={modalShow}
+          handleClose={handleClose}
+          name={name}
+          unit={unit}
+          measurement={measurement}
+          couldBeNegative={couldBeNegative}
+        />
       </div>
     </div>
   );

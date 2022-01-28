@@ -5,6 +5,7 @@ import verifyToken from "./utils";
 import { socketEmiter } from "./main";
 import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
+import loadData from "./load";
 
 const station = new Station();
 const dom = new Dom();
@@ -109,6 +110,32 @@ router.get("/api/getUserProfile", (req: any, res: any) => {
     res.status(401).send("auth issue");
   }
   return null;
+});
+
+router.get("/api/loadData", (req: any, res: any) => {
+  console.info("/loadData", req.query);
+  if (req.headers.authorization) {
+    const user = verifyToken(req.headers.authorization.substr(7));
+    if (user !== null) {
+      res.type("application/json");
+      if (
+        req.query.start != null &&
+        req.query.end != null &&
+        req.query.measurement != null
+      ) {
+        const start = new Date(req.query.start);
+        const end = new Date(req.query.end);
+        const { measurement } = req.query;
+        loadData(start, end, measurement).then((data) => res.json(data));
+      } else {
+        res.status(400).send("wrong params");
+      }
+    } else {
+      res.status(401).send("auth issue");
+    }
+  } else {
+    res.status(401).send("auth issue");
+  }
 });
 
 export default router;

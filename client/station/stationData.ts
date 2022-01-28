@@ -63,7 +63,7 @@ class StationData {
   }
 
   processData(newData: IStationData) {
-    console.info("process station data", newData, this);
+    // console.info("process station data", newData, this);
     if (newData != null) {
       const sdate = new Date(newData.timestamp)
         .toLocaleDateString("sk-SK")
@@ -78,7 +78,7 @@ class StationData {
   }
 
   processTrendData(newTrendData: IStationTrendData) {
-    console.info("process station trend data", newTrendData, this);
+    // console.info("process station trend data", newTrendData, this);
     if (newTrendData != null) {
       this.trendData = newTrendData;
     }

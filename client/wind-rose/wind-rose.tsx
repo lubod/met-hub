@@ -202,6 +202,7 @@ const WindRose = function ({
           data={speedTrend}
           range={5}
           couldBeNegative={false}
+          measurement="stanica:windspeed"
         />
         <DataWithTrend
           name="Wind Gust"
@@ -211,6 +212,7 @@ const WindRose = function ({
           data={gustTrend}
           range={5}
           couldBeNegative={false}
+          measurement="stanica:windgust"
         />
         <Data name="Daily Gust" value={dailyGust} unit="km/h" fix={1} />
       </Col>

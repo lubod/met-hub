@@ -13,13 +13,27 @@ import {
 } from "recharts";
 
 type TrendData = {
-  chdata: { minute: number; value: number }[];
+  chdata: {}[];
+  xkey: string;
+  ykey: string;
+  // loadFnc: Function;
   domainMin: number;
   domainMax: number;
+  // page: number;
+  // offset: number;
 };
 
-const BTrend = function ({ chdata, domainMin, domainMax }: TrendData) {
-  // console.info("render trend", range);
+const Chart = function ({
+  chdata,
+  xkey,
+  ykey,
+  // loadFnc,
+  domainMin,
+  domainMax,
+}: // page,
+// offset,
+TrendData) {
+  // console.info("render chart");
   // console.info(domainMin, domainMax, chdata);
   return (
     <div className="text-left">
@@ -35,7 +49,7 @@ const BTrend = function ({ chdata, domainMin, domainMax }: TrendData) {
         >
           <Area
             type="monotone"
-            dataKey="value"
+            dataKey={ykey}
             stroke="black"
             fillOpacity={1}
             fill="url(#colorUv)"
@@ -47,7 +61,7 @@ const BTrend = function ({ chdata, domainMin, domainMax }: TrendData) {
             </linearGradient>
           </defs>
           <CartesianGrid stroke="#ccc" vertical={false} />
-          <XAxis dataKey="minute" />
+          <XAxis dataKey={xkey} />
           <YAxis type="number" domain={[domainMin, domainMax]} />
           <Tooltip />
         </AreaChart>
@@ -56,4 +70,4 @@ const BTrend = function ({ chdata, domainMin, domainMax }: TrendData) {
   );
 };
 
-export default BTrend;
+export default Chart;

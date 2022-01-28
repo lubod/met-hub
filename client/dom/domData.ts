@@ -34,7 +34,7 @@ class DomData {
   }
 
   processData(newData: IDomData) {
-    console.info("process dom data", newData, this);
+    // console.info("process dom data", newData, this);
     if (newData != null) {
       const sdate = new Date(newData.timestamp)
         .toLocaleDateString("sk-SK")
@@ -48,7 +48,7 @@ class DomData {
   }
 
   processTrendData(newTrendData: IDomTrendData) {
-    console.info("process dom trend data", newTrendData, this);
+    // console.info("process dom trend data", newTrendData, this);
     if (newTrendData != null) {
       this.trendData = newTrendData;
     }
