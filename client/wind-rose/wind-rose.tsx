@@ -1,7 +1,11 @@
-import React from "react";
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import React, { useContext } from "react";
 import { Row, Col } from "react-bootstrap";
+import { AppContextP } from "..";
 import Data from "../data/data";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
+import MyModal from "../trend/mymodal";
 
 type Wind = {
   speed: number;
@@ -23,6 +27,18 @@ const WindRose = function ({
   speedTrend,
 }: Wind) {
   const canvasRef = React.useRef(null);
+  const [modalShow, setModalShow] = React.useState(false);
+  const appContext = useContext(AppContextP);
+
+  const handleClose = () => {
+    setModalShow(false);
+  };
+
+  const handleShow = () => {
+    if (appContext.auth.isAuthenticated()) {
+      setModalShow(true);
+    }
+  };
 
   function drawDirArrow(radius: number, ctx: any) {
     if (dir != null) {
@@ -189,9 +205,25 @@ const WindRose = function ({
   return (
     <Row>
       <Col xs={8}>
-        <canvas width="200" height="200" id="myCanvas" ref={canvasRef}>
+        <canvas
+          width="200"
+          height="200"
+          id="myCanvas"
+          ref={canvasRef}
+          onClick={handleShow}
+        >
           <p>Your browser doesn&apos;t support canvas. Boo hoo!</p>
         </canvas>
+        <div onClick={(e) => e.stopPropagation()}>
+          <MyModal
+            modalShow={modalShow}
+            handleClose={handleClose}
+            name="Wind Dir"
+            unit="Deg"
+            measurement="stanica:winddir"
+            couldBeNegative={false}
+          />
+        </div>
       </Col>
       <Col xs={4} className="text-left">
         <DataWithTrend

@@ -64,6 +64,7 @@ const Trend = function ({
   const handleClose = () => {
     setModalShow(false);
   };
+
   const handleShow = () => {
     if (appContext.auth.isAuthenticated()) {
       setModalShow(true);

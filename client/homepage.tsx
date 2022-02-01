@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import "./style.scss";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import Protected from "./protected";
 import Station from "./station/station";
 import { AppContextP } from ".";
@@ -37,9 +37,6 @@ const HomePage = function () {
           </Container>
           <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
             <p>Login to see more stations and historical data</p>
-            <Button variant="primary" onClick={appContext.auth.login}>
-              Login
-            </Button>
           </Container>
         </Col>
       </Row>

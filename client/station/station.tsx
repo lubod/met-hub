@@ -1,13 +1,29 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useContext } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
 import WindRose from "../wind-rose/wind-rose";
 import Data from "../data/data";
 import Text from "../text/text";
-import { StationDataP } from "..";
+import { AppContextP, StationDataP } from "..";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
+import MapModal from "../mapModal";
 
 const Station = observer(() => {
+  const [modalShow, setModalShow] = React.useState(false);
+  const appContext = useContext(AppContextP);
+
+  const handleClose = () => {
+    setModalShow(false);
+  };
+
+  const handleShow = () => {
+    if (appContext.auth.isAuthenticated()) {
+      setModalShow(true);
+    }
+  };
+
   console.info("station render");
 
   /*
@@ -62,8 +78,11 @@ const Station = observer(() => {
     <div className="main">
       <Container className="text-center text-light my-2 py-2 mx-auto border-primary bg-very-dark rounded shadow">
         <Row className={station.oldData ? "text-danger" : ""}>
-          <Col xs={4}>
+          <Col xs={4} onClick={handleShow}>
             <Text name="Place" value={station.data.place} />
+            <div onClick={(e) => e.stopPropagation()}>
+              <MapModal modalShow={modalShow} handleClose={handleClose} />
+            </div>
           </Col>
           <Col xs={4}>
             <Text name="Date" value={station.data.date} />
@@ -214,35 +233,37 @@ const Station = observer(() => {
           </Col>
         </Row>
       </Container>
-      <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
-        <div className="text-left font-weight-bold">IN</div>
-        <Row>
-          <Col xs={6}>
-            <DataWithTrend
-              name="Temperature"
-              value={station.oldData ? null : station.data.tempin}
-              unit="°C"
-              fix={1}
-              data={station.trendData.tempin}
-              range={1.6}
-              couldBeNegative
-              measurement="stanica:tempin"
-            />
-          </Col>
-          <Col xs={6}>
-            <DataWithTrend
-              name="Humidity"
-              value={station.oldData ? null : station.data.humidityin}
-              unit="%"
-              fix={0}
-              data={station.trendData.humidityin}
-              range={10}
-              couldBeNegative={false}
-              measurement="stanica:humidityin"
-            />
-          </Col>
-        </Row>
-      </Container>
+      {appContext.auth.isAuthenticated() && (
+        <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
+          <div className="text-left font-weight-bold">IN</div>
+          <Row>
+            <Col xs={6}>
+              <DataWithTrend
+                name="Temperature"
+                value={station.oldData ? null : station.data.tempin}
+                unit="°C"
+                fix={1}
+                data={station.trendData.tempin}
+                range={1.6}
+                couldBeNegative
+                measurement="stanica:tempin"
+              />
+            </Col>
+            <Col xs={6}>
+              <DataWithTrend
+                name="Humidity"
+                value={station.oldData ? null : station.data.humidityin}
+                unit="%"
+                fix={0}
+                data={station.trendData.humidityin}
+                range={10}
+                couldBeNegative={false}
+                measurement="stanica:humidityin"
+              />
+            </Col>
+          </Row>
+        </Container>
+      )}
     </div>
   );
 });

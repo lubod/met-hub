@@ -130,19 +130,39 @@ MyModalProps) {
             justifyContent: "center",
           }}
         >
-          <Button variant="primary" onClick={() => setOffset(3600 * 1000 * 1)} disabled={offset === 3600 * 1000 * 1}>
+          <Button
+            variant="primary"
+            onClick={() => setOffset(3600 * 1000 * 1)}
+            disabled={offset === 3600 * 1000 * 1}
+          >
             1h
           </Button>
-          <Button variant="primary" onClick={() => setOffset(3600 * 1000 * 3)} disabled={offset === 3600 * 1000 * 3}>
+          <Button
+            variant="primary"
+            onClick={() => setOffset(3600 * 1000 * 3)}
+            disabled={offset === 3600 * 1000 * 3}
+          >
             3h
           </Button>
-          <Button variant="primary" onClick={() => setOffset(3600 * 1000 * 6)} disabled={offset === 3600 * 1000 * 6}>
+          <Button
+            variant="primary"
+            onClick={() => setOffset(3600 * 1000 * 6)}
+            disabled={offset === 3600 * 1000 * 6}
+          >
             6h
           </Button>
-          <Button variant="primary" onClick={() => setOffset(3600 * 1000 * 12)} disabled={offset === 3600 * 1000 * 12}>
+          <Button
+            variant="primary"
+            onClick={() => setOffset(3600 * 1000 * 12)}
+            disabled={offset === 3600 * 1000 * 12}
+          >
             12h
           </Button>
-          <Button variant="primary" onClick={() => setOffset(3600 * 1000 * 24)} disabled={offset === 3600 * 1000 * 24}>
+          <Button
+            variant="primary"
+            onClick={() => setOffset(3600 * 1000 * 24)}
+            disabled={offset === 3600 * 1000 * 24}
+          >
             1d
           </Button>
           <Button
@@ -166,6 +186,27 @@ MyModalProps) {
           >
             28d
           </Button>
+        </div>
+        <Chart
+          chdata={hdata}
+          xkey="timestamp"
+          ykey={measurement.split(":")[1]}
+          domainMin={cdata.domainMin}
+          domainMax={cdata.domainMax}
+        />
+      </Modal.Body>
+      <Modal.Footer
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
           <Button variant="primary" onClick={() => setPage(page - 1)}>
             Prev
           </Button>
@@ -179,25 +220,7 @@ MyModalProps) {
             Next
           </Button>
         </div>
-        <Chart
-          chdata={hdata}
-          xkey="timestamp"
-          ykey={measurement.split(":")[1]}
-          // loadFnc={() => load(offset, page)}
-          domainMin={cdata.domainMin}
-          domainMax={cdata.domainMax}
-          // page={page}
-          // offset={offset}
-        />
-      </Modal.Body>
-      <Modal.Footer
-        style={{
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        Min:{cdata.min}, Max:{cdata.max}, Avg:{cdata.avg}, Sum:{cdata.sum},
-        Offset:{offset}, Page={page}
+        Min:{cdata.min}, Max:{cdata.max}, Avg:{cdata.avg}, Page={page}
       </Modal.Footer>
     </Modal>
   );
