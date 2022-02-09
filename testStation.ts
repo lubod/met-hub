@@ -15,8 +15,6 @@ const station = new Station();
 
 console.info(`PG: ${PG_HOST}`);
 
-process.env.STATION_PASSKEY = "33564A0851CC0C0D15FE3353FB8D8B47";
-
 function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
@@ -29,7 +27,7 @@ function round(value: number, precision: number) {
 function generateData(d: Date) {
   d.setUTCMilliseconds(0);
   const data = {} as IStationDataRaw;
-  data.PASSKEY = "33564A0851CC0C0D15FE3353FB8D8B47";
+  data.PASSKEY = "";
   data.stationtype = "EasyWeatherV1.5.2";
   data.wh65batt = 0;
   data.freq = "868M";
@@ -89,7 +87,7 @@ function generateOffsetData(cdata: IStationDataRaw, offset: number) {
 
 /*
 {
-  PASSKEY: '33564A0851CC0C0D15FE3353FB8D8B47',
+  PASSKEY: '',
   stationtype: 'EasyWeatherV1.5.2',
   dateutc: '2021-04-06 08:42:00',
   tempinf: '74.1',

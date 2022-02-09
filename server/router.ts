@@ -7,13 +7,15 @@ import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import loadData from "./load";
 
+const ENV = process.env.ENV || "";
+
 const station = new Station();
 const dom = new Dom();
 const router = express.Router();
 const redisClient = redis.createClient();
 
 function setData(measurement: IMeasurement, req: any, res: any) {
-  if (req.body.PASSKEY === measurement.getPasskey()) {
+  if (req.body.PASSKEY === measurement.getPasskey() || ENV === "dev") {
     // console.info(req.body);
     const { date, decoded, toStore } = measurement.decodeData(req.body);
     const now = Date.now();

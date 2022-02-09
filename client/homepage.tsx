@@ -10,13 +10,7 @@ const HomePage = function () {
   console.info("Homepage render");
   const appContext = useContext(AppContextP);
 
-  // const logout = () => {
-  //   appContext.auth.logout();
-  // };
-
   if (appContext.auth.isAuthenticated()) {
-    // const { name } = auth.getProfile();
-
     return <Protected />;
   }
 
@@ -32,7 +26,7 @@ const HomePage = function () {
             <h1 className="text-info">met-hub.com</h1>
             <p>
               This is a free site for non-professional meteorological stations.
-              Currently you can see data from GoGEN ME 3900 (b7)
+              Currently you can see data from GoGEN ME 3900 (b8)
             </p>
           </Container>
           <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">

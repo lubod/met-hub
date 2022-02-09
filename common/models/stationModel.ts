@@ -43,7 +43,7 @@ export interface IStationData {
 
 /*
 curl --header "Content-Type: application/json" --request POST --data \
-'{ "PASSKEY": "33564A0851CC0C0D15FE3353FB8D8B47",
+'{ "PASSKEY": "",
   "stationtype": "EasyWeatherV1.5.2",
   "dateutc": "2021-04-06 08:42:00",
   "tempinf": "74.1",

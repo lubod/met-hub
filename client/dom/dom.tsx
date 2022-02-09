@@ -81,11 +81,11 @@ const Dom = observer(() => {
           airTrend={dom.trendData.obyvacka_vzduch}
           air={oldData ? null : dom.data.obyvacka_vzduch}
           floor={oldData ? null : dom.data.obyvacka_podlaha}
-          required={oldData ? null : dom.data.obyvacka_req}
+          required={oldData ? null : dom.data.obyvacka_reqall}
           heat={oldData ? null : dom.data.obyvacka_kuri}
           summer={oldData ? null : dom.data.obyvacka_leto}
           low={oldData ? null : dom.data.obyvacka_low}
-          measurementAir="obyvacka_vzduch:temp"
+          measurementAir="obyvacka_vzduch:temp:reqall"
           measurementFloor="obyvacka_podlaha:temp"
         />
         <Room
@@ -94,11 +94,11 @@ const Dom = observer(() => {
           airTrend={dom.trendData.pracovna_vzduch}
           air={oldData ? null : dom.data.pracovna_vzduch}
           floor={oldData ? null : dom.data.pracovna_podlaha}
-          required={oldData ? null : dom.data.pracovna_req}
+          required={oldData ? null : dom.data.pracovna_reqall}
           heat={oldData ? null : dom.data.pracovna_kuri}
           summer={oldData ? null : dom.data.pracovna_leto}
           low={oldData ? null : dom.data.pracovna_low}
-          measurementAir="pracovna_vzduch:temp"
+          measurementAir="pracovna_vzduch:temp:reqall"
           measurementFloor="pracovna_podlaha:temp"
         />
         <Room
@@ -107,11 +107,11 @@ const Dom = observer(() => {
           airTrend={dom.trendData.spalna_vzduch}
           air={oldData ? null : dom.data.spalna_vzduch}
           floor={oldData ? null : dom.data.spalna_podlaha}
-          required={oldData ? null : dom.data.spalna_req}
+          required={oldData ? null : dom.data.spalna_reqall}
           heat={oldData ? null : dom.data.spalna_kuri}
           summer={oldData ? null : dom.data.spalna_leto}
           low={oldData ? null : dom.data.spalna_low}
-          measurementAir="spalna_vzduch:temp"
+          measurementAir="spalna_vzduch:temp:reqall"
           measurementFloor="spalna_podlaha:temp"
         />
         <Room
@@ -120,11 +120,11 @@ const Dom = observer(() => {
           airTrend={dom.trendData.chalani_vzduch}
           air={oldData ? null : dom.data.chalani_vzduch}
           floor={oldData ? null : dom.data.chalani_podlaha}
-          required={oldData ? null : dom.data.chalani_req}
+          required={oldData ? null : dom.data.chalani_reqall}
           heat={oldData ? null : dom.data.chalani_kuri}
           summer={oldData ? null : dom.data.chalani_leto}
           low={oldData ? null : dom.data.chalani_low}
-          measurementAir="chalani_vzduch:temp"
+          measurementAir="chalani_vzduch:temp:reqall"
           measurementFloor="chalani_podlaha:temp"
         />
         <Room
@@ -133,11 +133,11 @@ const Dom = observer(() => {
           airTrend={dom.trendData.petra_vzduch}
           air={oldData ? null : dom.data.petra_vzduch}
           floor={oldData ? null : dom.data.petra_podlaha}
-          required={oldData ? null : dom.data.petra_req}
+          required={oldData ? null : dom.data.petra_reqall}
           heat={oldData ? null : dom.data.petra_kuri}
           summer={oldData ? null : dom.data.petra_leto}
           low={oldData ? null : dom.data.petra_low}
-          measurementAir="petra_vzduch:temp"
+          measurementAir="petra_vzduch:temp:reqall"
           measurementFloor="petra_podlaha:temp"
         />
       </Container>

@@ -191,6 +191,7 @@ MyModalProps) {
           chdata={hdata}
           xkey="timestamp"
           ykey={measurement.split(":")[1]}
+          y2key={measurement.split(":")[2]}
           domainMin={cdata.domainMin}
           domainMax={cdata.domainMax}
         />

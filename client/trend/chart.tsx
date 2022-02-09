@@ -4,8 +4,9 @@
 import React from "react";
 import {
   Area,
-  AreaChart,
   CartesianGrid,
+  ComposedChart,
+  Line,
   ResponsiveContainer,
   Scatter,
   ScatterChart,
@@ -18,6 +19,7 @@ type ChartData = {
   chdata: {}[];
   xkey: string;
   ykey: string;
+  y2key: string;
   domainMin: number;
   domainMax: number;
 };
@@ -26,6 +28,7 @@ const Chart = function ({
   chdata,
   xkey,
   ykey,
+  y2key,
   domainMin,
   domainMax,
 }: ChartData) {
@@ -35,7 +38,7 @@ const Chart = function ({
     <div className="text-left">
       {ykey !== "winddir" && (
         <ResponsiveContainer width="100%" aspect={16.0 / 10.0}>
-          <AreaChart
+          <ComposedChart
             data={chdata}
             margin={{
               top: 0,
@@ -45,23 +48,29 @@ const Chart = function ({
             }}
           >
             <Area
-              type="monotone"
+              type="basis"
               dataKey={ykey}
-              stroke="black"
+              stroke="#17A2B8"
               fillOpacity={1}
               fill="url(#colorUv)"
             />
+
+            <Line type="linear" dataKey={y2key} stroke="#F93154" dot={false} strokeWidth={2}/>
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#17A2B8" stopOpacity={0.8} />
                 <stop offset="95%" stopColor="#17A2B8" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#81D4FA" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#81D4FA" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid stroke="#ccc" vertical={false} />
             <XAxis dataKey={xkey} />
             <YAxis type="number" domain={[domainMin, domainMax]} />
             <Tooltip />
-          </AreaChart>
+          </ComposedChart>
         </ResponsiveContainer>
       )}
       {ykey === "winddir" && (

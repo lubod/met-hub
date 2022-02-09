@@ -92,7 +92,10 @@ export default class Auth {
   }
 
   isAuthenticated() {
-    //        console.info(this.expiresAt, new Date().getTime() < this.expiresAt);
+    // console.log("a: dev env");
+    // return true;
+
+    console.info(this.expiresAt, new Date().getTime() < this.expiresAt);
     return new Date().getTime() < this.expiresAt;
   }
 

@@ -19,8 +19,6 @@ const dom = new Dom();
 
 console.info(`PG: ${PG_HOST}`);
 
-process.env.DOM_PASSKEY = "7d060d4d-c95f-4774-a0ec-a85c8952b9d9";
-
 function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
@@ -66,7 +64,7 @@ function generateTarifData() {
 function generateData(d: Date) {
   d.setUTCMilliseconds(0);
   const data = {} as IDomDataRaw;
-  data.PASSKEY = "7d060d4d-c95f-4774-a0ec-a85c8952b9d9";
+  data.PASSKEY = "";
   data.dateutc = d.toISOString().replace("T", " ").replace(".000Z", "");
   data.timestamp = d.toISOString();
   data.tarif = generateTarifData();
@@ -278,7 +276,7 @@ Sep 07 10:50:42 zaloha node[926]:   vonku: DomExternalData { temp: 20.2, humidit
 Sep 07 10:50:42 zaloha node[926]:   tarif: DomTarifData { tarif: 1 },
 Sep 07 10:50:42 zaloha node[926]:   timestamp: 2021-09-07T08:50:42.780Z,
 Sep 07 10:50:42 zaloha node[926]:   dateutc: '2021-9-7 8:50:42',
-Sep 07 10:50:42 zaloha node[926]:   PASSKEY: '7d060d4d-c95f-4774-a0ec-a85c8952b9d9' }
+Sep 07 10:50:42 zaloha node[926]:   PASSKEY: '' }
 */
 
 async function postData(data: any) {
@@ -434,7 +432,7 @@ setTimeout(async () => {
 
 setTimeout(async () => {
   const rows = await loadDomData(pgtime);
-  rows.PASSKEY = "7d060d4d-c95f-4774-a0ec-a85c8952b9d9";
+  rows.PASSKEY = "";
   data1.dateutc = `${pgtime}:00`;
   rows.timestamp = d.toISOString();
   assert.deepStrictEqual(rows, data1);

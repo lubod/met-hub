@@ -18,9 +18,16 @@ const Time = observer(() => {
           />
         </Col>
         <Col xs={6}>
-          <Button variant="primary" onClick={appContext.auth.login}>
-            Login
-          </Button>
+          {appContext.auth.isAuthenticated() && (
+            <Button variant="primary" onClick={() => appContext.auth.logout()}>
+              Logout
+            </Button>
+          )}
+          {!appContext.auth.isAuthenticated() && (
+            <Button variant="primary" onClick={() => appContext.auth.login()}>
+              Login
+            </Button>
+          )}
         </Col>
       </Row>
     </Container>

@@ -1,4 +1,6 @@
 import { Pool } from "pg";
+import { Dom, TABLES } from "./dom";
+import Station from "./station";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 5432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -13,6 +15,9 @@ const pool = new Pool({
   password: PG_PASSWORD,
   port: PG_PORT,
 });
+
+const station = new Station();
+const dom = new Dom();
 
 function minmax(arr: any, index: number, window: number, column: string) {
   let minIndex = index;
@@ -54,35 +59,49 @@ async function loadData(start: Date, end: Date, measurement: string) {
   try {
     console.info("connected", new Date());
 
-    const [table, column] = measurement.split(":");
-    const queryText = `select timestamp,${column} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}'`;
-    const res = await client.query(queryText);
-    // console.log("rows", queryText, typeof res.rows, res.fields);
-    if (res.rows.length > 1500) {
-      const window = Math.ceil(res.rows.length / 1500) * 2;
-      console.info(res.rows.length, window);
-      const res2 = [];
-      let i = 0;
-      for (; i < res.rows.length - window; i += window) {
-        const r = minmax(res.rows, i, window, column);
-        res2.push(res.rows[r.x]);
-        if (r.y != null) {
-          res2.push(res.rows[r.y]);
-        } else {
-          // console.info(null);
+    const dbd = measurement.split(":");
+    if (dbd.length >= 2) {
+      const stables = station.getTables();
+      const dtables = dom.getTables();
+      const table = dbd[0];
+      const column = dbd[1];
+      const extraColumn = dbd.length >= 3 ? `,${dbd[2]}` : "";
+      if (stables.includes(table) || dtables.includes(table as TABLES)) {
+        // select timestamp,sum(rain::int) as rain from vonku group by timestamp order by timestamp asc
+        let queryText = `select timestamp,${column}${extraColumn} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
+        if (table === "vonku" && column === "rain") {
+          queryText = `select timestamp,cast(${column} as int) as rain from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
         }
-      }
-      if (res.rows.length - i > 3) {
-        const r = minmax(res.rows, i, res.rows.length - i - 1, column);
-        res2.push(res.rows[r.x]);
-        if (r.y != null) {
-          res2.push(res.rows[r.y]);
+        const res = await client.query(queryText);
+        // console.log("rows", queryText, typeof res.rows, res.fields);
+        if (res.rows.length > 1500) {
+          const window = Math.ceil(res.rows.length / 1500) * 2;
+          console.info(res.rows.length, window);
+          const res2 = [];
+          let i = 0;
+          for (; i < res.rows.length - window; i += window) {
+            const r = minmax(res.rows, i, window, column);
+            res2.push(res.rows[r.x]);
+            if (r.y != null) {
+              res2.push(res.rows[r.y]);
+            } else {
+              // console.info(null);
+            }
+          }
+          if (res.rows.length - i > 3) {
+            const r = minmax(res.rows, i, res.rows.length - i - 1, column);
+            res2.push(res.rows[r.x]);
+            if (r.y != null) {
+              res2.push(res.rows[r.y]);
+            }
+          }
+          res2.push(res.rows[res.rows.length - 1]);
+          return res2;
         }
+        return res.rows;
       }
-      res2.push(res.rows[res.rows.length - 1]);
-      return res2;
+      console.error("wrong table");
     }
-    return res.rows;
   } catch (e) {
     console.error(e);
   } finally {

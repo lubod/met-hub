@@ -6,8 +6,7 @@ import {
   IDomTarifData,
 } from "../common/models/domModel";
 
-const DOM_PASSKEY =
-  process.env.DOM_PASSKEY || "7d060d4d-c95f-4774-a0ec-a85c8952b9d9";
+const DOM_PASSKEY = process.env.DOM_PASSKEY || "";
 
 const POS_ACTUALTEMP = 14;
 const POS_REQUIRED = 19;
