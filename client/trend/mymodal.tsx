@@ -52,7 +52,7 @@ MyModalProps) {
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${appContext.auth.getToken()}`,
+          Authorization: `Bearer ${appContext.auth.getAccessToken()}`,
         },
       });
 
