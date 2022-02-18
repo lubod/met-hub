@@ -55,7 +55,13 @@ const Chart = function ({
               fill="url(#colorUv)"
             />
 
-            <Line type="linear" dataKey={y2key} stroke="#F93154" dot={false} strokeWidth={2}/>
+            <Line
+              type="linear"
+              dataKey={y2key}
+              stroke="#F93154"
+              dot={false}
+              strokeWidth={2}
+            />
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#17A2B8" stopOpacity={0.8} />

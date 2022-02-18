@@ -149,10 +149,9 @@ export default class Auth {
   isAuthenticated() {
     // console.log("a: dev env");
     // return true;
-
     const time = Date.now();
     // console.info(time, this.expiresAt);
-    if (time > this.expiresAt - (this.duration / 2)) {
+    if (time > this.expiresAt - this.duration / 2) {
       this.handleRefresh();
     }
     return time < this.expiresAt;

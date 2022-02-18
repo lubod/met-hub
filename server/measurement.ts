@@ -20,6 +20,8 @@ export interface IMeasurement {
 
   getTables(): string[];
 
+  getColumns(): string[];
+
   transformTrendData(data: any): {};
 
   decodeData(data: any): { date: Date; decoded: {}; toStore: {} };

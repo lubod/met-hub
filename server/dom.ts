@@ -69,220 +69,33 @@ export class Dom implements IMeasurement {
   getQueryArray(table: string, data: IDomDataRaw) {
     switch (table) {
       case TABLES.OBYVACKA_VZDUCH:
-        return [
-          data.timestamp,
-          data[TABLES.OBYVACKA_VZDUCH].temp,
-          data[TABLES.OBYVACKA_VZDUCH].req,
-          data[TABLES.OBYVACKA_VZDUCH].reqall,
-          data[TABLES.OBYVACKA_VZDUCH].useroffset,
-          data[TABLES.OBYVACKA_VZDUCH].maxoffset,
-          data[TABLES.OBYVACKA_VZDUCH].kuri,
-          data[TABLES.OBYVACKA_VZDUCH].low,
-          data[TABLES.OBYVACKA_VZDUCH].leto,
-        ];
       case TABLES.OBYVACKA_PODLAHA:
-        return [
-          data.timestamp,
-          data[TABLES.OBYVACKA_PODLAHA].temp,
-          data[TABLES.OBYVACKA_PODLAHA].req,
-          data[TABLES.OBYVACKA_PODLAHA].reqall,
-          data[TABLES.OBYVACKA_PODLAHA].useroffset,
-          data[TABLES.OBYVACKA_PODLAHA].maxoffset,
-          data[TABLES.OBYVACKA_PODLAHA].kuri,
-          data[TABLES.OBYVACKA_PODLAHA].low,
-          data[TABLES.OBYVACKA_PODLAHA].leto,
-        ];
       case TABLES.PRACOVNA_VZDUCH:
-        return [
-          data.timestamp,
-          data[TABLES.PRACOVNA_VZDUCH].temp,
-          data[TABLES.PRACOVNA_VZDUCH].req,
-          data[TABLES.PRACOVNA_VZDUCH].reqall,
-          data[TABLES.PRACOVNA_VZDUCH].useroffset,
-          data[TABLES.PRACOVNA_VZDUCH].maxoffset,
-          data[TABLES.PRACOVNA_VZDUCH].kuri,
-          data[TABLES.PRACOVNA_VZDUCH].low,
-          data[TABLES.PRACOVNA_VZDUCH].leto,
-        ];
       case TABLES.PRACOVNA_PODLAHA:
-        return [
-          data.timestamp,
-          data[TABLES.PRACOVNA_PODLAHA].temp,
-          data[TABLES.PRACOVNA_PODLAHA].req,
-          data[TABLES.PRACOVNA_PODLAHA].reqall,
-          data[TABLES.PRACOVNA_PODLAHA].useroffset,
-          data[TABLES.PRACOVNA_PODLAHA].maxoffset,
-          data[TABLES.PRACOVNA_PODLAHA].kuri,
-          data[TABLES.PRACOVNA_PODLAHA].low,
-          data[TABLES.PRACOVNA_PODLAHA].leto,
-        ];
       case TABLES.SPALNA_VZDUCH:
-        return [
-          data.timestamp,
-          data[TABLES.SPALNA_VZDUCH].temp,
-          data[TABLES.SPALNA_VZDUCH].req,
-          data[TABLES.SPALNA_VZDUCH].reqall,
-          data[TABLES.SPALNA_VZDUCH].useroffset,
-          data[TABLES.SPALNA_VZDUCH].maxoffset,
-          data[TABLES.SPALNA_VZDUCH].kuri,
-          data[TABLES.SPALNA_VZDUCH].low,
-          data[TABLES.SPALNA_VZDUCH].leto,
-        ];
       case TABLES.SPALNA_PODLAHA:
-        return [
-          data.timestamp,
-          data[TABLES.SPALNA_PODLAHA].temp,
-          data[TABLES.SPALNA_PODLAHA].req,
-          data[TABLES.SPALNA_PODLAHA].reqall,
-          data[TABLES.SPALNA_PODLAHA].useroffset,
-          data[TABLES.SPALNA_PODLAHA].maxoffset,
-          data[TABLES.SPALNA_PODLAHA].kuri,
-          data[TABLES.SPALNA_PODLAHA].low,
-          data[TABLES.SPALNA_PODLAHA].leto,
-        ];
       case TABLES.CHALANI_VZDUCH:
-        return [
-          data.timestamp,
-          data[TABLES.CHALANI_VZDUCH].temp,
-          data[TABLES.CHALANI_VZDUCH].req,
-          data[TABLES.CHALANI_VZDUCH].reqall,
-          data[TABLES.CHALANI_VZDUCH].useroffset,
-          data[TABLES.CHALANI_VZDUCH].maxoffset,
-          data[TABLES.CHALANI_VZDUCH].kuri,
-          data[TABLES.CHALANI_VZDUCH].low,
-          data[TABLES.CHALANI_VZDUCH].leto,
-        ];
       case TABLES.CHALANI_PODLAHA:
-        return [
-          data.timestamp,
-          data[TABLES.CHALANI_PODLAHA].temp,
-          data[TABLES.CHALANI_PODLAHA].req,
-          data[TABLES.CHALANI_PODLAHA].reqall,
-          data[TABLES.CHALANI_PODLAHA].useroffset,
-          data[TABLES.CHALANI_PODLAHA].maxoffset,
-          data[TABLES.CHALANI_PODLAHA].kuri,
-          data[TABLES.CHALANI_PODLAHA].low,
-          data[TABLES.CHALANI_PODLAHA].leto,
-        ];
       case TABLES.PETRA_VZDUCH:
-        return [
-          data.timestamp,
-          data[TABLES.PETRA_VZDUCH].temp,
-          data[TABLES.PETRA_VZDUCH].req,
-          data[TABLES.PETRA_VZDUCH].reqall,
-          data[TABLES.PETRA_VZDUCH].useroffset,
-          data[TABLES.PETRA_VZDUCH].maxoffset,
-          data[TABLES.PETRA_VZDUCH].kuri,
-          data[TABLES.PETRA_VZDUCH].low,
-          data[TABLES.PETRA_VZDUCH].leto,
-        ];
       case TABLES.PETRA_PODLAHA:
-        return [
-          data.timestamp,
-          data[TABLES.PETRA_PODLAHA].temp,
-          data[TABLES.PETRA_PODLAHA].req,
-          data[TABLES.PETRA_PODLAHA].reqall,
-          data[TABLES.PETRA_PODLAHA].useroffset,
-          data[TABLES.PETRA_PODLAHA].maxoffset,
-          data[TABLES.PETRA_PODLAHA].kuri,
-          data[TABLES.PETRA_PODLAHA].low,
-          data[TABLES.PETRA_PODLAHA].leto,
-        ];
       case TABLES.ZADVERIE_VZDUCH:
-        return [
-          data.timestamp,
-          data[TABLES.ZADVERIE_VZDUCH].temp,
-          data[TABLES.ZADVERIE_VZDUCH].req,
-          data[TABLES.ZADVERIE_VZDUCH].reqall,
-          data[TABLES.ZADVERIE_VZDUCH].useroffset,
-          data[TABLES.ZADVERIE_VZDUCH].maxoffset,
-          data[TABLES.ZADVERIE_VZDUCH].kuri,
-          data[TABLES.ZADVERIE_VZDUCH].low,
-          data[TABLES.ZADVERIE_VZDUCH].leto,
-        ];
       case TABLES.ZADVERIE_PODLAHA:
-        return [
-          data.timestamp,
-          data[TABLES.ZADVERIE_PODLAHA].temp,
-          data[TABLES.ZADVERIE_PODLAHA].req,
-          data[TABLES.ZADVERIE_PODLAHA].reqall,
-          data[TABLES.ZADVERIE_PODLAHA].useroffset,
-          data[TABLES.ZADVERIE_PODLAHA].maxoffset,
-          data[TABLES.ZADVERIE_PODLAHA].kuri,
-          data[TABLES.ZADVERIE_PODLAHA].low,
-          data[TABLES.ZADVERIE_PODLAHA].leto,
-        ];
       case TABLES.CHODBA_VZDUCH:
-        return [
-          data.timestamp,
-          data[TABLES.CHODBA_VZDUCH].temp,
-          data[TABLES.CHODBA_VZDUCH].req,
-          data[TABLES.CHODBA_VZDUCH].reqall,
-          data[TABLES.CHODBA_VZDUCH].useroffset,
-          data[TABLES.CHODBA_VZDUCH].maxoffset,
-          data[TABLES.CHODBA_VZDUCH].kuri,
-          data[TABLES.CHODBA_VZDUCH].low,
-          data[TABLES.CHODBA_VZDUCH].leto,
-        ];
       case TABLES.CHODBA_PODLAHA:
-        return [
-          data.timestamp,
-          data[TABLES.CHODBA_PODLAHA].temp,
-          data[TABLES.CHODBA_PODLAHA].req,
-          data[TABLES.CHODBA_PODLAHA].reqall,
-          data[TABLES.CHODBA_PODLAHA].useroffset,
-          data[TABLES.CHODBA_PODLAHA].maxoffset,
-          data[TABLES.CHODBA_PODLAHA].kuri,
-          data[TABLES.CHODBA_PODLAHA].low,
-          data[TABLES.CHODBA_PODLAHA].leto,
-        ];
       case TABLES.SATNA_VZDUCH:
-        return [
-          data.timestamp,
-          data[TABLES.SATNA_VZDUCH].temp,
-          data[TABLES.SATNA_VZDUCH].req,
-          data[TABLES.SATNA_VZDUCH].reqall,
-          data[TABLES.SATNA_VZDUCH].useroffset,
-          data[TABLES.SATNA_VZDUCH].maxoffset,
-          data[TABLES.SATNA_VZDUCH].kuri,
-          data[TABLES.SATNA_VZDUCH].low,
-          data[TABLES.SATNA_VZDUCH].leto,
-        ];
       case TABLES.SATNA_PODLAHA:
-        return [
-          data.timestamp,
-          data[TABLES.SATNA_PODLAHA].temp,
-          data[TABLES.SATNA_PODLAHA].req,
-          data[TABLES.SATNA_PODLAHA].reqall,
-          data[TABLES.SATNA_PODLAHA].useroffset,
-          data[TABLES.SATNA_PODLAHA].maxoffset,
-          data[TABLES.SATNA_PODLAHA].kuri,
-          data[TABLES.SATNA_PODLAHA].low,
-          data[TABLES.SATNA_PODLAHA].leto,
-        ];
       case TABLES.KUPELNA_HORE:
-        return [
-          data.timestamp,
-          data[TABLES.KUPELNA_HORE].temp,
-          data[TABLES.KUPELNA_HORE].req,
-          data[TABLES.KUPELNA_HORE].reqall,
-          data[TABLES.KUPELNA_HORE].useroffset,
-          data[TABLES.KUPELNA_HORE].maxoffset,
-          data[TABLES.KUPELNA_HORE].kuri,
-          data[TABLES.KUPELNA_HORE].low,
-          data[TABLES.KUPELNA_HORE].leto,
-        ];
       case TABLES.KUPELNA_DOLE:
         return [
           data.timestamp,
-          data[TABLES.KUPELNA_DOLE].temp,
-          data[TABLES.KUPELNA_DOLE].req,
-          data[TABLES.KUPELNA_DOLE].reqall,
-          data[TABLES.KUPELNA_DOLE].useroffset,
-          data[TABLES.KUPELNA_DOLE].maxoffset,
-          data[TABLES.KUPELNA_DOLE].kuri,
-          data[TABLES.KUPELNA_DOLE].low,
-          data[TABLES.KUPELNA_DOLE].leto,
+          data[table].temp,
+          data[table].req,
+          data[table].reqall,
+          data[table].useroffset,
+          data[table].maxoffset,
+          data[table].kuri,
+          data[table].low,
+          data[table].leto,
         ];
       case TABLES.VONKU:
         return [
@@ -351,6 +164,10 @@ export class Dom implements IMeasurement {
       TABLES.VONKU,
       TABLES.TARIF,
     ];
+  }
+
+  getColumns() {
+    return this.cfg.COLUMNS;
   }
 
   transformTrendData(data: any) {

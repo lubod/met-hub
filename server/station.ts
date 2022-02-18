@@ -15,6 +15,10 @@ class Station implements IMeasurement {
     return [this.cfg.TABLE];
   }
 
+  getColumns() {
+    return this.cfg.COLUMNS;
+  }
+
   getPasskey() {
     return PASSKEY;
   }

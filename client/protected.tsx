@@ -1,9 +1,5 @@
 import React, { useContext } from "react";
-import {
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { AppContextP } from ".";
 import Dom from "./dom/dom";
 import HomePage from "./homepage";

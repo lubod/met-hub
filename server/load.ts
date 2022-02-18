@@ -48,6 +48,30 @@ function minmax(arr: any, index: number, window: number, column: string) {
   return { x: maxIndex, y: null };
 }
 
+function checkInput(table: string, column: string, extraColumn: string) {
+  const sc = station.getColumns();
+  const dc = dom.getColumns();
+  const st = station.getTables();
+  const dt = dom.getTables();
+  if (!st.includes(table) && !dt.includes(table as TABLES)) {
+    console.error(`Wrong table: ${table}`);
+    return false;
+  }
+  if (!sc.includes(column) && !dc.includes(column)) {
+    console.error(`Wrong column: ${column}`);
+    return false;
+  }
+  if (
+    extraColumn !== "" &&
+    !sc.includes(extraColumn) &&
+    !dc.includes(extraColumn)
+  ) {
+    console.error(`Wrong extraColumn: ${extraColumn}`);
+    return false;
+  }
+  return true;
+}
+
 // select timestamp, tempin from stanica where timestamp >= '2020-08-13 09:20:54+00' and timestamp <= '2020-08-13 10:00:31+00';
 async function loadData(start: Date, end: Date, measurement: string) {
   const timestampStart = `${start
@@ -61,12 +85,10 @@ async function loadData(start: Date, end: Date, measurement: string) {
 
     const dbd = measurement.split(":");
     if (dbd.length >= 2) {
-      const stables = station.getTables();
-      const dtables = dom.getTables();
       const table = dbd[0];
       const column = dbd[1];
       const extraColumn = dbd.length >= 3 ? `,${dbd[2]}` : "";
-      if (stables.includes(table) || dtables.includes(table as TABLES)) {
+      if (checkInput(table, column, extraColumn.substring(1))) {
         // select timestamp,sum(rain::int) as rain from vonku group by timestamp order by timestamp asc
         let queryText = `select timestamp,${column}${extraColumn} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
         if (table === "vonku" && column === "rain") {
@@ -100,7 +122,6 @@ async function loadData(start: Date, end: Date, measurement: string) {
         }
         return res.rows;
       }
-      console.error("wrong table");
     }
   } catch (e) {
     console.error(e);

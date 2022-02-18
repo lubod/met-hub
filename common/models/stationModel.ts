@@ -1,6 +1,23 @@
 export class StationCfg {
   TABLE = "stanica";
 
+  COLUMNS = [
+    "tempin",
+    "humidityin",
+    "pressurerel",
+    "pressureabs",
+    "temp",
+    "humidity",
+    "winddir",
+    "windspeed",
+    "windgust",
+    "rainrate",
+    "solarradiation",
+    "uv",
+    "eventrain",
+    "hourlyrain",
+  ];
+
   SOCKET_CHANNEL = "station";
 
   SOCKET_TREND_CHANNEL = "station-trend";

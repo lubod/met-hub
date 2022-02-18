@@ -1,6 +1,20 @@
 export class DomCfg {
   TABLE = "dom";
 
+  COLUMNS = [
+    "temp",
+    "humidity",
+    "rain",
+    "tarif",
+    "req",
+    "reqall",
+    "useroffset",
+    "maxoffset",
+    "kuri",
+    "low",
+    "leto",
+  ];
+
   SOCKET_CHANNEL = "dom";
 
   SOCKET_TREND_CHANNEL = "dom-trend";
