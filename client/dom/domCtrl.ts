@@ -6,6 +6,8 @@ class DomCtrl {
 
   domCfg: DomCfg;
 
+  timer: any;
+
   mySocket: any;
 
   constructor(mySocket: any, domData: DomData) {
@@ -28,6 +30,9 @@ class DomCtrl {
       .on(this.domCfg.SOCKET_TREND_CHANNEL, (data: IDomTrendData) => {
         this.domData.processTrendData(data);
       });
+    this.timer = setInterval(() => {
+      this.domData.setTime(new Date());
+    }, 1000);
   }
 
   async fetchData() {

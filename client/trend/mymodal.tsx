@@ -118,75 +118,65 @@ MyModalProps) {
       centered
       animation={false}
     >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          {name} {unit}
-        </Modal.Title>
+      <Modal.Header
+        closeButton
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Button
+          variant="primary"
+          onClick={() => setOffset(3600 * 1000 * 1)}
+          disabled={offset === 3600 * 1000 * 1}
+        >
+          1h
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => setOffset(3600 * 1000 * 4)}
+          disabled={offset === 3600 * 1000 * 4}
+        >
+          4h
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => setOffset(3600 * 1000 * 12)}
+          disabled={offset === 3600 * 1000 * 12}
+        >
+          12h
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => setOffset(3600 * 1000 * 24)}
+          disabled={offset === 3600 * 1000 * 24}
+        >
+          1d
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => setOffset(3600 * 1000 * 24 * 3)}
+          disabled={offset === 3600 * 1000 * 24 * 3}
+        >
+          3d
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => setOffset(3600 * 1000 * 24 * 7)}
+          disabled={offset === 3600 * 1000 * 24 * 7}
+        >
+          1w
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => setOffset(3600 * 1000 * 24 * 28)}
+          disabled={offset === 3600 * 1000 * 24 * 28}
+        >
+          4w
+        </Button>
+        {name} {unit}
       </Modal.Header>
       <Modal.Body>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Button
-            variant="primary"
-            onClick={() => setOffset(3600 * 1000 * 1)}
-            disabled={offset === 3600 * 1000 * 1}
-          >
-            1h
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setOffset(3600 * 1000 * 3)}
-            disabled={offset === 3600 * 1000 * 3}
-          >
-            3h
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setOffset(3600 * 1000 * 6)}
-            disabled={offset === 3600 * 1000 * 6}
-          >
-            6h
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setOffset(3600 * 1000 * 12)}
-            disabled={offset === 3600 * 1000 * 12}
-          >
-            12h
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setOffset(3600 * 1000 * 24)}
-            disabled={offset === 3600 * 1000 * 24}
-          >
-            1d
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setOffset(3600 * 1000 * 24 * 3)}
-            disabled={offset === 3600 * 1000 * 24 * 3}
-          >
-            3d
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setOffset(3600 * 1000 * 24 * 7)}
-            disabled={offset === 3600 * 1000 * 24 * 7}
-          >
-            7d
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setOffset(3600 * 1000 * 24 * 28)}
-            disabled={offset === 3600 * 1000 * 24 * 28}
-          >
-            28d
-          </Button>
-        </div>
         <Chart
           chdata={hdata}
           xkey="timestamp"

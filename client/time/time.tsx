@@ -10,7 +10,7 @@ const Time = observer(() => {
 
   return (
     <Container className="text-center text-light my-2 py-2 mx-auto border-primary bg-very-dark rounded shadow">
-      <Row>
+      <Row className="align-items-center">
         <Col xs={6}>
           <Text
             name="Current time"

@@ -33,11 +33,8 @@ class StationCtrl {
       .on(this.stationCfg.SOCKET_TREND_CHANNEL, (data: IStationTrendData) => {
         this.stationData.processTrendData(data);
       });
-    // props.socket.getSocket().emit('station', 'getLastData');
     this.timer = setInterval(() => {
       this.stationData.setTime(new Date());
-      // stationData.setOldData(new Date());
-      // console.info('timer ++');
     }, 1000);
   }
 

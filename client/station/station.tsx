@@ -13,6 +13,7 @@ import MapModal from "../mapModal";
 const Station = observer(() => {
   const [modalShow, setModalShow] = React.useState(false);
   const appContext = useContext(AppContextP);
+  const station = useContext(StationDataP);
 
   const handleClose = () => {
     setModalShow(false);
@@ -25,54 +26,6 @@ const Station = observer(() => {
   };
 
   console.info("station render");
-
-  /*
-    useEffect(() => {
-      var timer = setInterval(() => {
-        setCtime(new Date());
-        //console.info('ctime', ctime);
-
-        if (isOldData()) {
-          const now = new Date();
-          if (now.getTime() - lastCall >= maxDiff) {
-            //        if (props.auth.isAuthenticated()) {
-            console.info('call', lastCall, maxDiff, now.getTime() - lastCall);
-            fetchData('/api/getLastData/station', processData);
-            fetchData('/api/getTrendData/station', processTrendData);
-            setLastCall(now.getTime());
-            maxDiff *= 2;
-            //        }
-          }
-        }
-        else {
-          maxDiff = 1000;
-        }
-      }, 1000);
-
-      return () => {
-        clearInterval(timer);
-      };
-    }, [ctime]);
-
-    useEffect(() => {
-      console.info('mount station');
-      if (props.socket) {
-        console.info('socket on station');
-        props.socket.getSocket().on('station', processData);
-        props.socket.getSocket().on('stationTrend', processTrendData);
-        props.socket.getSocket().emit('station', 'getLastData');
-      }
-
-      return () => {
-        props.socket.getSocket().off('station', processData);
-        props.socket.getSocket().off('stationTrend', processTrendData);
-        console.info('unmount station');
-      };
-    }, [props.socket]);
-
-  */
-
-  const station = useContext(StationDataP);
 
   return (
     <div className="main">

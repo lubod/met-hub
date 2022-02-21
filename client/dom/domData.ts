@@ -2,7 +2,7 @@ import { action, makeObservable, observable } from "mobx";
 import { IDomData, IDomTrendData } from "../../common/models/domModel";
 
 class DomData {
-  data: IDomData = {} as IDomData;
+  data: IDomData = { timestamp: "" } as IDomData;
 
   trendData: IDomTrendData = {
     timestamp: [],
@@ -23,14 +23,40 @@ class DomData {
 
   ctime: Date = new Date();
 
+  oldData: boolean = true;
+
   constructor() {
     makeObservable(this, {
       data: observable,
       trendData: observable,
+      ctime: observable,
       processData: action,
       processTrendData: action,
       setTime: action,
+      setOldData: action,
     });
+  }
+
+  setOldData(time: Date) {
+    if (this.data.timestamp) {
+      const timestamp = new Date(this.data.timestamp);
+      const diff = time.getTime() - timestamp.getTime();
+      if (diff > 300000) {
+        // console.info('oldData = true');
+        this.oldData = true;
+      } else {
+        // console.info('oldData = false');
+        this.oldData = false;
+      }
+    } else {
+      // console.info('oldData = true');
+      this.oldData = true;
+    }
+  }
+
+  setTime(newTime: Date) {
+    this.ctime = newTime;
+    this.setOldData(newTime);
   }
 
   processData(newData: IDomData) {
@@ -44,6 +70,7 @@ class DomData {
       this.data = newData;
       this.data.time = stime;
       this.data.date = sdate.substring(0, sdate.length - 6);
+      this.setOldData(new Date());
     }
   }
 
@@ -52,10 +79,6 @@ class DomData {
     if (newTrendData != null) {
       this.trendData = newTrendData;
     }
-  }
-
-  setTime(newTime: Date) {
-    this.ctime = newTime;
   }
 }
 

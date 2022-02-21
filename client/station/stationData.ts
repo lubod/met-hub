@@ -44,7 +44,7 @@ class StationData {
     if (this.data.timestamp) {
       const timestamp = new Date(this.data.timestamp);
       const diff = time.getTime() - timestamp.getTime();
-      if (diff > 180000) {
+      if (diff > 300000) {
         // console.info('oldData = true');
         this.oldData = true;
       } else {
