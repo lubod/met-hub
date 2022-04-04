@@ -88,10 +88,12 @@ async function loadData(start: Date, end: Date, measurement: string) {
       const table = dbd[0];
       const column = dbd[1];
       const extraColumn = dbd.length >= 3 ? `${dbd[2]}` : "";
-      
+
       if (checkInput(table, column, extraColumn)) {
         // select timestamp,sum(rain::int) as rain from vonku group by timestamp order by timestamp asc
-        let queryText = `select timestamp,${column}${extraColumn === "" ? "" : ","}${extraColumn} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
+        let queryText = `select timestamp,${column}${
+          extraColumn === "" ? "" : ","
+        }${extraColumn} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
         if (table === "vonku" && column === "rain") {
           queryText = `select timestamp,cast(${column} as int) as rain from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
         }
