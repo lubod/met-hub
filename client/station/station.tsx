@@ -1,59 +1,64 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-import React, { useContext } from "react";
+import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
 import WindRose from "../wind-rose/wind-rose";
 import Data from "../data/data";
 import Text from "../text/text";
-import { AppContextP, StationDataP } from "..";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import MapModal from "../mapModal";
+import StationData from "./stationData";
+import { AuthData } from "../auth";
 
-const Station = observer(() => {
+type StationProps = {
+  stationData: StationData;
+  authData: AuthData;
+};
+
+const Station = observer(({ stationData, authData }: StationProps) => {
   const [modalShow, setModalShow] = React.useState(false);
-  const appContext = useContext(AppContextP);
-  const station = useContext(StationDataP);
 
   const handleClose = () => {
     setModalShow(false);
   };
 
   const handleShow = () => {
-    if (appContext.auth.isAuthenticated()) {
+    if (authData.isAuth) {
       setModalShow(true);
     }
   };
 
-  console.info("station render");
+  console.info("station render", authData.isAuth, stationData.oldData);
 
   return (
     <div className="main">
       <Container className="text-center text-light my-2 py-2 mx-auto border-primary bg-very-dark rounded shadow">
-        <Row className={station.oldData ? "text-danger" : ""}>
+        <Row className={stationData.oldData ? "text-danger" : ""}>
           <Col xs={4} onClick={handleShow}>
-            <Text name="Place" value={station.data.place} />
+            <Text name="Place" value={stationData.data.place} />
             <div onClick={(e) => e.stopPropagation()}>
               <MapModal modalShow={modalShow} handleClose={handleClose} />
             </div>
           </Col>
           <Col xs={4}>
-            <Text name="Date" value={station.data.date} />
+            <Text name="Date" value={stationData.data.date} />
           </Col>
           <Col xs={4}>
-            <Text name="Data time" value={station.data.time} />
+            <Text name="Data time" value={stationData.data.time} />
           </Col>
         </Row>
       </Container>
       <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
         <WindRose
-          gustTrend={station.trendData.windgust}
-          speedTrend={station.trendData.windspeed}
-          dirTrend={station.trendData.winddir}
-          speed={station.oldData ? null : station.data.windspeed}
-          dir={station.oldData ? null : station.data.winddir}
-          gust={station.oldData ? null : station.data.windgust}
-          dailyGust={station.oldData ? null : station.data.maxdailygust}
+          gustTrend={stationData.trendData.windgust}
+          speedTrend={stationData.trendData.windspeed}
+          dirTrend={stationData.trendData.winddir}
+          speed={stationData.oldData ? null : stationData.data.windspeed}
+          dir={stationData.oldData ? null : stationData.data.winddir}
+          gust={stationData.oldData ? null : stationData.data.windgust}
+          dailyGust={stationData.oldData ? null : stationData.data.maxdailygust}
+          authData={authData}
         />
       </Container>
       <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
@@ -61,37 +66,40 @@ const Station = observer(() => {
           <Col xs={4}>
             <DataWithTrend
               name="Temperature"
-              value={station.oldData ? null : station.data.temp}
+              value={stationData.oldData ? null : stationData.data.temp}
               unit="°C"
               fix={1}
-              data={station.trendData.temp}
+              data={stationData.trendData.temp}
               range={1.6}
               couldBeNegative
               measurement="stanica:temp"
+              authData={authData}
             />
           </Col>
           <Col xs={4}>
             <DataWithTrend
               name="Humidity"
-              value={station.oldData ? null : station.data.humidity}
+              value={stationData.oldData ? null : stationData.data.humidity}
               unit="%"
               fix={0}
-              data={station.trendData.humidity}
+              data={stationData.trendData.humidity}
               range={10}
               couldBeNegative={false}
               measurement="stanica:humidity"
+              authData={authData}
             />
           </Col>
           <Col xs={4}>
             <DataWithTrend
               name="Pressure"
-              value={station.oldData ? null : station.data.pressurerel}
+              value={stationData.oldData ? null : stationData.data.pressurerel}
               unit="hPa"
               fix={1}
-              data={station.trendData.pressurerel}
+              data={stationData.trendData.pressurerel}
               range={1}
               couldBeNegative={false}
               measurement="stanica:pressurerel"
+              authData={authData}
             />
           </Col>
         </Row>
@@ -99,37 +107,42 @@ const Station = observer(() => {
           <Col xs={4}>
             <DataWithTrend
               name="Radiation"
-              value={station.oldData ? null : station.data.solarradiation}
+              value={
+                stationData.oldData ? null : stationData.data.solarradiation
+              }
               unit="W/m2"
               fix={0}
-              data={station.trendData.solarradiation}
+              data={stationData.trendData.solarradiation}
               range={100}
               couldBeNegative={false}
               measurement="stanica:solarradiation"
+              authData={authData}
             />
           </Col>
           <Col xs={4}>
             <DataWithTrend
               name="UV"
-              value={station.oldData ? null : station.data.uv}
+              value={stationData.oldData ? null : stationData.data.uv}
               unit=""
               fix={0}
-              data={station.trendData.uv}
+              data={stationData.trendData.uv}
               range={3}
               couldBeNegative={false}
               measurement="stanica:uv"
+              authData={authData}
             />
           </Col>
           <Col xs={4}>
             <DataWithTrend
               name="Rain Rate"
-              value={station.oldData ? null : station.data.rainrate}
+              value={stationData.oldData ? null : stationData.data.rainrate}
               unit="mm/h"
               fix={1}
-              data={station.trendData.rainrate}
+              data={stationData.trendData.rainrate}
               range={1}
               couldBeNegative={false}
               measurement="stanica:rainrate"
+              authData={authData}
             />
           </Col>
         </Row>
@@ -137,7 +150,7 @@ const Station = observer(() => {
           <Col xs={4}>
             <Data
               name="Event Rain"
-              value={station.oldData ? null : station.data.eventrain}
+              value={stationData.oldData ? null : stationData.data.eventrain}
               unit="mm"
               fix={1}
             />
@@ -145,7 +158,7 @@ const Station = observer(() => {
           <Col xs={4}>
             <Data
               name="Hourly"
-              value={station.oldData ? null : station.data.hourlyrain}
+              value={stationData.oldData ? null : stationData.data.hourlyrain}
               unit="mm"
               fix={1}
             />
@@ -153,7 +166,7 @@ const Station = observer(() => {
           <Col xs={4}>
             <Data
               name="Daily"
-              value={station.oldData ? null : station.data.dailyrain}
+              value={stationData.oldData ? null : stationData.data.dailyrain}
               unit="mm"
               fix={1}
             />
@@ -163,7 +176,7 @@ const Station = observer(() => {
           <Col xs={4}>
             <Data
               name="Weekly"
-              value={station.oldData ? null : station.data.weeklyrain}
+              value={stationData.oldData ? null : stationData.data.weeklyrain}
               unit="mm"
               fix={1}
             />
@@ -171,7 +184,7 @@ const Station = observer(() => {
           <Col xs={4}>
             <Data
               name="Monthly"
-              value={station.oldData ? null : station.data.monthlyrain}
+              value={stationData.oldData ? null : stationData.data.monthlyrain}
               unit="mm"
               fix={1}
             />
@@ -179,39 +192,41 @@ const Station = observer(() => {
           <Col xs={4}>
             <Data
               name="Total"
-              value={station.oldData ? null : station.data.totalrain}
+              value={stationData.oldData ? null : stationData.data.totalrain}
               unit="mm"
               fix={1}
             />
           </Col>
         </Row>
       </Container>
-      {appContext.auth.isAuthenticated() && (
+      {authData.isAuth && (
         <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
           <div className="text-left font-weight-bold">IN</div>
           <Row>
             <Col xs={6}>
               <DataWithTrend
                 name="Temperature"
-                value={station.oldData ? null : station.data.tempin}
+                value={stationData.oldData ? null : stationData.data.tempin}
                 unit="°C"
                 fix={1}
-                data={station.trendData.tempin}
+                data={stationData.trendData.tempin}
                 range={1.6}
                 couldBeNegative
                 measurement="stanica:tempin"
+                authData={authData}
               />
             </Col>
             <Col xs={6}>
               <DataWithTrend
                 name="Humidity"
-                value={station.oldData ? null : station.data.humidityin}
+                value={stationData.oldData ? null : stationData.data.humidityin}
                 unit="%"
                 fix={0}
-                data={station.trendData.humidityin}
+                data={stationData.trendData.humidityin}
                 range={10}
                 couldBeNegative={false}
                 measurement="stanica:humidityin"
+                authData={authData}
               />
             </Col>
           </Row>

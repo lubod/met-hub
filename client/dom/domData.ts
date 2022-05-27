@@ -29,10 +29,9 @@ class DomData {
     makeObservable(this, {
       data: observable,
       trendData: observable,
-      ctime: observable,
+      oldData: observable,
       processData: action,
       processTrendData: action,
-      setTime: action,
       setOldData: action,
     });
   }

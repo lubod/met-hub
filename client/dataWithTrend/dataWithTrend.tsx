@@ -1,4 +1,6 @@
+import { observer } from "mobx-react";
 import React from "react";
+import { AuthData } from "../auth";
 import Data from "../data/data";
 import Trend from "../trend/trend";
 
@@ -11,20 +13,22 @@ type DataWithTrendProps = {
   range: number;
   couldBeNegative: boolean;
   measurement: string;
+  authData: AuthData;
 };
 
-const DataWithTrend = function ({
-  name,
-  value,
-  unit,
-  fix,
-  data,
-  range,
-  couldBeNegative,
-  measurement,
-}: DataWithTrendProps) {
-  return (
-    <>
+const DataWithTrend = observer(
+  ({
+    name,
+    value,
+    unit,
+    fix,
+    data,
+    range,
+    couldBeNegative,
+    measurement,
+    authData,
+  }: DataWithTrendProps) => (
+    <div>
       <Data name={name} value={value} unit={unit} fix={fix} />
       <Trend
         name={name}
@@ -33,9 +37,10 @@ const DataWithTrend = function ({
         unit={unit}
         couldBeNegative={couldBeNegative}
         measurement={measurement}
+        authData={authData}
       />
-    </>
-  );
-};
+    </div>
+  )
+);
 
 export default DataWithTrend;

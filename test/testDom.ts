@@ -2,13 +2,17 @@ import assert from "assert";
 import axios from "axios";
 import fetch from "node-fetch";
 import { Pool } from "pg";
-import { Dom, TABLES } from "./server/dom";
+import { Dom, TABLES } from "../server/dom";
 import {
+  IDomData,
   IDomDataRaw,
   IDomExternalData,
   IDomRoomData,
   IDomTarifData,
-} from "./common/models/domModel";
+} from "../common/models/domModel";
+import DomData from "../client/dom/domData";
+import DomCtrl from "../client/dom/domCtrl";
+import MySocket from "../client/socket";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -281,7 +285,7 @@ Sep 07 10:50:42 zaloha node[926]:   PASSKEY: '' }
 
 async function postData(data: any) {
   try {
-    await axios.post("http://localhost:8082/setDomData", data, {
+    await axios.post("http://localhost:18080/setDomData", data, {
       headers: {
         "Content-Type": "application/json; charset=utf-8",
       },
@@ -292,7 +296,7 @@ async function postData(data: any) {
 }
 
 async function fetchDomData() {
-  const url = "http://localhost:8082/api/getLastData/dom";
+  const url = "http://localhost:18080/api/getLastData/dom";
   console.info(url);
 
   try {
@@ -402,6 +406,49 @@ async function loadDomData(time: string) {
   return null;
 }
 
+function getClientDomData(data: IDomData) {
+  const cdd: IDomData = {
+    timestamp: data.timestamp,
+    time: null,
+    date: null,
+    place: data.place,
+    temp: data.temp,
+    humidity: data.humidity,
+    rain: data.rain,
+    obyvacka_vzduch: data.obyvacka_vzduch,
+    obyvacka_podlaha: data.obyvacka_podlaha,
+    obyvacka_reqall: data.obyvacka_reqall,
+    obyvacka_kuri: data.obyvacka_kuri,
+    obyvacka_leto: data.obyvacka_leto,
+    obyvacka_low: data.obyvacka_low,
+    pracovna_vzduch: data.pracovna_vzduch,
+    pracovna_podlaha: data.pracovna_podlaha,
+    pracovna_reqall: data.pracovna_reqall,
+    pracovna_kuri: data.pracovna_kuri,
+    pracovna_leto: data.pracovna_leto,
+    pracovna_low: data.pracovna_low,
+    spalna_vzduch: data.spalna_vzduch,
+    spalna_podlaha: data.spalna_podlaha,
+    spalna_reqall: data.spalna_reqall,
+    spalna_kuri: data.spalna_kuri,
+    spalna_leto: data.spalna_leto,
+    spalna_low: data.spalna_low,
+    chalani_vzduch: data.chalani_vzduch,
+    chalani_podlaha: data.chalani_podlaha,
+    chalani_reqall: data.chalani_reqall,
+    chalani_kuri: data.chalani_kuri,
+    chalani_leto: data.chalani_leto,
+    chalani_low: data.chalani_low,
+    petra_vzduch: data.petra_vzduch,
+    petra_podlaha: data.petra_podlaha,
+    petra_reqall: data.petra_reqall,
+    petra_kuri: data.petra_kuri,
+    petra_leto: data.petra_leto,
+    petra_low: data.petra_low,
+  };
+  return cdd;
+}
+
 const data1 = generateData(new Date());
 
 const d = new Date();
@@ -422,12 +469,21 @@ const toMinute = Date.now() % 60000;
 
 console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
 
+const socket = new MySocket();
+const domData = new DomData();
+const domCtrl = new DomCtrl(socket, domData);
+domCtrl.start();
 postData(data1);
 
 setTimeout(async () => {
   const sd = await fetchDomData();
   assert.deepStrictEqual(sd, dom.decodeData(data1).decoded);
   console.info("Redis1 OK");
+  assert.deepStrictEqual(
+    getClientDomData(domData.data),
+    dom.decodeData(data1).decoded
+  );
+  console.info("Client1 OK");
 }, 1000);
 
 setTimeout(async () => {

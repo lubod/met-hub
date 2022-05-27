@@ -1,5 +1,8 @@
+import fetch from "node-fetch";
 import { DomCfg, IDomData, IDomTrendData } from "../../common/models/domModel";
 import DomData from "./domData";
+
+const ENV = process.env.ENV || "";
 
 class DomCtrl {
   domData: DomData;
@@ -36,8 +39,11 @@ class DomCtrl {
   }
 
   async fetchData() {
-    const url = "/api/getLastData/dom";
-    // console.info(url);
+    let url = "/api/getLastData/dom";
+    if (ENV === "dev") {
+      url = "http://localhost:18080/api/getLastData/dom";
+      console.info(url);
+    }
 
     try {
       const response = await fetch(url, {
@@ -59,8 +65,11 @@ class DomCtrl {
   }
 
   async fetchTrendData() {
-    const url = "/api/getTrendData/dom";
-    // console.info(url);
+    let url = "/api/getTrendData/dom";
+    if (ENV === "dev") {
+      url = "http://localhost:18080/api/getTrendData/dom";
+      console.info(url);
+    }
 
     try {
       const response = await fetch(url, {

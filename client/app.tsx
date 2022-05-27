@@ -1,21 +1,42 @@
-import React, { useContext } from "react";
-import { Route, withRouter } from "react-router-dom";
+import { observer } from "mobx-react";
+import React from "react";
+import { AuthCtrl, AuthData } from "./auth";
 import Callback from "./callback";
+import DomData from "./dom/domData";
+import HeaderData from "./header/headerData";
 import HomePage from "./homepage";
-import "./style.scss";
-import { AppContextP } from ".";
-import "bootstrap/dist/css/bootstrap.css";
+import StationData from "./station/stationData";
 
-const App = function () {
-  const appContext = useContext(AppContextP);
-
-  console.info("App render", appContext.auth.isAuthenticated());
-  return (
-    <div className="App">
-      <Route exact path="/callback" render={() => <Callback />} />
-      <Route exact path="/" render={() => <HomePage />} />
-    </div>
-  );
+type AppProps = {
+  headerData: HeaderData;
+  stationData: StationData;
+  domData: DomData;
+  authData: AuthData;
+  authCtrl: AuthCtrl;
 };
 
-export default withRouter(App);
+const App = observer(
+  ({ headerData, stationData, domData, authData, authCtrl }: AppProps) => {
+    console.info("App render", authData.isAuth, window.location.pathname, authData.location);
+
+    return (
+      <div className="App">
+        {authData.location === "/" && (
+          <HomePage
+            headerData={headerData}
+            stationData={stationData}
+            domData={domData}
+            authData={authData}
+          />
+        )}
+        {authData.location === "/callback/" && (
+          <Callback
+            authCtrl={authCtrl}
+          />
+        )}
+      </div>
+    );
+  }
+);
+
+export default App;

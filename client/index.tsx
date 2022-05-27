@@ -1,22 +1,20 @@
+/* eslint-disable import/prefer-default-export */
 /* eslint-disable import/no-import-module-exports */
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
-import App from "./app";
-import Auth from "./auth";
+import { AuthData, AuthCtrl } from "./auth";
 import MySocket from "./socket";
 import StationData from "./station/stationData";
 import StationCtrl from "./station/stationCtrl";
 import DomData from "./dom/domData";
 import DomCtrl from "./dom/domCtrl";
-import AppData from "./appData";
-
-class AppContext {
-  auth = new Auth();
-}
+import HeaderData from "./header/headerData";
+import HeaderCtrl from "./header/headerCtrl";
+import "./style.scss";
+import "bootstrap/dist/css/bootstrap.css";
+import App from "./app";
 
 const socket = new MySocket();
-const appContext = new AppContext();
 
 const stationData = new StationData();
 const stationCtrl = new StationCtrl(socket, stationData);
@@ -26,29 +24,31 @@ const domData = new DomData();
 const domCtrl = new DomCtrl(socket, domData);
 domCtrl.start();
 
-const appData = new AppData();
+const authData = new AuthData();
+const authCtrl = new AuthCtrl(authData);
+authCtrl.start();
 
-export const AppContextP = React.createContext(appContext);
-export const StationDataP = React.createContext<StationData>(stationData);
-export const DomDataP = React.createContext<DomData>(domData);
-export const AppDataP = React.createContext<AppData>(appData);
+const headerData = new HeaderData();
+const headerCtrl = new HeaderCtrl(headerData);
+headerCtrl.start();
 
 function render() {
-  console.info("Index render");
+  console.info("Index render", authData.isAuth, window.location.pathname);
+  authData.setLocation(window.location.pathname);
 
   const appContainer = document.getElementById("app");
   ReactDOM.render(
-    <BrowserRouter>
-      <AppContextP.Provider value={appContext}>
-        <App />
-      </AppContextP.Provider>
-    </BrowserRouter>,
+    <div className="App">
+      <App
+        headerData={headerData}
+        stationData={stationData}
+        domData={domData}
+        authData={authData}
+        authCtrl={authCtrl}
+      />
+    </div>,
     appContainer
   );
 }
 
 render();
-
-if (module.hot) {
-  module.hot.accept("./App", render);
-}

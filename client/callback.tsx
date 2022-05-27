@@ -1,18 +1,18 @@
-import React, { useContext } from "react";
-import { withRouter } from "react-router";
-import { AppContextP } from ".";
+import React from "react";
+import { AuthCtrl } from "./auth";
 
 type CallbackData = {
-  history: any;
+  authCtrl: AuthCtrl;
 };
 
-const Callback = function ({ history }: CallbackData) {
+const Callback = function ({
+  authCtrl,
+}: CallbackData) {
   console.info("Callback render");
-  const appContext = useContext(AppContextP);
-  appContext.auth.handleAuthentication().then(() => {
-    //        console.info(props.auth.isAuthenticated());
-    appContext.auth.handleProfile().then(() => {
-      history.push("/");
+  authCtrl.handleAuthentication().then(() => {
+    console.info(authCtrl.authData.isAuth);
+    authCtrl.handleProfile().then(() => {
+      console.info(authCtrl.authData.profile);
     });
   });
 
@@ -20,4 +20,4 @@ const Callback = function ({ history }: CallbackData) {
   return <div className="text-center text-info h4">Authenticate ...</div>;
 };
 
-export default withRouter(Callback);
+export default Callback;

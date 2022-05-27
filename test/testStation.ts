@@ -2,8 +2,11 @@ import assert from "assert";
 import axios from "axios";
 import fetch from "node-fetch";
 import { Pool } from "pg";
-import { IStationDataRaw } from "./common/models/stationModel";
-import Station from "./server/station";
+import StationCtrl from "../client/station/stationCtrl";
+import StationData from "../client/station/stationData";
+import MySocket from "../client/socket";
+import { IStationData, IStationDataRaw } from "../common/models/stationModel";
+import Station from "../server/station";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -117,7 +120,7 @@ function generateOffsetData(cdata: IStationDataRaw, offset: number) {
 
 async function postData(data: any) {
   try {
-    await axios.post("http://localhost:8082/setData", data, {
+    await axios.post("http://localhost:18080/setData", data, {
       headers: {
         "Content-Type": "application/json; charset=utf-8",
       },
@@ -128,8 +131,8 @@ async function postData(data: any) {
 }
 
 async function fetchStationData() {
-  const url = "http://localhost:8082/api/getLastData/station";
-  console.info(url);
+  const url = "http://localhost:18080/api/getLastData/station";
+  console.info("GET", url);
 
   try {
     const res = await fetch(url, {
@@ -174,6 +177,36 @@ async function loadStationData(time: string) {
     console.info("released");
   }
   return null;
+}
+
+function getClientStationData(data: IStationData) {
+  const csd: IStationData = {
+    timestamp: data.timestamp,
+    time: null,
+    date: null,
+    place: data.place,
+    tempin: data.tempin,
+    humidityin: data.humidityin,
+    temp: data.temp,
+    humidity: data.humidity,
+    pressurerel: data.pressurerel,
+    pressureabs: data.pressureabs,
+    windgust: data.windgust,
+    windspeed: data.windspeed,
+    winddir: data.winddir,
+    maxdailygust: data.maxdailygust,
+    solarradiation: data.solarradiation,
+    uv: data.uv,
+    rainrate: data.rainrate,
+    eventrain: data.eventrain,
+    hourlyrain: data.hourlyrain,
+    dailyrain: data.dailyrain,
+    weeklyrain: data.weeklyrain,
+    monthlyrain: data.monthlyrain,
+    totalrain: data.totalrain,
+    minuterain: data.minuterain,
+  };
+  return csd;
 }
 
 const data1 = generateData(new Date());
@@ -221,23 +254,43 @@ const pgData = {
   windspeed: decoded.windspeed.toFixed(1),
 };
 
+const socket = new MySocket();
+const stationData = new StationData();
+const stationCtrl = new StationCtrl(socket, stationData);
+stationCtrl.start();
+
 postData(data1);
 setTimeout(async () => {
   const sd = await fetchStationData();
   assert.deepStrictEqual(sd, station.decodeData(data1).decoded);
   console.info("Redis1 OK");
+  assert.deepStrictEqual(
+    getClientStationData(stationData.data),
+    station.decodeData(data1).decoded
+  );
+  console.info("Client1 OK");
 }, 1000);
 setTimeout(() => postData(data2), 1500);
 setTimeout(async () => {
   const sd = await fetchStationData();
   assert.deepStrictEqual(sd, station.decodeData(data2).decoded);
   console.info("Redis2 OK");
+  assert.deepStrictEqual(
+    getClientStationData(stationData.data),
+    station.decodeData(data2).decoded
+  );
+  console.info("Client2 OK");
 }, 2000);
 setTimeout(() => postData(data3), 2500);
 setTimeout(async () => {
   const sd = await fetchStationData();
   assert.deepStrictEqual(sd, station.decodeData(data3).decoded);
   console.info("Redis3 OK");
+  assert.deepStrictEqual(
+    getClientStationData(stationData.data),
+    station.decodeData(data3).decoded
+  );
+  console.info("Client3 OK");
 }, 3000);
 setTimeout(async () => {
   const rows = await loadStationData(pgtime);

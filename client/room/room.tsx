@@ -1,5 +1,7 @@
+import { observer } from "mobx-react";
 import React from "react";
 import { Row, Col } from "react-bootstrap";
+import { AuthData } from "../auth";
 import Data from "../data/data";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import Text from "../text/text";
@@ -16,22 +18,24 @@ type RoomProps = {
   floorTrend: Array<number>;
   measurementAir: string;
   measurementFloor: string;
+  authData: AuthData;
 };
 
-const Room = function ({
-  air,
-  floor,
-  required,
-  heat,
-  summer,
-  low,
-  room,
-  airTrend,
-  floorTrend,
-  measurementAir,
-  measurementFloor,
-}: RoomProps) {
-  return (
+const Room = observer(
+  ({
+    air,
+    floor,
+    required,
+    heat,
+    summer,
+    low,
+    room,
+    airTrend,
+    floorTrend,
+    measurementAir,
+    measurementFloor,
+    authData,
+  }: RoomProps) => (
     <div className="text-left small text-info font-weight-bold">
       {room}
       <Row className="text-light">
@@ -45,6 +49,7 @@ const Room = function ({
             range={1.6}
             couldBeNegative
             measurement={measurementAir}
+            authData={authData}
           />
         </Col>
         <Col xs={3}>
@@ -57,6 +62,7 @@ const Room = function ({
             range={1.6}
             couldBeNegative
             measurement={measurementFloor}
+            authData={authData}
           />
         </Col>
         <Col xs={3}>
@@ -72,7 +78,7 @@ const Room = function ({
         </Col>
       </Row>
     </div>
-  );
-};
+  )
+);
 
 export default Room;

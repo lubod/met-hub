@@ -1,9 +1,12 @@
+import fetch from "node-fetch";
 import {
   IStationData,
   IStationTrendData,
   StationCfg,
 } from "../../common/models/stationModel";
 import StationData from "./stationData";
+
+const ENV = process.env.ENV || "";
 
 class StationCtrl {
   stationData: StationData;
@@ -39,8 +42,11 @@ class StationCtrl {
   }
 
   async fetchData() {
-    const url = "/api/getLastData/station";
-    // console.info(url);
+    let url = "/api/getLastData/station";
+    if (ENV === "dev") {
+      url = "http://localhost:18080/api/getLastData/station";
+      console.info(url);
+    }
 
     try {
       const response = await fetch(url, {
@@ -62,8 +68,11 @@ class StationCtrl {
   }
 
   async fetchTrendData() {
-    const url = "/api/getTrendData/station";
-    // console.info(url);
+    let url = "/api/getTrendData/station";
+    if (ENV === "dev") {
+      url = "http://localhost:18080/api/getTrendData/station";
+      console.info(url);
+    }
 
     try {
       const response = await fetch(url, {

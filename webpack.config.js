@@ -2,6 +2,7 @@ const path = require("path");
 const nodeExternals = require("webpack-node-externals");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
+const webpack = require("webpack");
 
 const options = {
   extensions: ["js", "jsx"],
@@ -51,6 +52,9 @@ const frontConfig = {
       xhtml: true,
     }),
     new ESLintPlugin(options),
+    new webpack.DefinePlugin({
+      "process.env.ENV": JSON.stringify(process.env.ENV),
+    }),
   ],
   devServer: {
     hot: true,
@@ -131,7 +135,7 @@ const backConfigPoll = {
 
 const testConfigStation = {
   target: "node",
-  entry: "./testStation.ts",
+  entry: "./test/testStation.ts",
   module: {
     rules: [
       {
@@ -154,7 +158,7 @@ const testConfigStation = {
 
 const testConfigDom = {
   target: "node",
-  entry: "./testDom.ts",
+  entry: "./test/testDom.ts",
   module: {
     rules: [
       {

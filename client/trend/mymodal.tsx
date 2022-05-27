@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { AppContextP } from "..";
+import { AuthData } from "../auth";
 import Chart from "./chart";
 
 type MyModalProps = {
@@ -10,6 +10,7 @@ type MyModalProps = {
   unit: string;
   measurement: string;
   couldBeNegative: boolean;
+  authData: AuthData;
 };
 
 class CData {
@@ -33,13 +34,13 @@ const MyModal = function ({
   unit,
   measurement,
   couldBeNegative,
+  authData,
 }: // range
 MyModalProps) {
   const [hdata, setHdata] = React.useState(null);
   const [cdata, setCdata] = React.useState(new CData());
   const [page, setPage] = React.useState(0);
   const [offset, setOffset] = React.useState(3600 * 1000 * 24);
-  const appContext = useContext(AppContextP);
 
   async function load(o: number, p: number) {
     // eslint-disable-next-line no-promise-executor-return
@@ -52,7 +53,7 @@ MyModalProps) {
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${appContext.auth.getAccessToken()}`,
+          Authorization: `Bearer ${authData.access_token}`,
         },
       });
 
@@ -119,64 +120,105 @@ MyModalProps) {
       animation={false}
     >
       <Modal.Header
-        closeButton
+        // closeButton
         style={{
-          display: "flex",
           justifyContent: "center",
         }}
       >
-        <Button
-          variant="primary"
-          onClick={() => setOffset(3600 * 1000 * 1)}
-          disabled={offset === 3600 * 1000 * 1}
+        <Modal.Title
+          style={{
+            justifyContent: "center",
+          }}
         >
-          1h
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => setOffset(3600 * 1000 * 4)}
-          disabled={offset === 3600 * 1000 * 4}
-        >
-          4h
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => setOffset(3600 * 1000 * 12)}
-          disabled={offset === 3600 * 1000 * 12}
-        >
-          12h
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => setOffset(3600 * 1000 * 24)}
-          disabled={offset === 3600 * 1000 * 24}
-        >
-          1d
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => setOffset(3600 * 1000 * 24 * 3)}
-          disabled={offset === 3600 * 1000 * 24 * 3}
-        >
-          3d
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => setOffset(3600 * 1000 * 24 * 7)}
-          disabled={offset === 3600 * 1000 * 24 * 7}
-        >
-          1w
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => setOffset(3600 * 1000 * 24 * 28)}
-          disabled={offset === 3600 * 1000 * 24 * 28}
-        >
-          4w
-        </Button>
-        {name} {unit}
+          <div>
+            {name} {unit}
+          </div>
+          <div>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setOffset(3600 * 1000 * 1)}
+              disabled={offset === 3600 * 1000 * 1}
+              size="sm"
+            >
+              1h
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setOffset(3600 * 1000 * 4)}
+              disabled={offset === 3600 * 1000 * 4}
+              size="sm"
+            >
+              4h
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setOffset(3600 * 1000 * 12)}
+              disabled={offset === 3600 * 1000 * 12}
+              size="sm"
+            >
+              12h
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setOffset(3600 * 1000 * 24)}
+              disabled={offset === 3600 * 1000 * 24}
+              size="sm"
+            >
+              1d
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setOffset(3600 * 1000 * 24 * 3)}
+              disabled={offset === 3600 * 1000 * 24 * 3}
+              size="sm"
+            >
+              3d
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setOffset(3600 * 1000 * 24 * 7)}
+              disabled={offset === 3600 * 1000 * 24 * 7}
+              size="sm"
+            >
+              1w
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setOffset(3600 * 1000 * 24 * 28)}
+              disabled={offset === 3600 * 1000 * 24 * 28}
+              size="sm"
+            >
+              4w
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setPage(page - 1)}
+              size="sm"
+            >
+              &lt;
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setPage(page < 0 ? page + 1 : 0)}
+              size="sm"
+            >
+              &gt;
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => setPage(0)}
+              size="sm"
+            >
+              |
+            </Button>
+          </div>
+        </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body
+        style={{
+          justifyContent: "center",
+        }}
+      >
         <Chart
           chdata={hdata}
           xkey="timestamp"
@@ -192,25 +234,6 @@ MyModalProps) {
           justifyContent: "center",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Button variant="primary" onClick={() => setPage(page - 1)}>
-            Prev
-          </Button>
-          <Button variant="primary" onClick={() => setPage(0)}>
-            Now
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => setPage(page < 0 ? page + 1 : 0)}
-          >
-            Next
-          </Button>
-        </div>
         Min:{cdata.min}, Max:{cdata.max}, Avg:{cdata.avg}, Page={page}
       </Modal.Footer>
     </Modal>

@@ -1,46 +1,50 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useContext } from "react";
+import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
 import Text from "../text/text";
 import Room from "../room/room";
-import { AppContextP, DomDataP } from "..";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import MapModal from "../mapModal";
+import DomData from "./domData";
+import { AuthData } from "../auth";
 
-const Dom = observer(() => {
+type DomProps = {
+  domData: DomData;
+  authData: AuthData;
+};
+
+const Dom = observer(({ domData, authData }: DomProps) => {
   const [modalShow, setModalShow] = React.useState(false);
-  const appContext = useContext(AppContextP);
-  const dom = useContext(DomDataP);
 
   const handleClose = () => {
     setModalShow(false);
   };
 
   const handleShow = () => {
-    if (appContext.auth.isAuthenticated()) {
+    if (authData.isAuth) {
       setModalShow(true);
     }
   };
 
-  console.info("dom render");
+  console.info("dom render", authData.isAuth, domData.oldData);
 
   return (
     <div className="main">
       <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
-        <Row className={dom.oldData ? "text-danger" : ""}>
+        <Row className={domData.oldData ? "text-danger" : ""}>
           <Col xs={4} onClick={handleShow}>
-            <Text name="Place" value={dom.data.place} />
+            <Text name="Place" value={domData.data.place} />
             <div onClick={(e) => e.stopPropagation()}>
               <MapModal modalShow={modalShow} handleClose={handleClose} />
             </div>
           </Col>
           <Col xs={4}>
-            <Text name="Date" value={dom.data.date} />
+            <Text name="Date" value={domData.data.date} />
           </Col>
           <Col xs={4}>
-            <Text name="Time" value={dom.data.time} />
+            <Text name="Data time" value={domData.data.time} />
           </Col>
         </Row>
       </Container>
@@ -50,37 +54,40 @@ const Dom = observer(() => {
           <Col xs={4}>
             <DataWithTrend
               name="Temperature"
-              value={dom.oldData ? null : dom.data.temp}
+              value={domData.oldData ? null : domData.data.temp}
               unit="°C"
               fix={1}
-              data={dom.trendData.temp}
+              data={domData.trendData.temp}
               range={1.6}
               couldBeNegative
               measurement="vonku:temp"
+              authData={authData}
             />
           </Col>
           <Col xs={4}>
             <DataWithTrend
               name="Humidity"
-              value={dom.oldData ? null : dom.data.humidity}
+              value={domData.oldData ? null : domData.data.humidity}
               unit="%"
               fix={0}
-              data={dom.trendData.humidity}
+              data={domData.trendData.humidity}
               range={10}
               couldBeNegative={false}
               measurement="vonku:humidity"
+              authData={authData}
             />
           </Col>
           <Col xs={4}>
             <DataWithTrend
               name="Rain"
-              value={dom.oldData ? null : dom.data.rain}
+              value={domData.oldData ? null : domData.data.rain}
               unit=""
               fix={0}
-              data={dom.trendData.rain}
+              data={domData.trendData.rain}
               range={1}
               couldBeNegative={false}
               measurement="vonku:rain"
+              authData={authData}
             />
           </Col>
         </Row>
@@ -94,68 +101,73 @@ const Dom = observer(() => {
         </Row>
         <Room
           room="Living room"
-          floorTrend={dom.trendData.obyvacka_podlaha}
-          airTrend={dom.trendData.obyvacka_vzduch}
-          air={dom.oldData ? null : dom.data.obyvacka_vzduch}
-          floor={dom.oldData ? null : dom.data.obyvacka_podlaha}
-          required={dom.oldData ? null : dom.data.obyvacka_reqall}
-          heat={dom.oldData ? null : dom.data.obyvacka_kuri}
-          summer={dom.oldData ? null : dom.data.obyvacka_leto}
-          low={dom.oldData ? null : dom.data.obyvacka_low}
+          floorTrend={domData.trendData.obyvacka_podlaha}
+          airTrend={domData.trendData.obyvacka_vzduch}
+          air={domData.oldData ? null : domData.data.obyvacka_vzduch}
+          floor={domData.oldData ? null : domData.data.obyvacka_podlaha}
+          required={domData.oldData ? null : domData.data.obyvacka_reqall}
+          heat={domData.oldData ? null : domData.data.obyvacka_kuri}
+          summer={domData.oldData ? null : domData.data.obyvacka_leto}
+          low={domData.oldData ? null : domData.data.obyvacka_low}
           measurementAir="obyvacka_vzduch:temp:reqall"
           measurementFloor="obyvacka_podlaha:temp:kuri"
+          authData={authData}
         />
         <Room
           room="Guest room"
-          floorTrend={dom.trendData.pracovna_podlaha}
-          airTrend={dom.trendData.pracovna_vzduch}
-          air={dom.oldData ? null : dom.data.pracovna_vzduch}
-          floor={dom.oldData ? null : dom.data.pracovna_podlaha}
-          required={dom.oldData ? null : dom.data.pracovna_reqall}
-          heat={dom.oldData ? null : dom.data.pracovna_kuri}
-          summer={dom.oldData ? null : dom.data.pracovna_leto}
-          low={dom.oldData ? null : dom.data.pracovna_low}
+          floorTrend={domData.trendData.pracovna_podlaha}
+          airTrend={domData.trendData.pracovna_vzduch}
+          air={domData.oldData ? null : domData.data.pracovna_vzduch}
+          floor={domData.oldData ? null : domData.data.pracovna_podlaha}
+          required={domData.oldData ? null : domData.data.pracovna_reqall}
+          heat={domData.oldData ? null : domData.data.pracovna_kuri}
+          summer={domData.oldData ? null : domData.data.pracovna_leto}
+          low={domData.oldData ? null : domData.data.pracovna_low}
           measurementAir="pracovna_vzduch:temp:reqall"
           measurementFloor="pracovna_podlaha:temp:kuri"
+          authData={authData}
         />
         <Room
           room="Bed room"
-          floorTrend={dom.trendData.spalna_podlaha}
-          airTrend={dom.trendData.spalna_vzduch}
-          air={dom.oldData ? null : dom.data.spalna_vzduch}
-          floor={dom.oldData ? null : dom.data.spalna_podlaha}
-          required={dom.oldData ? null : dom.data.spalna_reqall}
-          heat={dom.oldData ? null : dom.data.spalna_kuri}
-          summer={dom.oldData ? null : dom.data.spalna_leto}
-          low={dom.oldData ? null : dom.data.spalna_low}
+          floorTrend={domData.trendData.spalna_podlaha}
+          airTrend={domData.trendData.spalna_vzduch}
+          air={domData.oldData ? null : domData.data.spalna_vzduch}
+          floor={domData.oldData ? null : domData.data.spalna_podlaha}
+          required={domData.oldData ? null : domData.data.spalna_reqall}
+          heat={domData.oldData ? null : domData.data.spalna_kuri}
+          summer={domData.oldData ? null : domData.data.spalna_leto}
+          low={domData.oldData ? null : domData.data.spalna_low}
           measurementAir="spalna_vzduch:temp:reqall"
           measurementFloor="spalna_podlaha:temp:kuri"
+          authData={authData}
         />
         <Room
           room="Boys"
-          floorTrend={dom.trendData.chalani_podlaha}
-          airTrend={dom.trendData.chalani_vzduch}
-          air={dom.oldData ? null : dom.data.chalani_vzduch}
-          floor={dom.oldData ? null : dom.data.chalani_podlaha}
-          required={dom.oldData ? null : dom.data.chalani_reqall}
-          heat={dom.oldData ? null : dom.data.chalani_kuri}
-          summer={dom.oldData ? null : dom.data.chalani_leto}
-          low={dom.oldData ? null : dom.data.chalani_low}
+          floorTrend={domData.trendData.chalani_podlaha}
+          airTrend={domData.trendData.chalani_vzduch}
+          air={domData.oldData ? null : domData.data.chalani_vzduch}
+          floor={domData.oldData ? null : domData.data.chalani_podlaha}
+          required={domData.oldData ? null : domData.data.chalani_reqall}
+          heat={domData.oldData ? null : domData.data.chalani_kuri}
+          summer={domData.oldData ? null : domData.data.chalani_leto}
+          low={domData.oldData ? null : domData.data.chalani_low}
           measurementAir="chalani_vzduch:temp:reqall"
           measurementFloor="chalani_podlaha:temp:kuri"
+          authData={authData}
         />
         <Room
           room="Petra"
-          floorTrend={dom.trendData.petra_podlaha}
-          airTrend={dom.trendData.petra_vzduch}
-          air={dom.oldData ? null : dom.data.petra_vzduch}
-          floor={dom.oldData ? null : dom.data.petra_podlaha}
-          required={dom.oldData ? null : dom.data.petra_reqall}
-          heat={dom.oldData ? null : dom.data.petra_kuri}
-          summer={dom.oldData ? null : dom.data.petra_leto}
-          low={dom.oldData ? null : dom.data.petra_low}
+          floorTrend={domData.trendData.petra_podlaha}
+          airTrend={domData.trendData.petra_vzduch}
+          air={domData.oldData ? null : domData.data.petra_vzduch}
+          floor={domData.oldData ? null : domData.data.petra_podlaha}
+          required={domData.oldData ? null : domData.data.petra_reqall}
+          heat={domData.oldData ? null : domData.data.petra_kuri}
+          summer={domData.oldData ? null : domData.data.petra_leto}
+          low={domData.oldData ? null : domData.data.petra_low}
           measurementAir="petra_vzduch:temp:reqall"
           measurementFloor="petra_podlaha:temp:kuri"
+          authData={authData}
         />
       </Container>
     </div>

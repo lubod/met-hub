@@ -88,6 +88,7 @@
     "react-leaflet": "^3.2.1",
     "react-router": "^5.2.1",
     "react-router-dom": "^5.3.0",
+    "react-scripts": "^5.0.1",
     "recharts": "^2.1.8",
     "redis": "^3.1.2",
     "socket.io": "^4.2.0",
