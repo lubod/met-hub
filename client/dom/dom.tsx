@@ -8,7 +8,7 @@ import Room from "../room/room";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import MapModal from "../mapModal";
 import DomData from "./domData";
-import { AuthData } from "../auth";
+import AuthData from "../auth/authData";
 
 type DomProps = {
   domData: DomData;

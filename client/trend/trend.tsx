@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { Area, AreaChart, YAxis } from "recharts";
-import { AuthData } from "../auth";
+import AuthData from "../auth/authData";
 import MyModal from "./mymodal";
 
 type TrendData = {

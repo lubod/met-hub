@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { AuthData } from "../auth";
+import AuthData from "../auth/authData";
 import Chart from "./chart";
 
 type MyModalProps = {

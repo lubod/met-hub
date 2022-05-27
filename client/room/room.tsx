@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { Row, Col } from "react-bootstrap";
-import { AuthData } from "../auth";
+import AuthData from "../auth/authData";
 import Data from "../data/data";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import Text from "../text/text";

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
-import { AuthData } from "../auth";
+import AuthData from "../auth/authData";
 import Data from "../data/data";
 import Trend from "../trend/trend";
 

@@ -9,7 +9,7 @@ import Text from "../text/text";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import MapModal from "../mapModal";
 import StationData from "./stationData";
-import { AuthData } from "../auth";
+import AuthData from "../auth/authData";
 
 type StationProps = {
   stationData: StationData;

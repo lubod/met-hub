@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 import React from "react";
-import { AuthCtrl, AuthData } from "./auth";
-import Callback from "./callback";
+import AuthCtrl from "./auth/authCtrl";
+import AuthData from "./auth/authData";
+import Auth from "./auth/auth";
 import DomData from "./dom/domData";
 import HeaderData from "./header/headerData";
 import HomePage from "./homepage";
@@ -17,7 +18,12 @@ type AppProps = {
 
 const App = observer(
   ({ headerData, stationData, domData, authData, authCtrl }: AppProps) => {
-    console.info("App render", authData.isAuth, window.location.pathname, authData.location);
+    console.info(
+      "App render",
+      authData.isAuth,
+      window.location.pathname,
+      authData.location
+    );
 
     return (
       <div className="App">
@@ -29,11 +35,7 @@ const App = observer(
             authData={authData}
           />
         )}
-        {authData.location === "/callback/" && (
-          <Callback
-            authCtrl={authCtrl}
-          />
-        )}
+        {authData.location === "/callback/" && <Auth authCtrl={authCtrl} />}
       </div>
     );
   }

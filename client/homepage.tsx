@@ -1,5 +1,4 @@
 import React from "react";
-import "./style.scss";
 import { Col, Container, Row } from "react-bootstrap";
 import { observer } from "mobx-react";
 import Protected from "./protected";
@@ -7,7 +6,7 @@ import Station from "./station/station";
 import Header from "./header/header";
 import StationData from "./station/stationData";
 import DomData from "./dom/domData";
-import { AuthData } from "./auth";
+import AuthData from "./auth/authData";
 import HeaderData from "./header/headerData";
 
 type HomePageProps = {

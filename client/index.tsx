@@ -2,7 +2,8 @@
 /* eslint-disable import/no-import-module-exports */
 import React from "react";
 import ReactDOM from "react-dom";
-import { AuthData, AuthCtrl } from "./auth";
+import AuthCtrl from "./auth/authCtrl";
+import AuthData from "./auth/authData";
 import MySocket from "./socket";
 import StationData from "./station/stationData";
 import StationCtrl from "./station/stationCtrl";
