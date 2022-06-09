@@ -73,9 +73,16 @@ const Chart = function ({
               </linearGradient>
             </defs>
             <CartesianGrid stroke="#ccc" vertical={false} />
-            <XAxis dataKey={xkey} />
-            <YAxis type="number" domain={[domainMin, domainMax]} />
-            <Tooltip />
+            <XAxis dataKey={xkey} tick={{ fill: "white" }} />
+            <YAxis
+              type="number"
+              domain={[domainMin, domainMax]}
+              tick={{ fill: "white" }}
+            />
+            <Tooltip
+              labelStyle={{ color: "black" }}
+              itemStyle={{ color: "black" }}
+            />
           </ComposedChart>
         </ResponsiveContainer>
       )}
@@ -91,9 +98,12 @@ const Chart = function ({
             }}
           >
             <CartesianGrid stroke="#ccc" vertical={false} />
-            <XAxis dataKey={xkey} />
-            <YAxis type="number" domain={[0, 360]} />
-            <Tooltip />
+            <XAxis dataKey={xkey} tick={{ fill: "white" }} />
+            <YAxis type="number" domain={[0, 360]} tick={{ fill: "white" }} />
+            <Tooltip
+              labelStyle={{ color: "black" }}
+              itemStyle={{ color: "black" }}
+            />
             <Scatter dataKey={ykey} fill="#17A2B8" />
           </ScatterChart>
         </ResponsiveContainer>

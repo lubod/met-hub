@@ -11,9 +11,9 @@ import DomData from "./dom/domData";
 import DomCtrl from "./dom/domCtrl";
 import HeaderData from "./header/headerData";
 import HeaderCtrl from "./header/headerCtrl";
-import "./style.scss";
-import "bootstrap/dist/css/bootstrap.css";
 import App from "./app";
+import "bootstrap/dist/css/bootstrap.css";
+import "./style.scss";
 
 const socket = new MySocket();
 
