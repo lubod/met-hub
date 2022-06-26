@@ -7,7 +7,7 @@ type DataProps = {
 };
 
 const Text = observer((props: DataProps) => (
-  <div className="text-left">
+  <div className="text-left my-2">
     <div className="small text-info font-weight-bold">{props.name}</div>
     <span className="h4 mr-1">{props.value == null ? "-" : props.value}</span>
   </div>

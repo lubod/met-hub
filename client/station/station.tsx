@@ -1,10 +1,10 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
 import WindRose from "../wind-rose/wind-rose";
-import Data from "../data/data";
+import DataAlone from "../data/dataAlone";
 import Text from "../text/text";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import MapModal from "../mapModal";
@@ -33,7 +33,7 @@ const Station = observer(({ stationData, authData }: StationProps) => {
 
   return (
     <div className="main">
-      <Container className="text-center text-light my-2 py-2 mx-auto border-primary bg-very-dark rounded shadow">
+      <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
         <Row className={stationData.oldData ? "text-danger" : ""}>
           <Col xs={4} onClick={handleShow}>
             <Text name="Place" value={stationData.data.place} />
@@ -49,7 +49,7 @@ const Station = observer(({ stationData, authData }: StationProps) => {
           </Col>
         </Row>
       </Container>
-      <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
+      <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
         <WindRose
           gustTrend={stationData.trendData.windgust}
           speedTrend={stationData.trendData.windspeed}
@@ -61,7 +61,8 @@ const Station = observer(({ stationData, authData }: StationProps) => {
           authData={authData}
         />
       </Container>
-      <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
+      <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
+        <div className="text-left font-weight-bold">OUT</div>
         <Row>
           <Col xs={4}>
             <DataWithTrend
@@ -72,7 +73,6 @@ const Station = observer(({ stationData, authData }: StationProps) => {
               data={stationData.trendData.temp}
               range={1.6}
               couldBeNegative
-              measurement="stanica:temp"
               authData={authData}
             />
           </Col>
@@ -85,7 +85,6 @@ const Station = observer(({ stationData, authData }: StationProps) => {
               data={stationData.trendData.humidity}
               range={10}
               couldBeNegative={false}
-              measurement="stanica:humidity"
               authData={authData}
             />
           </Col>
@@ -98,7 +97,6 @@ const Station = observer(({ stationData, authData }: StationProps) => {
               data={stationData.trendData.pressurerel}
               range={1}
               couldBeNegative={false}
-              measurement="stanica:pressurerel"
               authData={authData}
             />
           </Col>
@@ -115,7 +113,6 @@ const Station = observer(({ stationData, authData }: StationProps) => {
               data={stationData.trendData.solarradiation}
               range={100}
               couldBeNegative={false}
-              measurement="stanica:solarradiation"
               authData={authData}
             />
           </Col>
@@ -128,7 +125,6 @@ const Station = observer(({ stationData, authData }: StationProps) => {
               data={stationData.trendData.uv}
               range={3}
               couldBeNegative={false}
-              measurement="stanica:uv"
               authData={authData}
             />
           </Col>
@@ -141,14 +137,16 @@ const Station = observer(({ stationData, authData }: StationProps) => {
               data={stationData.trendData.rainrate}
               range={1}
               couldBeNegative={false}
-              measurement="stanica:rainrate"
               authData={authData}
             />
           </Col>
         </Row>
+      </Container>
+      <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
+        <div className="text-left font-weight-bold">RAIN</div>
         <Row>
           <Col xs={4}>
-            <Data
+            <DataAlone
               name="Event Rain"
               value={stationData.oldData ? null : stationData.data.eventrain}
               unit="mm"
@@ -156,7 +154,7 @@ const Station = observer(({ stationData, authData }: StationProps) => {
             />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataAlone
               name="Hourly"
               value={stationData.oldData ? null : stationData.data.hourlyrain}
               unit="mm"
@@ -164,7 +162,7 @@ const Station = observer(({ stationData, authData }: StationProps) => {
             />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataAlone
               name="Daily"
               value={stationData.oldData ? null : stationData.data.dailyrain}
               unit="mm"
@@ -174,7 +172,7 @@ const Station = observer(({ stationData, authData }: StationProps) => {
         </Row>
         <Row>
           <Col xs={4}>
-            <Data
+            <DataAlone
               name="Weekly"
               value={stationData.oldData ? null : stationData.data.weeklyrain}
               unit="mm"
@@ -182,7 +180,7 @@ const Station = observer(({ stationData, authData }: StationProps) => {
             />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataAlone
               name="Monthly"
               value={stationData.oldData ? null : stationData.data.monthlyrain}
               unit="mm"
@@ -190,7 +188,7 @@ const Station = observer(({ stationData, authData }: StationProps) => {
             />
           </Col>
           <Col xs={4}>
-            <Data
+            <DataAlone
               name="Total"
               value={stationData.oldData ? null : stationData.data.totalrain}
               unit="mm"
@@ -200,7 +198,7 @@ const Station = observer(({ stationData, authData }: StationProps) => {
         </Row>
       </Container>
       {authData.isAuth && (
-        <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
+        <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
           <div className="text-left font-weight-bold">IN</div>
           <Row>
             <Col xs={6}>
@@ -212,7 +210,6 @@ const Station = observer(({ stationData, authData }: StationProps) => {
                 data={stationData.trendData.tempin}
                 range={1.6}
                 couldBeNegative
-                measurement="stanica:tempin"
                 authData={authData}
               />
             </Col>
@@ -225,7 +222,6 @@ const Station = observer(({ stationData, authData }: StationProps) => {
                 data={stationData.trendData.humidityin}
                 range={10}
                 couldBeNegative={false}
-                measurement="stanica:humidityin"
                 authData={authData}
               />
             </Col>

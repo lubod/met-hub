@@ -4,9 +4,8 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import AuthData from "../auth/authData";
-import Data from "../data/data";
+import DataAlone from "../data/dataAlone";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
-import MyModal from "../trend/mymodal";
 
 type Wind = {
   speed: number;
@@ -31,17 +30,6 @@ const WindRose = observer(
     authData,
   }: Wind) => {
     const canvasRef = React.useRef(null);
-    const [modalShow, setModalShow] = React.useState(false);
-
-    const handleClose = () => {
-      setModalShow(false);
-    };
-
-    const handleShow = () => {
-      if (authData.isAuth) {
-        setModalShow(true);
-      }
-    };
 
     function drawDirArrow(radius: number, ctx: any) {
       if (dir != null) {
@@ -208,26 +196,9 @@ const WindRose = observer(
     return (
       <Row>
         <Col xs={8}>
-          <canvas
-            width="200"
-            height="200"
-            id="myCanvas"
-            ref={canvasRef}
-            onClick={handleShow}
-          >
+          <canvas width="220" height="220" id="myCanvas" ref={canvasRef}>
             <p>Your browser doesn&apos;t support canvas. Boo hoo!</p>
           </canvas>
-          <div onClick={(e) => e.stopPropagation()}>
-            <MyModal
-              modalShow={modalShow}
-              handleClose={handleClose}
-              name="Wind Dir"
-              unit="Deg"
-              measurement="stanica:winddir"
-              couldBeNegative={false}
-              authData={authData}
-            />
-          </div>
         </Col>
         <Col xs={4} className="text-left">
           <DataWithTrend
@@ -238,7 +209,6 @@ const WindRose = observer(
             data={speedTrend}
             range={5}
             couldBeNegative={false}
-            measurement="stanica:windspeed"
             authData={authData}
           />
           <DataWithTrend
@@ -249,10 +219,9 @@ const WindRose = observer(
             data={gustTrend}
             range={5}
             couldBeNegative={false}
-            measurement="stanica:windgust"
             authData={authData}
           />
-          <Data name="Daily Gust" value={dailyGust} unit="km/h" fix={1} />
+          <DataAlone name="Daily Gust" value={dailyGust} unit="km/h" fix={1} />
         </Col>
       </Row>
     );

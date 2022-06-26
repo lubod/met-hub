@@ -12,7 +12,6 @@ type DataWithTrendProps = {
   data: Array<number>;
   range: number;
   couldBeNegative: boolean;
-  measurement: string;
   authData: AuthData;
 };
 
@@ -25,18 +24,14 @@ const DataWithTrend = observer(
     data,
     range,
     couldBeNegative,
-    measurement,
     authData,
   }: DataWithTrendProps) => (
-    <div>
+    <div className="my-2">
       <Data name={name} value={value} unit={unit} fix={fix} />
       <Trend
-        name={name}
         data={data}
         range={range}
-        unit={unit}
         couldBeNegative={couldBeNegative}
-        measurement={measurement}
         authData={authData}
       />
     </div>

@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 import React from "react";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Container } from "react-bootstrap";
 import AuthData from "../auth/authData";
-import Data from "../data/data";
+import DataAlone from "../data/dataAlone";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import Text from "../text/text";
 
@@ -16,8 +16,6 @@ type RoomProps = {
   room: string;
   airTrend: Array<number>;
   floorTrend: Array<number>;
-  measurementAir: string;
-  measurementFloor: string;
   authData: AuthData;
 };
 
@@ -32,12 +30,10 @@ const Room = observer(
     room,
     airTrend,
     floorTrend,
-    measurementAir,
-    measurementFloor,
     authData,
   }: RoomProps) => (
-    <div className="text-left small text-info font-weight-bold">
-      {room}
+    <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
+      <div className="text-left font-weight-bold">{room}</div>
       <Row className="text-light">
         <Col xs={3}>
           <DataWithTrend
@@ -48,7 +44,6 @@ const Room = observer(
             data={airTrend}
             range={1.6}
             couldBeNegative
-            measurement={measurementAir}
             authData={authData}
           />
         </Col>
@@ -61,12 +56,11 @@ const Room = observer(
             data={floorTrend}
             range={1.6}
             couldBeNegative
-            measurement={measurementFloor}
             authData={authData}
           />
         </Col>
         <Col xs={3}>
-          <Data name="" value={required} unit="°C" fix={1} />
+          <DataAlone name="" value={required} unit="°C" fix={1} />
         </Col>
         <Col xs={2}>
           <Text
@@ -77,7 +71,7 @@ const Room = observer(
           />
         </Col>
       </Row>
-    </div>
+    </Container>
   )
 );
 

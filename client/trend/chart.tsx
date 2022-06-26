@@ -37,18 +37,18 @@ const Chart = function ({
   return (
     <div className="text-left">
       {ykey !== "winddir" && (
-        <ResponsiveContainer width="100%" aspect={16.0 / 10.0}>
+        <ResponsiveContainer width="100%" aspect={4.0 / 4.0}>
           <ComposedChart
             data={chdata}
             margin={{
               top: 0,
-              right: 20,
+              right: 0,
               left: 0,
               bottom: 0,
             }}
           >
             <Area
-              type="basis"
+              type="monotoneX"
               dataKey={ykey}
               stroke="#17A2B8"
               fillOpacity={1}
@@ -56,7 +56,7 @@ const Chart = function ({
             />
 
             <Line
-              type="linear"
+              type="monotoneX"
               dataKey={y2key}
               stroke="#F93154"
               dot={false}
@@ -75,6 +75,7 @@ const Chart = function ({
             <CartesianGrid stroke="#ccc" vertical={false} />
             <XAxis dataKey={xkey} tick={{ fill: "white" }} />
             <YAxis
+              hide
               type="number"
               domain={[domainMin, domainMax]}
               tick={{ fill: "white" }}
@@ -87,19 +88,24 @@ const Chart = function ({
         </ResponsiveContainer>
       )}
       {ykey === "winddir" && (
-        <ResponsiveContainer width="100%" aspect={16.0 / 10.0}>
+        <ResponsiveContainer width="100%" aspect={4.0 / 4.0}>
           <ScatterChart
             data={chdata}
             margin={{
               top: 0,
-              right: 20,
+              right: 0,
               left: 0,
               bottom: 0,
             }}
           >
             <CartesianGrid stroke="#ccc" vertical={false} />
             <XAxis dataKey={xkey} tick={{ fill: "white" }} />
-            <YAxis type="number" domain={[0, 360]} tick={{ fill: "white" }} />
+            <YAxis
+              hide
+              type="number"
+              domain={[0, 360]}
+              tick={{ fill: "white" }}
+            />
             <Tooltip
               labelStyle={{ color: "black" }}
               itemStyle={{ color: "black" }}

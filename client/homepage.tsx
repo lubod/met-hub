@@ -23,25 +23,31 @@ const HomePage = observer(
     return (
       <div>
         {!authData.isAuth && (
-          <Container className="container-max-width text-center py-2">
+          <Container className="container-max-width text-center mx-auto">
+            <Row className="">
+              <Header headerData={headerData} authData={authData} />
+            </Row>
             <Row>
-              <Col sm={6} className="px-2">
-                <Header headerData={headerData} authData={authData} />
+              <Col sm={6} className="ps-1 pe-1">
                 <Station stationData={stationData} authData={authData} />
               </Col>
-              <Col sm={6} className="px-2">
-                <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
+              <Col sm={6} className="ps-1 pe-1">
+                <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
                   <h1 className="text-info">met-hub.com</h1>
                   <p>
                     This is a free site for non-professional meteorological
                     stations. Currently you can see data from GoGEN ME 3900
-                    (v12)
                   </p>
                 </Container>
-                <Container className="text-center text-light my-2 py-2 mx-auto border-secondary bg-very-dark rounded">
+                <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
                   <p>Login to see more stations and historical data</p>
                 </Container>
               </Col>
+            </Row>
+            <Row>
+              <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
+                - v16 -
+              </Container>
             </Row>
           </Container>
         )}
