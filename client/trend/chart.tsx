@@ -72,7 +72,7 @@ const Chart = function ({
                 <stop offset="95%" stopColor="#81D4FA" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid stroke="#ccc" vertical={false} />
+            <CartesianGrid stroke="#ccc" vertical={false} horizontal={false} />
             <XAxis dataKey={xkey} tick={{ fill: "white" }} />
             <YAxis
               hide
@@ -98,7 +98,7 @@ const Chart = function ({
               bottom: 0,
             }}
           >
-            <CartesianGrid stroke="#ccc" vertical={false} />
+            <CartesianGrid stroke="#ccc" vertical={false} horizontal={false} />
             <XAxis dataKey={xkey} tick={{ fill: "white" }} />
             <YAxis
               hide
