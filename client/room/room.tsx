@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import AuthData from "../auth/authData";
 import DataAlone from "../data/dataAlone";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
@@ -32,7 +32,8 @@ const Room = observer(
     floorTrend,
     authData,
   }: RoomProps) => (
-    <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
+    <>
+      <hr />
       <div className="text-left font-weight-bold">{room}</div>
       <Row className="text-light">
         <Col xs={3}>
@@ -71,7 +72,7 @@ const Room = observer(
           />
         </Col>
       </Row>
-    </Container>
+    </>
   )
 );
 

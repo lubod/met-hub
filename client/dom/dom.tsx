@@ -96,67 +96,67 @@ const Dom = observer(({ domData, authData }: DomProps) => {
           <Col xs={3}>Req</Col>
           <Col xs={2}>HSL</Col>
         </Row>
+        <Room
+          room="LIVING ROOM"
+          floorTrend={domData.trendData.obyvacka_podlaha}
+          airTrend={domData.trendData.obyvacka_vzduch}
+          air={domData.oldData ? null : domData.data.obyvacka_vzduch}
+          floor={domData.oldData ? null : domData.data.obyvacka_podlaha}
+          required={domData.oldData ? null : domData.data.obyvacka_reqall}
+          heat={domData.oldData ? null : domData.data.obyvacka_kuri}
+          summer={domData.oldData ? null : domData.data.obyvacka_leto}
+          low={domData.oldData ? null : domData.data.obyvacka_low}
+          authData={authData}
+        />
+        <Room
+          room="GUEST ROOM"
+          floorTrend={domData.trendData.pracovna_podlaha}
+          airTrend={domData.trendData.pracovna_vzduch}
+          air={domData.oldData ? null : domData.data.pracovna_vzduch}
+          floor={domData.oldData ? null : domData.data.pracovna_podlaha}
+          required={domData.oldData ? null : domData.data.pracovna_reqall}
+          heat={domData.oldData ? null : domData.data.pracovna_kuri}
+          summer={domData.oldData ? null : domData.data.pracovna_leto}
+          low={domData.oldData ? null : domData.data.pracovna_low}
+          authData={authData}
+        />
+        <Room
+          room="BED ROOM"
+          floorTrend={domData.trendData.spalna_podlaha}
+          airTrend={domData.trendData.spalna_vzduch}
+          air={domData.oldData ? null : domData.data.spalna_vzduch}
+          floor={domData.oldData ? null : domData.data.spalna_podlaha}
+          required={domData.oldData ? null : domData.data.spalna_reqall}
+          heat={domData.oldData ? null : domData.data.spalna_kuri}
+          summer={domData.oldData ? null : domData.data.spalna_leto}
+          low={domData.oldData ? null : domData.data.spalna_low}
+          authData={authData}
+        />
+        <Room
+          room="BOYS"
+          floorTrend={domData.trendData.chalani_podlaha}
+          airTrend={domData.trendData.chalani_vzduch}
+          air={domData.oldData ? null : domData.data.chalani_vzduch}
+          floor={domData.oldData ? null : domData.data.chalani_podlaha}
+          required={domData.oldData ? null : domData.data.chalani_reqall}
+          heat={domData.oldData ? null : domData.data.chalani_kuri}
+          summer={domData.oldData ? null : domData.data.chalani_leto}
+          low={domData.oldData ? null : domData.data.chalani_low}
+          authData={authData}
+        />
+        <Room
+          room="PETRA"
+          floorTrend={domData.trendData.petra_podlaha}
+          airTrend={domData.trendData.petra_vzduch}
+          air={domData.oldData ? null : domData.data.petra_vzduch}
+          floor={domData.oldData ? null : domData.data.petra_podlaha}
+          required={domData.oldData ? null : domData.data.petra_reqall}
+          heat={domData.oldData ? null : domData.data.petra_kuri}
+          summer={domData.oldData ? null : domData.data.petra_leto}
+          low={domData.oldData ? null : domData.data.petra_low}
+          authData={authData}
+        />
       </Container>
-      <Room
-        room="LIVING ROOM"
-        floorTrend={domData.trendData.obyvacka_podlaha}
-        airTrend={domData.trendData.obyvacka_vzduch}
-        air={domData.oldData ? null : domData.data.obyvacka_vzduch}
-        floor={domData.oldData ? null : domData.data.obyvacka_podlaha}
-        required={domData.oldData ? null : domData.data.obyvacka_reqall}
-        heat={domData.oldData ? null : domData.data.obyvacka_kuri}
-        summer={domData.oldData ? null : domData.data.obyvacka_leto}
-        low={domData.oldData ? null : domData.data.obyvacka_low}
-        authData={authData}
-      />
-      <Room
-        room="GUEST ROOM"
-        floorTrend={domData.trendData.pracovna_podlaha}
-        airTrend={domData.trendData.pracovna_vzduch}
-        air={domData.oldData ? null : domData.data.pracovna_vzduch}
-        floor={domData.oldData ? null : domData.data.pracovna_podlaha}
-        required={domData.oldData ? null : domData.data.pracovna_reqall}
-        heat={domData.oldData ? null : domData.data.pracovna_kuri}
-        summer={domData.oldData ? null : domData.data.pracovna_leto}
-        low={domData.oldData ? null : domData.data.pracovna_low}
-        authData={authData}
-      />
-      <Room
-        room="BED ROOM"
-        floorTrend={domData.trendData.spalna_podlaha}
-        airTrend={domData.trendData.spalna_vzduch}
-        air={domData.oldData ? null : domData.data.spalna_vzduch}
-        floor={domData.oldData ? null : domData.data.spalna_podlaha}
-        required={domData.oldData ? null : domData.data.spalna_reqall}
-        heat={domData.oldData ? null : domData.data.spalna_kuri}
-        summer={domData.oldData ? null : domData.data.spalna_leto}
-        low={domData.oldData ? null : domData.data.spalna_low}
-        authData={authData}
-      />
-      <Room
-        room="BOYS"
-        floorTrend={domData.trendData.chalani_podlaha}
-        airTrend={domData.trendData.chalani_vzduch}
-        air={domData.oldData ? null : domData.data.chalani_vzduch}
-        floor={domData.oldData ? null : domData.data.chalani_podlaha}
-        required={domData.oldData ? null : domData.data.chalani_reqall}
-        heat={domData.oldData ? null : domData.data.chalani_kuri}
-        summer={domData.oldData ? null : domData.data.chalani_leto}
-        low={domData.oldData ? null : domData.data.chalani_low}
-        authData={authData}
-      />
-      <Room
-        room="PETRA"
-        floorTrend={domData.trendData.petra_podlaha}
-        airTrend={domData.trendData.petra_vzduch}
-        air={domData.oldData ? null : domData.data.petra_vzduch}
-        floor={domData.oldData ? null : domData.data.petra_podlaha}
-        required={domData.oldData ? null : domData.data.petra_reqall}
-        heat={domData.oldData ? null : domData.data.petra_kuri}
-        summer={domData.oldData ? null : domData.data.petra_leto}
-        low={domData.oldData ? null : domData.data.petra_low}
-        authData={authData}
-      />
     </div>
   );
 });

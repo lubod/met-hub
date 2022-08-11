@@ -45,12 +45,13 @@ ChartsProps) {
   const [hdata, setHdata] = React.useState(null);
   const [cdata, setCdata] = React.useState(new CData());
   const [page, setPage] = React.useState(0);
-  const [offset, setOffset] = React.useState(3600 * 1000 * 24);
+  const [offset, setOffset] = React.useState("86400|1 day");
   const [measurement, setMeasurement] = React.useState(
     "stanica:temp|Temperature:[°C]:true"
   );
 
-  async function load(o: number, p: number, m: string) {
+  async function load(of: string, p: number, m: string) {
+    const o = parseInt(of.split("|")[0], 10) * 1000;
     // eslint-disable-next-line no-promise-executor-return
     // return new Promise((resolve) => setTimeout(resolve, 2000));
     const start = new Date(Date.now() - o + p * o);
@@ -82,7 +83,7 @@ ChartsProps) {
       if (cbn === "true") {
         couldBeNegative = true;
       }
-      const range = `${offset}`;
+      const range = offset.split("|")[1];
 
       const y = m1.split(":")[1];
       for (let i = 0; i < newData.length; i += 1) {
@@ -134,11 +135,10 @@ ChartsProps) {
     load(offset, page, measurement);
   }, [page, offset, measurement]);
 
-  // console.info("render modal");
   return (
     <>
       <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-        <Row>
+        <Row className="my-3">
           <ButtonGroup>
             <DropdownButton
               id="dropdown-measurement-button"
@@ -183,27 +183,17 @@ ChartsProps) {
             <DropdownButton
               id="dropdown-range-button"
               title="Range"
-              onSelect={(e) => setOffset(parseInt(e, 10))}
+              onSelect={(e) => setOffset(e)}
             >
-              <Dropdown.Item eventKey={3600 * 1000 * 1}>1 hour</Dropdown.Item>
-              <Dropdown.Item eventKey={3600 * 1000 * 3}>3 hours</Dropdown.Item>
-              <Dropdown.Item eventKey={3600 * 1000 * 6}>6 hours</Dropdown.Item>
-              <Dropdown.Item eventKey={3600 * 1000 * 12}>
-                12 hours
-              </Dropdown.Item>
-              <Dropdown.Item eventKey={3600 * 1000 * 24}>1 day</Dropdown.Item>
-              <Dropdown.Item eventKey={3600 * 1000 * 24 * 3}>
-                3 days
-              </Dropdown.Item>
-              <Dropdown.Item eventKey={3600 * 1000 * 24 * 7}>
-                1 week
-              </Dropdown.Item>
-              <Dropdown.Item eventKey={3600 * 1000 * 24 * 7 * 4}>
-                4 weeks
-              </Dropdown.Item>
-              <Dropdown.Item eventKey={3600 * 1000 * 24 * 7 * 52}>
-                1 year
-              </Dropdown.Item>
+              <Dropdown.Item eventKey="3600|1 hour">1 hour</Dropdown.Item>
+              <Dropdown.Item eventKey="10800|3 hours">3 hours</Dropdown.Item>
+              <Dropdown.Item eventKey="21600|6 hours">6 hours</Dropdown.Item>
+              <Dropdown.Item eventKey="43200|12 hours">12 hours</Dropdown.Item>
+              <Dropdown.Item eventKey="86400|1 day">1 day</Dropdown.Item>
+              <Dropdown.Item eventKey="259200|3 days">3 days</Dropdown.Item>
+              <Dropdown.Item eventKey="604800|1 week">1 week</Dropdown.Item>
+              <Dropdown.Item eventKey="2419200|4 weeks">4 weeks</Dropdown.Item>
+              <Dropdown.Item eventKey="31536000|1 year">1 year</Dropdown.Item>
             </DropdownButton>
             <Button
               // variant="outline-secondary"
@@ -225,8 +215,7 @@ ChartsProps) {
             </Button>
           </ButtonGroup>
         </Row>
-      </Container>
-      <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
+        <hr />
         <Row>
           <Col xs={12}>
             <Text name="Sensor" value={cdata.name + cdata.unit} />
