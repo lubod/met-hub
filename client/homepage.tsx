@@ -46,7 +46,7 @@ const HomePage = observer(
             </Row>
             <Row>
               <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-                - v16 -
+                - v17 -
               </Container>
             </Row>
           </Container>
