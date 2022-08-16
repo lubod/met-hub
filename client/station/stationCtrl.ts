@@ -3,7 +3,7 @@ import {
   IStationData,
   IStationTrendData,
   StationCfg,
-} from "../../common/models/stationModel";
+} from "../../common/stationModel";
 import StationData from "./stationData";
 
 const ENV = process.env.ENV || "";

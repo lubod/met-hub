@@ -32,8 +32,7 @@ const Chart = function ({
   domainMin,
   domainMax,
 }: ChartData) {
-  // console.info("render chart");
-  // console.info(domainMin, domainMax, chdata);
+  // console.info("render chart", chdata, xkey, ykey, y2key, domainMin, domainMax);
   return (
     <div className="text-left">
       {ykey !== "winddir" && (
@@ -54,7 +53,6 @@ const Chart = function ({
               fillOpacity={1}
               fill="url(#colorUv)"
             />
-
             <Line
               type="monotoneX"
               dataKey={y2key}

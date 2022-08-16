@@ -7,20 +7,29 @@ import Station from "./station/station";
 import StationData from "./station/stationData";
 import Header from "./header/header";
 import HeaderData from "./header/headerData";
-import StationCharts from "./station/stationCharts";
 import Dom from "./dom/dom";
 import AuthData from "./auth/authData";
-import DomCharts from "./dom/domCharts";
+import Charts from "./charts/charts";
+import ChartsData from "./charts/chartsData";
+import { STATION_MEASUREMENTS } from "../common/stationModel";
+import { DOM_MEASUREMENTS } from "../common/domModel";
 
 type ProtectedProps = {
   headerData: HeaderData;
   stationData: StationData;
   domData: DomData;
   authData: AuthData;
+  chartsData: ChartsData;
 };
 
 const Protected = observer(
-  ({ headerData, stationData, domData, authData }: ProtectedProps) => {
+  ({
+    headerData,
+    stationData,
+    domData,
+    authData,
+    chartsData,
+  }: ProtectedProps) => {
     console.info("Protected render", authData.isAuth);
 
     return (
@@ -31,6 +40,7 @@ const Protected = observer(
             stationData={stationData}
             domData={domData}
             authData={authData}
+            chartsData={chartsData}
           />
         )}
         {authData.isAuth && (
@@ -41,18 +51,32 @@ const Protected = observer(
             <Row>
               <Col sm={6} className="ps-1 pe-1">
                 {headerData.place === "stanica" && (
-                  <Station stationData={stationData} authData={authData} />
+                  <Station
+                    stationData={stationData}
+                    authData={authData}
+                    chartsData={chartsData}
+                  />
                 )}
                 {headerData.place === "dom" && (
-                  <Dom domData={domData} authData={authData} />
+                  <Dom
+                    domData={domData}
+                    authData={authData}
+                    chartsData={chartsData}
+                  />
                 )}
               </Col>
               <Col sm={6} className="ps-1 pe-1">
                 {headerData.place === "stanica" && (
-                  <StationCharts authData={authData} />
+                  <Charts
+                    chartsData={chartsData}
+                    measurements={STATION_MEASUREMENTS}
+                  />
                 )}
                 {headerData.place === "dom" && (
-                  <DomCharts authData={authData} />
+                  <Charts
+                    chartsData={chartsData}
+                    measurements={DOM_MEASUREMENTS}
+                  />
                 )}
               </Col>
             </Row>

@@ -3,7 +3,7 @@ import {
   IStationDataRaw,
   IStationTrendData,
   StationCfg,
-} from "../common/models/stationModel";
+} from "../common/stationModel";
 import { IMeasurement } from "./measurement";
 
 const PASSKEY = process.env.STATION_PASSKEY || "";

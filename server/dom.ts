@@ -4,7 +4,7 @@ import {
   IDomData,
   IDomDataRaw,
   DomCfg,
-} from "../common/models/domModel";
+} from "../common/domModel";
 import { IMeasurement } from "./measurement";
 
 const cloneDeep = require("lodash.clonedeep");

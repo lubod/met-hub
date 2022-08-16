@@ -1,5 +1,5 @@
 import { action, makeObservable, observable } from "mobx";
-import { IDomData, IDomTrendData } from "../../common/models/domModel";
+import { IDomData, IDomTrendData } from "../../common/domModel";
 
 class DomData {
   data: IDomData = { timestamp: "" } as IDomData;

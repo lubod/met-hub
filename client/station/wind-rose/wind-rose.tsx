@@ -3,9 +3,11 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { Row, Col } from "react-bootstrap";
-import AuthData from "../auth/authData";
-import DataAlone from "../data/dataAlone";
-import DataWithTrend from "../dataWithTrend/dataWithTrend";
+import { STATION_MEASUREMENTS_DESC } from "../../../common/stationModel";
+import AuthData from "../../auth/authData";
+import ChartsData from "../../charts/chartsData";
+import DataAlone from "../../data/dataAlone";
+import DataWithTrend from "../../dataWithTrend/dataWithTrend";
 
 type Wind = {
   speed: number;
@@ -16,6 +18,7 @@ type Wind = {
   gustTrend: Array<number>;
   speedTrend: Array<number>;
   authData: AuthData;
+  chartsData: ChartsData;
 };
 
 const WindRose = observer(
@@ -28,6 +31,7 @@ const WindRose = observer(
     gustTrend,
     speedTrend,
     authData,
+    chartsData,
   }: Wind) => {
     const canvasRef = React.useRef(null);
 
@@ -172,7 +176,11 @@ const WindRose = observer(
       ctx.font = "bold 13px Arial";
       ctx.fillStyle = "#17A2B8";
       ctx.textAlign = "center";
-      ctx.fillText("Wind Dir", canvas.width / 2, canvas.height / 2 + 3);
+      ctx.fillText(
+        STATION_MEASUREMENTS_DESC.WINDDIR.label,
+        canvas.width / 2,
+        canvas.height / 2 + 3
+      );
     }
 
     function draw(canvas: any) {
@@ -196,32 +204,56 @@ const WindRose = observer(
     return (
       <Row>
         <Col xs={8}>
-          <canvas width="220" height="220" id="myCanvas" ref={canvasRef}>
-            <p>Your browser doesn&apos;t support canvas. Boo hoo!</p>
-          </canvas>
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              chartsData.setMeasurementObject(STATION_MEASUREMENTS_DESC.WINDDIR)
+            }
+          >
+            <canvas width="220" height="220" id="myCanvas" ref={canvasRef}>
+              <p>Your browser doesn&apos;t support canvas. Boo hoo!</p>
+            </canvas>
+          </div>
         </Col>
         <Col xs={4} className="text-left">
           <DataWithTrend
-            name="Wind Speed"
+            label={STATION_MEASUREMENTS_DESC.WINDSPEED.label}
             value={speed}
-            unit="km/h"
-            fix={0}
+            unit={STATION_MEASUREMENTS_DESC.WINDSPEED.unit}
+            fix={STATION_MEASUREMENTS_DESC.WINDSPEED.fix}
             data={speedTrend}
-            range={5}
-            couldBeNegative={false}
+            range={STATION_MEASUREMENTS_DESC.WINDSPEED.range}
+            couldBeNegative={
+              STATION_MEASUREMENTS_DESC.WINDSPEED.couldBeNegative
+            }
             authData={authData}
+            onClick={() =>
+              chartsData.setMeasurementObject(
+                STATION_MEASUREMENTS_DESC.WINDSPEED
+              )
+            }
           />
           <DataWithTrend
-            name="Wind Gust"
+            label={STATION_MEASUREMENTS_DESC.WINDGUST.label}
             value={gust}
-            unit="km/h"
-            fix={1}
+            unit={STATION_MEASUREMENTS_DESC.WINDGUST.unit}
+            fix={STATION_MEASUREMENTS_DESC.WINDGUST.fix}
             data={gustTrend}
-            range={5}
-            couldBeNegative={false}
+            range={STATION_MEASUREMENTS_DESC.WINDGUST.range}
+            couldBeNegative={STATION_MEASUREMENTS_DESC.WINDGUST.couldBeNegative}
             authData={authData}
+            onClick={() =>
+              chartsData.setMeasurementObject(
+                STATION_MEASUREMENTS_DESC.WINDGUST
+              )
+            }
           />
-          <DataAlone name="Daily Gust" value={dailyGust} unit="km/h" fix={1} />
+          <DataAlone
+            label={STATION_MEASUREMENTS_DESC.DAILYGUST.label}
+            value={dailyGust}
+            unit={STATION_MEASUREMENTS_DESC.DAILYGUST.unit}
+            fix={STATION_MEASUREMENTS_DESC.DAILYGUST.fix}
+          />
         </Col>
       </Row>
     );

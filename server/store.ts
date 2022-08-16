@@ -1,9 +1,9 @@
 import { Pool } from "pg";
 import { createClient } from "redis";
-import { IStationData } from "../common/models/stationModel";
+import { IStationData } from "../common/stationModel";
 import { Dom } from "./dom";
 import Station from "./station";
-import { IDomDataRaw } from "../common/models/domModel";
+import { IDomDataRaw } from "../common/domModel";
 import { IMeasurement } from "./measurement";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 5432;

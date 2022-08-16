@@ -8,16 +8,24 @@ import StationData from "./station/stationData";
 import DomData from "./dom/domData";
 import AuthData from "./auth/authData";
 import HeaderData from "./header/headerData";
+import ChartsData from "./charts/chartsData";
 
 type HomePageProps = {
   headerData: HeaderData;
   stationData: StationData;
   domData: DomData;
   authData: AuthData;
+  chartsData: ChartsData;
 };
 
 const HomePage = observer(
-  ({ headerData, stationData, domData, authData }: HomePageProps) => {
+  ({
+    headerData,
+    stationData,
+    domData,
+    authData,
+    chartsData,
+  }: HomePageProps) => {
     console.info("Homepage render", authData.isAuth);
 
     return (
@@ -29,7 +37,11 @@ const HomePage = observer(
             </Row>
             <Row>
               <Col sm={6} className="ps-1 pe-1">
-                <Station stationData={stationData} authData={authData} />
+                <Station
+                  stationData={stationData}
+                  authData={authData}
+                  chartsData={chartsData}
+                />
               </Col>
               <Col sm={6} className="ps-1 pe-1">
                 <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
@@ -46,7 +58,7 @@ const HomePage = observer(
             </Row>
             <Row>
               <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-                - v17 -
+                - v18 -
               </Container>
             </Row>
           </Container>
@@ -57,6 +69,7 @@ const HomePage = observer(
             stationData={stationData}
             domData={domData}
             authData={authData}
+            chartsData={chartsData}
           />
         )}
       </div>

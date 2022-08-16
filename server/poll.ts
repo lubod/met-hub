@@ -4,7 +4,7 @@ import {
   IDomExternalData,
   IDomRoomData,
   IDomTarifData,
-} from "../common/models/domModel";
+} from "../common/domModel";
 
 const DOM_PASSKEY = process.env.DOM_PASSKEY || "";
 

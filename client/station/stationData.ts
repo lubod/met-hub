@@ -1,8 +1,5 @@
 import { action, makeObservable, observable } from "mobx";
-import {
-  IStationData,
-  IStationTrendData,
-} from "../../common/models/stationModel";
+import { IStationData, IStationTrendData } from "../../common/stationModel";
 
 class StationData {
   data: IStationData = {

@@ -9,7 +9,7 @@ import {
   IDomExternalData,
   IDomRoomData,
   IDomTarifData,
-} from "../common/models/domModel";
+} from "../common/domModel";
 import DomData from "../client/dom/domData";
 import DomCtrl from "../client/dom/domCtrl";
 import MySocket from "../client/socket";

@@ -7,6 +7,7 @@ import DomData from "./dom/domData";
 import HeaderData from "./header/headerData";
 import HomePage from "./homepage";
 import StationData from "./station/stationData";
+import ChartsData from "./charts/chartsData";
 
 type AppProps = {
   headerData: HeaderData;
@@ -14,10 +15,18 @@ type AppProps = {
   domData: DomData;
   authData: AuthData;
   authCtrl: AuthCtrl;
+  chartsData: ChartsData;
 };
 
 const App = observer(
-  ({ headerData, stationData, domData, authData, authCtrl }: AppProps) => {
+  ({
+    headerData,
+    stationData,
+    domData,
+    authData,
+    authCtrl,
+    chartsData,
+  }: AppProps) => {
     console.info(
       "App render",
       authData.isAuth,
@@ -33,6 +42,7 @@ const App = observer(
             stationData={stationData}
             domData={domData}
             authData={authData}
+            chartsData={chartsData}
           />
         )}
         {authData.location === "/callback/" && <Auth authCtrl={authCtrl} />}

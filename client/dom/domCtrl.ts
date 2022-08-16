@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { DomCfg, IDomData, IDomTrendData } from "../../common/models/domModel";
+import { DomCfg, IDomData, IDomTrendData } from "../../common/domModel";
 import DomData from "./domData";
 
 const ENV = process.env.ENV || "";

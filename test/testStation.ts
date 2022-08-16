@@ -5,7 +5,7 @@ import { Pool } from "pg";
 import StationCtrl from "../client/station/stationCtrl";
 import StationData from "../client/station/stationData";
 import MySocket from "../client/socket";
-import { IStationData, IStationDataRaw } from "../common/models/stationModel";
+import { IStationData, IStationDataRaw } from "../common/stationModel";
 import Station from "../server/station";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
