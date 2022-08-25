@@ -25,15 +25,27 @@ class StationData {
 
   oldData: boolean = true;
 
+  floatingRainData: boolean = false;
+
+  raindata: any = null;
+
   constructor() {
     makeObservable(this, {
       data: observable,
       trendData: observable,
       oldData: observable,
+      floatingRainData: observable,
+      raindata: observable,
       processData: action,
       processTrendData: action,
       setOldData: action,
+      setFloatingRainData: action,
+      setRaindata: action,
     });
+  }
+
+  setRaindata(raindata: any) {
+    this.raindata = raindata;
   }
 
   setOldData(time: Date) {
@@ -56,6 +68,10 @@ class StationData {
   setTime(newTime: Date) {
     this.ctime = newTime;
     this.setOldData(newTime);
+  }
+
+  setFloatingRainData(newFloatingRainData: boolean) {
+    this.floatingRainData = newFloatingRainData;
   }
 
   processData(newData: IStationData) {

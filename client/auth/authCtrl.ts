@@ -113,6 +113,7 @@ export default class AuthCtrl {
             res.data.refresh_token,
             res.data.expires_in * 1000
           );
+          this.authData.callWhenAuthetificated();
           resolve();
         })
         .catch((err) => {

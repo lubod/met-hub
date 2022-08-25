@@ -1,54 +1,31 @@
 import { observer } from "mobx-react";
 import React from "react";
-import AuthCtrl from "./auth/authCtrl";
-import AuthData from "./auth/authData";
 import Auth from "./auth/auth";
-import DomData from "./dom/domData";
-import HeaderData from "./header/headerData";
 import HomePage from "./homepage";
-import StationData from "./station/stationData";
-import ChartsData from "./charts/chartsData";
+import { AppContext } from ".";
 
 type AppProps = {
-  headerData: HeaderData;
-  stationData: StationData;
-  domData: DomData;
-  authData: AuthData;
-  authCtrl: AuthCtrl;
-  chartsData: ChartsData;
+  appContext: AppContext;
 };
 
-const App = observer(
-  ({
-    headerData,
-    stationData,
-    domData,
-    authData,
-    authCtrl,
-    chartsData,
-  }: AppProps) => {
-    console.info(
-      "App render",
-      authData.isAuth,
-      window.location.pathname,
-      authData.location
-    );
+const App = observer(({ appContext }: AppProps) => {
+  console.info(
+    "App render",
+    appContext.authData.isAuth,
+    window.location.pathname,
+    appContext.authData.location
+  );
 
-    return (
-      <div className="App">
-        {authData.location === "/" && (
-          <HomePage
-            headerData={headerData}
-            stationData={stationData}
-            domData={domData}
-            authData={authData}
-            chartsData={chartsData}
-          />
-        )}
-        {authData.location === "/callback/" && <Auth authCtrl={authCtrl} />}
-      </div>
-    );
-  }
-);
+  return (
+    <div className="App">
+      {appContext.authData.location === "/" && (
+        <HomePage appContext={appContext} />
+      )}
+      {appContext.authData.location === "/callback/" && (
+        <Auth authCtrl={appContext.authCtrl} />
+      )}
+    </div>
+  );
+});
 
 export default App;

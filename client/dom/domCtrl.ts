@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import { DomCfg, IDomData, IDomTrendData } from "../../common/domModel";
+import ChartsCtrl from "../charts/chartsCtrl";
 import DomData from "./domData";
 
 const ENV = process.env.ENV || "";
@@ -13,10 +14,13 @@ class DomCtrl {
 
   mySocket: any;
 
-  constructor(mySocket: any, domData: DomData) {
+  chartsCtrl: ChartsCtrl;
+
+  constructor(mySocket: any, domData: DomData, chartsCtrl: ChartsCtrl) {
     this.domData = domData;
     this.domCfg = new DomCfg();
     this.mySocket = mySocket;
+    this.chartsCtrl = chartsCtrl;
     // props.socket.getSocket().emit('dom', 'getLastData');
   }
 
@@ -32,6 +36,7 @@ class DomCtrl {
       .getSocket()
       .on(this.domCfg.SOCKET_TREND_CHANNEL, (data: IDomTrendData) => {
         this.domData.processTrendData(data);
+        this.chartsCtrl?.reload();
       });
     this.timer = setInterval(() => {
       this.domData.setTime(new Date());
@@ -41,7 +46,7 @@ class DomCtrl {
   async fetchData() {
     let url = "/api/getLastData/dom";
     if (ENV === "dev") {
-      url = "http://localhost:18080/api/getLastData/dom";
+      url = "http://localhost:18080/api/getLastData/dom"; // todo
       console.info(url);
     }
 
@@ -85,6 +90,7 @@ class DomCtrl {
 
       const newData = await response.json();
       this.domData.processTrendData(newData);
+      this.chartsCtrl?.reload();
     } catch (e) {
       console.error(e);
     }

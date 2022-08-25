@@ -2,7 +2,7 @@
 /* eslint-disable import/no-import-module-exports */
 import React from "react";
 import ReactDOM from "react-dom";
-import { autorun } from "mobx";
+// import { autorun } from "mobx";
 import AuthCtrl from "./auth/authCtrl";
 import AuthData from "./auth/authData";
 import MySocket from "./socket";
@@ -13,94 +13,76 @@ import DomCtrl from "./dom/domCtrl";
 import HeaderData from "./header/headerData";
 import HeaderCtrl from "./header/headerCtrl";
 import App from "./app";
-import "bootstrap/dist/css/bootstrap.css";
-import "./style.scss";
 import ChartsData from "./charts/chartsData";
 import ChartsCtrl from "./charts/chartsCtrl";
-import { STATION_MEASUREMENTS_DESC } from "../common/stationModel";
-import { DOM_MEASUREMENTS_DESC } from "../common/domModel";
+import { IMeasurementDesc } from "../common/measurementDesc";
+import "bootstrap/dist/css/bootstrap.css";
+import "./style.scss";
 
-const socket = new MySocket();
+export class AppContext {
+  socket: MySocket = new MySocket();
 
-const stationData = new StationData();
-const stationCtrl = new StationCtrl(socket, stationData);
-stationCtrl.start();
+  authData: AuthData = new AuthData();
 
-const domData = new DomData();
-const domCtrl = new DomCtrl(socket, domData);
-domCtrl.start();
+  authCtrl: AuthCtrl = new AuthCtrl(this.authData);
 
-const authData = new AuthData();
-const authCtrl = new AuthCtrl(authData);
-authCtrl.start();
+  headerData: HeaderData = new HeaderData();
 
-const headerData = new HeaderData();
-const headerCtrl = new HeaderCtrl(headerData);
-headerCtrl.start();
+  headerCtrl: HeaderCtrl = new HeaderCtrl(this.headerData);
 
-const chartsData = new ChartsData();
-const chartsCtrl = new ChartsCtrl(chartsData, authData);
-chartsCtrl.start();
+  chartsData: ChartsData = new ChartsData();
 
-autorun(() => {
-  console.log("Autorun:", chartsData.measurement);
-  chartsCtrl.load(chartsData.offset, chartsData.page, chartsData.measurement);
-});
+  chartsCtrl: ChartsCtrl = new ChartsCtrl(this.chartsData, this.authData);
 
-autorun(() => {
-  console.log("Autorun:", headerData.place);
-  if (headerData.place === "stanica") {
-    chartsData.setMeasurementObject(STATION_MEASUREMENTS_DESC.TEMPERATURE);
-  } else if (headerData.place === "dom") {
-    chartsData.setMeasurementObject(DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR);
+  stationData: StationData = new StationData();
+
+  stationCtrl: StationCtrl = new StationCtrl(
+    this.socket,
+    this.stationData,
+    this.authData,
+    this.chartsCtrl
+  );
+
+  domData: DomData = new DomData();
+
+  domCtrl: DomCtrl = new DomCtrl(this.socket, this.domData, this.chartsCtrl);
+
+  start() {
+    this.authData.setCallWhenAuthetificated(() => this.chartsCtrl.reload());
+    this.authCtrl.start();
+    this.headerCtrl.start();
+    this.chartsCtrl.start();
+    this.stationCtrl.start();
+    this.domCtrl.start();
   }
-});
 
-autorun(() => {
-  console.log("Autorun:", stationData.trendData);
-  if (headerData.place === "stanica") {
-    setTimeout(
-      () =>
-        chartsCtrl.load(
-          chartsData.offset,
-          chartsData.page,
-          chartsData.measurement
-        ),
-      2000
-    );
+  setMeasurementAndLoad(measurementDesc: IMeasurementDesc) {
+    this.chartsData.setMeasurementObject(measurementDesc);
+    this.chartsCtrl.reload();
   }
-});
+}
 
-autorun(() => {
-  console.log("Autorun:", domData.trendData);
-  if (headerData.place === "dom") {
-    setTimeout(
-      () =>
-        chartsCtrl.load(
-          chartsData.offset,
-          chartsData.page,
-          chartsData.measurement
-        ),
-      2000
-    );
-  }
-});
+const appContext: AppContext = new AppContext();
+appContext.start();
+
+// autorun(() => {
+/* if (appContext.authData.isAuth === true) {
+    appContext.chartsCtrl.reload();
+  } */
+// });
 
 function render() {
-  console.info("Index render", authData.isAuth, window.location.pathname);
-  authData.setLocation(window.location.pathname);
+  console.info(
+    "Index render",
+    appContext.authData.isAuth,
+    window.location.pathname
+  );
+  appContext.authData.setLocation(window.location.pathname);
 
   const appContainer = document.getElementById("app");
   ReactDOM.render(
     <div className="App">
-      <App
-        headerData={headerData}
-        stationData={stationData}
-        domData={domData}
-        authData={authData}
-        authCtrl={authCtrl}
-        chartsData={chartsData}
-      />
+      <App appContext={appContext} />
     </div>,
     appContainer
   );

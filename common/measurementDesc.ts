@@ -1,9 +1,11 @@
 export interface IMeasurementDesc {
-  yname: string;
+  col: string;
+  col2: string;
   unit: string;
   fix: number;
   range: number;
   couldBeNegative: boolean;
-  db: string;
+  table: string;
   label: string;
+  chartType: string;
 }

@@ -73,7 +73,7 @@ function checkInput(table: string, column: string, extraColumn: string) {
 }
 
 // select timestamp, tempin from stanica where timestamp >= '2020-08-13 09:20:54+00' and timestamp <= '2020-08-13 10:00:31+00';
-async function loadData(start: Date, end: Date, measurement: string) {
+export async function loadData(start: Date, end: Date, measurement: string) {
   const timestampStart = `${start
     .toISOString()
     .slice(0, 19)
@@ -96,6 +96,14 @@ async function loadData(start: Date, end: Date, measurement: string) {
         }${extraColumn} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
         if (table === "vonku" && column === "rain") {
           queryText = `select timestamp,cast(${column} as int) as rain from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
+        } else if (table === "stanica" && column === "hourlyrain") {
+          queryText = `select DATE_TRUNC('hour',timestamp, 'CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from stanica where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('hour',timestamp, 'CEST') order by timestamp asc`;
+        } else if (table === "stanica" && column === "dailyrain") {
+          queryText = `select DATE_TRUNC('day',timestamp, 'CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from stanica where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('day',timestamp, 'CEST') order by timestamp asc `;
+        } else if (table === "stanica" && column === "weeklyrain") {
+          queryText = `select DATE_TRUNC('week',timestamp + interval '1day','CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from stanica where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('week',timestamp  + interval '1day','CEST') order by timestamp asc`;
+        } else if (table === "stanica" && column === "monthlyrain") {
+          queryText = `select DATE_TRUNC('month',timestamp, 'CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from stanica where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('month',timestamp,'CEST') order by timestamp asc`;
         }
         if (extraColumn === "kuri") {
           queryText = `select timestamp,${column},cast(${extraColumn} as int) as kuri from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
@@ -138,4 +146,34 @@ async function loadData(start: Date, end: Date, measurement: string) {
   return null;
 }
 
-export default loadData;
+export async function loadRainData() {
+  const client = await pool.connect();
+  try {
+    console.info("connected", new Date());
+    const intervals = [
+      "1hour",
+      "3hour",
+      "6hour",
+      "12hour",
+      "1day",
+      "3day",
+      "1week",
+      "4week",
+    ];
+    const res = [];
+    for (const interval of intervals) {
+      const queryText = `WITH minuterain as (WITH hour_coef as (select DATE_TRUNC('hour',timestamp) as hour, sum(rainrate) as rainrate_sum, max(hourlyrain) as hourlyrain_max, max(hourlyrain)/NULLIF(sum(rainrate),0) as coef from stanica where timestamp > current_timestamp - '${interval}'::interval group by DATE_TRUNC('hour', timestamp)) select stanica.timestamp,stanica.rainrate,stanica.hourlyrain, stanica.solarradiation, hour_coef.hour, hour_coef.rainrate_sum, hour_coef.hourlyrain_max, hour_coef.coef, stanica.rainrate*hour_coef.coef as minuterain from stanica,hour_coef where DATE_TRUNC('hour', stanica.timestamp) = hour_coef.hour and stanica.rainrate > 0) select sum(minuterain.minuterain) from minuterain where timestamp > current_timestamp - '${interval}'::interval;`;
+      // eslint-disable-next-line no-await-in-loop
+      const r = await client.query(queryText);
+      res.push({ interval, rows: r.rows });
+    }
+    // console.log("rows", queryText, typeof res.rows, res.fields);
+    return res;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    client.release();
+    console.info("released");
+  }
+  return null;
+}

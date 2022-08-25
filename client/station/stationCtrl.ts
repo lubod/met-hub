@@ -4,6 +4,8 @@ import {
   IStationTrendData,
   StationCfg,
 } from "../../common/stationModel";
+import AuthData from "../auth/authData";
+import ChartsCtrl from "../charts/chartsCtrl";
 import StationData from "./stationData";
 
 const ENV = process.env.ENV || "";
@@ -17,10 +19,21 @@ class StationCtrl {
 
   stationCfg: StationCfg;
 
-  constructor(socket: any, stationData: StationData) {
+  authData: AuthData;
+
+  chartsCtrl: ChartsCtrl;
+
+  constructor(
+    socket: any,
+    stationData: StationData,
+    authData: AuthData,
+    chartsCtrl: ChartsCtrl
+  ) {
     this.stationData = stationData;
     this.stationCfg = new StationCfg();
     this.socket = socket;
+    this.authData = authData;
+    this.chartsCtrl = chartsCtrl;
   }
 
   start() {
@@ -35,6 +48,7 @@ class StationCtrl {
       .getSocket()
       .on(this.stationCfg.SOCKET_TREND_CHANNEL, (data: IStationTrendData) => {
         this.stationData.processTrendData(data);
+        this.chartsCtrl?.reload();
       });
     this.timer = setInterval(() => {
       this.stationData.setTime(new Date());
@@ -88,6 +102,32 @@ class StationCtrl {
 
       const newData = await response.json();
       this.stationData.processTrendData(newData);
+      this.chartsCtrl?.reload();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async fetchRainData() {
+    const url = "/api/loadRainData";
+
+    console.info(url);
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${this.authData.access_token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const message = `An error has occured: ${response.status}`;
+        throw new Error(message);
+      }
+
+      const newData = await response.json();
+      // console.info(newData);
+      this.stationData.setRaindata(newData);
     } catch (e) {
       console.error(e);
     }

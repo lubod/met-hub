@@ -17,6 +17,14 @@ class ChartsCtrl {
 
   start() {}
 
+  async reload() {
+    this.load(
+      this.chartsData.offset,
+      this.chartsData.page,
+      this.chartsData.measurement
+    );
+  }
+
   async load(of: string, p: number, m: IMeasurementDesc) {
     if (!this.authData.isAuth) {
       console.info("no load -> no auth");
@@ -27,9 +35,12 @@ class ChartsCtrl {
     // return new Promise((resolve) => setTimeout(resolve, 2000));
     const start = new Date(Date.now() - o + p * o);
     const end = new Date(Date.now() + p * o);
-    const url = `/api/loadData?start=${start.toISOString()}&end=${end.toISOString()}&measurement=${
-      m.db
-    }`;
+    let url = `/api/loadData?start=${start.toISOString()}&end=${end.toISOString()}&measurement=${
+      m.table
+    }:${m.col}`;
+    if (m.col2 !== "") {
+      url += `:${m.col2}`;
+    }
     console.info(url);
 
     try {
@@ -52,7 +63,8 @@ class ChartsCtrl {
 
       const range = this.chartsData.offset.split("|")[1];
 
-      const [y, y2] = m.yname.split(":"); // todo
+      const y = m.col;
+      const y2 = m.col2;
       for (let i = 0; i < newData.length; i += 1) {
         if (i === 0) {
           // console.info(newData[i]);
@@ -76,7 +88,7 @@ class ChartsCtrl {
       const domainMax = Math.ceil(max + (max / 100) * 5);
       const last = newData.length > 0 ? newData[newData.length - 1][y] : null;
 
-      if (y2 != null) {
+      if (y2 !== "") {
         domainMin = 0;
       }
       //      if (domainMin < 0 && couldBeNegative === false) {

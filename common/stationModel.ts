@@ -1,39 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { IMeasurementDesc } from "./measurementDesc";
 
-export class StationCfg {
-  TABLE = "stanica";
-
-  COLUMNS = [
-    "tempin",
-    "humidityin",
-    "pressurerel",
-    "pressureabs",
-    "temp",
-    "humidity",
-    "winddir",
-    "windspeed",
-    "windgust",
-    "rainrate",
-    "solarradiation",
-    "uv",
-    "eventrain",
-    "hourlyrain",
-  ];
-
-  SOCKET_CHANNEL = "station";
-
-  SOCKET_TREND_CHANNEL = "station-trend";
-
-  REDIS_LAST_DATA_KEY = "station-last";
-
-  REDIS_MINUTE_DATA_KEY = "station-minute-data";
-
-  REDIS_STORE_CHANNEL = "station-store-pubsub";
-
-  REDIS_TREND_KEY = "station-trend";
-}
-
 export interface IStationData {
   timestamp: string;
   time: string;
@@ -136,183 +103,219 @@ export interface IStationTrendData {
 
 export class STATION_MEASUREMENTS_DESC {
   static TEMPERATURE: IMeasurementDesc = {
-    yname: "temp",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: true,
-    db: "stanica:temp",
+    table: "stanica",
     label: "Temperature",
+    col2: "",
+    chartType: "",
   };
 
   static HUMIDITY: IMeasurementDesc = {
-    yname: "humidity",
+    col: "humidity",
     unit: "%",
     fix: 0,
     range: 10,
     couldBeNegative: false,
-    db: "stanica:humidity",
+    table: "stanica",
     label: "Humidity",
+    col2: "",
+    chartType: "",
   };
 
   static TEMPERATUREIN: IMeasurementDesc = {
-    yname: "tempin",
+    col: "tempin",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: true,
-    db: "stanica:tempin",
+    table: "stanica",
     label: "Temperature IN",
+    col2: "",
+    chartType: "",
   };
 
   static HUMIDITYIN: IMeasurementDesc = {
-    yname: "humidityin",
+    col: "humidityin",
     unit: "%",
     fix: 0,
     range: 10,
     couldBeNegative: false,
-    db: "stanica:humidityin",
+    table: "stanica",
     label: "Humidity IN",
+    col2: "",
+    chartType: "",
   };
 
   static PRESSURE: IMeasurementDesc = {
-    yname: "pressurerel",
+    col: "pressurerel",
     unit: "hPa",
     fix: 1,
     range: 1,
     couldBeNegative: false,
-    db: "stanica:pressurerel",
-    label: "Relative pressure",
+    table: "stanica",
+    label: "Pressure",
+    col2: "",
+    chartType: "",
   };
 
   static SOLAR: IMeasurementDesc = {
-    yname: "solarradiation",
+    col: "solarradiation",
     unit: "W/m2",
     fix: 0,
     range: 100,
     couldBeNegative: false,
-    db: "stanica:solarradiation",
-    label: "Solar radiation",
+    table: "stanica",
+    label: "Solar",
+    col2: "",
+    chartType: "",
   };
 
   static UV: IMeasurementDesc = {
-    yname: "uv",
+    col: "uv",
     unit: "",
     fix: 0,
     range: 3,
     couldBeNegative: false,
-    db: "stanica:uv",
+    table: "stanica",
     label: "UV",
+    col2: "",
+    chartType: "",
   };
 
   static RAINRATE: IMeasurementDesc = {
-    yname: "rainrate",
+    col: "rainrate",
     unit: "mm",
     fix: 1,
     range: 1,
     couldBeNegative: false,
-    db: "stanica:rainrate",
+    table: "stanica",
     label: "Rain rate",
+    col2: "",
+    chartType: "",
   };
 
   static EVENTRAIN: IMeasurementDesc = {
-    yname: "eventrain",
+    col: "eventrain",
     unit: "mm",
     fix: 1,
     range: 1,
     couldBeNegative: false,
-    db: "stanica:eventrain",
+    table: "stanica",
     label: "Event rain",
+    col2: "",
+    chartType: "",
   };
 
   static HOURLYRAIN: IMeasurementDesc = {
-    yname: "hourlyrain",
+    col: "hourlyrain",
     unit: "mm",
     fix: 1,
     range: 1,
     couldBeNegative: false,
-    db: "stanica:hourlyrain",
+    table: "stanica",
     label: "Hourly",
+    col2: "",
+    chartType: "rain",
   };
 
   static DAILYRAIN: IMeasurementDesc = {
-    yname: "dailyrain",
+    col: "dailyrain",
     unit: "mm",
     fix: 1,
     range: 1,
     couldBeNegative: false,
-    db: "stanica:dailyrain",
+    table: "stanica",
     label: "Daily",
+    col2: "",
+    chartType: "rain",
   };
 
   static WEEKLYRAIN: IMeasurementDesc = {
-    yname: "weeklyrain",
+    col: "weeklyrain",
     unit: "mm",
     fix: 1,
     range: 1,
     couldBeNegative: false,
-    db: "stanica:weeklyrain",
+    table: "stanica",
     label: "Weekly",
+    col2: "",
+    chartType: "rain",
   };
 
   static MONTHLYRAIN: IMeasurementDesc = {
-    yname: "monthlyrain",
+    col: "monthlyrain",
     unit: "mm",
     fix: 1,
     range: 1,
     couldBeNegative: false,
-    db: "stanica:monthlyrain",
+    table: "stanica",
     label: "Monthly",
+    col2: "",
+    chartType: "rain",
   };
 
   static TOTALRAIN: IMeasurementDesc = {
-    yname: "totyalrain",
+    col: "totyalrain",
     unit: "mm",
     fix: 1,
     range: 1,
     couldBeNegative: false,
-    db: "stanica:totalrain",
+    table: "stanica",
     label: "Total",
+    col2: "",
+    chartType: "",
   };
 
   static WINDDIR: IMeasurementDesc = {
-    yname: "winddir",
+    col: "winddir",
     unit: "°",
     fix: 0,
     range: 0,
     couldBeNegative: false,
-    db: "stanica:winddir",
+    table: "stanica",
     label: "Wind dir",
+    col2: "",
+    chartType: "winddir",
   };
 
   static WINDSPEED: IMeasurementDesc = {
-    yname: "windspeed",
+    col: "windspeed",
     unit: "km/h",
     fix: 1,
     range: 5,
     couldBeNegative: false,
-    db: "stanica:windspeed",
+    table: "stanica",
     label: "Wind speed",
+    col2: "",
+    chartType: "",
   };
 
   static WINDGUST: IMeasurementDesc = {
-    yname: "windgust",
+    col: "windgust",
     unit: "km/h",
     fix: 1,
     range: 5,
     couldBeNegative: false,
-    db: "stanica:windgust",
+    table: "stanica",
     label: "Wind gust",
+    col2: "",
+    chartType: "",
   };
 
   static DAILYGUST: IMeasurementDesc = {
-    yname: "dailygust",
+    col: "dailygust",
     unit: "km/h",
     fix: 1,
     range: 5,
     couldBeNegative: false,
-    db: "stanica:dailygust",
+    table: "stanica",
     label: "Daily gust",
+    col2: "",
+    chartType: "",
   };
 }
 
@@ -326,6 +329,46 @@ export const STATION_MEASUREMENTS: IMeasurementDesc[] = [
   STATION_MEASUREMENTS_DESC.SOLAR,
   STATION_MEASUREMENTS_DESC.UV,
   STATION_MEASUREMENTS_DESC.RAINRATE,
+  STATION_MEASUREMENTS_DESC.HOURLYRAIN,
+  STATION_MEASUREMENTS_DESC.DAILYRAIN,
+  STATION_MEASUREMENTS_DESC.WEEKLYRAIN,
+  STATION_MEASUREMENTS_DESC.MONTHLYRAIN,
   STATION_MEASUREMENTS_DESC.TEMPERATUREIN,
   STATION_MEASUREMENTS_DESC.HUMIDITYIN,
 ];
+
+export class StationCfg {
+  TABLE = "stanica";
+
+  COLUMNS = [
+    STATION_MEASUREMENTS_DESC.TEMPERATUREIN.col,
+    STATION_MEASUREMENTS_DESC.HUMIDITYIN.col,
+    STATION_MEASUREMENTS_DESC.PRESSURE.col,
+    "pressureabs", // todo
+    STATION_MEASUREMENTS_DESC.TEMPERATURE.col,
+    STATION_MEASUREMENTS_DESC.HUMIDITY.col,
+    STATION_MEASUREMENTS_DESC.WINDDIR.col,
+    STATION_MEASUREMENTS_DESC.WINDSPEED.col,
+    STATION_MEASUREMENTS_DESC.WINDGUST.col,
+    STATION_MEASUREMENTS_DESC.RAINRATE.col,
+    STATION_MEASUREMENTS_DESC.SOLAR.col,
+    STATION_MEASUREMENTS_DESC.UV.col,
+    STATION_MEASUREMENTS_DESC.EVENTRAIN.col,
+    STATION_MEASUREMENTS_DESC.HOURLYRAIN.col,
+    STATION_MEASUREMENTS_DESC.DAILYRAIN.col,
+    STATION_MEASUREMENTS_DESC.WEEKLYRAIN.col,
+    STATION_MEASUREMENTS_DESC.MONTHLYRAIN.col,
+  ];
+
+  SOCKET_CHANNEL = "station";
+
+  SOCKET_TREND_CHANNEL = "station-trend";
+
+  REDIS_LAST_DATA_KEY = "station-last";
+
+  REDIS_MINUTE_DATA_KEY = "station-minute-data";
+
+  REDIS_STORE_CHANNEL = "station-store-pubsub";
+
+  REDIS_TREND_KEY = "station-trend";
+}

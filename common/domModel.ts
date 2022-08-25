@@ -1,36 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { IMeasurementDesc } from "./measurementDesc";
 
-export class DomCfg {
-  TABLE = "dom";
-
-  COLUMNS = [
-    "temp",
-    "humidity",
-    "rain",
-    "tarif",
-    "req",
-    "reqall",
-    "useroffset",
-    "maxoffset",
-    "kuri",
-    "low",
-    "leto",
-  ];
-
-  SOCKET_CHANNEL = "dom";
-
-  SOCKET_TREND_CHANNEL = "dom-trend";
-
-  REDIS_LAST_DATA_KEY = "dom-last";
-
-  REDIS_MINUTE_DATA_KEY = "dom-minute-data";
-
-  REDIS_STORE_CHANNEL = "dom-store-pubsub";
-
-  REDIS_TREND_KEY = "dom-trend";
-}
-
 export interface IDomExternalData {
   temp: number;
   humidity: number;
@@ -140,143 +110,171 @@ export interface IDomTrendData {
 
 export class DOM_MEASUREMENTS_DESC {
   static TEMPERATURE: IMeasurementDesc = {
-    yname: "temp",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: true,
-    db: "vonku:temp",
+    table: "vonku",
     label: "Temperature",
+    col2: "",
+    chartType: "",
   };
 
   static HUMIDITY: IMeasurementDesc = {
-    yname: "humidity",
+    col: "humidity",
     unit: "%",
     fix: 0,
     range: 10,
     couldBeNegative: false,
-    db: "vonku:humidity",
+    table: "vonku",
     label: "Humidity",
+    col2: "",
+    chartType: "",
   };
 
   static RAIN: IMeasurementDesc = {
-    yname: "rain",
+    col: "rain",
     unit: "",
     fix: 0,
     range: 1,
     couldBeNegative: false,
-    db: "vonku:rain",
+    table: "vonku",
     label: "Rain",
+    col2: "",
+    chartType: "",
   };
 
   static ROOM: IMeasurementDesc = {
-    yname: "temp",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "",
+    table: "",
     label: "",
+    col2: "",
+    chartType: "",
   };
 
   static LIVING_ROOM_AIR: IMeasurementDesc = {
-    yname: "temp:reqall",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "obyvacka_vzduch:temp:reqall",
+    table: "obyvacka_vzduch",
     label: "Living room air",
+    col2: "reqall",
+    chartType: "",
   };
 
   static LIVING_ROOM_FLOOR: IMeasurementDesc = {
-    yname: "temp:kuri",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "obyvacka_podlaha:temp:kuri",
+    table: "obyvacka_podlaha",
     label: "Living room floor",
+    col2: "kuri",
+    chartType: "",
   };
 
   static GUEST_ROOM_AIR: IMeasurementDesc = {
-    yname: "temp:reqall",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "pracovna_vzduch:temp:reqall",
+    table: "pracovna_vzduch",
     label: "Guest room air",
+    col2: "reqall",
+    chartType: "",
   };
 
   static GUEST_ROOM_FLOOR: IMeasurementDesc = {
-    yname: "temp:kuri",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "pracovna_podlaha:temp:kuri",
+    table: "pracovna_podlaha",
     label: "Guest room floor",
+    col2: "kuri",
+    chartType: "",
   };
 
   static BED_ROOM_AIR: IMeasurementDesc = {
-    yname: "temp:reqall",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "spalna_vzduch:temp:reqall",
+    table: "spalna_vzduch",
     label: "Bed room air",
+    col2: "reqall",
+    chartType: "",
   };
 
   static BED_ROOM_FLOOR: IMeasurementDesc = {
-    yname: "temp:kuri",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "spalna_podlaha:temp:kuri",
+    table: "spalna_podlaha",
     label: "Bed room floor",
+    col2: "kuri",
+    chartType: "",
   };
 
   static BOYS_ROOM_AIR: IMeasurementDesc = {
-    yname: "temp:reqall",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "chalani_vzduch:temp:reqall",
+    table: "chalani_vzduch",
     label: "Boys room air",
+    col2: "reqall",
+    chartType: "",
   };
 
   static BOYS_ROOM_FLOOR: IMeasurementDesc = {
-    yname: "temp:kuri",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "chalani_podlaha:temp:kuri",
+    table: "chalani_podlaha",
     label: "Boys room floor",
+    col2: "kuri",
+    chartType: "",
   };
 
   static PETRA_ROOM_AIR: IMeasurementDesc = {
-    yname: "temp:reqall",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "petra_vzduch:temp:reqall",
+    table: "petra_vzduch",
     label: "Petra room air",
+    col2: "reqall",
+    chartType: "",
   };
 
   static PETRA_ROOM_FLOOR: IMeasurementDesc = {
-    yname: "temp:kuri",
+    col: "temp",
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    db: "petra_podlaha:temp:kuri",
+    table: "petra_podlaha",
     label: "Petra room floor",
+    col2: "kuri",
+    chartType: "",
   };
 }
 
@@ -295,3 +293,33 @@ export const DOM_MEASUREMENTS: IMeasurementDesc[] = [
   DOM_MEASUREMENTS_DESC.PETRA_ROOM_AIR,
   DOM_MEASUREMENTS_DESC.PETRA_ROOM_FLOOR,
 ];
+
+export class DomCfg {
+  TABLE = "dom";
+
+  COLUMNS = [
+    "temp",
+    "humidity",
+    "rain",
+    "tarif",
+    "req",
+    "reqall",
+    "useroffset",
+    "maxoffset",
+    "kuri",
+    "low",
+    "leto",
+  ];
+
+  SOCKET_CHANNEL = "dom";
+
+  SOCKET_TREND_CHANNEL = "dom-trend";
+
+  REDIS_LAST_DATA_KEY = "dom-last";
+
+  REDIS_MINUTE_DATA_KEY = "dom-minute-data";
+
+  REDIS_STORE_CHANNEL = "dom-store-pubsub";
+
+  REDIS_TREND_KEY = "dom-trend";
+}

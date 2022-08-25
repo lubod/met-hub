@@ -3,9 +3,8 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { Row, Col } from "react-bootstrap";
+import { AppContext } from "../..";
 import { STATION_MEASUREMENTS_DESC } from "../../../common/stationModel";
-import AuthData from "../../auth/authData";
-import ChartsData from "../../charts/chartsData";
 import DataAlone from "../../data/dataAlone";
 import DataWithTrend from "../../dataWithTrend/dataWithTrend";
 
@@ -17,8 +16,7 @@ type Wind = {
   dirTrend: Array<number>;
   gustTrend: Array<number>;
   speedTrend: Array<number>;
-  authData: AuthData;
-  chartsData: ChartsData;
+  appContext: AppContext;
 };
 
 const WindRose = observer(
@@ -30,8 +28,7 @@ const WindRose = observer(
     dirTrend,
     gustTrend,
     speedTrend,
-    authData,
-    chartsData,
+    appContext,
   }: Wind) => {
     const canvasRef = React.useRef(null);
 
@@ -207,7 +204,9 @@ const WindRose = observer(
           <div
             style={{ cursor: "pointer" }}
             onClick={() =>
-              chartsData.setMeasurementObject(STATION_MEASUREMENTS_DESC.WINDDIR)
+              appContext.setMeasurementAndLoad(
+                STATION_MEASUREMENTS_DESC.WINDDIR
+              )
             }
           >
             <canvas width="220" height="220" id="myCanvas" ref={canvasRef}>
@@ -226,9 +225,9 @@ const WindRose = observer(
             couldBeNegative={
               STATION_MEASUREMENTS_DESC.WINDSPEED.couldBeNegative
             }
-            authData={authData}
+            authData={appContext.authData}
             onClick={() =>
-              chartsData.setMeasurementObject(
+              appContext.setMeasurementAndLoad(
                 STATION_MEASUREMENTS_DESC.WINDSPEED
               )
             }
@@ -241,9 +240,9 @@ const WindRose = observer(
             data={gustTrend}
             range={STATION_MEASUREMENTS_DESC.WINDGUST.range}
             couldBeNegative={STATION_MEASUREMENTS_DESC.WINDGUST.couldBeNegative}
-            authData={authData}
+            authData={appContext.authData}
             onClick={() =>
-              chartsData.setMeasurementObject(
+              appContext.setMeasurementAndLoad(
                 STATION_MEASUREMENTS_DESC.WINDGUST
               )
             }

@@ -8,30 +8,51 @@ import {
   Dropdown,
   DropdownButton,
 } from "react-bootstrap";
-import AuthData from "../auth/authData";
+import { AppContext } from "..";
+import { DOM_MEASUREMENTS, DOM_MEASUREMENTS_DESC } from "../../common/domModel";
+import {
+  STATION_MEASUREMENTS,
+  STATION_MEASUREMENTS_DESC,
+} from "../../common/stationModel";
 import Text from "../text/text";
-import HeaderData from "./headerData";
 
 type HeaderProps = {
-  headerData: HeaderData;
-  authData: AuthData;
+  appContext: AppContext;
 };
 
-const Header = observer(({ headerData, authData }: HeaderProps) => (
+const Header = observer(({ appContext }: HeaderProps) => (
   <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
     <Row className="align-items-center">
       <Col xs={4}>
         <Text
           name="Current time"
-          value={headerData.ctime.toLocaleTimeString("sk-SK")}
+          value={appContext.headerData.ctime.toLocaleTimeString("sk-SK")}
         />
       </Col>
       <Col xs={4}>
-        {authData.isAuth && (
+        {appContext.authData.isAuth && (
           <DropdownButton
             id="dropdown-place-button"
             title="Place"
-            onSelect={(e) => headerData.setPlace(e)}
+            onSelect={(e) => {
+              appContext.headerData.setPlace(e);
+              if (appContext.headerData.place === "stanica") {
+                appContext.chartsData.setMeasurements(STATION_MEASUREMENTS);
+                appContext.chartsData.setMeasurementObject(
+                  STATION_MEASUREMENTS_DESC.TEMPERATURE
+                );
+              } else if (appContext.headerData.place === "dom") {
+                appContext.chartsData.setMeasurements(DOM_MEASUREMENTS);
+                appContext.chartsData.setMeasurementObject(
+                  DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR
+                );
+              }
+              appContext.chartsCtrl.load(
+                appContext.chartsData.offset,
+                appContext.chartsData.page,
+                appContext.chartsData.measurement
+              );
+            }}
           >
             <Dropdown.Item eventKey="stanica">Marianka - Station</Dropdown.Item>
             <Dropdown.Item eventKey="dom">Marianka - Dom</Dropdown.Item>
@@ -39,13 +60,16 @@ const Header = observer(({ headerData, authData }: HeaderProps) => (
         )}
       </Col>
       <Col xs={4}>
-        {authData.isAuth && (
-          <Button variant="primary" onClick={() => authData.logout()}>
+        {appContext.authData.isAuth && (
+          <Button
+            variant="primary"
+            onClick={() => appContext.authData.logout()}
+          >
             Logout
           </Button>
         )}
-        {!authData.isAuth && (
-          <Button variant="primary" onClick={() => authData.login()}>
+        {!appContext.authData.isAuth && (
+          <Button variant="primary" onClick={() => appContext.authData.login()}>
             Login
           </Button>
         )}

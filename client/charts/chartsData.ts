@@ -1,7 +1,10 @@
 /* eslint-disable max-classes-per-file */
 import { action, makeObservable, observable } from "mobx";
 import { IMeasurementDesc } from "../../common/measurementDesc";
-import { STATION_MEASUREMENTS_DESC } from "../../common/stationModel";
+import {
+  STATION_MEASUREMENTS,
+  STATION_MEASUREMENTS_DESC,
+} from "../../common/stationModel";
 
 class CData {
   min: number;
@@ -38,6 +41,8 @@ class ChartsData {
 
   measurement: IMeasurementDesc = STATION_MEASUREMENTS_DESC.TEMPERATURE;
 
+  measurements: IMeasurementDesc[] = STATION_MEASUREMENTS;
+
   constructor() {
     makeObservable(this, {
       hdata: observable,
@@ -45,9 +50,11 @@ class ChartsData {
       page: observable,
       offset: observable,
       measurement: observable,
+      measurements: observable,
       setHdata: action,
       setCdata: action,
       setMeasurement: action,
+      setMeasurements: action,
       setMeasurementObject: action,
       setOffset: action,
       setPage: action,
@@ -64,6 +71,10 @@ class ChartsData {
 
   setMeasurement(measurement: string) {
     this.measurement = JSON.parse(measurement);
+  }
+
+  setMeasurements(measurements: IMeasurementDesc[]) {
+    this.measurements = measurements;
   }
 
   setMeasurementObject(measurement: IMeasurementDesc) {

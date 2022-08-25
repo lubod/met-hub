@@ -5,7 +5,8 @@ import verifyToken from "./utils";
 import { socketEmiter } from "./main";
 import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
-import loadData from "./load";
+import { loadData, loadRainData } from "./load";
+import getForecast from "./forecast";
 
 const ENV = process.env.ENV || "";
 
@@ -129,6 +130,43 @@ router.get("/api/loadData", (req: any, res: any) => {
         const end = new Date(req.query.end);
         const { measurement } = req.query;
         loadData(start, end, measurement).then((data) => res.json(data));
+      } else {
+        res.status(400).send("wrong params");
+      }
+    } else {
+      res.status(401).send("auth issue");
+    }
+  } else {
+    res.status(401).send("auth issue");
+  }
+});
+
+router.get("/api/loadRainData", (req: any, res: any) => {
+  console.info("/loadRainData", req.query);
+  if (req.headers.authorization) {
+    const user = verifyToken(req.headers.authorization.substr(7));
+    if (user !== null) {
+      res.type("application/json");
+      loadRainData().then((data) => res.json(data));
+    } else {
+      res.status(401).send("auth issue");
+    }
+  } else {
+    res.status(401).send("auth issue");
+  }
+});
+
+router.get("/api/getForecast", (req: any, res: any) => {
+  console.info("/getForecast", req.query);
+  if (req.headers.authorization) {
+    const user = verifyToken(req.headers.authorization.substr(7));
+    if (user !== null) {
+      res.type("application/json");
+      if (
+        req.query.lat != null &&
+        req.query.lon != null 
+      ) {
+        getForecast(req.query.lat, req.query.lon).then((data) => res.json(data));
       } else {
         res.status(400).send("wrong params");
       }

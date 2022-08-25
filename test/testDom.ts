@@ -471,7 +471,7 @@ console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
 
 const socket = new MySocket();
 const domData = new DomData();
-const domCtrl = new DomCtrl(socket, domData);
+const domCtrl = new DomCtrl(socket, domData, null);
 domCtrl.start();
 postData(data1);
 

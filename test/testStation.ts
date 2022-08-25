@@ -237,6 +237,9 @@ const { decoded } = station.decodeData(data1);
 const pgData = {
   eventrain: decoded.eventrain.toFixed(1),
   hourlyrain: decoded.hourlyrain.toFixed(1),
+  dailyrain: decoded.dailyrain.toFixed(1),
+  weeklyrain: decoded.weeklyrain.toFixed(1),
+  monthlyrain: decoded.monthlyrain.toFixed(1),
   humidity: decoded.humidity.toFixed(0),
   humidityin: decoded.humidityin.toFixed(0),
   pressureabs: decoded.pressureabs.toFixed(1),
@@ -256,7 +259,7 @@ const pgData = {
 
 const socket = new MySocket();
 const stationData = new StationData();
-const stationCtrl = new StationCtrl(socket, stationData);
+const stationCtrl = new StationCtrl(socket, stationData, null, null); // todo
 stationCtrl.start();
 
 postData(data1);

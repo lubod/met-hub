@@ -18,6 +18,8 @@ export default class AuthData {
 
   location: string = "/";
 
+  callWhenAuthetificated: Function = null;
+
   constructor() {
     makeObservable(this, {
       profile: observable,
@@ -32,6 +34,10 @@ export default class AuthData {
       cancelAuth: action,
       checkAuth: action,
     });
+  }
+
+  setCallWhenAuthetificated(callWhenAuthetificated: Function) {
+    this.callWhenAuthetificated = callWhenAuthetificated;
   }
 
   setProfile(profile: string) {

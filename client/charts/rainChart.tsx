@@ -4,9 +4,8 @@
 import React from "react";
 import {
   Area,
+  AreaChart,
   CartesianGrid,
-  ComposedChart,
-  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -17,16 +16,14 @@ type ChartData = {
   chdata: {}[];
   xkey: string;
   ykey: string;
-  y2key: string;
   domainMin: number;
   domainMax: number;
 };
 
-const Chart = function ({
+const RainChart = function ({
   chdata,
   xkey,
   ykey,
-  y2key,
   domainMin,
   domainMax,
 }: ChartData) {
@@ -34,7 +31,7 @@ const Chart = function ({
   return (
     <div className="text-left">
       <ResponsiveContainer width="100%" aspect={4.0 / 4.0}>
-        <ComposedChart
+        <AreaChart
           data={chdata}
           margin={{
             top: 0,
@@ -44,27 +41,16 @@ const Chart = function ({
           }}
         >
           <Area
-            type="monotoneX"
+            type="step"
             dataKey={ykey}
             stroke="#17A2B8"
             fillOpacity={1}
             fill="url(#colorUv)"
           />
-          <Line
-            type="monotoneX"
-            dataKey={y2key}
-            stroke="#F93154"
-            dot={false}
-            strokeWidth={2}
-          />
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#17A2B8" stopOpacity={0.8} />
               <stop offset="95%" stopColor="#17A2B8" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#81D4FA" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#81D4FA" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid stroke="#ccc" vertical={false} horizontal={false} />
@@ -79,10 +65,10 @@ const Chart = function ({
             labelStyle={{ color: "black" }}
             itemStyle={{ color: "black" }}
           />
-        </ComposedChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );
 };
 
-export default Chart;
+export default RainChart;

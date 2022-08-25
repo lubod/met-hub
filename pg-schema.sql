@@ -343,7 +343,10 @@ CREATE TABLE public.stanica (
     solarradiation numeric(6,1),
     uv numeric(2,0),
     eventrain numeric(5,1),
-    hourlyrain numeric(5,1)
+    hourlyrain numeric(5,1),
+    dailyrain numeric(5,1),
+    weeklyrain numeric(5,1),
+    monthlyrain numeric(5,1)
 );
 
 
