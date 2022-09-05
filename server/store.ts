@@ -13,6 +13,7 @@ const PG_HOST = process.env.PG_HOST || "localhost";
 const PG_USER = process.env.PG_USER || "postgres";
 
 const redisClientSub = createClient();
+redisClientSub.connect();
 const station = new Station();
 const dom = new Dom();
 
@@ -55,20 +56,17 @@ async function store(
 }
 
 console.info(`PG: ${PG_HOST}`);
-redisClientSub.on("message", (channel: string, msg: string) => {
-  // console.log(channel, msg); // 'message'
-  const data = JSON.parse(msg);
-  // console.info(data);
 
-  if (channel === station.getRedisStoreChannel()) {
-    data.forEach((element: IStationData) => {
-      store(station, element);
-    });
-  } else if (channel === dom.getRedisStoreChannel()) {
-    data.forEach((element: IDomDataRaw) => {
-      store(dom, element);
-    });
-  }
+redisClientSub.subscribe(station.getRedisStoreChannel(), (msg: string) => {
+  const data = JSON.parse(msg);
+  data.forEach((element: IStationData) => {
+    store(station, element);
+  });
 });
-redisClientSub.subscribe(station.getRedisStoreChannel());
-redisClientSub.subscribe(dom.getRedisStoreChannel());
+
+redisClientSub.subscribe(dom.getRedisStoreChannel(), (msg: string) => {
+  const data = JSON.parse(msg);
+  data.forEach((element: IDomDataRaw) => {
+    store(dom, element);
+  });
+});

@@ -7,7 +7,6 @@ import WindRose from "./wind-rose/wind-rose";
 import DataAlone from "../data/dataAlone";
 import Text from "../text/text";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
-import MapModal from "../mapModal";
 import { STATION_MEASUREMENTS_DESC } from "../../common/stationModel";
 import { AppContext } from "..";
 
@@ -16,18 +15,6 @@ type StationProps = {
 };
 
 const Station = observer(({ appContext }: StationProps) => {
-  const [modalShow, setModalShow] = React.useState(false);
-
-  const handleClose = () => {
-    setModalShow(false);
-  };
-
-  const handleShow = () => {
-    if (appContext.authData.isAuth) {
-      setModalShow(true);
-    }
-  };
-
   console.info(
     "station render",
     appContext.authData.isAuth,
@@ -37,12 +24,10 @@ const Station = observer(({ appContext }: StationProps) => {
   return (
     <div className="main">
       <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
+        <div className="text-left font-weight-bold">CURRENT DATA</div>
         <Row className={appContext.stationData.oldData ? "text-danger" : ""}>
-          <Col xs={4} onClick={handleShow}>
+          <Col xs={4}>
             <Text name="Place" value={appContext.stationData.data.place} />
-            <div onClick={(e) => e.stopPropagation()}>
-              <MapModal modalShow={modalShow} handleClose={handleClose} />
-            </div>
           </Col>
           <Col xs={4}>
             <Text name="Date" value={appContext.stationData.data.date} />
@@ -85,6 +70,7 @@ const Station = observer(({ appContext }: StationProps) => {
               : appContext.stationData.data.maxdailygust
           }
           appContext={appContext}
+          color={STATION_MEASUREMENTS_DESC.WINDDIR.color}
         />
         <hr />
         <div className="text-left font-weight-bold">OUT</div>
@@ -104,12 +90,12 @@ const Station = observer(({ appContext }: StationProps) => {
               couldBeNegative={
                 STATION_MEASUREMENTS_DESC.TEMPERATURE.couldBeNegative
               }
-              authData={appContext.authData} // todo
               onClick={() =>
                 appContext.setMeasurementAndLoad(
                   STATION_MEASUREMENTS_DESC.TEMPERATURE
                 )
               }
+              color={STATION_MEASUREMENTS_DESC.TEMPERATURE.color}
             />
           </Col>
           <Col xs={4}>
@@ -127,12 +113,12 @@ const Station = observer(({ appContext }: StationProps) => {
               couldBeNegative={
                 STATION_MEASUREMENTS_DESC.HUMIDITY.couldBeNegative
               }
-              authData={appContext.authData}
               onClick={() =>
                 appContext.setMeasurementAndLoad(
                   STATION_MEASUREMENTS_DESC.HUMIDITY
                 )
               }
+              color={STATION_MEASUREMENTS_DESC.HUMIDITY.color}
             />
           </Col>
           <Col xs={4}>
@@ -150,12 +136,12 @@ const Station = observer(({ appContext }: StationProps) => {
               couldBeNegative={
                 STATION_MEASUREMENTS_DESC.PRESSURE.couldBeNegative
               }
-              authData={appContext.authData}
               onClick={() =>
                 appContext.setMeasurementAndLoad(
                   STATION_MEASUREMENTS_DESC.PRESSURE
                 )
               }
+              color={STATION_MEASUREMENTS_DESC.PRESSURE.color}
             />
           </Col>
         </Row>
@@ -173,12 +159,12 @@ const Station = observer(({ appContext }: StationProps) => {
               data={appContext.stationData.trendData.solarradiation}
               range={STATION_MEASUREMENTS_DESC.SOLAR.range}
               couldBeNegative={STATION_MEASUREMENTS_DESC.SOLAR.couldBeNegative}
-              authData={appContext.authData}
               onClick={() =>
                 appContext.setMeasurementAndLoad(
                   STATION_MEASUREMENTS_DESC.SOLAR
                 )
               }
+              color={STATION_MEASUREMENTS_DESC.SOLAR.color}
             />
           </Col>
           <Col xs={4}>
@@ -194,10 +180,10 @@ const Station = observer(({ appContext }: StationProps) => {
               data={appContext.stationData.trendData.uv}
               range={STATION_MEASUREMENTS_DESC.UV.range}
               couldBeNegative={STATION_MEASUREMENTS_DESC.UV.couldBeNegative}
-              authData={appContext.authData}
               onClick={() =>
                 appContext.setMeasurementAndLoad(STATION_MEASUREMENTS_DESC.UV)
               }
+              color={STATION_MEASUREMENTS_DESC.UV.color}
             />
           </Col>
           <Col xs={4}>
@@ -215,12 +201,12 @@ const Station = observer(({ appContext }: StationProps) => {
               couldBeNegative={
                 STATION_MEASUREMENTS_DESC.RAINRATE.couldBeNegative
               }
-              authData={appContext.authData}
               onClick={() =>
                 appContext.setMeasurementAndLoad(
                   STATION_MEASUREMENTS_DESC.RAINRATE
                 )
               }
+              color={STATION_MEASUREMENTS_DESC.RAINRATE.color}
             />
           </Col>
         </Row>
@@ -470,12 +456,12 @@ const Station = observer(({ appContext }: StationProps) => {
                   couldBeNegative={
                     STATION_MEASUREMENTS_DESC.TEMPERATUREIN.couldBeNegative
                   }
-                  authData={appContext.authData}
                   onClick={() =>
                     appContext.setMeasurementAndLoad(
                       STATION_MEASUREMENTS_DESC.TEMPERATUREIN
                     )
                   }
+                  color={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.color}
                 />
               </Col>
               <Col xs={6}>
@@ -493,12 +479,12 @@ const Station = observer(({ appContext }: StationProps) => {
                   couldBeNegative={
                     STATION_MEASUREMENTS_DESC.HUMIDITYIN.couldBeNegative
                   }
-                  authData={appContext.authData}
                   onClick={() =>
                     appContext.setMeasurementAndLoad(
                       STATION_MEASUREMENTS_DESC.HUMIDITYIN
                     )
                   }
+                  color={STATION_MEASUREMENTS_DESC.HUMIDITYIN.color}
                 />
               </Col>
             </Row>

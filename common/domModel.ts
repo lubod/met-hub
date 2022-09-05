@@ -119,6 +119,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Temperature",
     col2: "",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static HUMIDITY: IMeasurementDesc = {
@@ -131,6 +132,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Humidity",
     col2: "",
     chartType: "",
+    color: "#0d6efd",
   };
 
   static RAIN: IMeasurementDesc = {
@@ -143,6 +145,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Rain",
     col2: "",
     chartType: "",
+    color: "#0d6efd",
   };
 
   static ROOM: IMeasurementDesc = {
@@ -155,6 +158,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "",
     col2: "",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static LIVING_ROOM_AIR: IMeasurementDesc = {
@@ -167,6 +171,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Living room air",
     col2: "reqall",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static LIVING_ROOM_FLOOR: IMeasurementDesc = {
@@ -179,6 +184,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Living room floor",
     col2: "kuri",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static GUEST_ROOM_AIR: IMeasurementDesc = {
@@ -191,6 +197,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Guest room air",
     col2: "reqall",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static GUEST_ROOM_FLOOR: IMeasurementDesc = {
@@ -203,6 +210,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Guest room floor",
     col2: "kuri",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static BED_ROOM_AIR: IMeasurementDesc = {
@@ -215,6 +223,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Bed room air",
     col2: "reqall",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static BED_ROOM_FLOOR: IMeasurementDesc = {
@@ -227,6 +236,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Bed room floor",
     col2: "kuri",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static BOYS_ROOM_AIR: IMeasurementDesc = {
@@ -239,6 +249,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Boys room air",
     col2: "reqall",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static BOYS_ROOM_FLOOR: IMeasurementDesc = {
@@ -251,6 +262,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Boys room floor",
     col2: "kuri",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static PETRA_ROOM_AIR: IMeasurementDesc = {
@@ -263,6 +275,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Petra room air",
     col2: "reqall",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static PETRA_ROOM_FLOOR: IMeasurementDesc = {
@@ -275,6 +288,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Petra room floor",
     col2: "kuri",
     chartType: "",
+    color: "#fd7e14",
   };
 }
 

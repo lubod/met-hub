@@ -6,7 +6,6 @@ import { observer } from "mobx-react";
 import Text from "../text/text";
 import Room from "./room/room";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
-import MapModal from "../mapModal";
 import { DOM_MEASUREMENTS_DESC } from "../../common/domModel";
 import { AppContext } from "..";
 
@@ -15,18 +14,6 @@ type DomProps = {
 };
 
 const Dom = observer(({ appContext }: DomProps) => {
-  const [modalShow, setModalShow] = React.useState(false);
-
-  const handleClose = () => {
-    setModalShow(false);
-  };
-
-  const handleShow = () => {
-    if (appContext.authData.isAuth) {
-      setModalShow(true);
-    }
-  };
-
   console.info(
     "dom render",
     appContext.authData.isAuth,
@@ -36,12 +23,10 @@ const Dom = observer(({ appContext }: DomProps) => {
   return (
     <div className="main">
       <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
+        <div className="text-left font-weight-bold">CURRENT DATA</div>
         <Row className={appContext.domData.oldData ? "text-danger" : ""}>
-          <Col xs={4} onClick={handleShow}>
+          <Col xs={4}>
             <Text name="Place" value={appContext.domData.data.place} />
-            <div onClick={(e) => e.stopPropagation()}>
-              <MapModal modalShow={modalShow} handleClose={handleClose} />
-            </div>
           </Col>
           <Col xs={4}>
             <Text name="Date" value={appContext.domData.data.date} />
@@ -72,12 +57,12 @@ const Dom = observer(({ appContext }: DomProps) => {
               data={appContext.domData.trendData.temp}
               range={1.6}
               couldBeNegative
-              authData={appContext.authData}
               onClick={() =>
                 appContext.setMeasurementAndLoad(
                   DOM_MEASUREMENTS_DESC.TEMPERATURE
                 )
               } // todo
+              color={DOM_MEASUREMENTS_DESC.TEMPERATURE.color}
             />
           </Col>
           <Col xs={4}>
@@ -93,10 +78,10 @@ const Dom = observer(({ appContext }: DomProps) => {
               data={appContext.domData.trendData.humidity}
               range={10}
               couldBeNegative={false}
-              authData={appContext.authData}
               onClick={() =>
                 appContext.setMeasurementAndLoad(DOM_MEASUREMENTS_DESC.HUMIDITY)
               }
+              color={DOM_MEASUREMENTS_DESC.HUMIDITY.color}
             />
           </Col>
           <Col xs={4}>
@@ -110,10 +95,10 @@ const Dom = observer(({ appContext }: DomProps) => {
               data={appContext.domData.trendData.rain}
               range={1}
               couldBeNegative={false}
-              authData={appContext.authData}
               onClick={() =>
                 appContext.setMeasurementAndLoad(DOM_MEASUREMENTS_DESC.RAIN)
               } // todo
+              color={DOM_MEASUREMENTS_DESC.RAIN.color}
             />
           </Col>
         </Row>

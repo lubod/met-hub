@@ -3,16 +3,15 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { Area, AreaChart, YAxis } from "recharts";
-import AuthData from "../auth/authData";
 
 type TrendData = {
   data: Array<number>;
   range: number;
   couldBeNegative: boolean;
-  authData: AuthData;
+  color: string;
 };
 
-const Trend = observer(({ data, range, couldBeNegative }: TrendData) => {
+const Trend = observer(({ data, range, couldBeNegative, color }: TrendData) => {
   let max: number = null;
   let min: number = null;
   let avg: number = null;
@@ -71,7 +70,7 @@ const Trend = observer(({ data, range, couldBeNegative }: TrendData) => {
           bottom: 9,
         }}
       >
-        <Area type="monotone" dataKey="value" stroke="#17A2B8" fill="#17A2B8" />
+        <Area type="monotone" dataKey="value" stroke={color} fill={color} />
         <YAxis hide type="number" domain={[domainMin, domainMax]} />
       </AreaChart>
     </div>

@@ -18,6 +18,8 @@ import ChartsCtrl from "./charts/chartsCtrl";
 import { IMeasurementDesc } from "../common/measurementDesc";
 import "bootstrap/dist/css/bootstrap.css";
 import "./style.scss";
+import ForecastData from "./forecast/forecastData";
+import ForecastCtrl from "./forecast/forecastCtrl";
 
 export class AppContext {
   socket: MySocket = new MySocket();
@@ -47,13 +49,23 @@ export class AppContext {
 
   domCtrl: DomCtrl = new DomCtrl(this.socket, this.domData, this.chartsCtrl);
 
+  forecastData: ForecastData = new ForecastData();
+
+  forecastCrtl: ForecastCtrl = new ForecastCtrl(
+    this.forecastData,
+    this.authData
+  );
+
   start() {
-    this.authData.setCallWhenAuthetificated(() => this.chartsCtrl.reload());
+    this.authData.setCallWhenAuthetificated(() => {
+      this.chartsCtrl.reload();
+    });
     this.authCtrl.start();
     this.headerCtrl.start();
     this.chartsCtrl.start();
     this.stationCtrl.start();
     this.domCtrl.start();
+    this.forecastCrtl.start();
   }
 
   setMeasurementAndLoad(measurementDesc: IMeasurementDesc) {

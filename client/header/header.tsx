@@ -52,10 +52,17 @@ const Header = observer(({ appContext }: HeaderProps) => (
                 appContext.chartsData.page,
                 appContext.chartsData.measurement
               );
+              appContext.forecastCrtl.fetchData(
+                appContext.headerData.lat,
+                appContext.headerData.lon
+              );
             }}
           >
             <Dropdown.Item eventKey="stanica">Marianka - Station</Dropdown.Item>
             <Dropdown.Item eventKey="dom">Marianka - Dom</Dropdown.Item>
+            <Dropdown.Item eventKey="stanica2">
+              Demanovaska Dolina
+            </Dropdown.Item>
           </DropdownButton>
         )}
       </Col>

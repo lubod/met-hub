@@ -112,6 +112,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Temperature",
     col2: "",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static HUMIDITY: IMeasurementDesc = {
@@ -124,6 +125,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Humidity",
     col2: "",
     chartType: "",
+    color: "#0d6efd",
   };
 
   static TEMPERATUREIN: IMeasurementDesc = {
@@ -136,6 +138,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Temperature IN",
     col2: "",
     chartType: "",
+    color: "#fd7e14",
   };
 
   static HUMIDITYIN: IMeasurementDesc = {
@@ -148,6 +151,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Humidity IN",
     col2: "",
     chartType: "",
+    color: "#0d6efd",
   };
 
   static PRESSURE: IMeasurementDesc = {
@@ -160,6 +164,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Pressure",
     col2: "",
     chartType: "",
+    color: "#0d6efd",
   };
 
   static SOLAR: IMeasurementDesc = {
@@ -172,6 +177,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Solar",
     col2: "",
     chartType: "",
+    color: "#ffc107",
   };
 
   static UV: IMeasurementDesc = {
@@ -184,6 +190,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "UV",
     col2: "",
     chartType: "",
+    color: "#ffc107",
   };
 
   static RAINRATE: IMeasurementDesc = {
@@ -196,6 +203,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Rain rate",
     col2: "",
     chartType: "",
+    color: "#0d6efd",
   };
 
   static EVENTRAIN: IMeasurementDesc = {
@@ -208,6 +216,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Event rain",
     col2: "",
     chartType: "",
+    color: "#0d6efd",
   };
 
   static HOURLYRAIN: IMeasurementDesc = {
@@ -220,6 +229,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Hourly",
     col2: "",
     chartType: "rain",
+    color: "#0d6efd",
   };
 
   static DAILYRAIN: IMeasurementDesc = {
@@ -232,6 +242,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Daily",
     col2: "",
     chartType: "rain",
+    color: "#0d6efd",
   };
 
   static WEEKLYRAIN: IMeasurementDesc = {
@@ -244,6 +255,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Weekly",
     col2: "",
     chartType: "rain",
+    color: "#0d6efd",
   };
 
   static MONTHLYRAIN: IMeasurementDesc = {
@@ -256,6 +268,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Monthly",
     col2: "",
     chartType: "rain",
+    color: "#0d6efd",
   };
 
   static TOTALRAIN: IMeasurementDesc = {
@@ -268,6 +281,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Total",
     col2: "",
     chartType: "",
+    color: "#0d6efd",
   };
 
   static WINDDIR: IMeasurementDesc = {
@@ -280,6 +294,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Wind dir",
     col2: "",
     chartType: "winddir",
+    color: "#adb5bd",
   };
 
   static WINDSPEED: IMeasurementDesc = {
@@ -292,6 +307,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Wind speed",
     col2: "",
     chartType: "",
+    color: "#adb5bd",
   };
 
   static WINDGUST: IMeasurementDesc = {
@@ -304,6 +320,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Wind gust",
     col2: "",
     chartType: "",
+    color: "#adb5bd",
   };
 
   static DAILYGUST: IMeasurementDesc = {
@@ -316,6 +333,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Daily gust",
     col2: "",
     chartType: "",
+    color: "#adb5bd",
   };
 }
 

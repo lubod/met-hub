@@ -2,7 +2,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { observer } from "mobx-react";
 import React from "react";
-import AuthData from "../auth/authData";
 import Data from "../data/data";
 import Trend from "../trend/trend";
 
@@ -14,8 +13,8 @@ type DataWithTrendProps = {
   data: Array<number>;
   range: number;
   couldBeNegative: boolean;
-  authData: AuthData;
   onClick: any;
+  color: string;
 };
 
 const DataWithTrend = observer(
@@ -27,8 +26,8 @@ const DataWithTrend = observer(
     data,
     range,
     couldBeNegative,
-    authData,
     onClick,
+    color,
   }: DataWithTrendProps) => (
     <div className="my-2" style={{ cursor: "pointer" }} onClick={onClick}>
       <Data label={label} value={value} unit={unit} fix={fix} />
@@ -36,7 +35,7 @@ const DataWithTrend = observer(
         data={data}
         range={range}
         couldBeNegative={couldBeNegative}
-        authData={authData}
+        color={color}
       />
     </div>
   )

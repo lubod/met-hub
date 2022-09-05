@@ -1,5 +1,5 @@
 import express from "express";
-import redis from "redis";
+import { createClient } from "redis";
 import Station from "./station";
 import verifyToken from "./utils";
 import { socketEmiter } from "./main";
@@ -13,9 +13,11 @@ const ENV = process.env.ENV || "";
 const station = new Station();
 const dom = new Dom();
 const router = express.Router();
-const redisClient = redis.createClient();
+const redisClient = createClient();
+redisClient.on("error", (err) => console.log("Redis Client Error", err));
+redisClient.connect();
 
-function setData(measurement: IMeasurement, req: any, res: any) {
+async function setData(measurement: IMeasurement, req: any, res: any) {
   if (req.body.PASSKEY === measurement.getPasskey() || ENV === "dev") {
     // console.info(req.body);
     const { date, decoded, toStore } = measurement.decodeData(req.body);
@@ -23,16 +25,15 @@ function setData(measurement: IMeasurement, req: any, res: any) {
     const diff = now - date.getTime();
     if (diff < 3600000) {
       socketEmiter.emit(measurement.getSocketChannel(), decoded);
-      const multi = redisClient.multi();
-      multi.set(measurement.getRedisLastDataKey(), JSON.stringify(decoded));
-      multi.zadd(
-        measurement.getRedisMinuteDataKey(),
-        date.getTime(),
-        JSON.stringify(toStore)
-      );
-      multi.exec((err, replies) => {
-        console.log(replies); // 101, 51
-      });
+      const multi = await redisClient
+        .multi()
+        .set(measurement.getRedisLastDataKey(), JSON.stringify(decoded))
+        .zAdd(measurement.getRedisMinuteDataKey(), {
+          score: date.getTime(),
+          value: JSON.stringify(toStore),
+        })
+        .exec();
+      console.info(multi);
     } else {
       console.error("Old data ", date);
     }
@@ -52,11 +53,10 @@ function setDomData(req: any, res: any) {
   setData(dom, req, res);
 }
 
-function getLastData(measurement: IMeasurement, req: any, res: any) {
+async function getLastData(measurement: IMeasurement, req: any, res: any) {
   res.type("application/json");
-  redisClient.get(measurement.getRedisLastDataKey(), (err: any, reply: any) => {
-    res.json(JSON.parse(reply));
-  });
+  const reply = await redisClient.get(measurement.getRedisLastDataKey());
+  res.json(JSON.parse(reply));
 }
 
 function getStationLastData(req: any, res: any) {
@@ -69,17 +69,16 @@ function getDomLastData(req: any, res: any) {
   return getLastData(dom, req, res);
 }
 
-function getTrendData(measurement: IMeasurement, req: any, res: any) {
+async function getTrendData(measurement: IMeasurement, req: any, res: any) {
   res.type("application/json");
   const now = Date.now();
-  redisClient.zrangebyscore(
+
+  const reply = await redisClient.zRangeByScore(
     measurement.getRedisTrendKey(),
     now - 3600000,
-    now,
-    (err, result) => {
-      res.json(measurement.transformTrendData(result));
-    }
+    now
   );
+  res.json(measurement.transformTrendData(reply));
 }
 
 function getStationTrendData(req: any, res: any) {
@@ -158,24 +157,21 @@ router.get("/api/loadRainData", (req: any, res: any) => {
 
 router.get("/api/getForecast", (req: any, res: any) => {
   console.info("/getForecast", req.query);
-  if (req.headers.authorization) {
-    const user = verifyToken(req.headers.authorization.substr(7));
-    if (user !== null) {
-      res.type("application/json");
-      if (
-        req.query.lat != null &&
-        req.query.lon != null 
-      ) {
-        getForecast(req.query.lat, req.query.lon).then((data) => res.json(data));
-      } else {
-        res.status(400).send("wrong params");
-      }
-    } else {
-      res.status(401).send("auth issue");
-    }
+  //  if (req.headers.authorization) {
+  // const user = verifyToken(req.headers.authorization.substr(7));
+  // if (user !== null) {
+  res.type("application/json");
+  if (req.query.lat != null && req.query.lon != null) {
+    getForecast(req.query.lat, req.query.lon).then((data) => res.json(data));
   } else {
-    res.status(401).send("auth issue");
+    res.status(400).send("wrong params");
   }
+  // } else {
+  //   res.status(401).send("auth issue");
+  // }
+  // } else {
+  // res.status(401).send("auth issue");
+  // }
 });
 
 export default router;

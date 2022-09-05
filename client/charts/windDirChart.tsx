@@ -16,14 +16,15 @@ type ChartData = {
   chdata: {}[];
   xkey: string;
   ykey: string;
+  color: string;
 };
 
-const WindDirChart = function ({ chdata, xkey, ykey }: ChartData) {
+const WindDirChart = function ({ chdata, xkey, ykey, color }: ChartData) {
   // console.info("render wind dir chart", chdata, xkey, ykey, y2key, domainMin, domainMax);
   return (
     <div className="text-left">
       {ykey === "winddir" && (
-        <ResponsiveContainer width="100%" aspect={4.0 / 4.0}>
+        <ResponsiveContainer width="100%" aspect={5.0 / 4.0}>
           <ScatterChart
             data={chdata}
             margin={{
@@ -45,7 +46,7 @@ const WindDirChart = function ({ chdata, xkey, ykey }: ChartData) {
               labelStyle={{ color: "black" }}
               itemStyle={{ color: "black" }}
             />
-            <Scatter dataKey={ykey} fill="#17A2B8" />
+            <Scatter dataKey={ykey} fill={color} />
           </ScatterChart>
         </ResponsiveContainer>
       )}

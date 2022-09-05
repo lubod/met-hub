@@ -17,6 +17,7 @@ type Wind = {
   gustTrend: Array<number>;
   speedTrend: Array<number>;
   appContext: AppContext;
+  color: string;
 };
 
 const WindRose = observer(
@@ -29,6 +30,7 @@ const WindRose = observer(
     gustTrend,
     speedTrend,
     appContext,
+    color,
   }: Wind) => {
     const canvasRef = React.useRef(null);
 
@@ -50,7 +52,7 @@ const WindRose = observer(
           radius + 55 * Math.sin((dir + 7) * (Math.PI / 180) - Math.PI / 2);
         ctx.beginPath();
         ctx.lineWidth = 3;
-        ctx.strokeStyle = "white";
+        ctx.strokeStyle = color;
         ctx.moveTo(x0, y0);
         ctx.lineTo(x1, y1);
         ctx.moveTo(x2, y2);
@@ -82,7 +84,7 @@ const WindRose = observer(
         // console.log(dirTrendMap);
 
         ctx.lineWidth = 2;
-        ctx.strokeStyle = "#17A2B8";
+        ctx.strokeStyle = color;
         dirTrendMap.forEach((count, diri) => {
           const num = Math.floor(count / 4) + 1;
           for (let i = 0; i < num; i += 1) {
@@ -131,7 +133,7 @@ const WindRose = observer(
       ctx.stroke();
 
       ctx.font = "bold 20px Arial";
-      ctx.fillStyle = "#17A2B8";
+      ctx.fillStyle = color;
       ctx.textAlign = "center";
       ctx.fillText("N", canvas.width / 2, 23);
 
@@ -225,12 +227,12 @@ const WindRose = observer(
             couldBeNegative={
               STATION_MEASUREMENTS_DESC.WINDSPEED.couldBeNegative
             }
-            authData={appContext.authData}
             onClick={() =>
               appContext.setMeasurementAndLoad(
                 STATION_MEASUREMENTS_DESC.WINDSPEED
               )
             }
+            color={color}
           />
           <DataWithTrend
             label={STATION_MEASUREMENTS_DESC.WINDGUST.label}
@@ -240,12 +242,12 @@ const WindRose = observer(
             data={gustTrend}
             range={STATION_MEASUREMENTS_DESC.WINDGUST.range}
             couldBeNegative={STATION_MEASUREMENTS_DESC.WINDGUST.couldBeNegative}
-            authData={appContext.authData}
             onClick={() =>
               appContext.setMeasurementAndLoad(
                 STATION_MEASUREMENTS_DESC.WINDGUST
               )
             }
+            color={color}
           />
           <DataAlone
             label={STATION_MEASUREMENTS_DESC.DAILYGUST.label}

@@ -9,6 +9,7 @@ import {
   Col,
 } from "react-bootstrap";
 import { observer } from "mobx-react";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import Chart from "./chart";
 import Text from "../text/text";
 import WindDirChart from "./windDirChart";
@@ -25,6 +26,7 @@ const Charts = observer(
   }: // range
   ChartsProps) => (
     <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
+      <div className="text-left font-weight-bold">HISTORICAL DATA</div>
       <Row className="mt-3 mb-3">
         <ButtonGroup>
           <DropdownButton
@@ -112,6 +114,7 @@ const Charts = observer(
           </Button>
         </ButtonGroup>
       </Row>
+      <hr />
       <Row>
         <Col xs={6}>
           <Text
@@ -190,6 +193,7 @@ const Charts = observer(
             y2key={appContext.chartsData.measurement.col2}
             domainMin={appContext.chartsData.cdata.domainMin}
             domainMax={appContext.chartsData.cdata.domainMax}
+            color={appContext.chartsData.measurement.color}
           />
         )}
         {appContext.chartsData.measurement.chartType === "winddir" && (
@@ -197,6 +201,7 @@ const Charts = observer(
             chdata={appContext.chartsData.hdata}
             xkey="timestamp"
             ykey={appContext.chartsData.measurement.col}
+            color={appContext.chartsData.measurement.color}
           />
         )}
         {appContext.chartsData.measurement.chartType === "rain" && (
@@ -206,8 +211,23 @@ const Charts = observer(
             ykey={appContext.chartsData.measurement.col}
             domainMin={appContext.chartsData.cdata.domainMin}
             domainMax={appContext.chartsData.cdata.domainMax}
+            color={appContext.chartsData.measurement.color}
           />
         )}
+      </Row>
+      <hr />
+      <Row>
+        <MapContainer center={[48.2482, 17.0589]} zoom={13} scrollWheelZoom>
+          <TileLayer
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={[48.2482, 17.0589]}>
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+        </MapContainer>
       </Row>
     </Container>
   )

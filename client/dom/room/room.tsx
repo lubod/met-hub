@@ -35,7 +35,6 @@ const Room = observer(
     room,
     airTrend,
     floorTrend,
-    authData,
     onClickAir,
     onClickFloor,
   }: RoomProps) => (
@@ -51,8 +50,8 @@ const Room = observer(
             data={airTrend}
             range={DOM_MEASUREMENTS_DESC.ROOM.range}
             couldBeNegative={DOM_MEASUREMENTS_DESC.ROOM.couldBeNegative}
-            authData={authData}
             onClick={onClickAir}
+            color={DOM_MEASUREMENTS_DESC.ROOM.color}
           />
         </Col>
         <Col xs={3}>
@@ -64,8 +63,8 @@ const Room = observer(
             data={floorTrend}
             range={DOM_MEASUREMENTS_DESC.ROOM.range}
             couldBeNegative={DOM_MEASUREMENTS_DESC.ROOM.couldBeNegative}
-            authData={authData}
             onClick={onClickFloor}
+            color={DOM_MEASUREMENTS_DESC.ROOM.color}
           />
         </Col>
         <Col xs={3}>

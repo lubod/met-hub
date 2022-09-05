@@ -7,6 +7,7 @@ import Charts from "./charts/charts";
 import { AppContext } from ".";
 import Header from "./header/header";
 import Dom from "./dom/dom";
+import Forecast from "./forecast/forecast";
 
 type ProtectedProps = {
   appContext: AppContext;
@@ -24,7 +25,7 @@ const Protected = observer(({ appContext }: ProtectedProps) => {
             <Header appContext={appContext} />
           </Row>
           <Row>
-            <Col sm={6} className="ps-1 pe-1">
+            <Col sm={4} className="ps-1 pe-1">
               {appContext.headerData.place === "stanica" && (
                 <Station appContext={appContext} />
               )}
@@ -32,7 +33,10 @@ const Protected = observer(({ appContext }: ProtectedProps) => {
                 <Dom appContext={appContext} />
               )}
             </Col>
-            <Col sm={6} className="ps-1 pe-1">
+            <Col sm={4} className="ps-1 pe-1">
+              <Forecast appContext={appContext} />
+            </Col>
+            <Col sm={4} className="ps-1 pe-1">
               <Charts appContext={appContext} />
             </Col>
           </Row>

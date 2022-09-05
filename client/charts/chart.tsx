@@ -20,6 +20,7 @@ type ChartData = {
   y2key: string;
   domainMin: number;
   domainMax: number;
+  color: string;
 };
 
 const Chart = function ({
@@ -29,11 +30,12 @@ const Chart = function ({
   y2key,
   domainMin,
   domainMax,
+  color,
 }: ChartData) {
   // console.info("render chart", chdata, xkey, ykey, y2key, domainMin, domainMax);
   return (
     <div className="text-left">
-      <ResponsiveContainer width="100%" aspect={4.0 / 4.0}>
+      <ResponsiveContainer width="100%" aspect={5.0 / 4.0}>
         <ComposedChart
           data={chdata}
           margin={{
@@ -46,7 +48,7 @@ const Chart = function ({
           <Area
             type="monotoneX"
             dataKey={ykey}
-            stroke="#17A2B8"
+            stroke={color}
             fillOpacity={1}
             fill="url(#colorUv)"
           />
@@ -59,8 +61,8 @@ const Chart = function ({
           />
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#17A2B8" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#17A2B8" stopOpacity={0} />
+              <stop offset="5%" stopColor={color} stopOpacity={0.8} />
+              <stop offset="95%" stopColor={color} stopOpacity={0} />
             </linearGradient>
             <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#81D4FA" stopOpacity={0.8} />

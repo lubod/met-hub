@@ -8,4 +8,5 @@ export interface IMeasurementDesc {
   table: string;
   label: string;
   chartType: string;
+  color: string;
 }
