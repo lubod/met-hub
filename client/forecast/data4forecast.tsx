@@ -63,7 +63,7 @@ const Data4Forecast = function ({
     <div className="text-left">
       <Row>
         <Col xs={6}>
-          <div className="small text-info font-weight-bold">{label}</div>
+          <div className="small text-warning font-weight-bold">{label}</div>
         </Col>
         <Col xs={6}>
           <Form>

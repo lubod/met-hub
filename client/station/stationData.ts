@@ -29,6 +29,8 @@ class StationData {
 
   raindata: any = null;
 
+  try: number = 0;
+
   constructor() {
     makeObservable(this, {
       data: observable,
@@ -58,6 +60,7 @@ class StationData {
       } else {
         // console.info('oldData = false');
         this.oldData = false;
+        this.try = 0;
       }
     } else {
       // console.info('oldData = true');

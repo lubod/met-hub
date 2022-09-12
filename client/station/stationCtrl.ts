@@ -37,6 +37,7 @@ class StationCtrl {
   }
 
   start() {
+    // console.log("start", new Date());
     this.fetchData();
     this.fetchTrendData();
     this.socket
@@ -52,6 +53,21 @@ class StationCtrl {
       });
     this.timer = setInterval(() => {
       this.stationData.setTime(new Date());
+      if (this.stationData.oldData) {
+        if (
+          this.stationData.try === 0 ||
+          this.stationData.try === 2 ||
+          this.stationData.try === 5 ||
+          this.stationData.try === 10 ||
+          this.stationData.try === 30 ||
+          this.stationData.try % 60 === 0
+        ) {
+          console.info("try", this.stationData.try, new Date());
+          this.fetchData();
+          this.fetchTrendData();
+        }
+        this.stationData.try += 1;
+      }
     }, 1000);
   }
 
@@ -102,6 +118,7 @@ class StationCtrl {
 
       const newData = await response.json();
       this.stationData.processTrendData(newData);
+      // console.info(newData);
       this.chartsCtrl?.reload();
     } catch (e) {
       console.error(e);

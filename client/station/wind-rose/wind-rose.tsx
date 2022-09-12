@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { AppContext } from "../..";
+import MY_COLORS from "../../../common/colors";
 import { STATION_MEASUREMENTS_DESC } from "../../../common/stationModel";
 import DataAlone from "../../data/dataAlone";
 import DataWithTrend from "../../dataWithTrend/dataWithTrend";
@@ -173,7 +174,7 @@ const WindRose = observer(
       ctx.fillText("NW", 36, 46);
 
       ctx.font = "bold 13px Arial";
-      ctx.fillStyle = "#17A2B8";
+      ctx.fillStyle = MY_COLORS.gray;
       ctx.textAlign = "center";
       ctx.fillText(
         STATION_MEASUREMENTS_DESC.WINDDIR.label,

@@ -6,6 +6,8 @@ export default class ForecastCtrl {
 
   authData: AuthData;
 
+  timer: any;
+
   constructor(forecastData: ForecastData, authData: AuthData) {
     this.forecastData = forecastData;
     this.authData = authData;
@@ -13,6 +15,12 @@ export default class ForecastCtrl {
 
   start() {
     this.fetchData("48.2482", "17.0589"); // todo
+    this.timer = setInterval(() => {
+      this.fetchData(
+        this.forecastData.coordinates[1],
+        this.forecastData.coordinates[0]
+      );
+    }, 1800000);
   }
 
   async fetchData(lat: string, lon: string) {
