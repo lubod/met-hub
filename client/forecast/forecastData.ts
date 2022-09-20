@@ -25,6 +25,7 @@ export interface IForecastDay {
   symbol_code_12: string;
   symbol_code_18: string;
   forecastRows: IForecastRow[];
+  cloud_area_fraction_sum: number;
 }
 
 export default class ForecastData {
@@ -93,6 +94,7 @@ export default class ForecastData {
           symbol_code_12: null,
           symbol_code_18: null,
           forecastRows: [forecastRow],
+          cloud_area_fraction_sum: cloud_area_fraction,
         };
       } else {
         forecastDay.forecastRows.push(forecastRow);
@@ -104,6 +106,9 @@ export default class ForecastData {
         }
         forecastDay.precipitation_amount_sum += parseFloat(
           forecastRow.precipitation_amount
+        );
+        forecastDay.cloud_area_fraction_sum += parseFloat(
+          forecastRow.cloud_area_fraction
         );
         if (wind_speed_f > forecastDay.wind_speed_max) {
           forecastDay.wind_speed_max = wind_speed_f;

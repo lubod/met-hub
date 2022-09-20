@@ -1,3 +1,4 @@
+/* eslint-disable react/style-prop-object */
 /* eslint-disable camelcase */
 import React, { useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
@@ -14,6 +15,7 @@ type DataProps = {
   symbol_code_12: string;
   symbol_code_18: string;
   forecastRows: IForecastRow[];
+  cloudAreaFractionSum: number;
 };
 
 const Data4Forecast = function ({
@@ -27,43 +29,27 @@ const Data4Forecast = function ({
   symbol_code_12,
   symbol_code_18,
   forecastRows,
+  cloudAreaFractionSum,
 }: DataProps) {
   const [hourly, setHourly] = useState(false);
 
-  const windDirText = function (dir: number) {
-    if (dir >= 360 - 22.5 || dir < 0 + 22.5) {
-      return "N";
+  let labelStyle = "small text-primary font-weight-bold";
+  if (precipitationSum == null || precipitationSum === 0) {
+    labelStyle = "small text-warning font-weight-bold";
+    if (
+      forecastRows.length > 0 &&
+      cloudAreaFractionSum / forecastRows.length > 50
+    ) {
+      labelStyle = "small text-light font-weight-bold";
     }
-    if (dir >= 45 - 22.5 && dir < 45 + 22.5) {
-      return "NE";
-    }
-    if (dir >= 90 - 22.5 && dir < 90 + 22.5) {
-      return "E";
-    }
-    if (dir >= 135 - 22.5 && dir < 135 + 22.5) {
-      return "SE";
-    }
-    if (dir >= 180 - 22.5 && dir < 180 + 22.5) {
-      return "S";
-    }
-    if (dir >= 225 - 22.5 && dir < 225 + 22.5) {
-      return "SW";
-    }
-    if (dir >= 270 - 22.5 && dir < 270 + 22.5) {
-      return "W";
-    }
-    if (dir >= 315 - 22.5 && dir < 315 + 22.5) {
-      return "NW";
-    }
-    return "";
-  };
+  }
 
   // console.info("render data4forecat");
   return (
     <div className="text-left">
       <Row>
         <Col xs={6}>
-          <div className="small text-warning font-weight-bold">{label}</div>
+          <div className={labelStyle}>{label}</div>
         </Col>
         <Col xs={6}>
           <Form>
@@ -97,7 +83,7 @@ const Data4Forecast = function ({
               : precipitationSum.toFixed(1)}
           </span>
           <span className="small">
-            {precipitationSum == null || precipitationSum === 0 ? "" : "mm"}{" "}
+            {precipitationSum == null || precipitationSum === 0 ? "" : "mm"}
           </span>
         </Col>
         <Col xs={4}>
@@ -107,7 +93,7 @@ const Data4Forecast = function ({
           <span className="small">km/h </span>
         </Col>
       </Row>
-      <Row>
+      <Row className="mb-2">
         <Col xs={3}>
           {symbol_code_00 && hourly === false && (
             <img
@@ -164,12 +150,23 @@ const Data4Forecast = function ({
             <Col xs={2}>
               {parseFloat(forecastRow.air_temperature).toFixed(0)}
             </Col>
-            <Col xs={2}>{forecastRow.precipitation_amount}</Col>
+            <Col xs={2}>
+              {parseFloat(forecastRow.precipitation_amount) === 0
+                ? ""
+                : forecastRow.precipitation_amount}
+            </Col>
             <Col xs={2}>
               {(parseFloat(forecastRow.wind_speed) * 3.6).toFixed(0)}
             </Col>
             <Col xs={2}>
-              {windDirText(parseFloat(forecastRow.wind_from_direction))}
+              <svg width="25px" height="25px">
+                <polygon
+                  points="8 3, 12 21, 16 3"
+                  fill="white"
+                  stroke="white"
+                  transform={`rotate(${forecastRow.wind_from_direction} 12 12)`}
+                />
+              </svg>
             </Col>
           </Row>
         ))}

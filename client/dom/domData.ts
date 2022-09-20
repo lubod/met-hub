@@ -25,6 +25,8 @@ class DomData {
 
   oldData: boolean = true;
 
+  try: number = 0;
+
   constructor() {
     makeObservable(this, {
       data: observable,
@@ -46,6 +48,7 @@ class DomData {
       } else {
         // console.info('oldData = false');
         this.oldData = false;
+        this.try = 0;
       }
     } else {
       // console.info('oldData = true');

@@ -162,10 +162,10 @@ export async function loadRainData() {
     ];
     const res = [];
     for (const interval of intervals) {
-      const queryText = `WITH minuterain as (WITH hour_coef as (select DATE_TRUNC('hour',timestamp) as hour, sum(rainrate) as rainrate_sum, max(hourlyrain) as hourlyrain_max, max(hourlyrain)/NULLIF(sum(rainrate),0) as coef from stanica where timestamp > current_timestamp - '${interval}'::interval group by DATE_TRUNC('hour', timestamp)) select stanica.timestamp,stanica.rainrate,stanica.hourlyrain, stanica.solarradiation, hour_coef.hour, hour_coef.rainrate_sum, hour_coef.hourlyrain_max, hour_coef.coef, stanica.rainrate*hour_coef.coef as minuterain from stanica,hour_coef where DATE_TRUNC('hour', stanica.timestamp) = hour_coef.hour and stanica.rainrate > 0) select sum(minuterain.minuterain) from minuterain where timestamp > current_timestamp - '${interval}'::interval;`;
+      const queryText = `WITH minuterain as (WITH hour_coef as (select DATE_TRUNC('hour',timestamp) as hour, sum(rainrate) as rainrate_sum, max(hourlyrain) as hourlyrain_max, max(hourlyrain)/NULLIF(sum(rainrate),0) as coef from stanica where timestamp > current_timestamp - '${interval}'::interval group by DATE_TRUNC('hour', timestamp)) select stanica.timestamp,stanica.rainrate,stanica.hourlyrain, stanica.solarradiation, hour_coef.hour, hour_coef.rainrate_sum, hour_coef.hourlyrain_max, hour_coef.coef, stanica.rainrate*hour_coef.coef as minuterain from stanica,hour_coef where DATE_TRUNC('hour', stanica.timestamp) = hour_coef.hour and stanica.rainrate > 0) select coalesce(sum(minuterain.minuterain), 0) from minuterain where timestamp > current_timestamp - '${interval}'::interval;`;
       // eslint-disable-next-line no-await-in-loop
       const r = await client.query(queryText);
-      res.push({ interval, rows: r.rows });
+      res.push({ interval, sum: r.rows[0].coalesce });
     }
     // console.log("rows", queryText, typeof res.rows, res.fields);
     return res;

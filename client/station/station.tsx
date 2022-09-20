@@ -325,9 +325,7 @@ const Station = observer(({ appContext }: StationProps) => {
                   value={
                     appContext.stationData.raindata == null
                       ? null
-                      : parseFloat(
-                          appContext.stationData.raindata[0].rows[0].sum
-                        )
+                      : parseFloat(appContext.stationData.raindata[0].sum)
                   }
                   unit=""
                   fix={1}
@@ -339,9 +337,7 @@ const Station = observer(({ appContext }: StationProps) => {
                   value={
                     appContext.stationData.raindata == null
                       ? null
-                      : parseFloat(
-                          appContext.stationData.raindata[1].rows[0].sum
-                        )
+                      : parseFloat(appContext.stationData.raindata[1].sum)
                   }
                   unit=""
                   fix={1}
@@ -353,9 +349,7 @@ const Station = observer(({ appContext }: StationProps) => {
                   value={
                     appContext.stationData.raindata == null
                       ? null
-                      : parseFloat(
-                          appContext.stationData.raindata[2].rows[0].sum
-                        )
+                      : parseFloat(appContext.stationData.raindata[2].sum)
                   }
                   unit=""
                   fix={1}
@@ -367,9 +361,7 @@ const Station = observer(({ appContext }: StationProps) => {
                   value={
                     appContext.stationData.raindata == null
                       ? null
-                      : parseFloat(
-                          appContext.stationData.raindata[3].rows[0].sum
-                        )
+                      : parseFloat(appContext.stationData.raindata[3].sum)
                   }
                   unit=""
                   fix={1}
@@ -383,9 +375,7 @@ const Station = observer(({ appContext }: StationProps) => {
                   value={
                     appContext.stationData.raindata == null
                       ? null
-                      : parseFloat(
-                          appContext.stationData.raindata[4].rows[0].sum
-                        )
+                      : parseFloat(appContext.stationData.raindata[4].sum)
                   }
                   unit=""
                   fix={1}
@@ -397,9 +387,7 @@ const Station = observer(({ appContext }: StationProps) => {
                   value={
                     appContext.stationData.raindata == null
                       ? null
-                      : parseFloat(
-                          appContext.stationData.raindata[5].rows[0].sum
-                        )
+                      : parseFloat(appContext.stationData.raindata[5].sum)
                   }
                   unit=""
                   fix={1}
@@ -411,9 +399,7 @@ const Station = observer(({ appContext }: StationProps) => {
                   value={
                     appContext.stationData.raindata == null
                       ? null
-                      : parseFloat(
-                          appContext.stationData.raindata[6].rows[0].sum
-                        )
+                      : parseFloat(appContext.stationData.raindata[6].sum)
                   }
                   unit=""
                   fix={1}
@@ -425,9 +411,7 @@ const Station = observer(({ appContext }: StationProps) => {
                   value={
                     appContext.stationData.raindata == null
                       ? null
-                      : parseFloat(
-                          appContext.stationData.raindata[7].rows[0].sum
-                        )
+                      : parseFloat(appContext.stationData.raindata[7].sum)
                   }
                   unit=""
                   fix={1}

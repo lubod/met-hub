@@ -40,6 +40,21 @@ class DomCtrl {
       });
     this.timer = setInterval(() => {
       this.domData.setTime(new Date());
+      if (this.domData.oldData) {
+        if (
+          this.domData.try === 0 ||
+          this.domData.try === 2 ||
+          this.domData.try === 5 ||
+          this.domData.try === 10 ||
+          this.domData.try === 30 ||
+          this.domData.try % 60 === 0
+        ) {
+          console.info("try", this.domData.try, new Date());
+          this.fetchData();
+          this.fetchTrendData();
+        }
+        this.domData.try += 1;
+      }
     }, 1000);
   }
 

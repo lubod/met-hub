@@ -40,7 +40,7 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
     </Row>
     {[...appContext.forecastData.days.values()]
       .slice(0, 5)
-      .map((forecastDay) => (
+      .map((forecastDay, index) => (
         <>
           <div key={forecastDay.timestamp.getMilliseconds()}>
             <Data4Forecast
@@ -56,9 +56,10 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
               symbol_code_12={forecastDay.symbol_code_12}
               symbol_code_18={forecastDay.symbol_code_18}
               forecastRows={forecastDay.forecastRows}
+              cloudAreaFractionSum={forecastDay.cloud_area_fraction_sum}
             />
           </div>
-          <hr />
+          {index < 4 && <hr />}
         </>
       ))}
   </Container>
