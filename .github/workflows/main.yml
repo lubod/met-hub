@@ -20,8 +20,10 @@ jobs:
           node-version: "16.x"
       - run: npm install
       - run: npm run build
-      - run: echo "Docker-compose build."
-      - run: docker-compose build
+      - run: echo "docker build."
+      - run: docker build -f Dockerfile -t lubod/met-hub:latest ${{ github.repository }}
+      - run: docker build -f Dockerfile -t lubod/met-hub-store:latest ${{ github.repository }}
+      - run: docker build -f Dockerfile -t lubod/met-hub-nginx:latest ${{ github.repository }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
