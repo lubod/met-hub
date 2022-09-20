@@ -17,12 +17,12 @@ jobs:
       - name: npm build
         uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: "16.x"
       - run: npm install
       - run: npm run build
       - run: echo "Docker-compose build."
       - run: docker-compose build
-      
+
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -33,6 +33,5 @@ jobs:
       - run: docker push ghcr.io/lubod/met-hub:latest
       - run: docker push ghcr.io/lubod/met-hub-store:latest
       - run: docker push ghcr.io/lubod/met-hub-nginx:latest
-          
+
       - run: echo "🍏 This job's status is ${{ job.status }}."
- 
