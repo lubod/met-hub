@@ -14,13 +14,13 @@ jobs:
         uses: actions/checkout@v3
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: npm build
+      - name: npm install & build
         uses: actions/setup-node@v3
         with:
           node-version: "16.x"
       - run: npm install
       - run: npm run build
-      - run: echo "Docker-compose build."
+      - name: docker-compose build
       - run: docker-compose build
 
       - name: Log in to the Container registry

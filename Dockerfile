@@ -1,11 +1,11 @@
-FROM node:14 AS met-hub
+FROM node:16 AS met-hub
 WORKDIR /app
 COPY ./package*.json /app/
 RUN npm install
 COPY dist/be/main.js /app/
 CMD ["node", "/app/main.js"]
 
-FROM node:14 AS met-hub-store
+FROM node:16 AS met-hub-store
 WORKDIR /app
 COPY ./package*.json /app/
 RUN npm install
