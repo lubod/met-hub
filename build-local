@@ -1,0 +1,1 @@
+time npx prettier --write . && time npm run build && time sudo docker-compose -f docker-compose-local.yml build && time sudo docker-compose -f docker-compose-local.yml up

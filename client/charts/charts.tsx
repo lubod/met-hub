@@ -194,6 +194,7 @@ const Charts = observer(
             domainMin={appContext.chartsData.cdata.domainMin}
             domainMax={appContext.chartsData.cdata.domainMax}
             color={appContext.chartsData.measurement.color}
+            range={appContext.chartsData.cdata.range}
           />
         )}
         {appContext.chartsData.measurement.chartType === "winddir" && (
@@ -202,6 +203,7 @@ const Charts = observer(
             xkey="timestamp"
             ykey={appContext.chartsData.measurement.col}
             color={appContext.chartsData.measurement.color}
+            range={appContext.chartsData.cdata.range}
           />
         )}
         {appContext.chartsData.measurement.chartType === "rain" && (
@@ -212,6 +214,7 @@ const Charts = observer(
             domainMin={appContext.chartsData.cdata.domainMin}
             domainMax={appContext.chartsData.cdata.domainMax}
             color={appContext.chartsData.measurement.color}
+            range={appContext.chartsData.cdata.range}
           />
         )}
       </Row>

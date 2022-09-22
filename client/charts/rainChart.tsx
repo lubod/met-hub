@@ -1,6 +1,8 @@
+/* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/style-prop-object */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+import moment from "moment";
 import React from "react";
 import {
   Area,
@@ -19,6 +21,7 @@ type ChartData = {
   domainMin: number;
   domainMax: number;
   color: string;
+  range: string;
 };
 
 const RainChart = function ({
@@ -28,7 +31,25 @@ const RainChart = function ({
   domainMin,
   domainMax,
   color,
+  range,
 }: ChartData) {
+  function formatXAxis(tickItem: string) {
+    if (range?.includes("hour")) {
+      return moment(tickItem).format("HH:mm");
+    }
+    if (range?.includes("week")) {
+      return moment(tickItem).format("DD.MM");
+    }
+    if (range?.includes("year")) {
+      return moment(tickItem).format("MMM");
+    }
+    return moment(tickItem).format("DD.MM HH:mm");
+  }
+
+  function formatLabel(label: string) {
+    return moment(label).format("DD.MM.YYYY HH:mm:ss");
+  }
+
   // console.info("render chart", chdata, xkey, ykey, y2key, domainMin, domainMax);
   return (
     <div className="text-left">
@@ -56,7 +77,11 @@ const RainChart = function ({
             </linearGradient>
           </defs>
           <CartesianGrid stroke="#ccc" vertical={false} horizontal={false} />
-          <XAxis dataKey={xkey} tick={{ fill: "white" }} />
+          <XAxis
+            dataKey={xkey}
+            tick={{ fill: "white" }}
+            tickFormatter={formatXAxis}
+          />
           <YAxis
             hide
             type="number"
@@ -66,6 +91,7 @@ const RainChart = function ({
           <Tooltip
             labelStyle={{ color: "black" }}
             itemStyle={{ color: "black" }}
+            labelFormatter={formatLabel}
           />
         </AreaChart>
       </ResponsiveContainer>
