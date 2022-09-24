@@ -80,7 +80,7 @@ const WindRose = observer(
     const radius = width / 2 - offset;
     const dirTrendMap = new Map();
     let dirTrendMaxCount = 1;
-    
+
     dirTrend?.forEach((val) => {
       const diri = Math.floor((Math.floor(val / 22.5) + 1) / 2) % 8;
 
@@ -178,7 +178,9 @@ const WindRose = observer(
                 {STATION_MEASUREMENTS_DESC.WINDDIR.label}
               </text>
               {[...dirTrendMap.keys()].map((diri) =>
-                [...Array(dirTrendMap.get(diri)).keys()].map((count) => (
+                [
+                  ...Array(Math.floor(dirTrendMap.get(diri) / 4 + 1)).keys(),
+                ].map((count) => (
                   <path
                     d={describeArc(
                       width / 2,
