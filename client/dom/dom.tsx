@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
 import Text from "../text/text";
 import Room from "./room/room";
@@ -23,7 +23,23 @@ const Dom = observer(({ appContext }: DomProps) => {
   return (
     <div className="main">
       <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
-        <div className="text-left font-weight-bold">CURRENT DATA</div>
+        <Row className="mt-3">
+          <Col xs={6} className="text-left font-weight-bold">
+            <div>CURRENT DATA</div>
+          </Col>
+          <Col xs={4} />
+          <Col xs={2}>
+            <Button
+              variant="link btn-sm"
+              onClick={() => {
+                appContext.domCtrl.fetchData();
+                appContext.domCtrl.fetchTrendData();
+              }}
+            >
+              <img src="icons8-refresh-25.svg" alt="" />
+            </Button>
+          </Col>
+        </Row>
         <Row className={appContext.domData.oldData ? "text-danger" : ""}>
           <Col xs={4}>
             <Text name="Place" value={appContext.domData.data.place} />
@@ -32,15 +48,7 @@ const Dom = observer(({ appContext }: DomProps) => {
             <Text name="Date" value={appContext.domData.data.date} />
           </Col>
           <Col xs={4}>
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                appContext.domCtrl.fetchData();
-                appContext.domCtrl.fetchTrendData();
-              }}
-            >
-              <Text name="Data time" value={appContext.domData.data.time} />
-            </div>
+            <Text name="Data time" value={appContext.domData.data.time} />
           </Col>
         </Row>
         <hr />

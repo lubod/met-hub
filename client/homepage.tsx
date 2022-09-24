@@ -30,7 +30,7 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
             </Col>
             <Col sm={4} className="ps-1 pe-1">
               <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
-                <h1 className="text-info">met-hub.com</h1>
+                <h1>met-hub.com</h1>
                 <p>
                   This is a free site for non-professional meteorological
                   stations. Currently you can see data from GoGEN ME 3900
@@ -42,7 +42,7 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
           </Row>
           <Row>
             <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-              - v20 -
+              - v21 -
             </Container>
           </Row>
         </Container>

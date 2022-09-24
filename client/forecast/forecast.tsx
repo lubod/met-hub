@@ -11,10 +11,14 @@ type ForecastProps = {
 
 const Forecast = observer(({ appContext }: ForecastProps) => (
   <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-    <div className="text-left font-weight-bold">FORECAST DATA</div>
-    <Row className="mt-3 mb-3">
-      <Col xs={12}>
+    <Row className="mt-3">
+      <Col xs={6} className="text-left font-weight-bold">
+        <div>FORECAST DATA</div>
+      </Col>
+      <Col xs={4} />
+      <Col xs={2}>
         <Button
+          variant="link btn-sm"
           onClick={() => {
             appContext.forecastCrtl.fetchData(
               appContext.headerData.lat,
@@ -22,9 +26,16 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
             );
           }}
         >
-          Refresh
+          <img src="icons8-refresh-25.svg" alt="" />
         </Button>
       </Col>
+    </Row>
+    <Row className="">
+      <div className="text-left my-2">
+        <div className="my-1 small text-white-50 font-weight-bold">
+          Powered by Norwegian Meteorological Institute and NRK
+        </div>
+      </div>
     </Row>
     <hr />
     <Row>

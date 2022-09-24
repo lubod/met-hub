@@ -26,7 +26,27 @@ const Charts = observer(
   }: // range
   ChartsProps) => (
     <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-      <div className="text-left font-weight-bold">HISTORICAL DATA</div>
+      <Row className="mt-3">
+        <Col xs={6} className="text-left font-weight-bold">
+          <div>HISTORICAL DATA</div>
+        </Col>
+        <Col xs={4} />
+        <Col xs={2}>
+          <Button
+            variant="link btn-sm"
+            onClick={() => {
+              appContext.chartsData.setPage(0);
+              appContext.chartsCtrl.load(
+                appContext.chartsData.offset,
+                appContext.chartsData.page,
+                appContext.chartsData.measurement
+              );
+            }}
+          >
+            <img src="icons8-refresh-25.svg" alt="" />
+          </Button>
+        </Col>
+      </Row>
       <Row className="mt-3 mb-3">
         <ButtonGroup>
           <DropdownButton
@@ -98,19 +118,6 @@ const Charts = observer(
             }}
           >
             &gt;
-          </Button>
-          <Button
-            // variant="outline-secondary"
-            onClick={() => {
-              appContext.chartsData.setPage(0);
-              appContext.chartsCtrl.load(
-                appContext.chartsData.offset,
-                appContext.chartsData.page,
-                appContext.chartsData.measurement
-              );
-            }}
-          >
-            O
           </Button>
         </ButtonGroup>
       </Row>

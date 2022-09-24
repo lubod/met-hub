@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react";
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
 import WindRose from "./wind-rose/wind-rose";
 import DataAlone from "../data/dataAlone";
@@ -24,7 +24,23 @@ const Station = observer(({ appContext }: StationProps) => {
   return (
     <div className="main">
       <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-        <div className="text-left font-weight-bold">CURRENT DATA</div>
+        <Row className="mt-3">
+          <Col xs={6} className="text-left font-weight-bold">
+            <div>CURRENT DATA</div>
+          </Col>
+          <Col xs={4} />
+          <Col xs={2}>
+            <Button
+              variant="link btn-sm"
+              onClick={() => {
+                appContext.stationCtrl.fetchData();
+                appContext.stationCtrl.fetchTrendData();
+              }}
+            >
+              <img src="icons8-refresh-25.svg" alt="" />
+            </Button>
+          </Col>
+        </Row>
         <Row className={appContext.stationData.oldData ? "text-danger" : ""}>
           <Col xs={4}>
             <Text name="Place" value={appContext.stationData.data.place} />
@@ -33,15 +49,7 @@ const Station = observer(({ appContext }: StationProps) => {
             <Text name="Date" value={appContext.stationData.data.date} />
           </Col>
           <Col xs={4}>
-            <div
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                appContext.stationCtrl.fetchData();
-                appContext.stationCtrl.fetchTrendData();
-              }}
-            >
-              <Text name="Data time" value={appContext.stationData.data.time} />
-            </div>
+            <Text name="Data time" value={appContext.stationData.data.time} />
           </Col>
         </Row>
         <hr />
