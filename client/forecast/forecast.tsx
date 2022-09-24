@@ -32,8 +32,11 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
     </Row>
     <Row className="">
       <div className="text-left my-2">
+        <div className="small text-white-50 font-weight-bold">
+          Data and weather icons source:
+        </div>
         <div className="my-1 small text-white-50 font-weight-bold">
-          Powered by Norwegian Meteorological Institute and NRK
+          Norwegian Meteorological Institute
         </div>
       </div>
     </Row>

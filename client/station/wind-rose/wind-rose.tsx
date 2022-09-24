@@ -33,174 +33,68 @@ const WindRose = observer(
     appContext,
     color,
   }: Wind) => {
-    const canvasRef = React.useRef(null);
+    function polarToCartesian(
+      centerX: number,
+      centerY: number,
+      radius: number,
+      angleInDegrees: number
+    ) {
+      const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+      return {
+        x: centerX + radius * Math.cos(angleInRadians),
+        y: centerY + radius * Math.sin(angleInRadians),
+      };
+    }
 
-    function drawDirArrow(radius: number, ctx: any) {
-      if (dir != null) {
-        const cos = Math.cos(dir * (Math.PI / 180) - Math.PI / 2);
-        const sin = Math.sin(dir * (Math.PI / 180) - Math.PI / 2);
-        const x0 = radius + 70 * cos;
-        const y0 = radius + 70 * sin;
-        const x1 = radius + 40 * cos;
-        const y1 = radius + 40 * sin;
-        const x2 =
-          radius + 55 * Math.cos((dir - 7) * (Math.PI / 180) - Math.PI / 2);
-        const y2 =
-          radius + 55 * Math.sin((dir - 7) * (Math.PI / 180) - Math.PI / 2);
-        const x3 =
-          radius + 55 * Math.cos((dir + 7) * (Math.PI / 180) - Math.PI / 2);
-        const y3 =
-          radius + 55 * Math.sin((dir + 7) * (Math.PI / 180) - Math.PI / 2);
-        ctx.beginPath();
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = color;
-        ctx.moveTo(x0, y0);
-        ctx.lineTo(x1, y1);
-        ctx.moveTo(x2, y2);
-        ctx.lineTo(x1, y1);
-        ctx.moveTo(x3, y3);
-        ctx.lineTo(x1, y1);
-        ctx.stroke();
+    function describeArc(
+      x: number,
+      y: number,
+      radius: number,
+      startAngle: number,
+      endAngle: number
+    ) {
+      const start = polarToCartesian(x, y, radius, endAngle);
+      const end = polarToCartesian(x, y, radius, startAngle);
+
+      const arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
+      const d = [
+        "M",
+        start.x,
+        start.y,
+        "A",
+        radius,
+        radius,
+        0,
+        arcSweep,
+        0,
+        end.x,
+        end.y,
+      ].join(" ");
+
+      return d;
+    }
+    // console.info('render windrose', props);
+    const width = 220;
+    const height = width;
+    const offset = 30;
+    const radius = width / 2 - offset;
+    const dirTrendMap = new Map();
+    let dirTrendMaxCount = 1;
+    
+    dirTrend?.forEach((val) => {
+      const diri = Math.floor((Math.floor(val / 22.5) + 1) / 2) % 8;
+
+      if (dirTrendMap.has(diri)) {
+        const count = dirTrendMap.get(diri) + 1;
+        dirTrendMap.set(diri, count);
+        if (count > dirTrendMaxCount) {
+          dirTrendMaxCount = count;
+        }
+      } else {
+        dirTrendMap.set(diri, 1);
       }
-    }
-
-    function drawDirTrend(radius: number, ctx: any, canvas: any) {
-      if (dirTrend != null) {
-        const dirTrendMap = new Map();
-        let dirTrendMaxCount = 1;
-        dirTrend.forEach((val) => {
-          const diri = Math.floor((Math.floor(val / 22.5) + 1) / 2) % 8;
-
-          if (dirTrendMap.has(diri)) {
-            const count = dirTrendMap.get(diri) + 1;
-            dirTrendMap.set(diri, count);
-            if (count > dirTrendMaxCount) {
-              dirTrendMaxCount = count;
-            }
-          } else {
-            dirTrendMap.set(diri, 1);
-          }
-        });
-
-        // console.log(dirTrendMap);
-
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = color;
-        dirTrendMap.forEach((count, diri) => {
-          const num = Math.floor(count / 4) + 1;
-          for (let i = 0; i < num; i += 1) {
-            ctx.beginPath();
-            ctx.arc(
-              canvas.width / 2,
-              canvas.height / 2,
-              radius - 34 - i,
-              (diri * 45 - 22.5 - 90) * (Math.PI / 180),
-              (diri * 45 + 22.5 - 90) * (Math.PI / 180),
-              false
-            );
-            ctx.stroke();
-          }
-        });
-      }
-    }
-
-    function drawWindRose(radius: number, ctx: any, canvas: any) {
-      ctx.beginPath();
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "white";
-      ctx.arc(
-        canvas.width / 2,
-        canvas.height / 2,
-        radius - 30,
-        0 * (Math.PI / 180),
-        360 * (Math.PI / 180),
-        false
-      );
-      ctx.stroke();
-
-      ctx.beginPath();
-      for (let i = 0; i < 360; i += 45) {
-        const cos = Math.cos(i * (Math.PI / 180) - Math.PI / 2);
-        const sin = Math.sin(i * (Math.PI / 180) - Math.PI / 2);
-        const x0 = radius + 76 * cos;
-        const y0 = radius + 76 * sin;
-        const x1 = radius + 70 * cos;
-        const y1 = radius + 70 * sin;
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "white";
-        ctx.moveTo(x0, y0);
-        ctx.lineTo(x1, y1);
-      }
-      ctx.stroke();
-
-      ctx.font = "bold 20px Arial";
-      ctx.fillStyle = color;
-      ctx.textAlign = "center";
-      ctx.fillText("N", canvas.width / 2, 23);
-
-      ctx.font = "13px Arial";
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.fillText("NE", canvas.width - 36, 46);
-
-      ctx.font = "20px Arial";
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.fillText("E", canvas.width - 16, canvas.height / 2 + 8);
-
-      ctx.font = "13px Arial";
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.fillText("SE", canvas.width - 37, canvas.height - 37);
-
-      ctx.font = "20px Arial";
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.fillText("S", canvas.width / 2, canvas.height - 6);
-
-      ctx.font = "13px Arial";
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.fillText("SW", 34, canvas.height - 37);
-
-      ctx.font = "20px Arial";
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.fillText("W", 14, canvas.height / 2 + 8);
-
-      ctx.font = "13px Arial";
-      ctx.fillStyle = "white";
-      ctx.textAlign = "center";
-      ctx.fillText("NW", 36, 46);
-
-      ctx.font = "bold 13px Arial";
-      ctx.fillStyle = MY_COLORS.gray;
-      ctx.textAlign = "center";
-      ctx.fillText(
-        STATION_MEASUREMENTS_DESC.WINDDIR.label,
-        canvas.width / 2,
-        canvas.height / 2 + 3
-      );
-    }
-
-    function draw(canvas: any) {
-      const ctx = canvas.getContext("2d");
-      const radius = canvas.width / 2;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawWindRose(radius, ctx, canvas);
-      // drawSpeed(wind.speed, ctx, canvas);
-      drawDirTrend(radius, ctx, canvas);
-      // drawSpeedTrend(wind.speedTrend, ctx, canvas);
-      drawDirArrow(radius, ctx);
-    }
-
-    React.useEffect(() => {
-      const canvas = canvasRef.current;
-      draw(canvas);
     });
 
-    // console.info('render windrose', props);
     return (
       <Row>
         <Col xs={8}>
@@ -212,9 +106,94 @@ const WindRose = observer(
               )
             }
           >
-            <canvas width="220" height="220" id="myCanvas" ref={canvasRef}>
-              <p>Your browser doesn&apos;t support canvas. Boo hoo!</p>
-            </canvas>
+            <svg width="220px" height="220px">
+              <circle
+                cx={width / 2}
+                cy={height / 2}
+                r={radius}
+                stroke="white"
+                fill="none"
+              />
+              {[0, 45, 90, 135, 180, 225, 270, 315].map((value) => (
+                <line
+                  x1={width / 2}
+                  y1={offset + 4}
+                  x2={width / 2}
+                  y2={offset + 10}
+                  stroke="white"
+                  transform={`rotate(${value} ${width / 2} ${width / 2})`}
+                />
+              ))}
+              <polygon
+                points={`${width / 2 - 5} ${offset + 14}, ${width / 2} ${
+                  offset + 55
+                }, ${width / 2 + 5} ${offset + 14}"`}
+                fill={color}
+                stroke={color}
+                transform={`rotate(${dir} ${width / 2} ${height / 2})`}
+              />
+              <text
+                x={width / 2}
+                y="23"
+                fontSize="20"
+                textAnchor="middle"
+                fill={color}
+              >
+                N
+              </text>
+              <text
+                x={width / 2}
+                y={width - 10}
+                fontSize="20"
+                textAnchor="middle"
+                fill="white"
+              >
+                S
+              </text>
+              <text
+                x={20 - 5}
+                y={width / 2 + 7}
+                fontSize="20"
+                textAnchor="middle"
+                fill="white"
+              >
+                W
+              </text>
+              <text
+                x={width - 20}
+                y={width / 2 + 7}
+                fontSize="20"
+                textAnchor="middle"
+                fill="white"
+              >
+                E
+              </text>
+              <text
+                x={width / 2}
+                y={width / 2}
+                fontSize="14"
+                textAnchor="middle"
+                fill={MY_COLORS.gray}
+              >
+                {STATION_MEASUREMENTS_DESC.WINDDIR.label}
+              </text>
+              {[...dirTrendMap.keys()].map((diri) =>
+                [...Array(dirTrendMap.get(diri)).keys()].map((count) => (
+                  <path
+                    d={describeArc(
+                      width / 2,
+                      width / 2,
+                      radius - 3 - count,
+                      diri * 45 - 22.5,
+                      diri * 45 + 22.5
+                    )}
+                    stroke={color}
+                    strokeWidth={2}
+                    fill="none"
+                  />
+                ))
+              )}
+            </svg>
           </div>
         </Col>
         <Col xs={4} className="text-left">
