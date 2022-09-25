@@ -234,6 +234,7 @@ console.info("Now, Timestamp, Redis, pgtime, Pg", d, data2.dateutc, pgtime);
 console.info("Now, Timestamp, Redis, pgtime, Pg", d, data3.dateutc, pgtime);
 
 const { decoded } = station.decodeData(data1);
+
 const pgData = {
   eventrain: decoded.eventrain.toFixed(1),
   hourlyrain: decoded.hourlyrain.toFixed(1),

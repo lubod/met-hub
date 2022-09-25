@@ -14,4 +14,6 @@ CMD ["node", "/app/store.js"]
 
 FROM nginx:latest AS met-hub-nginx
 COPY dist/fe/* /usr/share/nginx/html/
+COPY public/* /usr/share/nginx/html/
 COPY default-local.conf /etc/nginx/conf.d/default.conf
+RUN ln -sf /usr/share/nginx/html/ /usr/share/nginx/html/callback

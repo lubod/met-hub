@@ -124,14 +124,16 @@ const WindRose = observer(
                   transform={`rotate(${value} ${width / 2} ${width / 2})`}
                 />
               ))}
-              <polygon
-                points={`${width / 2 - 5} ${offset + 14}, ${width / 2} ${
-                  offset + 55
-                }, ${width / 2 + 5} ${offset + 14}"`}
-                fill={color}
-                stroke={color}
-                transform={`rotate(${dir} ${width / 2} ${height / 2})`}
-              />
+              {dir != null && (
+                <polygon
+                  points={`${width / 2 - 5} ${offset + 14}, ${width / 2} ${
+                    offset + 50
+                  }, ${width / 2 + 5} ${offset + 14}`}
+                  fill={color}
+                  stroke={color}
+                  transform={`rotate(${dir} ${width / 2} ${height / 2})`}
+                />
+              )}
               <text
                 x={width / 2}
                 y="23"
@@ -170,7 +172,7 @@ const WindRose = observer(
               </text>
               <text
                 x={width / 2}
-                y={width / 2}
+                y={width / 2 + 4}
                 fontSize="14"
                 textAnchor="middle"
                 fill={MY_COLORS.gray}

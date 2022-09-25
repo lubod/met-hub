@@ -17,40 +17,52 @@ const redisClient = createClient();
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.connect();
 
-async function setData(measurement: IMeasurement, req: any, res: any) {
+async function setData(
+  measurement: IMeasurement,
+  req: any,
+  res: any,
+  next: any
+) {
   if (req.body.PASSKEY === measurement.getPasskey() || ENV === "dev") {
     // console.info(req.body);
-    const { date, decoded, toStore } = measurement.decodeData(req.body);
-    const now = Date.now();
-    const diff = now - date.getTime();
-    if (diff < 3600000) {
-      socketEmiter.emit(measurement.getSocketChannel(), decoded);
-      const multi = await redisClient
-        .multi()
-        .set(measurement.getRedisLastDataKey(), JSON.stringify(decoded))
-        .zAdd(measurement.getRedisMinuteDataKey(), {
-          score: date.getTime(),
-          value: JSON.stringify(toStore),
-        })
-        .exec();
-      console.info(multi);
-    } else {
-      console.error("Old data ", date);
+    try {
+      const { date, decoded, toStore } = measurement.decodeData(req.body);
+      const now = Date.now();
+      const diff = now - date.getTime();
+      if (diff < 3600000) {
+        socketEmiter.emit(measurement.getSocketChannel(), decoded);
+        const multi = await redisClient
+          .multi()
+          .set(measurement.getRedisLastDataKey(), JSON.stringify(decoded))
+          .zAdd(measurement.getRedisMinuteDataKey(), {
+            score: date.getTime(),
+            value: JSON.stringify(toStore),
+          })
+          .exec();
+        console.info(multi);
+      } else {
+        console.error("Old data ", date);
+        res.sendStatus(400);
+      }
+    } catch (err) {
+      console.error("Error ", err);
+      next(err);
     }
   } else {
     console.error("Wrong PASSKEY ", req.body.PASSKEY);
+    res.sendStatus(401);
   }
   res.sendStatus(200);
 }
 
-function setStationData(req: any, res: any) {
+function setStationData(req: any, res: any, next: any) {
   console.info("/setData/station");
-  setData(station, req, res);
+  setData(station, req, res, next);
 }
 
-function setDomData(req: any, res: any) {
+function setDomData(req: any, res: any, next: any) {
   console.info("/setData/dom");
-  setData(dom, req, res);
+  setData(dom, req, res, next);
 }
 
 async function getLastData(measurement: IMeasurement, req: any, res: any) {
