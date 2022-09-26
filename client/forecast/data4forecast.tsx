@@ -143,8 +143,16 @@ const Data4Forecast = function ({
               <img
                 width="25px"
                 height="25px"
-                src={`svg/${forecastRow.symbol_code_1h}.svg`}
-                alt={forecastRow.symbol_code_1h}
+                src={`svg/${
+                  forecastRow.symbol_code_1h != null
+                    ? forecastRow.symbol_code_1h
+                    : forecastRow.symbol_code_6h
+                }.svg`}
+                alt={
+                  forecastRow.symbol_code_1h != null
+                    ? forecastRow.symbol_code_1h
+                    : forecastRow.symbol_code_6h
+                }
               />
             </Col>
             <Col xs={2}>
