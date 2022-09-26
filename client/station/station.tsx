@@ -3,6 +3,7 @@
 import React from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
+import moment from "moment";
 import WindRose from "./wind-rose/wind-rose";
 import DataAlone from "../data/dataAlone";
 import Text from "../text/text";
@@ -46,10 +47,20 @@ const Station = observer(({ appContext }: StationProps) => {
             <Text name="Place" value={appContext.stationData.data.place} />
           </Col>
           <Col xs={4}>
-            <Text name="Date" value={appContext.stationData.data.date} />
+            <Text
+              name="Date"
+              value={moment(appContext.stationData.data.timestamp).format(
+                "DD MMM"
+              )}
+            />
           </Col>
           <Col xs={4}>
-            <Text name="Data time" value={appContext.stationData.data.time} />
+            <Text
+              name="Data time"
+              value={moment(appContext.stationData.data.timestamp).format(
+                "HH:mm:ss"
+              )}
+            />
           </Col>
         </Row>
         <hr />

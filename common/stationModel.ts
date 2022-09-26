@@ -4,8 +4,6 @@ import { IMeasurementDesc } from "./measurementDesc";
 
 export interface IStationData {
   timestamp: string;
-  time: string;
-  date: string;
   place: string;
   tempin: number;
   humidityin: number;

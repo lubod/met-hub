@@ -182,8 +182,6 @@ async function loadStationData(time: string) {
 function getClientStationData(data: IStationData) {
   const csd: IStationData = {
     timestamp: data.timestamp,
-    time: null,
-    date: null,
     place: data.place,
     tempin: data.tempin,
     humidityin: data.humidityin,

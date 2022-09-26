@@ -245,8 +245,6 @@ export class Dom implements IMeasurement {
       petra_kuri: data.petra_podlaha.kuri,
       petra_leto: data.petra_podlaha.leto,
       petra_low: data.petra_podlaha.low,
-      time: null,
-      date: null,
       place: "Dom",
     };
     const date = new Date(decoded.timestamp);

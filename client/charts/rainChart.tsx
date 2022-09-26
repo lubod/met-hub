@@ -43,7 +43,7 @@ const RainChart = function ({
     if (range?.includes("year")) {
       return moment(tickItem).format("MMM");
     }
-    return moment(tickItem).format("DD.MM HH:mm");
+    return moment(tickItem).format("DD MMM HH:mm");
   }
 
   function formatLabel(label: string) {
@@ -81,6 +81,7 @@ const RainChart = function ({
             dataKey={xkey}
             tick={{ fill: "white" }}
             tickFormatter={formatXAxis}
+            axisLine={false}
           />
           <YAxis
             hide

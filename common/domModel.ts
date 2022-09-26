@@ -54,8 +54,6 @@ export interface IDomDataRaw {
 
 export interface IDomData {
   timestamp: string;
-  time: string;
-  date: string;
   place: string;
   temp: number;
   humidity: number;

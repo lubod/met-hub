@@ -3,6 +3,7 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
+import moment from "moment";
 import Text from "../text/text";
 import Room from "./room/room";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
@@ -45,10 +46,20 @@ const Dom = observer(({ appContext }: DomProps) => {
             <Text name="Place" value={appContext.domData.data.place} />
           </Col>
           <Col xs={4}>
-            <Text name="Date" value={appContext.domData.data.date} />
+            <Text
+              name="Date"
+              value={moment(appContext.stationData.data.timestamp).format(
+                "DD MMM"
+              )}
+            />
           </Col>
           <Col xs={4}>
-            <Text name="Data time" value={appContext.domData.data.time} />
+            <Text
+              name="Data time"
+              value={moment(appContext.stationData.data.timestamp).format(
+                "HH:mm:ss"
+              )}
+            />
           </Col>
         </Row>
         <hr />

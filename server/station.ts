@@ -106,8 +106,6 @@ class Station implements IMeasurement {
       humidity: round(data.humidity * 1.0, 0),
       humidityin: round(data.humidityin * 1.0, 0),
       winddir: round(data.winddir * 1.0, 0),
-      time: null,
-      date: null,
       place: "Marianka",
       minuterain: null,
     };
@@ -189,8 +187,6 @@ class Station implements IMeasurement {
         humidity: 0,
         winddir: 0,
         timestamp: null,
-        time: null,
-        date: null,
         place: null,
         maxdailygust: null,
         eventrain: null,

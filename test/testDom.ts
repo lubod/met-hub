@@ -409,8 +409,6 @@ async function loadDomData(time: string) {
 function getClientDomData(data: IDomData) {
   const cdd: IDomData = {
     timestamp: data.timestamp,
-    time: null,
-    date: null,
     place: data.place,
     temp: data.temp,
     humidity: data.humidity,
