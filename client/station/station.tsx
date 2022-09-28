@@ -250,6 +250,7 @@ const Station = observer(({ appContext }: StationProps) => {
                       appContext.stationCtrl.fetchRainData();
                     }
                   }}
+                  className="small text-light"
                 />
               </Form>
             )}

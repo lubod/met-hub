@@ -36,7 +36,7 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
           Data and weather icons source:
         </div>
         <div className="my-1 small text-white-50 font-weight-bold">
-          Norwegian Meteorological Institute
+          <a href="https://www.met.no/en">Norwegian Meteorological Institute</a>
         </div>
       </div>
     </Row>

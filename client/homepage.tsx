@@ -33,9 +33,11 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
                 <h1 className="text-primary">met-hub.com</h1>
                 <p>
                   This is a free site for non-professional meteorological
-                  stations. Currently you can see data from GoGEN ME 3900
+                  stations based on open-source project{" "}
+                  <a href="https://github.com/lubod/met-hub">met-hub</a>
                 </p>
                 <hr />
+                <p>Currently you can see data from GoGEN ME 3900</p>
                 <p>Login to see more stations and historical data</p>
               </Container>
             </Col>

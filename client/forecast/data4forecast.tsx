@@ -33,25 +33,26 @@ const Data4Forecast = function ({
 }: DataProps) {
   const [hourly, setHourly] = useState(false);
 
-  let labelStyle = "small text-primary font-weight-bold";
+  let labelStyle = "text-primary";
   if (precipitationSum == null || precipitationSum === 0) {
-    labelStyle = "small text-warning font-weight-bold";
+    labelStyle = "text-warning";
     if (
       forecastRows.length > 0 &&
       cloudAreaFractionSum / forecastRows.length > 50
     ) {
-      labelStyle = "small text-light font-weight-bold";
+      labelStyle = "text-light";
     }
   }
 
   // console.info("render data4forecat");
   return (
     <div className="text-left">
-      <Row>
+      <Row className="mb-2">
         <Col xs={6}>
-          <div className={labelStyle}>{label}</div>
+          <div className={`small ${labelStyle} font-weight-bold`}>{label}</div>
         </Col>
-        <Col xs={6}>
+        <Col xs={1} />
+        <Col xs={4}>
           <Form>
             <Form.Check
               type="switch"
@@ -61,9 +62,11 @@ const Data4Forecast = function ({
               onChange={(e) => {
                 setHourly(e.target.checked);
               }}
+              className={`small ${labelStyle}`}
             />
           </Form>
         </Col>
+        <Col xs={1} />
       </Row>
       <Row>
         <Col xs={4}>
