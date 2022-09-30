@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
+import moment from "moment";
 import Text from "../text/text";
 import { AppContext } from "..";
 import Data4Forecast from "./data4forecast";
@@ -23,6 +24,11 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
             appContext.forecastCrtl.fetchData(
               appContext.headerData.lat,
               appContext.headerData.lon
+            );
+            appContext.forecastCrtl.fetchAstronomicalData(
+              appContext.headerData.lat,
+              appContext.headerData.lon,
+              new Date()
             );
           }}
         >
@@ -76,17 +82,22 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
           {index < 4 && <hr />}
         </>
       ))}
+    <hr />
+    <Row>
+      <Col xs={6}>
+        <Text
+          name="Sunrise"
+          value={moment(appContext.forecastData.sunrise).format("HH:mm")}
+        />
+      </Col>
+      <Col xs={6}>
+        <Text
+          name="Sunset"
+          value={moment(appContext.forecastData.sunset).format("HH:mm")}
+        />
+      </Col>
+    </Row>
   </Container>
 ));
 
 export default Forecast;
-
-/*
-{appContext.forecastData.forecast?.properties.timeseries.map(
-  (row: any, i: any) => (
-    <p key={row.time}>
-      {i} {row.data.instant}
-    </p>
-  )
-)}
-*/

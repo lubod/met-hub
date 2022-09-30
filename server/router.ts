@@ -6,7 +6,7 @@ import { socketEmiter } from "./main";
 import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import { loadData, loadRainData } from "./load";
-import getForecast from "./forecast";
+import { getForecast, getAstronomicalData } from "./forecast";
 
 const ENV = process.env.ENV || "";
 
@@ -174,7 +174,37 @@ router.get("/api/getForecast", (req: any, res: any) => {
   // if (user !== null) {
   res.type("application/json");
   if (req.query.lat != null && req.query.lon != null) {
-    getForecast(req.query.lat, req.query.lon).then((data) => res.json(data));
+    getForecast(req.query.lat, req.query.lon).then((data: any) =>
+      res.json(data)
+    );
+  } else {
+    res.status(400).send("wrong params");
+  }
+  // } else {
+  //   res.status(401).send("auth issue");
+  // }
+  // } else {
+  // res.status(401).send("auth issue");
+  // }
+});
+
+router.get("/api/getAstronomicalData", (req: any, res: any, next: any) => {
+  console.info("/getAstronomicalData", req.query);
+  //  if (req.headers.authorization) {
+  // const user = verifyToken(req.headers.authorization.substr(7));
+  // if (user !== null) {
+  res.type("application/json");
+  if (req.query.lat != null && req.query.lon != null) {
+    try {
+      getAstronomicalData(
+        req.query.lat,
+        req.query.lon,
+        new Date(req.query.date)
+      ).then((data: any) => res.json(data));
+    } catch (err) {
+      console.error("Error ", err);
+      next(err);
+    }
   } else {
     res.status(400).send("wrong params");
   }

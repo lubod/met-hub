@@ -1,10 +1,13 @@
+import moment from "moment";
 import fetch from "node-fetch";
 import { createClient } from "redis";
+
+const convert = require("xml-js");
 
 const redisClient = createClient();
 redisClient.connect();
 
-async function getForecast(lat: string, lon: string) {
+export async function getForecast(lat: string, lon: string) {
   const cacheKey = `FORECAST_CACHE_${lat}_${lon}`;
   const reply = await redisClient.get(cacheKey);
   // console.info(reply);
@@ -41,4 +44,50 @@ async function getForecast(lat: string, lon: string) {
   }
 }
 
-export default getForecast;
+export async function getAstronomicalData(
+  lat: string,
+  lon: string,
+  date: Date
+) {
+  try {
+    const cacheKey = `ASTRONOMICAL_DATA_CACHE_${lat}_${lon}_${moment(
+      date
+    ).format("YYYY-DD-MM")}`;
+    const reply = await redisClient.get(cacheKey);
+    // console.info(reply);
+    if (reply != null) {
+      const json = JSON.parse(reply);
+      // console.info(json);
+      if (Object.keys(json).length > 0) {
+        console.info(cacheKey);
+        return json;
+      }
+    }
+    const url = `https://api.met.no/weatherapi/sunrise/2.0?lat=${lat}&lon=${lon}&date=${moment(
+      date
+    ).format("YYYY-MM-DD")}&offset=+02:00`;
+    console.info(`GET ${url}`);
+    const response = await fetch(url, {
+      headers: {
+        Accept: "text/xml",
+        "User-Agent": "met-hub.com",
+      },
+    });
+
+    if (!response.ok) {
+      const message = `An error has occured: ${response.status}`;
+      throw new Error(message);
+    }
+    const xml = await response.text();
+    const json = JSON.parse(
+      convert.xml2json(xml, { compact: true, spaces: 1 })
+    );
+    redisClient.set(cacheKey, JSON.stringify(json), {
+      EX: 3600,
+    });
+    return json;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 import { action, makeObservable, observable } from "mobx";
 
@@ -33,14 +34,32 @@ export default class ForecastData {
 
   coordinates: string[] = [];
 
+  astronomicalData: any = null;
+
+  sunrise: Date = null;
+
+  sunset: Date = null;
+
   days: Map<string, IForecastDay> = new Map<string, IForecastDay>();
 
   constructor() {
     makeObservable(this, {
       coordinates: observable,
       days: observable,
+      // astronomicalData: observable,
       setForecast: action,
+      setAstronomicalData: action,
     });
+  }
+
+  setAstronomicalData(astronomicalData: any) {
+    this.astronomicalData = astronomicalData;
+    this.sunrise = new Date(
+      astronomicalData.astrodata.location.time[0].sunrise._attributes.time
+    );
+    this.sunset = new Date(
+      astronomicalData.astrodata.location.time[0].sunset._attributes.time
+    );
   }
 
   setForecast(newForecast: any) {

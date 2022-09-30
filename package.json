@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "build": "webpack --mode production",
+    "builddev": "webpack --mode development",
     "start:dev": "webpack-dev-server",
     "lint": "eslint . --ext .ts --ext .tsx --fix"
   },
@@ -64,6 +65,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "@types/react-transition-group": "^4.4.5",
     "@types/recharts": "^1.8.23",
     "amazon-cognito-identity-js": "^5.1.0",
     "axios": "^0.21.4",
@@ -89,9 +91,11 @@
     "react-router": "^5.2.1",
     "react-router-dom": "^5.3.0",
     "react-scripts": "^5.0.1",
+    "react-transition-group": "^4.4.5",
     "recharts": "^2.1.8",
     "redis": "^4.3.0",
     "socket.io": "^4.2.0",
-    "socket.io-client": "^4.2.0"
+    "socket.io-client": "^4.2.0",
+    "xml-js": "^1.6.11"
   }
 }
