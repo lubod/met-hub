@@ -46,7 +46,8 @@ export default class ForecastData {
     makeObservable(this, {
       coordinates: observable,
       days: observable,
-      // astronomicalData: observable,
+      sunrise: observable,
+      sunset: observable,
       setForecast: action,
       setAstronomicalData: action,
     });
