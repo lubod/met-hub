@@ -67,7 +67,7 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
       .slice(0, 5)
       .map((forecastDay, index) => (
         <>
-          <div key={forecastDay.timestamp.getMilliseconds()}>
+          <div key={forecastDay.timestamp.getTime()}>
             <Data4Forecast
               label={forecastDay.timestamp
                 .toDateString()

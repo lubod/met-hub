@@ -140,7 +140,7 @@ const Data4Forecast = function ({
       </Row>
       {hourly &&
         forecastRows.map((forecastRow) => (
-          <Row>
+          <Row key={forecastRow.timestamp.getTime()}>
             <Col xs={2}>{forecastRow.timestamp.getHours()}</Col>
             <Col xs={2}>
               <img

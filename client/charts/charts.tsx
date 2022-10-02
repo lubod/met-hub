@@ -67,7 +67,10 @@ const Charts = observer(
             }}
           >
             {appContext.chartsData.measurements.map((m) => (
-              <Dropdown.Item key={m.table} eventKey={JSON.stringify(m)}>
+              <Dropdown.Item
+                key={`${m.table}${m.label}`}
+                eventKey={JSON.stringify(m)}
+              >
                 {m.label}
               </Dropdown.Item>
             ))}
