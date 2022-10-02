@@ -35,7 +35,6 @@ const Station = observer(({ appContext }: StationProps) => {
             <Button
               variant="link btn-sm"
               onClick={() => {
-                appContext.stationData.setLoading(true);
                 appContext.stationCtrl.fetchData();
                 appContext.stationCtrl.fetchTrendData();
               }}

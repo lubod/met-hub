@@ -152,6 +152,5 @@ export default class ForecastData {
       this.days.set(timestamp.toDateString(), forecastDay);
     }
     this.forecast = newForecast;
-    this.setLoading(false);
   }
 }

@@ -79,6 +79,7 @@ class StationCtrl {
     }
 
     try {
+      this.stationData.setLoading(true);
       const response = await fetch(url, {
         headers: {
           // Authorization: `Bearer ${props.auth.getToken()}`,
@@ -92,6 +93,7 @@ class StationCtrl {
 
       const newData = await response.json();
       this.stationData.processData(newData);
+      this.stationData.setLoading(false);
     } catch (e) {
       console.error(e);
     }

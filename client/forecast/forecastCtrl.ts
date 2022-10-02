@@ -34,6 +34,7 @@ export default class ForecastCtrl {
     console.info(url);
 
     try {
+      this.forecastData.setLoading(true);
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${this.authData.access_token}`,
@@ -48,6 +49,7 @@ export default class ForecastCtrl {
       const newData = await response.json();
       // console.info(newData);
       this.forecastData.setForecast(newData);
+      this.forecastData.setLoading(false);
     } catch (e) {
       console.error(e);
     }

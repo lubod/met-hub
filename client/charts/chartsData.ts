@@ -71,12 +71,10 @@ class ChartsData {
 
   setHdata(newHdata: any) {
     this.hdata = newHdata;
-    this.loading = false;
   }
 
   setCdata(newCdata: CData) {
     this.cdata = newCdata;
-    this.loading = false;
   }
 
   setMeasurement(measurement: string) {

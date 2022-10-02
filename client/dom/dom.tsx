@@ -34,7 +34,6 @@ const Dom = observer(({ appContext }: DomProps) => {
             <Button
               variant="link btn-sm"
               onClick={() => {
-                appContext.domData.setLoading(true);
                 appContext.domCtrl.fetchData();
                 appContext.domCtrl.fetchTrendData();
               }}

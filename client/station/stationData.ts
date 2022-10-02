@@ -90,7 +90,6 @@ class StationData {
     if (newData != null) {
       this.data = newData;
       this.checkOldData(new Date());
-      this.setLoading(false);
     }
   }
 

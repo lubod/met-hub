@@ -42,7 +42,6 @@ const Charts = observer(
                 appContext.chartsData.page,
                 appContext.chartsData.measurement
               );
-              appContext.chartsData.setLoading(true);
             }}
           >
             <LoadImg

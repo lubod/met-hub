@@ -66,6 +66,7 @@ class DomCtrl {
     }
 
     try {
+      this.domData.setLoading(true);
       const response = await fetch(url, {
         headers: {
           // Authorization: `Bearer ${props.auth.getToken()}`,
@@ -79,6 +80,7 @@ class DomCtrl {
 
       const newData = await response.json();
       this.domData.processData(newData);
+      this.domData.setLoading(false);
     } catch (e) {
       console.error(e);
     }

@@ -30,20 +30,21 @@ class ChartsCtrl {
       console.info("no load -> no auth");
       return;
     }
-    const o = parseInt(of.split("|")[0], 10) * 1000;
-    // eslint-disable-next-line no-promise-executor-return
-    // return new Promise((resolve) => setTimeout(resolve, 2000));
-    const start = new Date(Date.now() - o + p * o);
-    const end = new Date(Date.now() + p * o);
-    let url = `/api/loadData?start=${start.toISOString()}&end=${end.toISOString()}&measurement=${
-      m.table
-    }:${m.col}`;
-    if (m.col2 !== "") {
-      url += `:${m.col2}`;
-    }
-    console.info(url);
-
     try {
+      this.chartsData.setLoading(true);
+      const o = parseInt(of.split("|")[0], 10) * 1000;
+      // eslint-disable-next-line no-promise-executor-return
+      // return new Promise((resolve) => setTimeout(resolve, 2000));
+      const start = new Date(Date.now() - o + p * o);
+      const end = new Date(Date.now() + p * o);
+      let url = `/api/loadData?start=${start.toISOString()}&end=${end.toISOString()}&measurement=${
+        m.table
+      }:${m.col}`;
+      if (m.col2 !== "") {
+        url += `:${m.col2}`;
+      }
+      console.info(url);
+
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${this.authData.access_token}`,
@@ -110,6 +111,7 @@ class ChartsCtrl {
         last,
       });
       // console.info(min, max, avg, sum);
+      this.chartsData.setLoading(false);
     } catch (e) {
       console.error(e);
     }

@@ -31,7 +31,6 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
               appContext.headerData.lon,
               new Date()
             );
-            appContext.forecastData.setLoading(true);
           }}
         >
           <LoadImg
