@@ -9,6 +9,7 @@ import Room from "./room/room";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import { DOM_MEASUREMENTS_DESC } from "../../common/domModel";
 import { AppContext } from "..";
+import { LoadImg } from "../data/loadImg";
 
 type DomProps = {
   appContext: AppContext;
@@ -33,11 +34,18 @@ const Dom = observer(({ appContext }: DomProps) => {
             <Button
               variant="link btn-sm"
               onClick={() => {
+                appContext.domData.setLoading(true);
                 appContext.domCtrl.fetchData();
                 appContext.domCtrl.fetchTrendData();
               }}
             >
-              <img src="icons8-refresh-25.svg" alt="" />
+              <LoadImg
+                rotate={
+                  appContext.domData.loading || appContext.domData.oldData
+                }
+                src="icons8-refresh-25.svg"
+                alt=""
+              />
             </Button>
           </Col>
         </Row>

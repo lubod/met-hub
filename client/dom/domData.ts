@@ -27,18 +27,26 @@ class DomData {
 
   try: number = 0;
 
+  loading: boolean = true;
+
   constructor() {
     makeObservable(this, {
       data: observable,
       trendData: observable,
       oldData: observable,
+      loading: observable,
       processData: action,
       processTrendData: action,
-      setOldData: action,
+      checkOldData: action,
+      setLoading: action,
     });
   }
 
-  setOldData(time: Date) {
+  setLoading(loading: boolean) {
+    this.loading = loading;
+  }
+
+  checkOldData(time: Date) {
     if (this.data.timestamp) {
       const timestamp = new Date(this.data.timestamp);
       const diff = time.getTime() - timestamp.getTime();
@@ -58,14 +66,15 @@ class DomData {
 
   setTime(newTime: Date) {
     this.ctime = newTime;
-    this.setOldData(newTime);
+    this.checkOldData(newTime);
   }
 
   processData(newData: IDomData) {
     // console.info("process dom data", newData, this);
     if (newData != null) {
       this.data = newData;
-      this.setOldData(new Date());
+      this.checkOldData(new Date());
+      this.setLoading(false);
     }
   }
 

@@ -5,6 +5,7 @@ import moment from "moment";
 import Text from "../text/text";
 import { AppContext } from "..";
 import Data4Forecast from "./data4forecast";
+import { LoadImg } from "../data/loadImg";
 
 type ForecastProps = {
   appContext: AppContext;
@@ -30,9 +31,14 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
               appContext.headerData.lon,
               new Date()
             );
+            appContext.forecastData.setLoading(true);
           }}
         >
-          <img src="icons8-refresh-25.svg" alt="" />
+          <LoadImg
+            rotate={appContext.forecastData.loading}
+            src="icons8-refresh-25.svg"
+            alt=""
+          />
         </Button>
       </Col>
     </Row>

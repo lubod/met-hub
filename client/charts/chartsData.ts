@@ -43,6 +43,8 @@ class ChartsData {
 
   measurements: IMeasurementDesc[] = STATION_MEASUREMENTS;
 
+  loading: boolean = true;
+
   constructor() {
     makeObservable(this, {
       hdata: observable,
@@ -51,6 +53,7 @@ class ChartsData {
       offset: observable,
       measurement: observable,
       measurements: observable,
+      loading: observable,
       setHdata: action,
       setCdata: action,
       setMeasurement: action,
@@ -58,15 +61,22 @@ class ChartsData {
       setMeasurementObject: action,
       setOffset: action,
       setPage: action,
+      setLoading: action,
     });
+  }
+
+  setLoading(loading: boolean) {
+    this.loading = loading;
   }
 
   setHdata(newHdata: any) {
     this.hdata = newHdata;
+    this.loading = false;
   }
 
   setCdata(newCdata: CData) {
     this.cdata = newCdata;
+    this.loading = false;
   }
 
   setMeasurement(measurement: string) {

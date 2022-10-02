@@ -15,6 +15,7 @@ import Text from "../text/text";
 import WindDirChart from "./windDirChart";
 import RainChart from "./rainChart";
 import { AppContext } from "..";
+import { LoadImg } from "../data/loadImg";
 
 type ChartsProps = {
   appContext: AppContext;
@@ -41,9 +42,14 @@ const Charts = observer(
                 appContext.chartsData.page,
                 appContext.chartsData.measurement
               );
+              appContext.chartsData.setLoading(true);
             }}
           >
-            <img src="icons8-refresh-25.svg" alt="" />
+            <LoadImg
+              rotate={appContext.chartsData.loading}
+              src="icons8-refresh-25.svg"
+              alt=""
+            />
           </Button>
         </Col>
       </Row>

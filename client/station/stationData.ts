@@ -31,6 +31,8 @@ class StationData {
 
   try: number = 0;
 
+  loading: boolean = true;
+
   constructor() {
     makeObservable(this, {
       data: observable,
@@ -38,9 +40,11 @@ class StationData {
       oldData: observable,
       floatingRainData: observable,
       raindata: observable,
+      loading: observable,
       processData: action,
       processTrendData: action,
-      setOldData: action,
+      checkOldData: action,
+      setLoading: action,
       setFloatingRainData: action,
       setRaindata: action,
     });
@@ -50,7 +54,11 @@ class StationData {
     this.raindata = raindata;
   }
 
-  setOldData(time: Date) {
+  setLoading(loading: boolean) {
+    this.loading = loading;
+  }
+
+  checkOldData(time: Date) {
     if (this.data.timestamp) {
       const timestamp = new Date(this.data.timestamp);
       const diff = time.getTime() - timestamp.getTime();
@@ -70,7 +78,7 @@ class StationData {
 
   setTime(newTime: Date) {
     this.ctime = newTime;
-    this.setOldData(newTime);
+    this.checkOldData(newTime);
   }
 
   setFloatingRainData(newFloatingRainData: boolean) {
@@ -81,7 +89,8 @@ class StationData {
     // console.info("process station data", newData, this);
     if (newData != null) {
       this.data = newData;
-      this.setOldData(new Date());
+      this.checkOldData(new Date());
+      this.setLoading(false);
     }
   }
 

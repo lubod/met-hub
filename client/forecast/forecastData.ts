@@ -42,15 +42,22 @@ export default class ForecastData {
 
   days: Map<string, IForecastDay> = new Map<string, IForecastDay>();
 
+  loading: boolean = true;
+
   constructor() {
     makeObservable(this, {
       coordinates: observable,
       days: observable,
       sunrise: observable,
       sunset: observable,
+      loading: observable,
       setForecast: action,
       setAstronomicalData: action,
     });
+  }
+
+  setLoading(loading: boolean) {
+    this.loading = loading;
   }
 
   setAstronomicalData(astronomicalData: any) {
@@ -145,6 +152,6 @@ export default class ForecastData {
       this.days.set(timestamp.toDateString(), forecastDay);
     }
     this.forecast = newForecast;
-    console.info(this.days);
+    this.setLoading(false);
   }
 }

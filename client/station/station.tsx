@@ -10,6 +10,7 @@ import Text from "../text/text";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import { STATION_MEASUREMENTS_DESC } from "../../common/stationModel";
 import { AppContext } from "..";
+import { LoadImg } from "../data/loadImg";
 
 type StationProps = {
   appContext: AppContext;
@@ -34,11 +35,19 @@ const Station = observer(({ appContext }: StationProps) => {
             <Button
               variant="link btn-sm"
               onClick={() => {
+                appContext.stationData.setLoading(true);
                 appContext.stationCtrl.fetchData();
                 appContext.stationCtrl.fetchTrendData();
               }}
             >
-              <img src="icons8-refresh-25.svg" alt="" />
+              <LoadImg
+                rotate={
+                  appContext.stationData.loading ||
+                  appContext.stationData.oldData
+                }
+                src="icons8-refresh-25.svg"
+                alt=""
+              />
             </Button>
           </Col>
         </Row>
