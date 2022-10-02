@@ -39,13 +39,12 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
                 <hr />
                 <p>Currently you can see data from GoGEN ME 3900</p>
                 <p>Login to see more stations and historical data</p>
+                <hr/>
+                <p>
+                - v22 -
+                </p>
               </Container>
             </Col>
-          </Row>
-          <Row>
-            <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-              - v21 -
-            </Container>
           </Row>
         </Container>
       )}

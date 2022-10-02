@@ -40,11 +40,6 @@ const Protected = observer(({ appContext }: ProtectedProps) => {
               <Charts appContext={appContext} />
             </Col>
           </Row>
-          <Row>
-            <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-              -
-            </Container>
-          </Row>
         </Container>
       )}
     </div>
