@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
 import moment from "moment";
 import Text from "../text/text";
@@ -10,6 +10,8 @@ import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import { DOM_MEASUREMENTS_DESC } from "../../common/domModel";
 import { AppContext } from "..";
 import { LoadImg } from "../data/loadImg";
+import { Myhr } from "../data/myhr";
+import { MyContainer } from "../data/mycontainer";
 
 type DomProps = {
   appContext: AppContext;
@@ -24,7 +26,7 @@ const Dom = observer(({ appContext }: DomProps) => {
 
   return (
     <div className="main">
-      <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
+      <MyContainer>
         <Row className="mt-3">
           <Col xs={6} className="text-left font-weight-bold">
             <div>CURRENT DATA</div>
@@ -69,7 +71,7 @@ const Dom = observer(({ appContext }: DomProps) => {
             />
           </Col>
         </Row>
-        <hr />
+        <Myhr />
         <div className="text-left font-weight-bold">GARDEN HOUSE</div>
         <Row>
           <Col xs={4}>
@@ -128,8 +130,8 @@ const Dom = observer(({ appContext }: DomProps) => {
             />
           </Col>
         </Row>
-        <hr />
-        <Row className="text-left text-info font-weight-bold">
+        <Myhr />
+        <Row className="text-left text-primary font-weight-bold">
           <Col xs={3}>Air</Col>
           <Col xs={3}>Floor</Col>
           <Col xs={3}>Req</Col>
@@ -181,7 +183,7 @@ const Dom = observer(({ appContext }: DomProps) => {
             )
           }
         />
-        <hr />
+        <Myhr />
         <Room
           room="GUEST ROOM"
           floorTrend={appContext.domData.trendData.pracovna_podlaha}
@@ -228,7 +230,7 @@ const Dom = observer(({ appContext }: DomProps) => {
             )
           }
         />
-        <hr />
+        <Myhr />
         <Room
           room="BED ROOM"
           floorTrend={appContext.domData.trendData.spalna_podlaha}
@@ -273,7 +275,7 @@ const Dom = observer(({ appContext }: DomProps) => {
             )
           }
         />
-        <hr />
+        <Myhr />
         <Room
           room="BOYS"
           floorTrend={appContext.domData.trendData.chalani_podlaha}
@@ -320,7 +322,7 @@ const Dom = observer(({ appContext }: DomProps) => {
             )
           }
         />
-        <hr />
+        <Myhr />
         <Room
           room="PETRA"
           floorTrend={appContext.domData.trendData.petra_podlaha}
@@ -367,7 +369,7 @@ const Dom = observer(({ appContext }: DomProps) => {
             )
           }
         />
-      </Container>
+      </MyContainer>
     </div>
   );
 });

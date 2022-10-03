@@ -1,18 +1,20 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
 import moment from "moment";
 import Text from "../text/text";
 import { AppContext } from "..";
 import Data4Forecast from "./data4forecast";
 import { LoadImg } from "../data/loadImg";
+import { Myhr } from "../data/myhr";
+import { MyContainer } from "../data/mycontainer";
 
 type ForecastProps = {
   appContext: AppContext;
 };
 
 const Forecast = observer(({ appContext }: ForecastProps) => (
-  <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
+  <MyContainer>
     <Row className="mt-3">
       <Col xs={6} className="text-left font-weight-bold">
         <div>FORECAST DATA</div>
@@ -51,7 +53,7 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
         </div>
       </div>
     </Row>
-    <hr />
+    <Myhr />
     <Row>
       <Col xs={4}>
         <Text name="Temperature" value="" />
@@ -84,10 +86,10 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
               cloudAreaFractionSum={forecastDay.cloud_area_fraction_sum}
             />
           </div>
-          {index < 4 && <hr />}
+          {index < 4 && <Myhr />}
         </>
       ))}
-    <hr />
+    <Myhr />
     <Row>
       <Col xs={6}>
         <Text
@@ -102,7 +104,7 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
         />
       </Col>
     </Row>
-  </Container>
+  </MyContainer>
 ));
 
 export default Forecast;

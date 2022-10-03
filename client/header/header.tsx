@@ -1,19 +1,13 @@
 import { observer } from "mobx-react";
 import React from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Dropdown,
-  DropdownButton,
-} from "react-bootstrap";
+import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { AppContext } from "..";
 import { DOM_MEASUREMENTS, DOM_MEASUREMENTS_DESC } from "../../common/domModel";
 import {
   STATION_MEASUREMENTS,
   STATION_MEASUREMENTS_DESC,
 } from "../../common/stationModel";
+import { MyContainer } from "../data/mycontainer";
 import Text from "../text/text";
 
 type HeaderProps = {
@@ -21,7 +15,7 @@ type HeaderProps = {
 };
 
 const Header = observer(({ appContext }: HeaderProps) => (
-  <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
+  <MyContainer>
     <Row className="align-items-center">
       <Col xs={4}>
         <Text
@@ -82,7 +76,7 @@ const Header = observer(({ appContext }: HeaderProps) => (
         )}
       </Col>
     </Row>
-  </Container>
+  </MyContainer>
 ));
 
 export default Header;

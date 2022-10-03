@@ -6,6 +6,8 @@ import Station from "./station/station";
 import Header from "./header/header";
 import { AppContext } from ".";
 import Forecast from "./forecast/forecast";
+import { Myhr } from "./data/myhr";
+import { MyContainer } from "./data/mycontainer";
 
 type HomePageProps = {
   appContext: AppContext;
@@ -29,21 +31,19 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
               <Forecast appContext={appContext} />
             </Col>
             <Col sm={4} className="ps-1 pe-1">
-              <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
+              <MyContainer>
                 <h1 className="text-primary">met-hub.com</h1>
                 <p>
                   This is a free site for non-professional meteorological
                   stations based on open-source project{" "}
                   <a href="https://github.com/lubod/met-hub">met-hub</a>
                 </p>
-                <hr />
+                <Myhr />
                 <p>Currently you can see data from GoGEN ME 3900</p>
                 <p>Login to see more stations and historical data</p>
-                <hr/>
-                <p>
-                - v22 -
-                </p>
-              </Container>
+                <Myhr />
+                <p>- v22 -</p>
+              </MyContainer>
             </Col>
           </Row>
         </Container>

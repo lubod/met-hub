@@ -2,7 +2,6 @@ import React from "react";
 import {
   Button,
   ButtonGroup,
-  Container,
   Dropdown,
   DropdownButton,
   Row,
@@ -16,6 +15,8 @@ import WindDirChart from "./windDirChart";
 import RainChart from "./rainChart";
 import { AppContext } from "..";
 import { LoadImg } from "../data/loadImg";
+import { Myhr } from "../data/myhr";
+import { MyContainer } from "../data/mycontainer";
 
 type ChartsProps = {
   appContext: AppContext;
@@ -26,7 +27,7 @@ const Charts = observer(
     appContext,
   }: // range
   ChartsProps) => (
-    <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
+    <MyContainer>
       <Row className="mt-3">
         <Col xs={6} className="text-left font-weight-bold">
           <div>HISTORICAL DATA</div>
@@ -129,7 +130,7 @@ const Charts = observer(
           </Button>
         </ButtonGroup>
       </Row>
-      <hr />
+      <Myhr />
       <Row>
         <Col xs={6}>
           <Text
@@ -198,7 +199,7 @@ const Charts = observer(
           <Text name="Avg" value={appContext.chartsData.cdata.avg} />
         </Col>
       </Row>
-      <hr />
+      <Myhr />
       <Row>
         {appContext.chartsData.measurement.chartType === "" && (
           <Chart
@@ -233,7 +234,7 @@ const Charts = observer(
           />
         )}
       </Row>
-      <hr />
+      <Myhr />
       <Row>
         <div>
           <MapContainer center={[48.2482, 17.0589]} zoom={13} scrollWheelZoom>
@@ -249,7 +250,7 @@ const Charts = observer(
           </MapContainer>
         </div>
       </Row>
-    </Container>
+    </MyContainer>
   )
 );
 

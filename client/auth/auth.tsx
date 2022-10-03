@@ -1,5 +1,5 @@
 import React from "react";
-import { Container } from "react-bootstrap";
+import { MyContainer } from "../data/mycontainer";
 import AuthCtrl from "./authCtrl";
 
 type AuthProps = {
@@ -16,12 +16,7 @@ const Auth = function ({ authCtrl }: AuthProps) {
   });
 
   //    console.log('Callback');
-  return (
-    <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
-      {" "}
-      Authenticate ...
-    </Container>
-  );
+  return <MyContainer> Authenticate ...</MyContainer>;
 };
 
 export default Auth;

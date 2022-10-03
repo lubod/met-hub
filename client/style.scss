@@ -10,23 +10,6 @@
     brightness(0.7) opacity(0.9);
 }
 
-.modal-header {
-  border-bottom: 0px !important;
-}
-
-.modal-body {
-  padding: 0px !important;
-}
-
-.modal-footer {
-  border-top: 0px !important;
-}
-
-.modal-content {
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  color: white;
-}
-
 .btn-outline-secondary {
   color: white !important;
   border-color: #0dcaf0 !important;
@@ -34,19 +17,4 @@
 
 .btn-outline-secondary:disabled {
   color: #0dcaf0 !important;
-}
-
-body.modal-open > :not(.modal) {
-  -webkit-filter: blur(8px);
-  -moz-filter: blur(8px);
-  -o-filter: blur(8px);
-  -ms-filter: blur(8px);
-  filter: blur(8px);
-}
-
-hr {
-  margin-top: 4px;
-  margin-bottom: 1rem;
-  border: 0;
-  border-top: 2px solid rgba(0, 0, 0, 0.1);
 }

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Row, Col, Form, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
 import moment from "moment";
 import WindRose from "./wind-rose/wind-rose";
@@ -11,6 +11,8 @@ import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import { STATION_MEASUREMENTS_DESC } from "../../common/stationModel";
 import { AppContext } from "..";
 import { LoadImg } from "../data/loadImg";
+import { Myhr } from "../data/myhr";
+import { MyContainer } from "../data/mycontainer";
 
 type StationProps = {
   appContext: AppContext;
@@ -25,7 +27,7 @@ const Station = observer(({ appContext }: StationProps) => {
 
   return (
     <div className="main">
-      <Container className="text-center text-light border-primary bg-very-dark rounded mb-2 py-2">
+      <MyContainer>
         <Row className="mt-3">
           <Col xs={6} className="text-left font-weight-bold">
             <div>CURRENT DATA</div>
@@ -71,7 +73,7 @@ const Station = observer(({ appContext }: StationProps) => {
             />
           </Col>
         </Row>
-        <hr />
+        <Myhr />
         <WindRose
           gustTrend={appContext.stationData.trendData.windgust}
           speedTrend={appContext.stationData.trendData.windspeed}
@@ -99,7 +101,7 @@ const Station = observer(({ appContext }: StationProps) => {
           appContext={appContext}
           color={STATION_MEASUREMENTS_DESC.WINDDIR.color}
         />
-        <hr />
+        <Myhr />
         <div className="text-left font-weight-bold">OUT</div>
         <Row>
           <Col xs={4}>
@@ -237,7 +239,7 @@ const Station = observer(({ appContext }: StationProps) => {
             />
           </Col>
         </Row>
-        <hr />
+        <Myhr />
         <Row>
           <Col xs={6}>
             <div className="text-left font-weight-bold">RAIN mm</div>
@@ -450,7 +452,7 @@ const Station = observer(({ appContext }: StationProps) => {
         )}
         {appContext.authData.isAuth && (
           <>
-            <hr />
+            <Myhr />
             <div className="text-left font-weight-bold">IN</div>
             <Row>
               <Col xs={6}>
@@ -502,7 +504,7 @@ const Station = observer(({ appContext }: StationProps) => {
             </Row>
           </>
         )}
-      </Container>
+      </MyContainer>
     </div>
   );
 });
