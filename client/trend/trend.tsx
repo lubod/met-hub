@@ -70,7 +70,13 @@ const Trend = observer(({ data, range, couldBeNegative, color }: TrendData) => {
           bottom: 9,
         }}
       >
-        <Area type="monotone" dataKey="value" stroke={color} fill={color} />
+        <Area
+          type="monotone"
+          dataKey="value"
+          stroke={color}
+          fill={color}
+          isAnimationActive={false}
+        />
         <YAxis hide type="number" domain={[domainMin, domainMax]} />
       </AreaChart>
     </div>

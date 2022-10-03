@@ -78,7 +78,7 @@ const WindDirChart = function ({
               itemStyle={{ color: "black" }}
               labelFormatter={formatLabel}
             />
-            <Scatter dataKey={ykey} fill={color} />
+            <Scatter dataKey={ykey} fill={color} isAnimationActive={false} />
           </ScatterChart>
         </ResponsiveContainer>
       )}

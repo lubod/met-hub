@@ -72,6 +72,7 @@ const Chart = function ({
             stroke={color}
             fillOpacity={1}
             fill="url(#colorUv)"
+            isAnimationActive={false}
           />
           <Line
             type="monotoneX"
@@ -79,6 +80,7 @@ const Chart = function ({
             stroke="#F93154"
             dot={false}
             strokeWidth={2}
+            isAnimationActive={false}
           />
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
