@@ -18,7 +18,7 @@ type DataProps = {
   cloudAreaFractionSum: number;
 };
 
-const Data4Forecast = function ({
+function Data4Forecast ({
   label,
   temperatureMax,
   temperatureMin,

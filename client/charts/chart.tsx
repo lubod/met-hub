@@ -26,7 +26,7 @@ type ChartData = {
   range: string;
 };
 
-const Chart = function ({
+function Chart ({
   chdata,
   xkey,
   ykey,

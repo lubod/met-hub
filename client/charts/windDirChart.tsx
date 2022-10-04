@@ -22,7 +22,7 @@ type ChartData = {
   range: string;
 };
 
-const WindDirChart = function ({
+function WindDirChart ({
   chdata,
   xkey,
   ykey,

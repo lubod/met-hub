@@ -8,7 +8,7 @@ type DataProps = {
   fix: number;
 };
 
-const DataAlone = function ({ label, value, unit, fix }: DataProps) {
+function DataAlone ({ label, value, unit, fix }: DataProps) {
   return (
     <div className="text-left my-2">
       <Data label={label} value={value} unit={unit} fix={fix} />

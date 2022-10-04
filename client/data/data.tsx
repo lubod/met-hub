@@ -7,7 +7,7 @@ type DataProps = {
   fix: number;
 };
 
-const Data = function ({ label, value, unit, fix }: DataProps) {
+function Data ({ label, value, unit, fix }: DataProps) {
   return (
     <div className="text-left">
       <div className="small text-white-50 font-weight-bold">{label}</div>

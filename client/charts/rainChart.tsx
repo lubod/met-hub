@@ -24,7 +24,7 @@ type ChartData = {
   range: string;
 };
 
-const RainChart = function ({
+function RainChart ({
   chdata,
   xkey,
   ykey,

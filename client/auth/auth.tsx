@@ -6,7 +6,7 @@ type AuthProps = {
   authCtrl: AuthCtrl;
 };
 
-const Auth = function ({ authCtrl }: AuthProps) {
+function Auth ({ authCtrl }: AuthProps) {
   console.info("Callback render");
   authCtrl.handleAuthentication().then(() => {
     console.info(authCtrl.authData.isAuth);
