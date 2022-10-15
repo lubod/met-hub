@@ -241,14 +241,7 @@ const Charts = observer(
         <Myhr />
         <Row>
           <div>
-            <MapContainer
-              center={[
-                parseFloat(appContext.headerData.lat),
-                parseFloat(appContext.headerData.lon),
-              ]}
-              zoom={8}
-              scrollWheelZoom
-            >
+            <MapContainer center={[48.6776, 19.699]} zoom={6} scrollWheelZoom>
               <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

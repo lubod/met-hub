@@ -67,7 +67,7 @@ export class AppContext {
     this.headerCtrl.start();
     this.chartsCtrl.start();
     this.stationCtrl.start();
-    //    this.domCtrl.start();
+    this.domCtrl.start();
     this.forecastCrtl.start();
   }
 
