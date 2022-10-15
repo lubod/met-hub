@@ -22,13 +22,7 @@ type ChartData = {
   range: string;
 };
 
-function WindDirChart ({
-  chdata,
-  xkey,
-  ykey,
-  color,
-  range,
-}: ChartData) {
+function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
   function formatXAxis(tickItem: string) {
     if (range?.includes("hour")) {
       return moment(tickItem).format("HH:mm");
@@ -84,6 +78,6 @@ function WindDirChart ({
       )}
     </div>
   );
-};
+}
 
 export default WindDirChart;

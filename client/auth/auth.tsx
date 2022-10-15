@@ -6,7 +6,7 @@ type AuthProps = {
   authCtrl: AuthCtrl;
 };
 
-function Auth ({ authCtrl }: AuthProps) {
+function Auth({ authCtrl }: AuthProps) {
   console.info("Callback render");
   authCtrl.handleAuthentication().then(() => {
     console.info(authCtrl.authData.isAuth);
@@ -17,6 +17,6 @@ function Auth ({ authCtrl }: AuthProps) {
 
   //    console.log('Callback');
   return <MyContainer> Authenticate ...</MyContainer>;
-};
+}
 
 export default Auth;

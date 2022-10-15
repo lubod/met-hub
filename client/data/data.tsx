@@ -7,7 +7,7 @@ type DataProps = {
   fix: number;
 };
 
-function Data ({ label, value, unit, fix }: DataProps) {
+function Data({ label, value, unit, fix }: DataProps) {
   return (
     <div className="text-left">
       <div className="small text-white-50 font-weight-bold">{label}</div>
@@ -15,6 +15,6 @@ function Data ({ label, value, unit, fix }: DataProps) {
       <span className="small">{unit}</span>
     </div>
   );
-};
+}
 
 export default Data;

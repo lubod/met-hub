@@ -216,4 +216,23 @@ router.get("/api/getAstronomicalData", (req: any, res: any, next: any) => {
   // }
 });
 
+router.get(
+  "/weatherstation/updateweatherstation.php",
+  (req: any, res: any, next: any) => {
+    console.info("/weatherstation/updateweatherstation.php", req.query);
+    res.type("application/json");
+    //  if (req.query.lat != null && req.query.lon != null) {
+    try {
+      console.log(req.query);
+      res.json({});
+    } catch (err) {
+      console.error("Error ", err);
+      next(err);
+    }
+    //  } else {
+    //  res.status(400).send("wrong params");
+    // }
+  }
+);
+
 export default router;

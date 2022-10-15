@@ -24,7 +24,7 @@ type ChartData = {
   range: string;
 };
 
-function RainChart ({
+function RainChart({
   chdata,
   xkey,
   ykey,
@@ -99,6 +99,6 @@ function RainChart ({
       </ResponsiveContainer>
     </div>
   );
-};
+}
 
 export default RainChart;

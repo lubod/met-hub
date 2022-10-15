@@ -26,7 +26,7 @@ type ChartData = {
   range: string;
 };
 
-function Chart ({
+function Chart({
   chdata,
   xkey,
   ykey,
@@ -114,6 +114,6 @@ function Chart ({
       </ResponsiveContainer>
     </div>
   );
-};
+}
 
 export default Chart;

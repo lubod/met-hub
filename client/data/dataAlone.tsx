@@ -8,12 +8,12 @@ type DataProps = {
   fix: number;
 };
 
-function DataAlone ({ label, value, unit, fix }: DataProps) {
+function DataAlone({ label, value, unit, fix }: DataProps) {
   return (
     <div className="text-left my-2">
       <Data label={label} value={value} unit={unit} fix={fix} />
     </div>
   );
-};
+}
 
 export default DataAlone;
