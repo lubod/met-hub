@@ -27,36 +27,29 @@ export interface IStationData {
   minuterain: number;
 }
 
-/*
-curl --header "Content-Type: application/json" --request POST --data \
-'{ "PASSKEY": "",
-  "stationtype": "EasyWeatherV1.5.2",
-  "dateutc": "2021-04-06 08:42:00",
-  "tempinf": "74.1",
-  "humidityin": "62",
-  "baromrelin": "30.189",
-  "baromabsin": "29.442",
-  "tempf": "71.4",
-  "humidity": "72",
-  "winddir": "69",
-  "windspeedmph": "0.4",
-  "windgustmph": "1.1",
-  "maxdailygust": "3.4",
-  "rainratein": "0.000",
-  "eventrainin": "0.000",
-  "hourlyrainin": "0.000",
-  "dailyrainin": "0.000",
-  "weeklyrainin": "0.000",
-  "monthlyrainin": "0.201",
-  "totalrainin": "0.201",
-  "solarradiation": "19.45",
-  "uv": "0",
-  "wh65batt": "0",
-  "freq": "868M",
-  "model": "WS2900_V2.01.10" }' \
-  http://localhost:8082/setData
-*/
-export interface IStationDataRaw {
+export interface IStationGarni1025ArcusDataRaw {
+  ID: string;
+  PASSWORD: string;
+  action: string;
+  realtime: string;
+  rtfreq: number;
+  dateutc: string;
+  baromin: number;
+  tempf: number;
+  dewptf: number;
+  humidity: number;
+  windspeedmph: number;
+  windgustmph: number;
+  winddir: number;
+  rainin: number;
+  dailyrainin: number;
+  solarradiation: number;
+  UV: number;
+  indoortempf: number;
+  indoorhumidity: number;
+}
+
+export interface IStationGoGenMe3900DataRaw {
   PASSKEY: string;
   stationtype: string;
   dateutc: string;
@@ -353,39 +346,3 @@ export const STATION_MEASUREMENTS: IMeasurementDesc[] = [
   STATION_MEASUREMENTS_DESC.TEMPERATUREIN,
   STATION_MEASUREMENTS_DESC.HUMIDITYIN,
 ];
-
-export class StationCfg {
-  TABLE = "stanica";
-
-  COLUMNS = [
-    STATION_MEASUREMENTS_DESC.TEMPERATUREIN.col,
-    STATION_MEASUREMENTS_DESC.HUMIDITYIN.col,
-    STATION_MEASUREMENTS_DESC.PRESSURE.col,
-    "pressureabs", // todo
-    STATION_MEASUREMENTS_DESC.TEMPERATURE.col,
-    STATION_MEASUREMENTS_DESC.HUMIDITY.col,
-    STATION_MEASUREMENTS_DESC.WINDDIR.col,
-    STATION_MEASUREMENTS_DESC.WINDSPEED.col,
-    STATION_MEASUREMENTS_DESC.WINDGUST.col,
-    STATION_MEASUREMENTS_DESC.RAINRATE.col,
-    STATION_MEASUREMENTS_DESC.SOLAR.col,
-    STATION_MEASUREMENTS_DESC.UV.col,
-    STATION_MEASUREMENTS_DESC.EVENTRAIN.col,
-    STATION_MEASUREMENTS_DESC.HOURLYRAIN.col,
-    STATION_MEASUREMENTS_DESC.DAILYRAIN.col,
-    STATION_MEASUREMENTS_DESC.WEEKLYRAIN.col,
-    STATION_MEASUREMENTS_DESC.MONTHLYRAIN.col,
-  ];
-
-  SOCKET_CHANNEL = "station";
-
-  SOCKET_TREND_CHANNEL = "station-trend";
-
-  REDIS_LAST_DATA_KEY = "station-last";
-
-  REDIS_MINUTE_DATA_KEY = "station-minute-data";
-
-  REDIS_STORE_CHANNEL = "station-store-pubsub";
-
-  REDIS_TREND_KEY = "station-trend";
-}

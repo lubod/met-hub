@@ -1,16 +1,18 @@
 import express from "express";
 import { createClient } from "redis";
-import Station from "./station";
+import StationGoGenMe3900 from "./stationGoGenMe3900";
 import verifyToken from "./utils";
 import { socketEmiter } from "./main";
 import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import { loadData, loadRainData } from "./load";
 import { getForecast, getAstronomicalData } from "./forecast";
+import StationGarni1025Arcus from "./stationGarni1025Arcus";
 
 const ENV = process.env.ENV || "";
 
-const station = new Station();
+const stationGoGenMe3900 = new StationGoGenMe3900();
+const stationGarni1025Arcus = new StationGarni1025Arcus();
 const dom = new Dom();
 const router = express.Router();
 const redisClient = createClient();
@@ -21,12 +23,14 @@ async function setData(
   measurement: IMeasurement,
   req: any,
   res: any,
-  next: any
+  next: any,
+  PASSKEY: string,
+  data: any
 ) {
-  if (req.body.PASSKEY === measurement.getPasskey() || ENV === "dev") {
+  if (PASSKEY === measurement.getPasskey() || ENV === "dev") {
     // console.info(req.body);
     try {
-      const { date, decoded, toStore } = measurement.decodeData(req.body);
+      const { date, decoded, toStore } = measurement.decodeData(data);
       const now = Date.now();
       const diff = now - date.getTime();
       if (diff < 3600000) {
@@ -57,12 +61,12 @@ async function setData(
 
 function setStationData(req: any, res: any, next: any) {
   console.info("/setData/station");
-  setData(station, req, res, next);
+  setData(stationGoGenMe3900, req, res, next, req.body.PASSKEY, req.body);
 }
 
 function setDomData(req: any, res: any, next: any) {
   console.info("/setData/dom");
-  setData(dom, req, res, next);
+  setData(dom, req, res, next, req.body.PASSKEY, req.body);
 }
 
 async function getLastData(measurement: IMeasurement, req: any, res: any) {
@@ -72,8 +76,12 @@ async function getLastData(measurement: IMeasurement, req: any, res: any) {
 }
 
 function getStationLastData(req: any, res: any) {
-  console.info("/getLastData/station");
-  return getLastData(station, req, res);
+  console.info("/getLastData/station", req.params);
+  if (req.params.stationID === "2") {
+    // todo
+    return getLastData(stationGarni1025Arcus, req, res);
+  }
+  return getLastData(stationGoGenMe3900, req, res);
 }
 
 function getDomLastData(req: any, res: any) {
@@ -95,7 +103,7 @@ async function getTrendData(measurement: IMeasurement, req: any, res: any) {
 
 function getStationTrendData(req: any, res: any) {
   console.info("/getTrendData/station");
-  getTrendData(station, req, res);
+  getTrendData(stationGoGenMe3900, req, res);
 }
 
 function getDomTrendData(req: any, res: any) {
@@ -104,8 +112,8 @@ function getDomTrendData(req: any, res: any) {
 }
 
 router.post("/setData", setStationData);
-router.get("/api/getLastData/station", getStationLastData);
-router.get("/api/getTrendData/station", getStationTrendData);
+router.get("/api/getLastData/station/:stationID", getStationLastData);
+router.get("/api/getTrendData/station/:stationID", getStationTrendData);
 
 router.post("/setDomData", setDomData);
 router.get("/api/getLastData/dom", getDomLastData);
@@ -220,18 +228,16 @@ router.get(
   "/weatherstation/updateweatherstation.php",
   (req: any, res: any, next: any) => {
     console.info("/weatherstation/updateweatherstation.php", req.query);
-    res.type("application/json");
-    //  if (req.query.lat != null && req.query.lon != null) {
-    try {
-      console.log(req.query);
-      res.json({});
-    } catch (err) {
-      console.error("Error ", err);
-      next(err);
+    if (req.query.ID != null) {
+      try {
+        setData(stationGarni1025Arcus, req, res, next, req.query.ID, req.query);
+      } catch (err) {
+        console.error("Error ", err);
+        next(err);
+      }
+    } else {
+      res.status(400).send("wrong params");
     }
-    //  } else {
-    //  res.status(400).send("wrong params");
-    // }
   }
 );
 

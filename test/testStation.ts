@@ -5,8 +5,12 @@ import { Pool } from "pg";
 import StationCtrl from "../client/station/stationCtrl";
 import StationData from "../client/station/stationData";
 import MySocket from "../client/socket";
-import { IStationData, IStationDataRaw } from "../common/stationModel";
-import Station from "../server/station";
+import {
+  IStationData,
+  IStationGoGenMe3900DataRaw,
+} from "../common/stationModel";
+import StationGoGenMe3900 from "../server/stationGoGenMe3900";
+import { StationGoGenMe3900Cfg } from "../common/stationGoGenMe3900Cfg";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -14,7 +18,7 @@ const PG_DB = process.env.PG_DB || "postgres";
 const PG_HOST = process.env.PG_HOST || "192.168.1.199";
 const PG_USER = process.env.PG_USER || "postgres";
 
-const station = new Station();
+const station = new StationGoGenMe3900();
 
 console.info(`PG: ${PG_HOST}`);
 
@@ -29,7 +33,7 @@ function round(value: number, precision: number) {
 
 function generateData(d: Date) {
   d.setUTCMilliseconds(0);
-  const data = {} as IStationDataRaw;
+  const data = {} as IStationGoGenMe3900DataRaw;
   data.PASSKEY = "";
   data.stationtype = "EasyWeatherV1.5.2";
   data.wh65batt = 0;
@@ -58,8 +62,8 @@ function generateData(d: Date) {
   return data;
 }
 
-function generateOffsetData(cdata: IStationDataRaw, offset: number) {
-  const data = {} as IStationDataRaw;
+function generateOffsetData(cdata: IStationGoGenMe3900DataRaw, offset: number) {
+  const data = {} as IStationGoGenMe3900DataRaw;
   data.PASSKEY = cdata.PASSKEY;
   data.stationtype = cdata.stationtype;
   data.wh65batt = cdata.wh65batt;
@@ -131,7 +135,7 @@ async function postData(data: any) {
 }
 
 async function fetchStationData() {
-  const url = "http://localhost:18080/api/getLastData/station";
+  const url = "http://localhost:18080/api/getLastData/station/1";
   console.info("GET", url);
 
   try {
@@ -258,7 +262,13 @@ const pgData = {
 
 const socket = new MySocket();
 const stationData = new StationData();
-const stationCtrl = new StationCtrl(socket, stationData, null, null); // todo
+const stationCtrl = new StationCtrl(
+  socket,
+  stationData,
+  null,
+  null,
+  new StationGoGenMe3900Cfg()
+); // todo
 stationCtrl.start();
 
 postData(data1);

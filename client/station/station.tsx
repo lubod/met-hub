@@ -22,7 +22,8 @@ const Station = observer(({ appContext }: StationProps) => {
   console.info(
     "station render",
     appContext.authData.isAuth,
-    appContext.stationData.oldData
+    appContext.stationData.oldData,
+    appContext.headerData.id
   );
 
   return (

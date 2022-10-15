@@ -1,23 +1,21 @@
 import fetch from "node-fetch";
-import {
-  IStationData,
-  IStationTrendData,
-  StationCfg,
-} from "../../common/stationModel";
+import { IStationCfg } from "../../common/stationCfg";
+import { IStationData, IStationTrendData } from "../../common/stationModel";
 import AuthData from "../auth/authData";
 import ChartsCtrl from "../charts/chartsCtrl";
 import StationData from "./stationData";
+import { IController } from "../../common/controller";
 
 const ENV = process.env.ENV || "";
 
-class StationCtrl {
+class StationCtrl implements IController {
   stationData: StationData;
 
   socket: any;
 
   timer: any;
 
-  stationCfg: StationCfg;
+  stationCfg: IStationCfg;
 
   authData: AuthData;
 
@@ -27,10 +25,11 @@ class StationCtrl {
     socket: any,
     stationData: StationData,
     authData: AuthData,
-    chartsCtrl: ChartsCtrl
+    chartsCtrl: ChartsCtrl,
+    stationCfg: IStationCfg
   ) {
     this.stationData = stationData;
-    this.stationCfg = new StationCfg();
+    this.stationCfg = stationCfg;
     this.socket = socket;
     this.authData = authData;
     this.chartsCtrl = chartsCtrl;
@@ -71,10 +70,27 @@ class StationCtrl {
     }, 1000);
   }
 
+  stop() {
+    this.socket
+      .getSocket()
+      .off(this.stationCfg.SOCKET_CHANNEL, (data: IStationData) => {
+        this.stationData.processData(data);
+      });
+    this.socket
+      .getSocket()
+      .off(this.stationCfg.SOCKET_TREND_CHANNEL, (data: IStationTrendData) => {
+        this.stationData.processTrendData(data);
+        this.chartsCtrl?.reload();
+      });
+    clearInterval(this.timer);
+  }
+
   async fetchData() {
-    let url = "/api/getLastData/station";
+    let url = `/api/getLastData/station/${this.stationCfg.STATION_ID}`;
+
     if (ENV === "dev") {
-      url = "http://localhost:18080/api/getLastData/station";
+      // test needs this
+      url = `http://localhost:18080/api/getLastData/station/${this.stationCfg.STATION_ID}`;
       console.info(url);
     }
 
@@ -100,9 +116,11 @@ class StationCtrl {
   }
 
   async fetchTrendData() {
-    let url = "/api/getTrendData/station";
+    let url = `/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
+
     if (ENV === "dev") {
-      url = "http://localhost:18080/api/getTrendData/station";
+      // test needs this
+      url = `http://localhost:18080/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
       console.info(url);
     }
 

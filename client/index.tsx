@@ -8,8 +8,6 @@ import AuthData from "./auth/authData";
 import MySocket from "./socket";
 import StationData from "./station/stationData";
 import StationCtrl from "./station/stationCtrl";
-import DomData from "./dom/domData";
-import DomCtrl from "./dom/domCtrl";
 import HeaderData from "./header/headerData";
 import HeaderCtrl from "./header/headerCtrl";
 import App from "./app";
@@ -20,6 +18,10 @@ import "bootstrap/dist/css/bootstrap.css";
 import "./style.scss";
 import ForecastData from "./forecast/forecastData";
 import ForecastCtrl from "./forecast/forecastCtrl";
+import { StationGoGenMe3900Cfg } from "../common/stationGoGenMe3900Cfg";
+import { IController } from "../common/controller";
+import DomData from "./dom/domData";
+import DomCtrl from "./dom/domCtrl";
 
 export class AppContext {
   socket: MySocket = new MySocket();
@@ -38,11 +40,12 @@ export class AppContext {
 
   stationData: StationData = new StationData();
 
-  stationCtrl: StationCtrl = new StationCtrl(
+  stationCtrl: IController = new StationCtrl(
     this.socket,
     this.stationData,
     this.authData,
-    this.chartsCtrl
+    this.chartsCtrl,
+    new StationGoGenMe3900Cfg()
   );
 
   domData: DomData = new DomData();
@@ -64,7 +67,7 @@ export class AppContext {
     this.headerCtrl.start();
     this.chartsCtrl.start();
     this.stationCtrl.start();
-    this.domCtrl.start();
+    //    this.domCtrl.start();
     this.forecastCrtl.start();
   }
 

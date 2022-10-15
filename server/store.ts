@@ -2,7 +2,7 @@ import { Pool } from "pg";
 import { createClient } from "redis";
 import { IStationData } from "../common/stationModel";
 import { Dom } from "./dom";
-import Station from "./station";
+import StationGoGenMe3900 from "./stationGoGenMe3900";
 import { IDomDataRaw } from "../common/domModel";
 import { IMeasurement } from "./measurement";
 
@@ -14,7 +14,7 @@ const PG_USER = process.env.PG_USER || "postgres";
 
 const redisClientSub = createClient();
 redisClientSub.connect();
-const station = new Station();
+const station = new StationGoGenMe3900();
 const dom = new Dom();
 
 const pool = new Pool({

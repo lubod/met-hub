@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { Dom, TABLES } from "./dom";
-import Station from "./station";
+import StationGoGenMe3900 from "./stationGoGenMe3900";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 5432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -16,7 +16,7 @@ const pool = new Pool({
   port: PG_PORT,
 });
 
-const station = new Station();
+const station = new StationGoGenMe3900();
 const dom = new Dom();
 
 function minmax(arr: any, index: number, window: number, column: string) {

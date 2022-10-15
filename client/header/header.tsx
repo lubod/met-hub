@@ -1,13 +1,18 @@
+/* eslint-disable no-param-reassign */
 import { observer } from "mobx-react";
 import React from "react";
 import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { AppContext } from "..";
 import { DOM_MEASUREMENTS, DOM_MEASUREMENTS_DESC } from "../../common/domModel";
+import { StationGarni1025ArcusCfg } from "../../common/stationGarni1025ArcusCfg";
+import { StationGoGenMe3900Cfg } from "../../common/stationGoGenMe3900Cfg";
 import {
   STATION_MEASUREMENTS,
   STATION_MEASUREMENTS_DESC,
 } from "../../common/stationModel";
 import { MyContainer } from "../data/mycontainer";
+import StationCtrl from "../station/stationCtrl";
+import StationData from "../station/stationData";
 import Text from "../text/text";
 
 type HeaderProps = {
@@ -29,17 +34,44 @@ const Header = observer(({ appContext }: HeaderProps) => (
             id="dropdown-place-button"
             title="Place"
             onSelect={(e) => {
-              appContext.headerData.setPlace(e);
-              if (appContext.headerData.place === "stanica") {
+              appContext.headerData.setId(e);
+              if (appContext.headerData.id === "station_1") {
                 appContext.chartsData.setMeasurements(STATION_MEASUREMENTS);
                 appContext.chartsData.setMeasurementObject(
                   STATION_MEASUREMENTS_DESC.TEMPERATURE
                 );
-              } else if (appContext.headerData.place === "dom") {
+                appContext.stationCtrl.stop();
+                appContext.stationData = new StationData();
+
+                appContext.stationCtrl = new StationCtrl(
+                  appContext.socket,
+                  appContext.stationData,
+                  appContext.authData,
+                  appContext.chartsCtrl,
+                  new StationGoGenMe3900Cfg()
+                );
+                appContext.stationCtrl.start();
+              } else if (appContext.headerData.id === "dom") {
                 appContext.chartsData.setMeasurements(DOM_MEASUREMENTS);
                 appContext.chartsData.setMeasurementObject(
                   DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR
                 );
+              } else if (appContext.headerData.id === "station_2") {
+                appContext.chartsData.setMeasurements(STATION_MEASUREMENTS);
+                appContext.chartsData.setMeasurementObject(
+                  STATION_MEASUREMENTS_DESC.TEMPERATURE
+                );
+                appContext.stationCtrl.stop();
+                appContext.stationData = new StationData();
+
+                appContext.stationCtrl = new StationCtrl(
+                  appContext.socket,
+                  appContext.stationData,
+                  appContext.authData,
+                  appContext.chartsCtrl,
+                  new StationGarni1025ArcusCfg()
+                );
+                appContext.stationCtrl.start();
               }
               appContext.chartsCtrl.load(
                 appContext.chartsData.offset,
@@ -52,10 +84,12 @@ const Header = observer(({ appContext }: HeaderProps) => (
               );
             }}
           >
-            <Dropdown.Item eventKey="stanica">Marianka - Station</Dropdown.Item>
+            <Dropdown.Item eventKey="station_1">
+              Marianka - Station
+            </Dropdown.Item>
             <Dropdown.Item eventKey="dom">Marianka - Dom</Dropdown.Item>
-            <Dropdown.Item eventKey="stanica2">
-              Demanovaska Dolina
+            <Dropdown.Item eventKey="station_2">
+              Demanovska Dolina
             </Dropdown.Item>
           </DropdownButton>
         )}

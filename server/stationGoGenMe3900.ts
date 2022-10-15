@@ -1,15 +1,15 @@
+import { StationGoGenMe3900Cfg } from "../common/stationGoGenMe3900Cfg";
 import {
   IStationData,
-  IStationDataRaw,
+  IStationGoGenMe3900DataRaw,
   IStationTrendData,
-  StationCfg,
 } from "../common/stationModel";
 import { IMeasurement } from "./measurement";
 
-const PASSKEY = process.env.STATION_PASSKEY || "";
+const PASSKEY = process.env.STATION_1_PASSKEY || "";
 
-class Station implements IMeasurement {
-  cfg: StationCfg = new StationCfg();
+class StationGoGenMe3900 implements IMeasurement {
+  cfg: StationGoGenMe3900Cfg = new StationGoGenMe3900Cfg();
 
   getTables() {
     return [this.cfg.TABLE];
@@ -74,7 +74,37 @@ class Station implements IMeasurement {
     return `insert into ${this.cfg.TABLE}(timestamp, tempin, humidityin, pressurerel, pressureabs, temp, humidity, winddir, windspeed, windgust, rainrate, solarradiation, uv, eventrain, hourlyrain, dailyrain, weeklyrain, monthlyrain) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`;
   }
 
-  decodeData(data: IStationDataRaw) {
+  /*
+curl --header "Content-Type: application/json" --request POST --data \
+'{ "PASSKEY": "",
+  "stationtype": "EasyWeatherV1.5.2",
+  "dateutc": "2021-04-06 08:42:00",
+  "tempinf": "74.1",
+  "humidityin": "62",
+  "baromrelin": "30.189",
+  "baromabsin": "29.442",
+  "tempf": "71.4",
+  "humidity": "72",
+  "winddir": "69",
+  "windspeedmph": "0.4",
+  "windgustmph": "1.1",
+  "maxdailygust": "3.4",
+  "rainratein": "0.000",
+  "eventrainin": "0.000",
+  "hourlyrainin": "0.000",
+  "dailyrainin": "0.000",
+  "weeklyrainin": "0.000",
+  "monthlyrainin": "0.201",
+  "totalrainin": "0.201",
+  "solarradiation": "19.45",
+  "uv": "0",
+  "wh65batt": "0",
+  "freq": "868M",
+  "model": "WS2900_V2.01.10" }' \
+  http://localhost:8082/setData
+*/
+
+  decodeData(data: IStationGoGenMe3900DataRaw) {
     const TO_MM = 25.4;
     const TO_KM = 1.6;
     const TO_HPA = 33.8639;
@@ -283,4 +313,4 @@ class Station implements IMeasurement {
   }
 }
 
-export default Station;
+export default StationGoGenMe3900;
