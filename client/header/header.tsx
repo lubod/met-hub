@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { observer } from "mobx-react";
+import moment from "moment";
 import React from "react";
 import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { AppContext } from "..";
@@ -22,7 +23,7 @@ const Header = observer(({ appContext }: HeaderProps) => (
       <Col xs={4}>
         <Text
           name="Current time"
-          value={appContext.headerData.ctime.toLocaleTimeString("sk-SK")}
+          value={moment(appContext.headerData.ctime).format("HH:mm:ss")}
         />
       </Col>
       <Col xs={4}>

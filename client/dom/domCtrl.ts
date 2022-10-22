@@ -16,6 +16,15 @@ class DomCtrl {
 
   chartsCtrl: ChartsCtrl;
 
+  listener = (data: IDomData) => {
+    this.domData.processData(data);
+  };
+
+  listenerTrend = (data: IDomTrendData) => {
+    this.domData.processTrendData(data);
+    this.chartsCtrl?.reload();
+  };
+
   constructor(mySocket: any, domData: DomData, chartsCtrl: ChartsCtrl) {
     this.domData = domData;
     this.domCfg = new DomCfg();
@@ -27,15 +36,10 @@ class DomCtrl {
   start() {
     this.fetchData();
     this.fetchTrendData();
-    this.socket.getSocket().on(this.domCfg.SOCKET_CHANNEL, (data: IDomData) => {
-      this.domData.processData(data);
-    });
+    this.socket.getSocket().on(this.domCfg.SOCKET_CHANNEL, this.listener);
     this.socket
       .getSocket()
-      .on(this.domCfg.SOCKET_TREND_CHANNEL, (data: IDomTrendData) => {
-        this.domData.processTrendData(data);
-        this.chartsCtrl?.reload();
-      });
+      .on(this.domCfg.SOCKET_TREND_CHANNEL, this.listenerTrend);
     this.timer = setInterval(() => {
       this.domData.setTime(new Date());
       if (this.domData.oldData) {
@@ -57,17 +61,10 @@ class DomCtrl {
   }
 
   stop() {
+    this.socket.getSocket().off(this.domCfg.SOCKET_CHANNEL, this.listener);
     this.socket
       .getSocket()
-      .off(this.domCfg.SOCKET_CHANNEL, (data: IDomData) => {
-        this.domData.processData(data);
-      });
-    this.socket
-      .getSocket()
-      .off(this.domCfg.SOCKET_TREND_CHANNEL, (data: IDomTrendData) => {
-        this.domData.processTrendData(data);
-        this.chartsCtrl?.reload();
-      });
+      .off(this.domCfg.SOCKET_TREND_CHANNEL, this.listenerTrend);
     clearInterval(this.timer);
   }
 

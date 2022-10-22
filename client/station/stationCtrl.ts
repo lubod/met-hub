@@ -21,6 +21,15 @@ class StationCtrl implements IController {
 
   stationCfg: StationCfg;
 
+  listener = (data: IStationData) => {
+    this.stationData.processData(data);
+  };
+
+  listenerTrend = (data: IStationTrendData) => {
+    this.stationData.processTrendData(data);
+    this.chartsCtrl?.reload();
+  };
+
   constructor(
     socket: any,
     stationData: StationData,
@@ -51,17 +60,10 @@ class StationCtrl implements IController {
     // console.log("start", new Date());
     this.fetchData();
     this.fetchTrendData();
+    this.socket.getSocket().on(this.stationCfg.SOCKET_CHANNEL, this.listener);
     this.socket
       .getSocket()
-      .on(this.stationCfg.SOCKET_CHANNEL, (data: IStationData) => {
-        this.stationData.processData(data);
-      });
-    this.socket
-      .getSocket()
-      .on(this.stationCfg.SOCKET_TREND_CHANNEL, (data: IStationTrendData) => {
-        this.stationData.processTrendData(data);
-        this.chartsCtrl?.reload();
-      });
+      .on(this.stationCfg.SOCKET_TREND_CHANNEL, this.listenerTrend);
     this.timer = setInterval(() => {
       this.stationData.setTime(new Date());
       if (this.stationData.oldData) {
@@ -83,17 +85,10 @@ class StationCtrl implements IController {
   }
 
   stop() {
+    this.socket.getSocket().off(this.stationCfg.SOCKET_CHANNEL, this.listener);
     this.socket
       .getSocket()
-      .off(this.stationCfg.SOCKET_CHANNEL, (data: IStationData) => {
-        this.stationData.processData(data);
-      });
-    this.socket
-      .getSocket()
-      .off(this.stationCfg.SOCKET_TREND_CHANNEL, (data: IStationTrendData) => {
-        this.stationData.processTrendData(data);
-        this.chartsCtrl?.reload();
-      });
+      .off(this.stationCfg.SOCKET_TREND_CHANNEL, this.listenerTrend);
     clearInterval(this.timer);
   }
 

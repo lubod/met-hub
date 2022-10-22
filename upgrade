@@ -1,0 +1,28 @@
+echo "stop"
+sudo docker stop met-hub-store
+sudo docker stop met-hub
+sudo docker stop met-hub-nginx
+
+echo "rm"
+sudo docker rm met-hub-store
+sudo docker rm met-hub
+sudo docker rm met-hub-nginx
+
+echo "pull"
+sudo docker pull ghcr.io/lubod/met-hub-store:latest
+sudo docker pull ghcr.io/lubod/met-hub:latest
+sudo docker pull ghcr.io/lubod/met-hub-nginx
+
+echo "run"
+sudo docker run --name met-hub -d --env-file /home/ubuntu/met-hub.env --net host --restart unless-stopped ghcr.io/lubod/met-hub
+sudo docker run --name met-hub-store -d --env-file /home/ubuntu/met-hub.env --net host --restart unless-stopped ghcr.io/lubod/met-hub-store
+sudo docker run --name met-hub-nginx -d --env-file /home/ubuntu/met-hub.env --net host --restart unless-stopped -v /etc/nginx/snippets/:/etc/nginx/snippets/ -v /etc/ssl/:/etc/ssl/ -v /etc/letsencrypt/:/etc/letsencrypt/ -v /etc/nginx/dhparam.pem:/etc/nginx/dhparam.pem  ghcr.io/lubod/met-hub-nginx
+
+echo "logs"
+sudo docker logs met-hub
+sudo docker logs met-hub-store
+sudo docker logs met-hub-nginx
+
+echo "prune"
+sudo docker image prune -a
+
