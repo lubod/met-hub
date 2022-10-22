@@ -169,7 +169,7 @@ class StationCtrl implements IController {
   }
 
   async fetchRainData() {
-    const url = "/api/loadRainData";
+    const url = `/api/loadRainData/station/${this.stationCfg.STATION_ID}`;
 
     console.info(url);
 

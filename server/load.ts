@@ -65,7 +65,7 @@ function checkInput(
   return false;
 }
 
-// select timestamp, tempin from stanica where timestamp >= '2020-08-13 09:20:54+00' and timestamp <= '2020-08-13 10:00:31+00';
+// select timestamp, tempin from station_${stationID} where timestamp >= '2020-08-13 09:20:54+00' and timestamp <= '2020-08-13 10:00:31+00';
 export async function loadData(
   start: Date,
   end: Date,
@@ -94,14 +94,14 @@ export async function loadData(
         }${extraColumn} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
         if (table === "vonku" && column === "rain") {
           queryText = `select timestamp,cast(${column} as int) as rain from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
-        } else if (table === "stanica" && column === "hourlyrain") {
-          queryText = `select DATE_TRUNC('hour',timestamp, 'CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from stanica where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('hour',timestamp, 'CEST') order by timestamp asc`;
-        } else if (table === "stanica" && column === "dailyrain") {
-          queryText = `select DATE_TRUNC('day',timestamp, 'CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from stanica where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('day',timestamp, 'CEST') order by timestamp asc `;
-        } else if (table === "stanica" && column === "weeklyrain") {
-          queryText = `select DATE_TRUNC('week',timestamp + interval '1day','CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from stanica where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('week',timestamp  + interval '1day','CEST') order by timestamp asc`;
-        } else if (table === "stanica" && column === "monthlyrain") {
-          queryText = `select DATE_TRUNC('month',timestamp, 'CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from stanica where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('month',timestamp,'CEST') order by timestamp asc`;
+        } else if (table.startsWith("station") && column === "hourlyrain") {
+          queryText = `select DATE_TRUNC('hour',timestamp, 'CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('hour',timestamp, 'CEST') order by timestamp asc`;
+        } else if (table.startsWith("station") && column === "dailyrain") {
+          queryText = `select DATE_TRUNC('day',timestamp, 'CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('day',timestamp, 'CEST') order by timestamp asc `;
+        } else if (table.startsWith("station") && column === "weeklyrain") {
+          queryText = `select DATE_TRUNC('week',timestamp + interval '1day','CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('week',timestamp  + interval '1day','CEST') order by timestamp asc`;
+        } else if (table.startsWith("station") && column === "monthlyrain") {
+          queryText = `select DATE_TRUNC('month',timestamp, 'CEST') as timestamp, coalesce(max(${column}), 0.0) as ${column} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' group by DATE_TRUNC('month',timestamp,'CEST') order by timestamp asc`;
         }
         if (extraColumn === "kuri") {
           queryText = `select timestamp,${column},cast(${extraColumn} as int) as kuri from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
@@ -144,7 +144,7 @@ export async function loadData(
   return null;
 }
 
-export async function loadRainData() {
+export async function loadRainData(stationID: string) {
   const client = await pool.connect();
   try {
     console.info("connected", new Date());
@@ -159,8 +159,9 @@ export async function loadRainData() {
       "4week",
     ];
     const res = [];
+    const table = `station_${stationID}`;
     for (const interval of intervals) {
-      const queryText = `WITH minuterain as (WITH hour_coef as (select DATE_TRUNC('hour',timestamp) as hour, sum(rainrate) as rainrate_sum, max(hourlyrain) as hourlyrain_max, max(hourlyrain)/NULLIF(sum(rainrate),0) as coef from stanica where timestamp > current_timestamp - '${interval}'::interval group by DATE_TRUNC('hour', timestamp)) select stanica.timestamp,stanica.rainrate,stanica.hourlyrain, stanica.solarradiation, hour_coef.hour, hour_coef.rainrate_sum, hour_coef.hourlyrain_max, hour_coef.coef, stanica.rainrate*hour_coef.coef as minuterain from stanica,hour_coef where DATE_TRUNC('hour', stanica.timestamp) = hour_coef.hour and stanica.rainrate > 0) select coalesce(sum(minuterain.minuterain), 0) from minuterain where timestamp > current_timestamp - '${interval}'::interval;`;
+      const queryText = `WITH minuterain as (WITH hour_coef as (select DATE_TRUNC('hour',timestamp) as hour, sum(rainrate) as rainrate_sum, max(hourlyrain) as hourlyrain_max, max(hourlyrain)/NULLIF(sum(rainrate),0) as coef from ${table} where timestamp > current_timestamp - '${interval}'::interval group by DATE_TRUNC('hour', timestamp)) select station_${stationID}.timestamp,station_${stationID}.rainrate,station_${stationID}.hourlyrain, station_${stationID}.solarradiation, hour_coef.hour, hour_coef.rainrate_sum, hour_coef.hourlyrain_max, hour_coef.coef, station_${stationID}.rainrate*hour_coef.coef as minuterain from station_${stationID},hour_coef where DATE_TRUNC('hour', station_${stationID}.timestamp) = hour_coef.hour and station_${stationID}.rainrate > 0) select coalesce(sum(minuterain.minuterain), 0) from minuterain where timestamp > current_timestamp - '${interval}'::interval;`;
       // eslint-disable-next-line no-await-in-loop
       const r = await client.query(queryText);
       res.push({ interval, sum: r.rows[0].coalesce });

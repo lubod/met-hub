@@ -173,13 +173,13 @@ router.get("/api/loadData", (req: any, res: any) => {
   }
 });
 
-router.get("/api/loadRainData", (req: any, res: any) => {
-  console.info("/loadRainData", req.query);
+router.get("/api/loadRainData/station/:stationID", (req: any, res: any) => {
+  console.info("/loadRainData", req.params);
   if (req.headers.authorization) {
     const user = verifyToken(req.headers.authorization.substr(7));
     if (user !== null) {
       res.type("application/json");
-      loadRainData().then((data) => res.json(data));
+      loadRainData(req.params.stationID).then((data) => res.json(data));
     } else {
       res.status(401).send("auth issue");
     }
