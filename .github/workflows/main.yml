@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: "16.x"
       - run: npm install
-      - run: npm run build
+      - run: NODE_OPTIONS="--max-old-space-size=4096" npm run build
       - run: echo "docker build."
       - run: docker build -f Dockerfile-met-hub -t ghcr.io/lubod/met-hub:latest .
       - run: docker build -f Dockerfile-met-hub-store -t ghcr.io/lubod/met-hub-store:latest .
