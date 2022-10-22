@@ -39,10 +39,10 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
                   <a href="https://github.com/lubod/met-hub">met-hub</a>
                 </p>
                 <Myhr />
-                <p>Currently you can see data from GoGEN ME 3900</p>
+                <p>Currently you can see data from GoGEN ME 3900 or GARNI 1025 Arcus</p>
                 <p>Login to see more stations and historical data</p>
                 <Myhr />
-                <p>- v22 -</p>
+                <p>- v23 -</p>
               </MyContainer>
             </Col>
           </Row>
