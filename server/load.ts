@@ -1,6 +1,5 @@
 import { Pool } from "pg";
-import { Dom, TABLES } from "./dom";
-import StationGoGenMe3900 from "./stationGoGenMe3900";
+import { AllStationsCfg } from "../common/allStationsCfg";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 5432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -15,9 +14,6 @@ const pool = new Pool({
   password: PG_PASSWORD,
   port: PG_PORT,
 });
-
-const station = new StationGoGenMe3900();
-const dom = new Dom();
 
 function minmax(arr: any, index: number, window: number, column: string) {
   let minIndex = index;
@@ -48,32 +44,34 @@ function minmax(arr: any, index: number, window: number, column: string) {
   return { x: maxIndex, y: null };
 }
 
-function checkInput(table: string, column: string, extraColumn: string) {
-  const sc = station.getColumns();
-  const dc = dom.getColumns();
-  const st = station.getTables();
-  const dt = dom.getTables();
-  if (!st.includes(table) && !dt.includes(table as TABLES)) {
-    console.error(`Wrong table: ${table}`);
-    return false;
+function checkInput(
+  table: string,
+  column: string,
+  extraColumn: string,
+  allStationsCfg: AllStationsCfg
+) {
+  const stationID = table.startsWith("station") ? table.split("_")[1] : "dom"; // todo
+  const station = allStationsCfg.getStationByID(stationID);
+  const tables = station.measurement.getTables();
+  const columns = station.measurement.getColumns();
+  if (tables.includes(table) && columns.includes(column)) {
+    if (extraColumn === "") {
+      return true;
+    }
+    if (columns.includes(extraColumn)) {
+      return true;
+    }
   }
-  if (!sc.includes(column) && !dc.includes(column)) {
-    console.error(`Wrong column: ${column}`);
-    return false;
-  }
-  if (
-    extraColumn !== "" &&
-    !sc.includes(extraColumn) &&
-    !dc.includes(extraColumn)
-  ) {
-    console.error(`Wrong extraColumn: ${extraColumn}`);
-    return false;
-  }
-  return true;
+  return false;
 }
 
 // select timestamp, tempin from stanica where timestamp >= '2020-08-13 09:20:54+00' and timestamp <= '2020-08-13 10:00:31+00';
-export async function loadData(start: Date, end: Date, measurement: string) {
+export async function loadData(
+  start: Date,
+  end: Date,
+  measurement: string,
+  allStationsCfg: AllStationsCfg
+) {
   const timestampStart = `${start
     .toISOString()
     .slice(0, 19)
@@ -89,7 +87,7 @@ export async function loadData(start: Date, end: Date, measurement: string) {
       const column = dbd[1];
       const extraColumn = dbd.length >= 3 ? `${dbd[2]}` : "";
 
-      if (checkInput(table, column, extraColumn)) {
+      if (checkInput(table, column, extraColumn, allStationsCfg)) {
         // select timestamp,sum(rain::int) as rain from vonku group by timestamp order by timestamp asc
         let queryText = `select timestamp,${column}${
           extraColumn === "" ? "" : ","

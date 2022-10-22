@@ -26,10 +26,10 @@ const Protected = observer(({ appContext }: ProtectedProps) => {
           </Row>
           <Row>
             <Col sm={4} className="ps-1 pe-1">
-              {appContext.headerData.id.startsWith("station") && (
+              {appContext.headerData.stationID !== "dom" && (
                 <Station appContext={appContext} />
               )}
-              {appContext.headerData.id === "dom" && (
+              {appContext.headerData.stationID === "dom" && (
                 <Dom appContext={appContext} />
               )}
             </Col>

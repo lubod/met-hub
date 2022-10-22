@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import { IMeasurementDesc } from "../../common/measurementDesc";
 import AuthData from "../auth/authData";
-import ChartsData from "./chartsData";
+import ChartsData, { CData } from "./chartsData";
 
 // const ENV = process.env.ENV || "";
 
@@ -21,17 +21,20 @@ class ChartsCtrl {
     this.load(
       this.chartsData.offset,
       this.chartsData.page,
-      this.chartsData.measurement
+      this.chartsData.measurement,
+      this.chartsData.stationID
     );
   }
 
-  async load(of: string, p: number, m: IMeasurementDesc) {
+  async load(of: string, p: number, m: IMeasurementDesc, stationID: string) {
     if (!this.authData.isAuth) {
-      console.info("no load -> no auth");
+      console.info("no auth -> no load");
       return;
     }
     try {
       this.chartsData.setLoading(true);
+      this.chartsData.setHdata(null);
+      this.chartsData.setCdata(new CData());
       const o = parseInt(of.split("|")[0], 10) * 1000;
       // eslint-disable-next-line no-promise-executor-return
       // return new Promise((resolve) => setTimeout(resolve, 2000));
@@ -39,7 +42,11 @@ class ChartsCtrl {
       const end = new Date(Date.now() + p * o);
       let url = `/api/loadData?start=${start.toISOString()}&end=${end.toISOString()}&measurement=${
         m.table
-      }:${m.col}`;
+      }`;
+      if (stationID !== "dom") {
+        url += `_${stationID}`;
+      }
+      url += `:${m.col}`;
       if (m.col2 !== "") {
         url += `:${m.col2}`;
       }
@@ -92,9 +99,6 @@ class ChartsCtrl {
       if (y2 !== "") {
         domainMin = 0;
       }
-      //      if (domainMin < 0 && couldBeNegative === false) {
-      //      domainMin = 0; // todo
-      //      }
 
       this.chartsData.setHdata(newData);
       this.chartsData.setCdata({

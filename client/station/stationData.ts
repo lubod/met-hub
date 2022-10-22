@@ -2,9 +2,7 @@ import { action, makeObservable, observable } from "mobx";
 import { IStationData, IStationTrendData } from "../../common/stationModel";
 
 class StationData {
-  data: IStationData = {
-    timestamp: "",
-  } as IStationData;
+  data: IStationData = {} as IStationData;
 
   trendData: IStationTrendData = {
     timestamp: [],
@@ -33,7 +31,9 @@ class StationData {
 
   loading: boolean = true;
 
-  constructor() {
+  stationID: string = null;
+
+  constructor(stationID: string) {
     makeObservable(this, {
       data: observable,
       trendData: observable,
@@ -41,13 +41,21 @@ class StationData {
       floatingRainData: observable,
       raindata: observable,
       loading: observable,
+      stationID: observable,
       processData: action,
       processTrendData: action,
       checkOldData: action,
       setLoading: action,
       setFloatingRainData: action,
       setRaindata: action,
+      setStationID: action,
     });
+    this.stationID = stationID;
+    console.info("OLDDATA", this.oldData);
+  }
+
+  setStationID(stationID: string) {
+    this.stationID = stationID;
   }
 
   setRaindata(raindata: any) {

@@ -325,10 +325,10 @@ CREATE TABLE public.spalna_vzduch (
 ALTER TABLE public.spalna_vzduch OWNER TO postgres;
 
 --
--- Name: stanica; Type: TABLE; Schema: public; Owner: postgres
+-- Name: station_gJr6xKyg; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.stanica (
+CREATE TABLE public.station_gJr6xKyg (
     "timestamp" timestamp with time zone NOT NULL,
     tempin numeric(4,1),
     humidityin numeric(3,0),
@@ -350,7 +350,7 @@ CREATE TABLE public.stanica (
 );
 
 
-ALTER TABLE public.stanica OWNER TO postgres;
+ALTER TABLE public.station_gJr6xKyg OWNER TO postgres;
 
 --
 -- Name: tarif; Type: TABLE; Schema: public; Owner: postgres
@@ -545,11 +545,11 @@ ALTER TABLE ONLY public.spalna_vzduch
 
 
 --
--- Name: stanica stanica_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: station_gJr6xKyg station_gJr6xKyg_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.stanica
-    ADD CONSTRAINT stanica_pkey PRIMARY KEY ("timestamp");
+ALTER TABLE ONLY public.station_gJr6xKyg
+    ADD CONSTRAINT station_gJr6xKyg_pkey PRIMARY KEY ("timestamp");
 
 
 --
@@ -587,3 +587,38 @@ ALTER TABLE ONLY public.zadverie_vzduch
 -- docker exec -it postgres bash
 -- docker cp pg-schema.sql postgres:/pg-schema.sql
 -- psql --host=database --port=5432 --username=postgres -d postgres --password < pg-schema.sql
+
+--
+-- Name: station_dcTNOTWv; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.station_dcTNOTWv (
+    "timestamp" timestamp with time zone NOT NULL,
+    tempin numeric(4,1),
+    humidityin numeric(3,0),
+    pressurerel numeric(6,1),
+    pressureabs numeric(6,1),
+    temp numeric(4,1),
+    humidity numeric(3,0),
+    winddir numeric(3,0),
+    windspeed numeric(4,1),
+    windgust numeric(4,1),
+    rainrate numeric(5,1),
+    solarradiation numeric(6,1),
+    uv numeric(2,0),
+    eventrain numeric(5,1),
+    hourlyrain numeric(5,1),
+    dailyrain numeric(5,1),
+    weeklyrain numeric(5,1),
+    monthlyrain numeric(5,1)
+);
+
+
+ALTER TABLE public.station_dcTNOTWv OWNER TO postgres;
+
+--
+-- Name: station_dcTNOTWv station_dcTNOTWv_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.station_dcTNOTWv
+    ADD CONSTRAINT station_dcTNOTWv_pkey PRIMARY KEY ("timestamp");

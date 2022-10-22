@@ -1,9 +1,6 @@
 import { createClient, RedisClientType } from "redis";
-import StationGoGenMe3900 from "./stationGoGenMe3900";
-import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import SocketEmitter from "./socketEmitter";
-import StationGarni1025Arcus from "./stationGarni1025Arcus";
 
 class Agregator {
   redis: RedisClientType;
@@ -14,14 +11,10 @@ class Agregator {
 
   socketEmiter: SocketEmitter;
 
-  constructor(socketEmiter: SocketEmitter) {
+  constructor(socketEmiter: SocketEmitter, measurements: IMeasurement[]) {
     this.redis = createClient();
     this.redisPub = createClient();
-    this.measurements = [
-      new StationGoGenMe3900(),
-      new Dom(),
-      new StationGarni1025Arcus(),
-    ];
+    this.measurements = measurements;
     this.socketEmiter = socketEmiter;
   }
 

@@ -2,7 +2,6 @@
 /* eslint-disable import/no-import-module-exports */
 import React from "react";
 import ReactDOM from "react-dom";
-// import { autorun } from "mobx";
 import AuthCtrl from "./auth/authCtrl";
 import AuthData from "./auth/authData";
 import MySocket from "./socket";
@@ -18,48 +17,76 @@ import "bootstrap/dist/css/bootstrap.css";
 import "./style.scss";
 import ForecastData from "./forecast/forecastData";
 import ForecastCtrl from "./forecast/forecastCtrl";
-import { StationGoGenMe3900Cfg } from "../common/stationGoGenMe3900Cfg";
 import { IController } from "../common/controller";
 import DomData from "./dom/domData";
 import DomCtrl from "./dom/domCtrl";
+import { AllStationsCfgClient } from "../common/allStationsCfgClient";
+import {
+  STATION_MEASUREMENTS,
+  STATION_MEASUREMENTS_DESC,
+} from "../common/stationModel";
 
 export class AppContext {
-  socket: MySocket = new MySocket();
+  socket: MySocket;
 
-  authData: AuthData = new AuthData();
+  authData: AuthData;
 
-  authCtrl: AuthCtrl = new AuthCtrl(this.authData);
+  authCtrl: AuthCtrl;
 
-  headerData: HeaderData = new HeaderData();
+  headerData: HeaderData;
 
-  headerCtrl: HeaderCtrl = new HeaderCtrl(this.headerData);
+  headerCtrl: HeaderCtrl;
 
-  chartsData: ChartsData = new ChartsData();
+  chartsData: ChartsData;
 
-  chartsCtrl: ChartsCtrl = new ChartsCtrl(this.chartsData, this.authData);
+  chartsCtrl: ChartsCtrl;
 
-  stationData: StationData = new StationData();
+  stationData: StationData;
 
-  stationCtrl: IController = new StationCtrl(
-    this.socket,
-    this.stationData,
-    this.authData,
-    this.chartsCtrl,
-    new StationGoGenMe3900Cfg()
-  );
+  stationCtrl: IController;
 
-  domData: DomData = new DomData();
+  domData: DomData;
 
-  domCtrl: DomCtrl = new DomCtrl(this.socket, this.domData, this.chartsCtrl);
+  domCtrl: DomCtrl;
 
-  forecastData: ForecastData = new ForecastData();
+  forecastData: ForecastData;
 
-  forecastCrtl: ForecastCtrl = new ForecastCtrl(
-    this.forecastData,
-    this.authData
-  );
+  forecastCrtl: ForecastCtrl;
 
   start() {
+    this.socket = new MySocket();
+    this.authData = new AuthData();
+    this.authCtrl = new AuthCtrl(this.authData);
+    this.headerData = new HeaderData(
+      AllStationsCfgClient.getDefaultStationID()
+    );
+    this.headerCtrl = new HeaderCtrl(this.headerData);
+    this.chartsData = new ChartsData(
+      AllStationsCfgClient.getDefaultStationID(),
+      AllStationsCfgClient.getDefaultStation().lat,
+      AllStationsCfgClient.getDefaultStation().lon,
+      STATION_MEASUREMENTS_DESC.TEMPERATURE,
+      STATION_MEASUREMENTS
+    );
+    this.chartsCtrl = new ChartsCtrl(this.chartsData, this.authData);
+    this.stationData = new StationData(
+      AllStationsCfgClient.getDefaultStationID()
+    );
+    this.stationCtrl = new StationCtrl(
+      this.socket,
+      this.stationData,
+      this.authData,
+      this.chartsCtrl
+    );
+    this.domData = new DomData();
+    this.domCtrl = new DomCtrl(this.socket, this.domData, this.chartsCtrl);
+    this.forecastData = new ForecastData(
+      AllStationsCfgClient.getDefaultStationID(),
+      AllStationsCfgClient.getDefaultStation().lat,
+      AllStationsCfgClient.getDefaultStation().lon
+    );
+    this.forecastCrtl = new ForecastCtrl(this.forecastData, this.authData);
+
     this.authData.setCallWhenAuthetificated(() => {
       this.chartsCtrl.reload();
     });
@@ -67,7 +94,7 @@ export class AppContext {
     this.headerCtrl.start();
     this.chartsCtrl.start();
     this.stationCtrl.start();
-    this.domCtrl.start();
+    // this.domCtrl.start();
     this.forecastCrtl.start();
   }
 
@@ -78,7 +105,6 @@ export class AppContext {
 }
 
 const appContext: AppContext = new AppContext();
-appContext.start();
 
 // autorun(() => {
 /* if (appContext.authData.isAuth === true) {
@@ -103,4 +129,7 @@ function render() {
   );
 }
 
-render();
+AllStationsCfgClient.fetchAllStationsCfg().then(() => {
+  appContext.start();
+  render();
+});

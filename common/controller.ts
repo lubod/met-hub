@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 export interface IController {
+  setStation(stationID: string): any;
+
   start(): any;
 
   stop(): any;

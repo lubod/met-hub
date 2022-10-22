@@ -33,14 +33,8 @@ export enum TABLES {
   TARIF = "tarif",
 }
 
-const PASSKEY = process.env.DOM_PASSKEY || "";
-
 export class Dom implements IMeasurement {
   cfg: DomCfg = new DomCfg();
-
-  getPasskey() {
-    return PASSKEY;
-  }
 
   getSocketChannel() {
     return this.cfg.SOCKET_CHANNEL;

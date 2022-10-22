@@ -3,3 +3,4 @@ dist
 deploy
 met-hub.env
 default
+.redis-stations-cfg

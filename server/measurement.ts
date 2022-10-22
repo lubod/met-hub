@@ -1,7 +1,5 @@
 /* eslint-disable no-unused-vars */
 export interface IMeasurement {
-  getPasskey(): string;
-
   getSocketChannel(): string;
 
   getSocketTrendChannel(): string;

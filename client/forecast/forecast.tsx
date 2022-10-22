@@ -24,15 +24,8 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
         <Button
           variant="link btn-sm"
           onClick={() => {
-            appContext.forecastCrtl.fetchData(
-              appContext.headerData.lat,
-              appContext.headerData.lon
-            );
-            appContext.forecastCrtl.fetchAstronomicalData(
-              appContext.headerData.lat,
-              appContext.headerData.lon,
-              new Date()
-            );
+            appContext.forecastCrtl.fetchData();
+            appContext.forecastCrtl.fetchAstronomicalData(new Date());
           }}
         >
           <LoadImg
@@ -94,13 +87,21 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
       <Col xs={6}>
         <Text
           name="Sunrise"
-          value={moment(appContext.forecastData.sunrise).format("HH:mm")}
+          value={
+            appContext.forecastData.sunrise == null
+              ? "-"
+              : moment(appContext.forecastData.sunrise).format("HH:mm")
+          }
         />
       </Col>
       <Col xs={6}>
         <Text
           name="Sunset"
-          value={moment(appContext.forecastData.sunset).format("HH:mm")}
+          value={
+            appContext.forecastData.sunset == null
+              ? "-"
+              : moment(appContext.forecastData.sunset).format("HH:mm")
+          }
         />
       </Col>
     </Row>

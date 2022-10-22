@@ -51,23 +51,26 @@ const Dom = observer(({ appContext }: DomProps) => {
           </Col>
         </Row>
         <Row className={appContext.domData.oldData ? "text-danger" : ""}>
-          <Col xs={4}>
-            <Text name="Place" value={appContext.domData.data.place} />
-          </Col>
-          <Col xs={4}>
+          <Col xs={6}>
             <Text
-              name="Date"
-              value={moment(appContext.stationData.data.timestamp).format(
-                "DD MMM"
-              )}
+              name="Data date"
+              value={
+                appContext.domData.data.timestamp === null
+                  ? "-"
+                  : moment(appContext.domData.data.timestamp).format(
+                      "DD MMM YYYY"
+                    )
+              }
             />
           </Col>
-          <Col xs={4}>
+          <Col xs={6}>
             <Text
               name="Data time"
-              value={moment(appContext.stationData.data.timestamp).format(
-                "HH:mm:ss"
-              )}
+              value={
+                appContext.domData.data.timestamp === null
+                  ? "-"
+                  : moment(appContext.domData.data.timestamp).format("HH:mm:ss")
+              }
             />
           </Col>
         </Row>

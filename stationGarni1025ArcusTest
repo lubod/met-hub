@@ -1,0 +1,1 @@
+ENV=dev node dist/test/testStationGarni1025Arcus.js 

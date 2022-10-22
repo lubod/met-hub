@@ -1,4 +1,4 @@
-import { StationGoGenMe3900Cfg } from "../common/stationGoGenMe3900Cfg";
+import { StationCfg } from "../common/stationCfg";
 import {
   IStationData,
   IStationGoGenMe3900DataRaw,
@@ -6,10 +6,12 @@ import {
 } from "../common/stationModel";
 import { IMeasurement } from "./measurement";
 
-const PASSKEY = process.env.STATION_1_PASSKEY || "";
-
 class StationGoGenMe3900 implements IMeasurement {
-  cfg: StationGoGenMe3900Cfg = new StationGoGenMe3900Cfg();
+  cfg: StationCfg = null;
+
+  constructor(stationID: string) {
+    this.cfg = new StationCfg(stationID);
+  }
 
   getTables() {
     return [this.cfg.TABLE];
@@ -17,10 +19,6 @@ class StationGoGenMe3900 implements IMeasurement {
 
   getColumns() {
     return this.cfg.COLUMNS;
-  }
-
-  getPasskey() {
-    return PASSKEY;
   }
 
   getSocketChannel() {

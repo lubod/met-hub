@@ -12,14 +12,14 @@ class DomCtrl {
 
   timer: any;
 
-  mySocket: any;
+  socket: any;
 
   chartsCtrl: ChartsCtrl;
 
   constructor(mySocket: any, domData: DomData, chartsCtrl: ChartsCtrl) {
     this.domData = domData;
     this.domCfg = new DomCfg();
-    this.mySocket = mySocket;
+    this.socket = mySocket;
     this.chartsCtrl = chartsCtrl;
     // props.socket.getSocket().emit('dom', 'getLastData');
   }
@@ -27,12 +27,10 @@ class DomCtrl {
   start() {
     this.fetchData();
     this.fetchTrendData();
-    this.mySocket
-      .getSocket()
-      .on(this.domCfg.SOCKET_CHANNEL, (data: IDomData) => {
-        this.domData.processData(data);
-      });
-    this.mySocket
+    this.socket.getSocket().on(this.domCfg.SOCKET_CHANNEL, (data: IDomData) => {
+      this.domData.processData(data);
+    });
+    this.socket
       .getSocket()
       .on(this.domCfg.SOCKET_TREND_CHANNEL, (data: IDomTrendData) => {
         this.domData.processTrendData(data);
@@ -58,10 +56,26 @@ class DomCtrl {
     }, 1000);
   }
 
+  stop() {
+    this.socket
+      .getSocket()
+      .off(this.domCfg.SOCKET_CHANNEL, (data: IDomData) => {
+        this.domData.processData(data);
+      });
+    this.socket
+      .getSocket()
+      .off(this.domCfg.SOCKET_TREND_CHANNEL, (data: IDomTrendData) => {
+        this.domData.processTrendData(data);
+        this.chartsCtrl?.reload();
+      });
+    clearInterval(this.timer);
+  }
+
   async fetchData() {
+    this.domData.data = { timestamp: null } as IDomData;
     let url = "/api/getLastData/dom";
     if (ENV === "dev") {
-      url = "http://localhost:18080/api/getLastData/dom"; // todo
+      url = "http://localhost:18080/api/getLastData/dom";
       console.info(url);
     }
 
@@ -87,6 +101,22 @@ class DomCtrl {
   }
 
   async fetchTrendData() {
+    this.domData.trendData = {
+      timestamp: [],
+      temp: [],
+      humidity: [],
+      rain: [],
+      obyvacka_vzduch: [],
+      obyvacka_podlaha: [],
+      pracovna_vzduch: [],
+      pracovna_podlaha: [],
+      spalna_vzduch: [],
+      spalna_podlaha: [],
+      chalani_vzduch: [],
+      chalani_podlaha: [],
+      petra_vzduch: [],
+      petra_podlaha: [],
+    } as IDomTrendData;
     let url = "/api/getTrendData/dom";
     if (ENV === "dev") {
       url = "http://localhost:18080/api/getTrendData/dom";

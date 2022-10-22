@@ -1,10 +1,10 @@
 import fetch from "node-fetch";
-import { IStationCfg } from "../../common/stationCfg";
 import { IStationData, IStationTrendData } from "../../common/stationModel";
 import AuthData from "../auth/authData";
 import ChartsCtrl from "../charts/chartsCtrl";
 import StationData from "./stationData";
 import { IController } from "../../common/controller";
+import { StationCfg } from "../../common/stationCfg";
 
 const ENV = process.env.ENV || "";
 
@@ -15,24 +15,36 @@ class StationCtrl implements IController {
 
   timer: any;
 
-  stationCfg: IStationCfg;
-
   authData: AuthData;
 
   chartsCtrl: ChartsCtrl;
+
+  stationCfg: StationCfg;
 
   constructor(
     socket: any,
     stationData: StationData,
     authData: AuthData,
-    chartsCtrl: ChartsCtrl,
-    stationCfg: IStationCfg
+    chartsCtrl: ChartsCtrl
   ) {
     this.stationData = stationData;
-    this.stationCfg = stationCfg;
     this.socket = socket;
     this.authData = authData;
     this.chartsCtrl = chartsCtrl;
+    this.stationCfg = new StationCfg(stationData.stationID);
+  }
+
+  setStation(stationID: string) {
+    this.stop();
+    this.stationCfg = new StationCfg(stationID);
+    this.stationData.ctime = new Date();
+    this.stationData.oldData = true;
+    this.stationData.floatingRainData = false;
+    this.stationData.raindata = null;
+    this.stationData.try = 0;
+    this.stationData.loading = true;
+    this.stationData.stationID = stationID;
+    this.start();
   }
 
   start() {
@@ -86,6 +98,8 @@ class StationCtrl implements IController {
   }
 
   async fetchData() {
+    this.stationData.data = { timestamp: null } as IStationData;
+
     let url = `/api/getLastData/station/${this.stationCfg.STATION_ID}`;
 
     if (ENV === "dev") {
@@ -116,6 +130,20 @@ class StationCtrl implements IController {
   }
 
   async fetchTrendData() {
+    this.stationData.trendData = {
+      timestamp: [],
+      tempin: [],
+      humidityin: [],
+      temp: [],
+      humidity: [],
+      pressurerel: [],
+      windgust: [],
+      windspeed: [],
+      winddir: [],
+      solarradiation: [],
+      uv: [],
+      rainrate: [],
+    } as IStationTrendData;
     let url = `/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
 
     if (ENV === "dev") {

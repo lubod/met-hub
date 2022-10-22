@@ -1,10 +1,9 @@
 import { Pool } from "pg";
 import { createClient } from "redis";
 import { IStationData } from "../common/stationModel";
-import { Dom } from "./dom";
-import StationGoGenMe3900 from "./stationGoGenMe3900";
 import { IDomDataRaw } from "../common/domModel";
 import { IMeasurement } from "./measurement";
+import { AllStationsCfg, IStation } from "../common/allStationsCfg";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 5432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -14,8 +13,6 @@ const PG_USER = process.env.PG_USER || "postgres";
 
 const redisClientSub = createClient();
 redisClientSub.connect();
-const station = new StationGoGenMe3900();
-const dom = new Dom();
 
 const pool = new Pool({
   user: PG_USER,
@@ -55,18 +52,21 @@ async function store(
   }
 }
 
-console.info(`PG: ${PG_HOST}`);
+function main(stations: Map<string, IStation>) {
+  console.info(`PG: ${PG_HOST}`);
 
-redisClientSub.subscribe(station.getRedisStoreChannel(), (msg: string) => {
-  const data = JSON.parse(msg);
-  data.forEach((element: IStationData) => {
-    store(station, element);
-  });
-});
+  for (const station of stations.values()) {
+    redisClientSub.subscribe(
+      station.measurement.getRedisStoreChannel(),
+      (msg: string) => {
+        const data = JSON.parse(msg);
+        data.forEach((element: IDomDataRaw | IStationData) => {
+          store(station.measurement, element);
+        });
+      }
+    );
+  }
+}
 
-redisClientSub.subscribe(dom.getRedisStoreChannel(), (msg: string) => {
-  const data = JSON.parse(msg);
-  data.forEach((element: IDomDataRaw) => {
-    store(dom, element);
-  });
-});
+const allStationsCfg = new AllStationsCfg();
+allStationsCfg.readCfg().then(() => main(allStationsCfg.getStations()));

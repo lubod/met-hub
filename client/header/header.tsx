@@ -3,16 +3,13 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { AppContext } from "..";
+import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 import { DOM_MEASUREMENTS, DOM_MEASUREMENTS_DESC } from "../../common/domModel";
-import { StationGarni1025ArcusCfg } from "../../common/stationGarni1025ArcusCfg";
-import { StationGoGenMe3900Cfg } from "../../common/stationGoGenMe3900Cfg";
 import {
   STATION_MEASUREMENTS,
   STATION_MEASUREMENTS_DESC,
 } from "../../common/stationModel";
 import { MyContainer } from "../data/mycontainer";
-import StationCtrl from "../station/stationCtrl";
-import StationData from "../station/stationData";
 import Text from "../text/text";
 
 type HeaderProps = {
@@ -32,65 +29,51 @@ const Header = observer(({ appContext }: HeaderProps) => (
         {appContext.authData.isAuth && (
           <DropdownButton
             id="dropdown-place-button"
-            title="Place"
-            onSelect={(e) => {
-              appContext.headerData.setId(e);
-              if (appContext.headerData.id === "station_1") {
-                appContext.chartsData.setMeasurements(STATION_MEASUREMENTS);
-                appContext.chartsData.setMeasurementObject(
-                  STATION_MEASUREMENTS_DESC.TEMPERATURE
-                );
-                appContext.stationCtrl.stop();
-                appContext.stationData = new StationData();
-
-                appContext.stationCtrl = new StationCtrl(
-                  appContext.socket,
-                  appContext.stationData,
-                  appContext.authData,
-                  appContext.chartsCtrl,
-                  new StationGoGenMe3900Cfg()
-                );
-                appContext.stationCtrl.start();
-              } else if (appContext.headerData.id === "dom") {
+            title={
+              AllStationsCfgClient.getStationByID(
+                appContext.headerData.stationID
+              ).place
+            }
+            onSelect={(stationID) => {
+              console.info("stationID", stationID);
+              appContext.headerData.setStationID(stationID);
+              if (appContext.headerData.stationID === "dom") {
                 appContext.chartsData.setMeasurements(DOM_MEASUREMENTS);
                 appContext.chartsData.setMeasurementObject(
                   DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR
                 );
-              } else if (appContext.headerData.id === "station_2") {
+                appContext.stationCtrl.stop();
+                appContext.domCtrl.start();
+              } else {
+                // todo
                 appContext.chartsData.setMeasurements(STATION_MEASUREMENTS);
                 appContext.chartsData.setMeasurementObject(
                   STATION_MEASUREMENTS_DESC.TEMPERATURE
                 );
-                appContext.stationCtrl.stop();
-                appContext.stationData = new StationData();
-
-                appContext.stationCtrl = new StationCtrl(
-                  appContext.socket,
-                  appContext.stationData,
-                  appContext.authData,
-                  appContext.chartsCtrl,
-                  new StationGarni1025ArcusCfg()
-                );
-                appContext.stationCtrl.start();
+                appContext.domCtrl.stop();
+                appContext.stationCtrl.setStation(stationID);
               }
-              appContext.chartsCtrl.load(
-                appContext.chartsData.offset,
-                appContext.chartsData.page,
-                appContext.chartsData.measurement
+
+              appContext.chartsData.setStationID(
+                stationID,
+                AllStationsCfgClient.getStationByID(stationID).lat,
+                AllStationsCfgClient.getStationByID(stationID).lon
               );
-              appContext.forecastCrtl.fetchData(
-                appContext.headerData.lat,
-                appContext.headerData.lon
+              appContext.chartsCtrl.reload();
+
+              appContext.forecastData.setStationID(
+                stationID,
+                AllStationsCfgClient.getStationByID(stationID).lat,
+                AllStationsCfgClient.getStationByID(stationID).lon
               );
+              appContext.forecastCrtl.fetchData(); // TODO
             }}
           >
-            <Dropdown.Item eventKey="station_1">
-              Marianka - Station
-            </Dropdown.Item>
-            <Dropdown.Item eventKey="dom">Marianka - Dom</Dropdown.Item>
-            <Dropdown.Item eventKey="station_2">
-              Demanovska Dolina
-            </Dropdown.Item>
+            {[...AllStationsCfgClient.getStations().entries()].map(
+              ([key, value]) => (
+                <Dropdown.Item eventKey={key}>{value.place}</Dropdown.Item>
+              )
+            )}
           </DropdownButton>
         )}
       </Col>

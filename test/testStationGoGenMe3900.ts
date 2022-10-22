@@ -10,17 +10,13 @@ import {
   IStationGoGenMe3900DataRaw,
 } from "../common/stationModel";
 import StationGoGenMe3900 from "../server/stationGoGenMe3900";
-import { StationGoGenMe3900Cfg } from "../common/stationGoGenMe3900Cfg";
+import { AllStationsCfg } from "../common/allStationsCfg";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
 const PG_DB = process.env.PG_DB || "postgres";
 const PG_HOST = process.env.PG_HOST || "192.168.1.199";
 const PG_USER = process.env.PG_USER || "postgres";
-
-const station = new StationGoGenMe3900();
-
-console.info(`PG: ${PG_HOST}`);
 
 function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
@@ -31,10 +27,10 @@ function round(value: number, precision: number) {
   return Math.round(value * multiplier) / multiplier;
 }
 
-function generateData(d: Date) {
+function generateData(d: Date, PASSKEY: string) {
   d.setUTCMilliseconds(0);
   const data = {} as IStationGoGenMe3900DataRaw;
-  data.PASSKEY = "";
+  data.PASSKEY = PASSKEY;
   data.stationtype = "EasyWeatherV1.5.2";
   data.wh65batt = 0;
   data.freq = "868M";
@@ -134,8 +130,8 @@ async function postData(data: any) {
   }
 }
 
-async function fetchStationData() {
-  const url = "http://localhost:18080/api/getLastData/station/1";
+async function fetchStationData(STATION_ID: string) {
+  const url = `http://localhost:18080/api/getLastData/station/${STATION_ID}`;
   console.info("GET", url);
 
   try {
@@ -156,7 +152,7 @@ async function fetchStationData() {
   return null;
 }
 
-async function loadStationData(time: string) {
+async function loadStationData(time: string, STATION_ID: string) {
   const pool = new Pool({
     user: PG_USER,
     host: PG_HOST,
@@ -169,7 +165,7 @@ async function loadStationData(time: string) {
   try {
     console.info("connected", new Date());
 
-    const table = "stanica";
+    const table = `station_${STATION_ID}`;
     const queryText = `select * from ${table} where timestamp='${time}:00+00'`;
     const res = await client.query(queryText);
     //    console.log('rows', queryText, res.rows[0]);
@@ -211,101 +207,108 @@ function getClientStationData(data: IStationData) {
   return csd;
 }
 
-const data1 = generateData(new Date());
-const data2 = generateOffsetData(data1, 5);
-const data3 = generateOffsetData(data1, -5);
-// console.info(data1);
-// console.info(data2);
-// console.info(data3);
-// console.log(decodedData1);
+function main(STATION_ID: string, PASSKEY: string) {
+  const station = new StationGoGenMe3900(STATION_ID);
 
-const d = new Date();
-d.setUTCMilliseconds(0);
-const pgtime = `${d.getUTCFullYear()}-${
-  d.getUTCMonth() + 1
-}-${d.getUTCDate()} ${d.getUTCHours()}:${d.getUTCMinutes()}`;
+  console.info(`PG: ${PG_HOST}`);
 
-const toMinute = Date.now() % 60000;
+  const data1 = generateData(new Date(), PASSKEY);
+  const data2 = generateOffsetData(data1, 5);
+  const data3 = generateOffsetData(data1, -5);
+  // console.info(data1);
+  // console.info(data2);
+  // console.info(data3);
+  // console.log(decodedData1);
 
-data1.dateutc = `${pgtime}:${d.getUTCSeconds()}`;
-data2.dateutc = `${pgtime}:${d.getUTCSeconds() + 1}`;
-data3.dateutc = `${pgtime}:${d.getUTCSeconds() + 2}`;
+  const d = new Date();
+  d.setUTCMilliseconds(0);
+  const pgtime = `${d.getUTCFullYear()}-${
+    d.getUTCMonth() + 1
+  }-${d.getUTCDate()} ${d.getUTCHours()}:${d.getUTCMinutes()}`;
 
-console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
-console.info("Now, Timestamp, Redis, pgtime, Pg", d, data2.dateutc, pgtime);
-console.info("Now, Timestamp, Redis, pgtime, Pg", d, data3.dateutc, pgtime);
+  const toMinute = Date.now() % 60000;
 
-const { decoded } = station.decodeData(data1);
+  data1.dateutc = `${pgtime}:${d.getUTCSeconds()}`;
+  data2.dateutc = `${pgtime}:${d.getUTCSeconds() + 1}`;
+  data3.dateutc = `${pgtime}:${d.getUTCSeconds() + 2}`;
 
-const pgData = {
-  eventrain: decoded.eventrain.toFixed(1),
-  hourlyrain: decoded.hourlyrain.toFixed(1),
-  dailyrain: decoded.dailyrain.toFixed(1),
-  weeklyrain: decoded.weeklyrain.toFixed(1),
-  monthlyrain: decoded.monthlyrain.toFixed(1),
-  humidity: decoded.humidity.toFixed(0),
-  humidityin: decoded.humidityin.toFixed(0),
-  pressureabs: decoded.pressureabs.toFixed(1),
-  pressurerel: decoded.pressurerel.toFixed(1),
-  rainrate: decoded.rainrate.toFixed(1),
-  solarradiation: decoded.solarradiation.toFixed(1),
-  temp: decoded.temp.toFixed(1),
-  tempin: decoded.tempin.toFixed(1),
-  timestamp: new Date(
-    `${decoded.timestamp.substr(0, 17)}00${decoded.timestamp.substr(19)}`
-  ),
-  uv: decoded.uv.toFixed(0),
-  winddir: decoded.winddir.toFixed(0),
-  windgust: decoded.windgust.toFixed(1),
-  windspeed: decoded.windspeed.toFixed(1),
-};
+  console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
+  console.info("Now, Timestamp, Redis, pgtime, Pg", d, data2.dateutc, pgtime);
+  console.info("Now, Timestamp, Redis, pgtime, Pg", d, data3.dateutc, pgtime);
 
-const socket = new MySocket();
-const stationData = new StationData();
-const stationCtrl = new StationCtrl(
-  socket,
-  stationData,
-  null,
-  null,
-  new StationGoGenMe3900Cfg()
-); // todo
-stationCtrl.start();
+  const { decoded } = station.decodeData(data1);
 
-postData(data1);
-setTimeout(async () => {
-  const sd = await fetchStationData();
-  assert.deepStrictEqual(sd, station.decodeData(data1).decoded);
-  console.info("Redis1 OK");
-  assert.deepStrictEqual(
-    getClientStationData(stationData.data),
-    station.decodeData(data1).decoded
-  );
-  console.info("Client1 OK");
-}, 1000);
-setTimeout(() => postData(data2), 1500);
-setTimeout(async () => {
-  const sd = await fetchStationData();
-  assert.deepStrictEqual(sd, station.decodeData(data2).decoded);
-  console.info("Redis2 OK");
-  assert.deepStrictEqual(
-    getClientStationData(stationData.data),
-    station.decodeData(data2).decoded
-  );
-  console.info("Client2 OK");
-}, 2000);
-setTimeout(() => postData(data3), 2500);
-setTimeout(async () => {
-  const sd = await fetchStationData();
-  assert.deepStrictEqual(sd, station.decodeData(data3).decoded);
-  console.info("Redis3 OK");
-  assert.deepStrictEqual(
-    getClientStationData(stationData.data),
-    station.decodeData(data3).decoded
-  );
-  console.info("Client3 OK");
-}, 3000);
-setTimeout(async () => {
-  const rows = await loadStationData(pgtime);
-  assert.deepStrictEqual(rows, pgData);
-  console.info("PG OK");
-}, 61000 - toMinute);
+  const pgData = {
+    eventrain: decoded.eventrain.toFixed(1),
+    hourlyrain: decoded.hourlyrain.toFixed(1),
+    dailyrain: decoded.dailyrain.toFixed(1),
+    weeklyrain: decoded.weeklyrain.toFixed(1),
+    monthlyrain: decoded.monthlyrain.toFixed(1),
+    humidity: decoded.humidity.toFixed(0),
+    humidityin: decoded.humidityin.toFixed(0),
+    pressureabs: decoded.pressureabs.toFixed(1),
+    pressurerel: decoded.pressurerel.toFixed(1),
+    rainrate: decoded.rainrate.toFixed(1),
+    solarradiation: decoded.solarradiation.toFixed(1),
+    temp: decoded.temp.toFixed(1),
+    tempin: decoded.tempin.toFixed(1),
+    timestamp: new Date(
+      `${decoded.timestamp.substr(0, 17)}00${decoded.timestamp.substr(19)}`
+    ),
+    uv: decoded.uv.toFixed(0),
+    winddir: decoded.winddir.toFixed(0),
+    windgust: decoded.windgust.toFixed(1),
+    windspeed: decoded.windspeed.toFixed(1),
+  };
+
+  const socket = new MySocket();
+  const stationData = new StationData(STATION_ID);
+  const stationCtrl = new StationCtrl(socket, stationData, null, null); // todo
+  stationCtrl.start();
+
+  postData(data1);
+  setTimeout(async () => {
+    const sd = await fetchStationData(STATION_ID);
+    assert.deepStrictEqual(sd, station.decodeData(data1).decoded);
+    console.info("Redis1 OK");
+    assert.deepStrictEqual(
+      getClientStationData(stationData.data),
+      station.decodeData(data1).decoded
+    );
+    console.info("Client1 OK");
+  }, 1000);
+  setTimeout(() => postData(data2), 1500);
+  setTimeout(async () => {
+    const sd = await fetchStationData(STATION_ID);
+    assert.deepStrictEqual(sd, station.decodeData(data2).decoded);
+    console.info("Redis2 OK");
+    assert.deepStrictEqual(
+      getClientStationData(stationData.data),
+      station.decodeData(data2).decoded
+    );
+    console.info("Client2 OK");
+  }, 2000);
+  setTimeout(() => postData(data3), 2500);
+  setTimeout(async () => {
+    const sd = await fetchStationData(STATION_ID);
+    assert.deepStrictEqual(sd, station.decodeData(data3).decoded);
+    console.info("Redis3 OK");
+    assert.deepStrictEqual(
+      getClientStationData(stationData.data),
+      station.decodeData(data3).decoded
+    );
+    console.info("Client3 OK");
+  }, 3000);
+  setTimeout(async () => {
+    const rows = await loadStationData(pgtime, STATION_ID);
+    assert.deepStrictEqual(rows, pgData);
+    console.info("PG OK");
+  }, 61000 - toMinute);
+}
+
+const allStationsCfg = new AllStationsCfg();
+allStationsCfg.readCfg().then(() => {
+  const STATION_ID = allStationsCfg.getDefaultStationID(); // todo
+  const PASSKEY = allStationsCfg.getStationByID(STATION_ID).passkey;
+  main(STATION_ID, PASSKEY);
+});

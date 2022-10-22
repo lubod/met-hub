@@ -14,23 +14,17 @@ export default class ForecastCtrl {
   }
 
   start() {
-    this.fetchData("48.2482", "17.0589"); // todo
-    this.fetchAstronomicalData("48.2482", "17.0589", new Date()); // todo
+    this.fetchData();
+    this.fetchAstronomicalData(new Date());
     this.timer = setInterval(() => {
-      this.fetchData(
-        this.forecastData.coordinates[1],
-        this.forecastData.coordinates[0]
-      );
-      this.fetchAstronomicalData(
-        this.forecastData.coordinates[1],
-        this.forecastData.coordinates[0],
-        new Date()
-      );
+      this.fetchData();
+      this.fetchAstronomicalData(new Date());
     }, 1800000);
   }
 
-  async fetchData(lat: string, lon: string) {
-    const url = `/api/getForecast?lat=${lat}&lon=${lon}`;
+  async fetchData() {
+    this.forecastData.forecast = null;
+    const url = `/api/getForecast?lat=${this.forecastData.lat}&lon=${this.forecastData.lon}`;
     console.info(url);
 
     try {
@@ -55,8 +49,11 @@ export default class ForecastCtrl {
     }
   }
 
-  async fetchAstronomicalData(lat: string, lon: string, date: Date) {
-    const url = `/api/getAstronomicalData?lat=${lat}&lon=${lon}&date=${date.toISOString()}`;
+  async fetchAstronomicalData(date: Date) {
+    this.forecastData.astronomicalData = null;
+    const url = `/api/getAstronomicalData?lat=${this.forecastData.lat}&lon=${
+      this.forecastData.lon
+    }&date=${date.toISOString()}`;
     console.info(url);
 
     try {

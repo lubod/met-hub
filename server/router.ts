@@ -1,18 +1,12 @@
 import express from "express";
 import { createClient } from "redis";
-import StationGoGenMe3900 from "./stationGoGenMe3900";
 import verifyToken from "./utils";
-import { socketEmiter } from "./main";
+import { socketEmiter, allStationsCfg } from "./main";
 import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import { loadData, loadRainData } from "./load";
 import { getForecast, getAstronomicalData } from "./forecast";
-import StationGarni1025Arcus from "./stationGarni1025Arcus";
 
-const ENV = process.env.ENV || "";
-
-const stationGoGenMe3900 = new StationGoGenMe3900();
-const stationGarni1025Arcus = new StationGarni1025Arcus();
 const dom = new Dom();
 const router = express.Router();
 const redisClient = createClient();
@@ -27,41 +21,38 @@ async function setData(
   PASSKEY: string,
   data: any
 ) {
-  if (PASSKEY === measurement.getPasskey() || ENV === "dev") {
-    // console.info(req.body);
-    try {
-      const { date, decoded, toStore } = measurement.decodeData(data);
-      const now = Date.now();
-      const diff = now - date.getTime();
-      if (diff < 3600000) {
-        socketEmiter.emit(measurement.getSocketChannel(), decoded);
-        const multi = await redisClient
-          .multi()
-          .set(measurement.getRedisLastDataKey(), JSON.stringify(decoded))
-          .zAdd(measurement.getRedisMinuteDataKey(), {
-            score: date.getTime(),
-            value: JSON.stringify(toStore),
-          })
-          .exec();
-        console.info(multi);
-      } else {
-        console.error("Old data ", date);
-        res.sendStatus(400);
-      }
-    } catch (err) {
-      console.error("Error ", err);
-      next(err);
+  // console.info(req.body);
+  try {
+    const { date, decoded, toStore } = measurement.decodeData(data);
+    const now = Date.now();
+    const diff = now - date.getTime();
+    if (diff < 3600000) {
+      socketEmiter.emit(measurement.getSocketChannel(), decoded);
+      const multi = await redisClient
+        .multi()
+        .set(measurement.getRedisLastDataKey(), JSON.stringify(decoded))
+        .zAdd(measurement.getRedisMinuteDataKey(), {
+          score: date.getTime(),
+          value: JSON.stringify(toStore),
+        })
+        .exec();
+      console.info(multi);
+    } else {
+      console.error("Old data ", date);
+      res.sendStatus(400);
     }
-  } else {
-    console.error("Wrong PASSKEY ", req.body.PASSKEY);
-    res.sendStatus(401);
+  } catch (err) {
+    console.error("Error ", err);
+    next(err);
   }
   res.sendStatus(200);
 }
 
 function setStationData(req: any, res: any, next: any) {
-  console.info("/setData/station");
-  setData(stationGoGenMe3900, req, res, next, req.body.PASSKEY, req.body);
+  console.info("/setData/station", req.body.PASSKEY);
+  const { measurement } = allStationsCfg.getStationByPasskey(req.body.PASSKEY);
+  // console.info(measurement);
+  setData(measurement, req, res, next, req.body.PASSKEY, req.body);
 }
 
 function setDomData(req: any, res: any, next: any) {
@@ -77,11 +68,12 @@ async function getLastData(measurement: IMeasurement, req: any, res: any) {
 
 function getStationLastData(req: any, res: any) {
   console.info("/getLastData/station", req.params);
-  if (req.params.stationID === "2") {
-    // todo
-    return getLastData(stationGarni1025Arcus, req, res);
+  if (allStationsCfg.getStationByID(req.params.stationID) != null) {
+    const { measurement } = allStationsCfg.getStationByID(req.params.stationID);
+    getLastData(measurement, req, res);
+  } else {
+    res.status(401).send("wrong station id");
   }
-  return getLastData(stationGoGenMe3900, req, res);
 }
 
 function getDomLastData(req: any, res: any) {
@@ -102,8 +94,13 @@ async function getTrendData(measurement: IMeasurement, req: any, res: any) {
 }
 
 function getStationTrendData(req: any, res: any) {
-  console.info("/getTrendData/station");
-  getTrendData(stationGoGenMe3900, req, res);
+  console.info("/getTrendData/station", req.params);
+  if (allStationsCfg.getStationByID(req.params.stationID) != null) {
+    const { measurement } = allStationsCfg.getStationByID(req.params.stationID);
+    getTrendData(measurement, req, res);
+  } else {
+    res.status(401).send("wrong station id");
+  }
 }
 
 function getDomTrendData(req: any, res: any) {
@@ -125,13 +122,27 @@ router.get("/api/getUserProfile", (req: any, res: any) => {
     const user = verifyToken(req.headers.authorization.substr(7));
     if (user !== null) {
       res.type("application/json");
-      return res.json(user);
+      res.json(user);
     }
     res.status(401).send("auth issue");
   } else {
     res.status(401).send("auth issue");
   }
   return null;
+});
+
+router.get("/api/getAllStationsCfg", (req: any, res: any) => {
+  console.info("/getAllStationsCfg");
+  res.type("application/json");
+
+  if (req.headers.authorization) {
+    const user = verifyToken(req.headers.authorization.substr(7));
+    if (user !== null) {
+      res.json(allStationsCfg.array);
+    }
+    res.json(allStationsCfg.array);
+  }
+  res.json(allStationsCfg.array);
 });
 
 router.get("/api/loadData", (req: any, res: any) => {
@@ -148,7 +159,9 @@ router.get("/api/loadData", (req: any, res: any) => {
         const start = new Date(req.query.start);
         const end = new Date(req.query.end);
         const { measurement } = req.query;
-        loadData(start, end, measurement).then((data) => res.json(data));
+        loadData(start, end, measurement, allStationsCfg).then((data) =>
+          res.json(data)
+        );
       } else {
         res.status(400).send("wrong params");
       }
@@ -230,7 +243,10 @@ router.get(
     console.info("/weatherstation/updateweatherstation.php", req.query);
     if (req.query.ID != null) {
       try {
-        setData(stationGarni1025Arcus, req, res, next, req.query.ID, req.query);
+        const { measurement } = allStationsCfg.getStationByPasskey(
+          req.query.ID
+        );
+        setData(measurement, req, res, next, req.query.ID, req.query);
       } catch (err) {
         console.error("Error ", err);
         next(err);

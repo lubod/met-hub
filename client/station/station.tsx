@@ -23,7 +23,7 @@ const Station = observer(({ appContext }: StationProps) => {
     "station render",
     appContext.authData.isAuth,
     appContext.stationData.oldData,
-    appContext.headerData.id
+    appContext.headerData.stationID
   );
 
   return (
@@ -54,23 +54,28 @@ const Station = observer(({ appContext }: StationProps) => {
           </Col>
         </Row>
         <Row className={appContext.stationData.oldData ? "text-danger" : ""}>
-          <Col xs={4}>
-            <Text name="Place" value={appContext.stationData.data.place} />
-          </Col>
-          <Col xs={4}>
+          <Col xs={6}>
             <Text
-              name="Date"
-              value={moment(appContext.stationData.data.timestamp).format(
-                "DD MMM"
-              )}
+              name="Data date"
+              value={
+                appContext.stationData.data.timestamp === null
+                  ? "-"
+                  : moment(appContext.stationData.data.timestamp).format(
+                      "DD MMM YYYY"
+                    )
+              }
             />
           </Col>
-          <Col xs={4}>
+          <Col xs={6}>
             <Text
               name="Data time"
-              value={moment(appContext.stationData.data.timestamp).format(
-                "HH:mm:ss"
-              )}
+              value={
+                appContext.stationData.data.timestamp === null
+                  ? "-"
+                  : moment(appContext.stationData.data.timestamp).format(
+                      "HH:mm:ss"
+                    )
+              }
             />
           </Col>
         </Row>

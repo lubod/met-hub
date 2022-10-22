@@ -27,7 +27,7 @@ const Charts = observer(
     appContext,
   }: // range
   ChartsProps) => {
-    console.info("render charts");
+    console.info("render charts", appContext.chartsData);
     // const map = useMap();
     // map.invalidateSize();
     return (
@@ -42,11 +42,7 @@ const Charts = observer(
               variant="link btn-sm"
               onClick={() => {
                 appContext.chartsData.setPage(0);
-                appContext.chartsCtrl.load(
-                  appContext.chartsData.offset,
-                  appContext.chartsData.page,
-                  appContext.chartsData.measurement
-                );
+                appContext.chartsCtrl.reload();
               }}
             >
               <LoadImg
@@ -64,11 +60,7 @@ const Charts = observer(
               title="Sensor"
               onSelect={(e) => {
                 appContext.chartsData.setMeasurement(e);
-                appContext.chartsCtrl.load(
-                  appContext.chartsData.offset,
-                  appContext.chartsData.page,
-                  appContext.chartsData.measurement
-                );
+                appContext.chartsCtrl.reload();
               }}
             >
               {appContext.chartsData.measurements.map((m) => (
@@ -85,11 +77,7 @@ const Charts = observer(
               title="Range"
               onSelect={(e) => {
                 appContext.chartsData.setOffset(e);
-                appContext.chartsCtrl.load(
-                  appContext.chartsData.offset,
-                  appContext.chartsData.page,
-                  appContext.chartsData.measurement
-                );
+                appContext.chartsCtrl.reload();
               }}
             >
               <Dropdown.Item eventKey="3600|1 hour">1 hour</Dropdown.Item>
@@ -106,11 +94,7 @@ const Charts = observer(
               // variant="outline-secondary"
               onClick={() => {
                 appContext.chartsData.setPage(appContext.chartsData.page - 1);
-                appContext.chartsCtrl.load(
-                  appContext.chartsData.offset,
-                  appContext.chartsData.page,
-                  appContext.chartsData.measurement
-                );
+                appContext.chartsCtrl.reload();
               }}
             >
               &lt;
@@ -123,11 +107,7 @@ const Charts = observer(
                     ? appContext.chartsData.page + 1
                     : 0
                 );
-                appContext.chartsCtrl.load(
-                  appContext.chartsData.offset,
-                  appContext.chartsData.page,
-                  appContext.chartsData.measurement
-                );
+                appContext.chartsCtrl.reload();
               }}
             >
               &gt;
@@ -139,7 +119,11 @@ const Charts = observer(
           <Col xs={6}>
             <Text
               name="Sensor"
-              value={`${appContext.chartsData.cdata.label} ${appContext.chartsData.cdata.unit}`}
+              value={
+                appContext.chartsData.cdata.label == null
+                  ? ""
+                  : `${appContext.chartsData.cdata.label} ${appContext.chartsData.cdata.unit}`
+              }
             />
           </Col>
           <Col xs={6}>
@@ -248,12 +232,12 @@ const Charts = observer(
               />
               <Marker
                 position={[
-                  parseFloat(appContext.headerData.lat),
-                  parseFloat(appContext.headerData.lon),
+                  appContext.chartsData.lat,
+                  appContext.chartsData.lon,
                 ]}
               >
                 <Popup>
-                  {appContext.headerData.lat}, {appContext.headerData.lon}
+                  {appContext.chartsData.lat}, {appContext.chartsData.lon}
                 </Popup>
               </Marker>
             </MapContainer>

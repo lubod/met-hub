@@ -34,6 +34,12 @@ const frontConfig = {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    fallback: {
+      crypto: false,
+      tls: false,
+      net: false,
+      url: false,
+    },
   },
   output: {
     filename: "[name].js",
@@ -133,9 +139,9 @@ const backConfigPoll = {
   plugins: [new ESLintPlugin(options)],
 };
 
-const testConfigStation = {
+const testConfigStationGoGenMe3900 = {
   target: "node",
-  entry: "./test/testStation.ts",
+  entry: "./test/testStationGoGenMe3900.ts",
   module: {
     rules: [
       {
@@ -149,7 +155,30 @@ const testConfigStation = {
     extensions: [".tsx", ".ts", ".js"],
   },
   output: {
-    filename: "testStation.js",
+    filename: "testStationGoGenMe3900.js",
+    path: path.resolve(__dirname, "dist/test"),
+  },
+  externals: [nodeExternals()],
+  plugins: [new ESLintPlugin(options)],
+};
+
+const testConfigStationGarni1025Arcus = {
+  target: "node",
+  entry: "./test/testStationGarni1025Arcus.ts",
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"],
+  },
+  output: {
+    filename: "testStationGarni1025Arcus.js",
     path: path.resolve(__dirname, "dist/test"),
   },
   externals: [nodeExternals()],
@@ -184,6 +213,7 @@ module.exports = [
   backConfigMain,
   backConfigStore,
   backConfigPoll,
-  testConfigStation,
+  testConfigStationGoGenMe3900,
+  testConfigStationGarni1025Arcus,
   testConfigDom,
 ];

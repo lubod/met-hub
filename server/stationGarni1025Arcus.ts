@@ -1,4 +1,4 @@
-import { StationGarni1025ArcusCfg } from "../common/stationGarni1025ArcusCfg";
+import { StationCfg } from "../common/stationCfg";
 import {
   IStationData,
   IStationGarni1025ArcusDataRaw,
@@ -6,10 +6,12 @@ import {
 } from "../common/stationModel";
 import { IMeasurement } from "./measurement";
 
-const PASSKEY = process.env.STATION_2_PASSKEY || "";
-
 class StationGarni1025Arcus implements IMeasurement {
-  cfg: StationGarni1025ArcusCfg = new StationGarni1025ArcusCfg();
+  cfg: StationCfg = null;
+
+  constructor(stationID: string) {
+    this.cfg = new StationCfg(stationID);
+  }
 
   getTables() {
     return [this.cfg.TABLE];
@@ -17,10 +19,6 @@ class StationGarni1025Arcus implements IMeasurement {
 
   getColumns() {
     return this.cfg.COLUMNS;
-  }
-
-  getPasskey() {
-    return PASSKEY;
   }
 
   getSocketChannel() {
@@ -135,7 +133,7 @@ class StationGarni1025Arcus implements IMeasurement {
     };
     const date = new Date(decoded.timestamp);
     const toStore = decoded;
-    console.info(data, date, decoded);
+    // console.info(data, date, decoded);
     return { date, decoded, toStore };
   }
 
@@ -202,7 +200,7 @@ class StationGarni1025Arcus implements IMeasurement {
         tempin: 0,
         temp: 0,
         pressurerel: 0,
-        pressureabs: 0,
+        pressureabs: null,
         windgust: 0,
         windspeed: 0,
         rainrate: 0,
@@ -235,7 +233,7 @@ class StationGarni1025Arcus implements IMeasurement {
         total.temp += item.temp;
         total.humidity += item.humidity;
         total.pressurerel += item.pressurerel;
-        total.pressureabs += item.pressureabs;
+        // total.pressureabs += item.pressureabs;
         total.windgust += item.windgust;
         total.windspeed += item.windspeed;
         //        init.winddir += item.winddir;
@@ -259,7 +257,7 @@ class StationGarni1025Arcus implements IMeasurement {
       avg.tempin = round(total.tempin / count, 1);
       avg.temp = round(total.temp / count, 1);
       avg.pressurerel = round(total.pressurerel / count, 1);
-      avg.pressureabs = round(total.pressureabs / count, 1);
+      // avg.pressureabs = round(total.pressureabs / count, 1);
       avg.windgust = round(total.windgust / count, 1);
       avg.windspeed = round(total.windspeed / count, 1);
       avg.rainrate = round(total.rainrate / count, 1);

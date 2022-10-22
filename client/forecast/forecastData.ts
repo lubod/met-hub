@@ -32,7 +32,9 @@ export interface IForecastDay {
 export default class ForecastData {
   forecast: any = null;
 
-  coordinates: string[] = [];
+  lat: number = null;
+
+  lon: number = null;
 
   astronomicalData: any = null;
 
@@ -44,16 +46,31 @@ export default class ForecastData {
 
   loading: boolean = true;
 
-  constructor() {
+  stationID: string = null;
+
+  constructor(stationID: string, lat: number, lon: number) {
     makeObservable(this, {
-      coordinates: observable,
+      lat: observable,
+      lon: observable,
       days: observable,
       sunrise: observable,
       sunset: observable,
       loading: observable,
+      stationID: observable,
       setForecast: action,
       setAstronomicalData: action,
+      setStationID: action,
     });
+
+    this.stationID = stationID;
+    this.lat = lat;
+    this.lon = lon;
+  }
+
+  setStationID(stationID: string, lat: number, lon: number) {
+    this.stationID = stationID;
+    this.lat = lat;
+    this.lon = lon;
   }
 
   setLoading(loading: boolean) {
@@ -72,7 +89,6 @@ export default class ForecastData {
 
   setForecast(newForecast: any) {
     this.days = new Map<string, IForecastDay>();
-    this.coordinates = newForecast.geometry.coordinates;
     for (const item of newForecast.properties.timeseries) {
       const timestamp: Date = new Date(item.time);
       const {
