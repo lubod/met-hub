@@ -35,6 +35,7 @@ const Header = observer(({ appContext }: HeaderProps) => (
           }
           onSelect={(stationID) => {
             console.info("stationID", stationID);
+            localStorage.setItem("lastStationID", stationID);
             appContext.headerData.setStationID(stationID);
             if (appContext.headerData.stationID === "dom") {
               appContext.chartsData.setMeasurements(DOM_MEASUREMENTS);

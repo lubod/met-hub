@@ -13,6 +13,7 @@ import {
 import DomData from "../client/dom/domData";
 import DomCtrl from "../client/dom/domCtrl";
 import MySocket from "../client/socket";
+import AuthData from "../client/auth/authData";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -469,7 +470,7 @@ console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
 
 const socket = new MySocket();
 const domData = new DomData();
-const domCtrl = new DomCtrl(socket, domData, null);
+const domCtrl = new DomCtrl(socket, domData, null, new AuthData());
 domCtrl.start();
 postData(data1);
 

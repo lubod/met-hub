@@ -78,7 +78,16 @@ function getStationLastData(req: any, res: any) {
 
 function getDomLastData(req: any, res: any) {
   console.info("/getLastData/dom");
-  return getLastData(dom, req, res);
+  if (req.headers.authorization) {
+    const user = verifyToken(req.headers.authorization.substr(7));
+    if (user !== null) {
+      getLastData(dom, req, res);
+    } else {
+      res.status(401).send("auth issue");
+    }
+  } else {
+    res.status(401).send("auth issue");
+  }
 }
 
 async function getTrendData(measurement: IMeasurement, req: any, res: any) {
@@ -105,7 +114,16 @@ function getStationTrendData(req: any, res: any) {
 
 function getDomTrendData(req: any, res: any) {
   console.info("/getTrendData/dom");
-  getTrendData(dom, req, res);
+  if (req.headers.authorization) {
+    const user = verifyToken(req.headers.authorization.substr(7));
+    if (user !== null) {
+      getTrendData(dom, req, res);
+    } else {
+      res.status(401).send("auth issue");
+    }
+  } else {
+    res.status(401).send("auth issue");
+  }
 }
 
 router.post("/setData", setStationData);
@@ -123,8 +141,9 @@ router.get("/api/getUserProfile", (req: any, res: any) => {
     if (user !== null) {
       res.type("application/json");
       res.json(user);
+    } else {
+      res.status(401).send("auth issue");
     }
-    res.status(401).send("auth issue");
   } else {
     res.status(401).send("auth issue");
   }
@@ -190,51 +209,51 @@ router.get("/api/loadRainData/station/:stationID", (req: any, res: any) => {
 
 router.get("/api/getForecast", (req: any, res: any) => {
   console.info("/getForecast", req.query);
-  //  if (req.headers.authorization) {
-  // const user = verifyToken(req.headers.authorization.substr(7));
-  // if (user !== null) {
-  res.type("application/json");
-  if (req.query.lat != null && req.query.lon != null) {
-    getForecast(req.query.lat, req.query.lon).then((data: any) =>
-      res.json(data)
-    );
+  if (req.headers.authorization) {
+    const user = verifyToken(req.headers.authorization.substr(7));
+    if (user !== null) {
+      res.type("application/json");
+      if (req.query.lat != null && req.query.lon != null) {
+        getForecast(req.query.lat, req.query.lon).then((data: any) =>
+          res.json(data)
+        );
+      } else {
+        res.status(400).send("wrong params");
+      }
+    } else {
+      res.status(401).send("auth issue");
+    }
   } else {
-    res.status(400).send("wrong params");
+    res.status(401).send("auth issue");
   }
-  // } else {
-  //   res.status(401).send("auth issue");
-  // }
-  // } else {
-  // res.status(401).send("auth issue");
-  // }
 });
 
 router.get("/api/getAstronomicalData", (req: any, res: any, next: any) => {
   console.info("/getAstronomicalData", req.query);
-  //  if (req.headers.authorization) {
-  // const user = verifyToken(req.headers.authorization.substr(7));
-  // if (user !== null) {
-  res.type("application/json");
-  if (req.query.lat != null && req.query.lon != null) {
-    try {
-      getAstronomicalData(
-        req.query.lat,
-        req.query.lon,
-        new Date(req.query.date)
-      ).then((data: any) => res.json(data));
-    } catch (err) {
-      console.error("Error ", err);
-      next(err);
+  if (req.headers.authorization) {
+    const user = verifyToken(req.headers.authorization.substr(7));
+    if (user !== null) {
+      res.type("application/json");
+      if (req.query.lat != null && req.query.lon != null) {
+        try {
+          getAstronomicalData(
+            req.query.lat,
+            req.query.lon,
+            new Date(req.query.date)
+          ).then((data: any) => res.json(data));
+        } catch (err) {
+          console.error("Error ", err);
+          next(err);
+        }
+      } else {
+        res.status(400).send("wrong params");
+      }
+    } else {
+      res.status(401).send("auth issue");
     }
   } else {
-    res.status(400).send("wrong params");
+    res.status(401).send("auth issue");
   }
-  // } else {
-  //   res.status(401).send("auth issue");
-  // }
-  // } else {
-  // res.status(401).send("auth issue");
-  // }
 });
 
 router.get(

@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import { DomCfg, IDomData, IDomTrendData } from "../../common/domModel";
+import AuthData from "../auth/authData";
 import ChartsCtrl from "../charts/chartsCtrl";
 import DomData from "./domData";
 
@@ -16,6 +17,8 @@ class DomCtrl {
 
   chartsCtrl: ChartsCtrl;
 
+  authData: AuthData;
+
   listener = (data: IDomData) => {
     this.domData.processData(data);
   };
@@ -25,12 +28,17 @@ class DomCtrl {
     this.chartsCtrl?.reload();
   };
 
-  constructor(mySocket: any, domData: DomData, chartsCtrl: ChartsCtrl) {
+  constructor(
+    mySocket: any,
+    domData: DomData,
+    chartsCtrl: ChartsCtrl,
+    authData: AuthData
+  ) {
     this.domData = domData;
     this.domCfg = new DomCfg();
     this.socket = mySocket;
     this.chartsCtrl = chartsCtrl;
-    // props.socket.getSocket().emit('dom', 'getLastData');
+    this.authData = authData;
   }
 
   start() {
@@ -80,7 +88,7 @@ class DomCtrl {
       this.domData.setLoading(true);
       const response = await fetch(url, {
         headers: {
-          // Authorization: `Bearer ${props.auth.getToken()}`,
+          Authorization: `Bearer ${this.authData.access_token}`,
         },
       });
 
@@ -123,7 +131,7 @@ class DomCtrl {
     try {
       const response = await fetch(url, {
         headers: {
-          // Authorization: `Bearer ${props.auth.getToken()}`,
+          Authorization: `Bearer ${this.authData.access_token}`,
         },
       });
 

@@ -54,12 +54,17 @@ export class AppContext {
   forecastCrtl: ForecastCtrl;
 
   start() {
+    const lastStation = AllStationsCfgClient.getStationByID(
+      localStorage.getItem("lastStationID")
+    );
     this.socket = new MySocket();
     this.authData = new AuthData();
     this.authCtrl = new AuthCtrl(this.authData);
-    this.headerData = new HeaderData(
-      AllStationsCfgClient.getDefaultStationID()
-    );
+    let headerStationID = AllStationsCfgClient.getDefaultStationID();
+    if (lastStation != null && lastStation.public) {
+      headerStationID = lastStation.id;
+    }
+    this.headerData = new HeaderData(headerStationID);
     this.headerCtrl = new HeaderCtrl(this.headerData);
     this.chartsData = new ChartsData(
       AllStationsCfgClient.getDefaultStationID(),
@@ -79,7 +84,12 @@ export class AppContext {
       this.chartsCtrl
     );
     this.domData = new DomData();
-    this.domCtrl = new DomCtrl(this.socket, this.domData, this.chartsCtrl);
+    this.domCtrl = new DomCtrl(
+      this.socket,
+      this.domData,
+      this.chartsCtrl,
+      this.authData
+    );
     this.forecastData = new ForecastData(
       AllStationsCfgClient.getDefaultStationID(),
       AllStationsCfgClient.getDefaultStation().lat,
