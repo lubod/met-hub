@@ -15,6 +15,7 @@ export interface IStation {
   passkey: string;
   id: string;
   measurement: IMeasurement;
+  public: boolean;
 }
 
 export class AllStationsCfg {
@@ -54,6 +55,7 @@ export class AllStationsCfg {
       cStation.lon = station.lon;
       cStation.place = station.place;
       cStation.type = station.type;
+      cStation.public = station.public;
       this.array.push(cStation); // json to client
       this.passkey2IDMap.set(station.passkey, station.id);
       this.measurements.push(station.measurement);
