@@ -67,16 +67,14 @@ export class AppContext {
     this.headerData = new HeaderData(headerStationID);
     this.headerCtrl = new HeaderCtrl(this.headerData);
     this.chartsData = new ChartsData(
-      AllStationsCfgClient.getDefaultStationID(),
-      AllStationsCfgClient.getDefaultStation().lat,
-      AllStationsCfgClient.getDefaultStation().lon,
+      headerStationID,
+      AllStationsCfgClient.getStationByID(headerStationID).lat,
+      AllStationsCfgClient.getStationByID(headerStationID).lon,
       STATION_MEASUREMENTS_DESC.TEMPERATURE,
       STATION_MEASUREMENTS
     );
     this.chartsCtrl = new ChartsCtrl(this.chartsData, this.authData);
-    this.stationData = new StationData(
-      AllStationsCfgClient.getDefaultStationID()
-    );
+    this.stationData = new StationData(headerStationID);
     this.stationCtrl = new StationCtrl(
       this.socket,
       this.stationData,
@@ -91,9 +89,9 @@ export class AppContext {
       this.authData
     );
     this.forecastData = new ForecastData(
-      AllStationsCfgClient.getDefaultStationID(),
-      AllStationsCfgClient.getDefaultStation().lat,
-      AllStationsCfgClient.getDefaultStation().lon
+      headerStationID,
+      AllStationsCfgClient.getStationByID(headerStationID).lat,
+      AllStationsCfgClient.getStationByID(headerStationID).lon
     );
     this.forecastCrtl = new ForecastCtrl(this.forecastData, this.authData);
 

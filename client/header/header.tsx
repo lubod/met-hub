@@ -67,6 +67,7 @@ const Header = observer(({ appContext }: HeaderProps) => (
               AllStationsCfgClient.getStationByID(stationID).lon
             );
             appContext.forecastCrtl.fetchData(); // TODO
+            appContext.forecastCrtl.fetchAstronomicalData(new Date());
           }}
         >
           {[...AllStationsCfgClient.getStations().entries()]
