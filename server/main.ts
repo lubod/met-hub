@@ -9,6 +9,20 @@ const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 
+export class AppError {
+  code: number;
+
+  msg: string;
+
+  stack: string;
+
+  constructor(code: number, msg: string, stack?: string) {
+    this.code = code;
+    this.msg = msg;
+    this.stack = stack;
+  }
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export const socketEmiter = new SocketEmitter();
 // AllStationsCfg.writeCfg();
@@ -29,7 +43,19 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use((req: any, res: any, next: any) => {
+  console.log("ENDPOINT:", req.path);
+  next();
+});
+
 app.use(router);
+
+// eslint-disable-next-line no-unused-vars
+app.use((err: AppError, req: any, res: any, next: any) => {
+  console.error("ERROR:", err);
+  res.status(err.code || 500).json({ code: err.code, msg: err.msg });
+});
 
 io.on("connection", (socket: any) => {
   console.log("a user connected", socket.id);

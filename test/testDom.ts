@@ -14,6 +14,7 @@ import DomData from "../client/dom/domData";
 import DomCtrl from "../client/dom/domCtrl";
 import MySocket from "../client/socket";
 import AuthData from "../client/auth/authData";
+import { AllStationsCfg } from "../common/allStationsCfg";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -66,10 +67,10 @@ function generateTarifData() {
   return data;
 }
 
-function generateData(d: Date) {
+function generateData(d: Date, PASSKEY: string) {
   d.setUTCMilliseconds(0);
   const data = {} as IDomDataRaw;
-  data.PASSKEY = "";
+  data.PASSKEY = PASSKEY;
   data.dateutc = d.toISOString().replace("T", " ").replace(".000Z", "");
   data.timestamp = d.toISOString();
   data.tarif = generateTarifData();
@@ -448,48 +449,58 @@ function getClientDomData(data: IDomData) {
   return cdd;
 }
 
-const data1 = generateData(new Date());
+function main(PASSKEY: string) {
+  const data1 = generateData(new Date(), PASSKEY);
 
-const d = new Date();
-d.setUTCMilliseconds(0);
+  const d = new Date();
+  d.setUTCMilliseconds(0);
 
-function addZero(val: number) {
-  if (val > 9) {
-    return val;
+  function addZero(val: number) {
+    if (val > 9) {
+      return val;
+    }
+    return `0${val}`;
   }
-  return `0${val}`;
+  const pgtime = `${d.getUTCFullYear()}-${addZero(
+    d.getUTCMonth() + 1
+  )}-${addZero(d.getUTCDate())} ${addZero(d.getUTCHours())}:${addZero(
+    d.getUTCMinutes()
+  )}`;
+
+  data1.dateutc = `${pgtime}:${d.getUTCSeconds()}`;
+  const toMinute = Date.now() % 60000;
+
+  console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
+
+  const socket = new MySocket();
+  const domData = new DomData();
+  const domCtrl = new DomCtrl(socket, domData, null, new AuthData());
+  domCtrl.start();
+  postData(data1);
+
+  setTimeout(async () => {
+    const sd = await fetchDomData();
+    assert.deepStrictEqual(sd, dom.decodeData(data1).decoded);
+    console.info("Redis1 OK");
+    assert.deepStrictEqual(
+      getClientDomData(domData.data),
+      dom.decodeData(data1).decoded
+    );
+    console.info("Client1 OK");
+  }, 1000);
+
+  setTimeout(async () => {
+    const rows = await loadDomData(pgtime);
+    data1.dateutc = `${pgtime}:00`;
+    rows.timestamp = d.toISOString();
+    rows.PASSKEY = PASSKEY;
+    assert.deepStrictEqual(rows, data1);
+    console.info("PG OK");
+  }, 61000 - toMinute);
 }
-const pgtime = `${d.getUTCFullYear()}-${addZero(d.getUTCMonth() + 1)}-${addZero(
-  d.getUTCDate()
-)} ${addZero(d.getUTCHours())}:${addZero(d.getUTCMinutes())}`;
 
-data1.dateutc = `${pgtime}:${d.getUTCSeconds()}`;
-const toMinute = Date.now() % 60000;
-
-console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
-
-const socket = new MySocket();
-const domData = new DomData();
-const domCtrl = new DomCtrl(socket, domData, null, new AuthData());
-domCtrl.start();
-postData(data1);
-
-setTimeout(async () => {
-  const sd = await fetchDomData();
-  assert.deepStrictEqual(sd, dom.decodeData(data1).decoded);
-  console.info("Redis1 OK");
-  assert.deepStrictEqual(
-    getClientDomData(domData.data),
-    dom.decodeData(data1).decoded
-  );
-  console.info("Client1 OK");
-}, 1000);
-
-setTimeout(async () => {
-  const rows = await loadDomData(pgtime);
-  rows.PASSKEY = "";
-  data1.dateutc = `${pgtime}:00`;
-  rows.timestamp = d.toISOString();
-  assert.deepStrictEqual(rows, data1);
-  console.info("PG OK");
-}, 61000 - toMinute);
+const allStationsCfg = new AllStationsCfg();
+allStationsCfg.readCfg().then(() => {
+  const PASSKEY = allStationsCfg.getStationByID("dom").passkey;
+  main(PASSKEY);
+});
