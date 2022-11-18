@@ -27,59 +27,73 @@ const Header = observer(({ appContext }: HeaderProps) => (
         />
       </Col>
       <Col xs={4}>
-        <DropdownButton
-          id="dropdown-place-button"
-          title={
-            AllStationsCfgClient.getStationByID(appContext.headerData.stationID)
-              .place
-          }
-          onSelect={(stationID) => {
-            console.info("stationID", stationID);
-            localStorage.setItem("lastStationID", stationID);
-            appContext.headerData.setStationID(stationID);
-            if (appContext.headerData.stationID === "dom") {
-              appContext.chartsData.setMeasurements(DOM_MEASUREMENTS);
-              appContext.chartsData.setMeasurementObject(
-                DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR
-              );
-              appContext.stationCtrl.stop();
-              appContext.domCtrl.start();
-            } else {
-              // todo
-              appContext.chartsData.setMeasurements(STATION_MEASUREMENTS);
-              appContext.chartsData.setMeasurementObject(
-                STATION_MEASUREMENTS_DESC.TEMPERATURE
-              );
-              appContext.domCtrl.stop();
-              appContext.stationCtrl.setStation(stationID);
+        {appContext.headerData.isExternalID === false && (
+          <DropdownButton
+            id="dropdown-place-button"
+            title={
+              AllStationsCfgClient.getStationByID(
+                appContext.headerData.stationID
+              ).place
             }
+            onSelect={(stationID) => {
+              console.info("stationID", stationID);
+              localStorage.setItem("lastStationID", stationID);
+              appContext.headerData.setStationID(stationID);
+              if (appContext.headerData.stationID === "dom") {
+                appContext.chartsData.setMeasurements(DOM_MEASUREMENTS);
+                appContext.chartsData.setMeasurementObject(
+                  DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR
+                );
+                appContext.stationCtrl.stop();
+                appContext.domCtrl.start();
+              } else {
+                // todo
+                appContext.chartsData.setMeasurements(STATION_MEASUREMENTS);
+                appContext.chartsData.setMeasurementObject(
+                  STATION_MEASUREMENTS_DESC.TEMPERATURE
+                );
+                appContext.domCtrl.stop();
+                appContext.stationCtrl.setStation(stationID);
+              }
 
-            appContext.chartsData.setStationID(
-              stationID,
-              AllStationsCfgClient.getStationByID(stationID).lat,
-              AllStationsCfgClient.getStationByID(stationID).lon
-            );
-            appContext.chartsCtrl.reload();
+              appContext.chartsData.setStationID(
+                stationID,
+                AllStationsCfgClient.getStationByID(stationID).lat,
+                AllStationsCfgClient.getStationByID(stationID).lon
+              );
+              appContext.chartsCtrl.reload();
 
-            appContext.forecastData.setStationID(
-              stationID,
-              AllStationsCfgClient.getStationByID(stationID).lat,
-              AllStationsCfgClient.getStationByID(stationID).lon
-            );
-            appContext.forecastCrtl.fetchData(); // TODO
-            appContext.forecastCrtl.fetchAstronomicalData(new Date());
-          }}
-        >
-          {[...AllStationsCfgClient.getStations().entries()]
-            .filter(
-              ([key, value]) =>
-                key != null &&
-                (value.public || (!value.public && appContext.authData.isAuth))
-            )
-            .map(([fkey, fvalue]) => (
-              <Dropdown.Item eventKey={fkey}>{fvalue.place}</Dropdown.Item>
-            ))}
-        </DropdownButton>
+              appContext.forecastData.setStationID(
+                stationID,
+                AllStationsCfgClient.getStationByID(stationID).lat,
+                AllStationsCfgClient.getStationByID(stationID).lon
+              );
+              appContext.forecastCrtl.fetchData(); // TODO
+              appContext.forecastCrtl.fetchAstronomicalData(new Date());
+            }}
+          >
+            {[...AllStationsCfgClient.getStations().entries()]
+              .filter(
+                ([key, value]) =>
+                  key != null &&
+                  (value.public ||
+                    (!value.public && appContext.authData.isAuth))
+              )
+              .map(([fkey, fvalue]) => (
+                <Dropdown.Item eventKey={fkey}>{fvalue.place}</Dropdown.Item>
+              ))}
+          </DropdownButton>
+        )}
+        {appContext.headerData.isExternalID === true && (
+          <Text
+            name=""
+            value={
+              AllStationsCfgClient.getStationByID(
+                appContext.headerData.stationID
+              ).place
+            }
+          />
+        )}
       </Col>
       <Col xs={4}>
         {appContext.authData.isAuth && (

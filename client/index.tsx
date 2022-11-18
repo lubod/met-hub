@@ -54,17 +54,26 @@ export class AppContext {
   forecastCrtl: ForecastCtrl;
 
   start() {
+    const queryParams = new URLSearchParams(window.location.search);
+    const id = queryParams.get("id");
+    console.info("External station ID", id);
+    const externalStation = AllStationsCfgClient.getStationByID(id);
     const lastStation = AllStationsCfgClient.getStationByID(
       localStorage.getItem("lastStationID")
     );
-    this.socket = new MySocket();
-    this.authData = new AuthData();
-    this.authCtrl = new AuthCtrl(this.authData);
     let headerStationID = AllStationsCfgClient.getDefaultStationID();
+    let isExternalID = false;
     if (lastStation != null && lastStation.public) {
       headerStationID = lastStation.id;
     }
-    this.headerData = new HeaderData(headerStationID);
+    if (externalStation != null && externalStation.public) {
+      headerStationID = externalStation.id;
+      isExternalID = true;
+    }
+    this.socket = new MySocket();
+    this.authData = new AuthData();
+    this.authCtrl = new AuthCtrl(this.authData);
+    this.headerData = new HeaderData(headerStationID, isExternalID);
     this.headerCtrl = new HeaderCtrl(this.headerData);
     this.chartsData = new ChartsData(
       headerStationID,
