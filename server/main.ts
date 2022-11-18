@@ -1,5 +1,6 @@
 import express from "express";
 import { AddressInfo } from "net";
+import cookieParser from "cookie-parser";
 import router from "./router";
 import SocketEmitter from "./socketEmitter";
 import Agregator from "./agregator";
@@ -42,10 +43,12 @@ app.use(
   })
 );
 
+app.use(cookieParser());
+
 app.use(express.json());
 
 app.use((req: any, res: any, next: any) => {
-  console.log("ENDPOINT:", req.path);
+  console.log("ENDPOINT:", req.path, req.cookies);
   next();
 });
 
