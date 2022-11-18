@@ -15,6 +15,10 @@ type HomePageProps = {
 
 const HomePage = observer(({ appContext }: HomePageProps) => {
   console.info("Homepage render", appContext.authData.isAuth);
+  let colSize = 4;
+  if (appContext.headerData.isExternalID) {
+    colSize = 6;
+  }
 
   return (
     <div>
@@ -24,30 +28,32 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
             <Header appContext={appContext} />
           </Row>
           <Row>
-            <Col sm={4} className="ps-1 pe-1">
+            <Col sm={colSize} className="ps-1 pe-1">
               <Station appContext={appContext} />
             </Col>
-            <Col sm={4} className="ps-1 pe-1">
+            <Col sm={colSize} className="ps-1 pe-1">
               <Forecast appContext={appContext} />
             </Col>
-            <Col sm={4} className="ps-1 pe-1">
-              <MyContainer>
-                <h1 className="text-primary">met-hub.com</h1>
-                <p>
-                  This is a free site for non-professional meteorological
-                  stations based on open-source project{" "}
-                  <a href="https://github.com/lubod/met-hub">met-hub</a>
-                </p>
-                <Myhr />
-                <p>
-                  Currently you can see data from GoGEN ME 3900 or GARNI 1025
-                  Arcus
-                </p>
-                <p>Login to see more stations and historical data</p>
-                <Myhr />
-                <p>- v23 -</p>
-              </MyContainer>
-            </Col>
+            {appContext.headerData.isExternalID && (
+              <Col sm={colSize} className="ps-1 pe-1">
+                <MyContainer>
+                  <h1 className="text-primary">met-hub.com</h1>
+                  <p>
+                    This is a free site for non-professional meteorological
+                    stations based on open-source project{" "}
+                    <a href="https://github.com/lubod/met-hub">met-hub</a>
+                  </p>
+                  <Myhr />
+                  <p>
+                    Currently you can see data from GoGEN ME 3900 or GARNI 1025
+                    Arcus
+                  </p>
+                  <p>Login to see more stations and historical data</p>
+                  <Myhr />
+                  <p>- v23 -</p>
+                </MyContainer>
+              </Col>
+            )}
           </Row>
         </Container>
       )}

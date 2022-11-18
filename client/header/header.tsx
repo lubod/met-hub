@@ -95,21 +95,33 @@ const Header = observer(({ appContext }: HeaderProps) => (
           />
         )}
       </Col>
-      <Col xs={4}>
-        {appContext.authData.isAuth && (
-          <Button
-            variant="primary"
-            onClick={() => appContext.authData.logout()}
-          >
-            Logout
-          </Button>
-        )}
-        {!appContext.authData.isAuth && (
-          <Button variant="primary" onClick={() => appContext.authData.login()}>
-            Login
-          </Button>
-        )}
-      </Col>
+      {appContext.headerData.isExternalID === false && (
+        <Col xs={4}>
+          {appContext.authData.isAuth && (
+            <Button
+              variant="primary"
+              onClick={() => appContext.authData.logout()}
+            >
+              Logout
+            </Button>
+          )}
+          {!appContext.authData.isAuth && (
+            <Button
+              variant="primary"
+              onClick={() => appContext.authData.login()}
+            >
+              Login
+            </Button>
+          )}
+        </Col>
+      )}
+      {appContext.headerData.isExternalID === true && (
+        <Col xs={4}>
+          <a href="https://www.met-hub.com">
+            <Text name="Powered by" value="www.met-hub.com" />
+          </a>
+        </Col>
+      )}
     </Row>
   </MyContainer>
 ));
