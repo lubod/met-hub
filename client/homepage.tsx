@@ -34,7 +34,7 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
             <Col sm={colSize} className="ps-1 pe-1">
               <Forecast appContext={appContext} />
             </Col>
-            {appContext.headerData.isExternalID && (
+            {appContext.headerData.isExternalID === false && (
               <Col sm={colSize} className="ps-1 pe-1">
                 <MyContainer>
                   <h1 className="text-primary">met-hub.com</h1>
