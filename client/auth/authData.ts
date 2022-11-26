@@ -70,17 +70,4 @@ export default class AuthData {
     this.isAuth = false;
     this.location = "/";
   }
-
-  login() {
-    //        console.log('login');
-    window.location.replace(
-      "https://met-hub.auth.eu-central-1.amazoncognito.com/login?client_id=vn2mg0efils48lijdpc6arvl9&response_type=code&scope=aws.cognito.signin.user.admin&redirect_uri=https://www.met-hub.com/callback"
-    );
-  }
-
-  logout() {
-    // clear id token and expiration
-    this.cancelAuth();
-    window.location.reload();
-  }
 }

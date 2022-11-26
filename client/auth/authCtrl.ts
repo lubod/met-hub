@@ -29,7 +29,6 @@ export default class AuthCtrl {
       return;
     }
     if (time > this.authData.expiresAt - this.authData.duration / 2) {
-      console.info(time, this.authData.expiresAt);
       this.handleRefresh();
     }
     if (time < this.authData.expiresAt) {
@@ -164,5 +163,19 @@ export default class AuthCtrl {
           });
       });
     });
+  }
+
+  login() {
+    //        console.log('login');
+    window.location.replace(
+      "https://met-hub.auth.eu-central-1.amazoncognito.com/login?client_id=vn2mg0efils48lijdpc6arvl9&response_type=code&scope=aws.cognito.signin.user.admin&redirect_uri=https://www.met-hub.com/callback"
+    );
+  }
+
+  logout() {
+    // clear id token and expiration
+    this.authData.cancelAuth();
+    localStorage.setItem("refresh", null);
+    window.location.reload();
   }
 }
