@@ -1,8 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { observable, makeObservable, action } from "mobx";
 
-const ENV = process.env.ENV || "";
-
 export default class AuthData {
   profile: string = null;
 
@@ -32,7 +30,6 @@ export default class AuthData {
       setAuth: action,
       setProfile: action,
       cancelAuth: action,
-      checkAuth: action,
     });
   }
 
@@ -72,24 +69,6 @@ export default class AuthData {
     this.duration = null;
     this.isAuth = false;
     this.location = "/";
-  }
-
-  checkAuth() {
-    const time = Date.now();
-    if (ENV === "dev") {
-      this.isAuth = true;
-      console.log("auth: dev env");
-      return;
-    }
-    // console.info(time, this.expiresAt);
-    /* if (time > this.expiresAt - this.duration / 2) {
-      this.handleRefresh();
-    } */
-    if (time < this.expiresAt) {
-      this.isAuth = true;
-    } else {
-      this.cancelAuth();
-    }
   }
 
   login() {

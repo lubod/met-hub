@@ -2,6 +2,8 @@
 import axios from "axios";
 import AuthData from "./authData";
 
+const ENV = process.env.ENV || "";
+
 export default class AuthCtrl {
   authData: AuthData;
 
@@ -19,9 +21,29 @@ export default class AuthCtrl {
     return this.authData.access_token;
   }
 
+  checkAuth() {
+    const time = Date.now();
+    if (ENV === "dev") {
+      this.authData.isAuth = true;
+      console.log("auth: dev env");
+      return;
+    }
+    if (time > this.authData.expiresAt - this.authData.duration / 2) {
+      console.info(time, this.authData.expiresAt);
+      this.handleRefresh();
+    }
+    if (time < this.authData.expiresAt) {
+      this.authData.isAuth = true;
+    } else {
+      this.authData.cancelAuth();
+    }
+  }
+
   start() {
+    this.authData.refresh_token = localStorage.getItem("refresh");
+    this.handleRefresh();
     this.timer = setInterval(() => {
-      this.authData.checkAuth();
+      this.checkAuth();
     }, 1000);
   }
 
@@ -113,6 +135,7 @@ export default class AuthCtrl {
             res.data.refresh_token,
             res.data.expires_in * 1000
           );
+          localStorage.setItem("refresh", res.data.refresh_token);
           this.authData.callWhenAuthetificated();
           resolve();
         })
