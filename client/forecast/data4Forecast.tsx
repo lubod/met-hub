@@ -2,6 +2,7 @@
 /* eslint-disable camelcase */
 import React, { useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
+import ForecastChart from "./forecastChart";
 import { IForecastRow } from "./forecastData";
 
 type DataProps = {
@@ -16,6 +17,7 @@ type DataProps = {
   symbol_code_18: string;
   forecastRows: IForecastRow[];
   cloudAreaFractionSum: number;
+  index: number;
 };
 
 function Data4Forecast({
@@ -30,6 +32,7 @@ function Data4Forecast({
   symbol_code_18,
   forecastRows,
   cloudAreaFractionSum,
+  index,
 }: DataProps) {
   const [hourly, setHourly] = useState(false);
 
@@ -97,6 +100,11 @@ function Data4Forecast({
         </Col>
       </Row>
       <Row className="mb-2">
+        <Col xs={12}>
+          <ForecastChart data={forecastRows} index={index} />
+        </Col>
+      </Row>
+      <Row className="my-2">
         <Col xs={3}>
           {symbol_code_00 && hourly === false && (
             <img

@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import moment from "moment";
 import Text from "../text/text";
 import { AppContext } from "..";
-import Data4Forecast from "./data4forecast";
+import Data4Forecast from "./data4Forecast";
 import { LoadImg } from "../data/loadImg";
 import { Myhr } from "../data/myhr";
 import { MyContainer } from "../data/mycontainer";
@@ -12,6 +12,8 @@ import { MyContainer } from "../data/mycontainer";
 type ForecastProps = {
   appContext: AppContext;
 };
+
+const numberOfForecastDays = 3;
 
 const Forecast = observer(({ appContext }: ForecastProps) => (
   <MyContainer>
@@ -59,7 +61,7 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
       </Col>
     </Row>
     {[...appContext.forecastData.days.values()]
-      .slice(0, 5)
+      .slice(0, numberOfForecastDays)
       .map((forecastDay, index) => (
         <>
           <div key={forecastDay.timestamp.getTime()}>
@@ -77,9 +79,10 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
               symbol_code_18={forecastDay.symbol_code_18}
               forecastRows={forecastDay.forecastRows}
               cloudAreaFractionSum={forecastDay.cloud_area_fraction_sum}
+              index={index}
             />
           </div>
-          {index < 4 && <Myhr />}
+          {index < numberOfForecastDays - 1 && <Myhr />}
         </>
       ))}
     <Myhr />
