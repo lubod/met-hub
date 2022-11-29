@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Button,
-  ButtonGroup,
-  Dropdown,
-  DropdownButton,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Button, Dropdown, DropdownButton, Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import Chart from "./chart";
@@ -53,10 +46,40 @@ const Charts = observer(
         </Col>
       </Row>
       <Row className="mt-3 mb-3">
-        <ButtonGroup>
+        <Col xs={6} className="text-left">
+          <Button
+            // variant="link"
+            onClick={() => {
+              appContext.chartsData.setPage(appContext.chartsData.page - 1);
+              appContext.chartsCtrl.reload();
+            }}
+          >
+            Prev
+          </Button>
+        </Col>
+        <Col xs={6} className="text-right">
+          <Button
+            // variant="outline-secondary"
+            onClick={() => {
+              appContext.chartsData.setPage(
+                appContext.chartsData.page < 0
+                  ? appContext.chartsData.page + 1
+                  : 0
+              );
+              appContext.chartsCtrl.reload();
+            }}
+          >
+            Next
+          </Button>
+        </Col>
+      </Row>
+      <Myhr />
+      <Row>
+        <Col xs={6}>
+          <Text name="Sensor" value="" />
           <DropdownButton
             id="dropdown-measurement-button"
-            title="Sensor"
+            title={`${appContext.chartsData.measurement.label} ${appContext.chartsData.measurement.unit}`}
             onSelect={(e) => {
               appContext.chartsData.setMeasurement(e);
               appContext.chartsCtrl.reload();
@@ -67,13 +90,16 @@ const Charts = observer(
                 key={`${m.table}${m.label}`}
                 eventKey={JSON.stringify(m)}
               >
-                {m.label}
+                {`${m.label} ${m.unit}`}
               </Dropdown.Item>
             ))}
           </DropdownButton>
+        </Col>
+        <Col xs={6}>
+          <Text name="Range" value="" />
           <DropdownButton
             id="dropdown-range-button"
-            title="Range"
+            title={appContext.chartsData.range.split("|")[1]}
             onSelect={(e) => {
               appContext.chartsData.setOffset(e);
               appContext.chartsCtrl.reload();
@@ -89,44 +115,6 @@ const Charts = observer(
             <Dropdown.Item eventKey="2419200|4 weeks">4 weeks</Dropdown.Item>
             <Dropdown.Item eventKey="31536000|1 year">1 year</Dropdown.Item>
           </DropdownButton>
-          <Button
-            // variant="outline-secondary"
-            onClick={() => {
-              appContext.chartsData.setPage(appContext.chartsData.page - 1);
-              appContext.chartsCtrl.reload();
-            }}
-          >
-            &lt;
-          </Button>
-          <Button
-            // variant="outline-secondary"
-            onClick={() => {
-              appContext.chartsData.setPage(
-                appContext.chartsData.page < 0
-                  ? appContext.chartsData.page + 1
-                  : 0
-              );
-              appContext.chartsCtrl.reload();
-            }}
-          >
-            &gt;
-          </Button>
-        </ButtonGroup>
-      </Row>
-      <Myhr />
-      <Row>
-        <Col xs={6}>
-          <Text
-            name="Sensor"
-            value={
-              appContext.chartsData.cdata.label == null
-                ? ""
-                : `${appContext.chartsData.cdata.label} ${appContext.chartsData.cdata.unit}`
-            }
-          />
-        </Col>
-        <Col xs={6}>
-          <Text name="Range" value={appContext.chartsData.cdata.range} />
         </Col>
       </Row>
       <Row>

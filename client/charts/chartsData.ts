@@ -33,7 +33,7 @@ class ChartsData {
 
   page: number = 0;
 
-  offset: string = "86400|1 day";
+  range: string = "86400|1 day";
 
   measurement: IMeasurementDesc = null;
 
@@ -58,7 +58,7 @@ class ChartsData {
       hdata: observable,
       cdata: observable,
       page: observable,
-      offset: observable,
+      range: observable,
       measurement: observable,
       measurements: observable,
       loading: observable,
@@ -113,7 +113,7 @@ class ChartsData {
   }
 
   setOffset(offset: string) {
-    this.offset = offset;
+    this.range = offset;
   }
 
   setPage(page: number) {

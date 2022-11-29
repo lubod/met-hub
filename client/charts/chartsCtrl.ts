@@ -19,7 +19,7 @@ class ChartsCtrl {
 
   async reload() {
     this.load(
-      this.chartsData.offset,
+      this.chartsData.range,
       this.chartsData.page,
       this.chartsData.measurement,
       this.chartsData.stationID
@@ -69,7 +69,7 @@ class ChartsCtrl {
       let avg: string = null;
       let total: number = null;
 
-      const range = this.chartsData.offset.split("|")[1];
+      const range = this.chartsData.range.split("|")[1];
 
       const y = m.col;
       const y2 = m.col2;
