@@ -53,7 +53,7 @@ function Chart({
     return moment(label).format("DD.MM.YYYY HH:mm:ss");
   }
 
-  // console.info("render chart", chdata, xkey, ykey, y2key, domainMin, domainMax);
+  console.info("render chart", color);
   return (
     <div className="text-left">
       <ResponsiveContainer width="100%" aspect={5.0 / 4.0}>

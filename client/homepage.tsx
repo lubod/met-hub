@@ -23,7 +23,7 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
   return (
     <div>
       {!appContext.authData.isAuth && (
-        <Container className="container-max-width text-center mx-auto">
+        <Container className="container-max-width text-center mx-auto vh-100">
           <Row className="">
             <Header appContext={appContext} />
           </Row>

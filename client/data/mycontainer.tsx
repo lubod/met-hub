@@ -10,7 +10,7 @@ type Props = {
 
 export function MyContainer({ children }: Props) {
   return (
-    <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2">
+    <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2 h-100">
       {children}
     </Container>
   );

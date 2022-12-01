@@ -64,14 +64,16 @@ const ForecastChart = observer(({ data, index }: ForecastChartData) => {
             fillOpacity={1}
             fill="url(#colorUv)"
             isAnimationActive={false}
+            yAxisId="left"
           />
           <Line
-            type="monotoneX"
+            type="step"
             dataKey="rain"
             stroke={MY_COLORS.blue}
             dot={false}
             strokeWidth={2}
             isAnimationActive={false}
+            yAxisId="right"
           />
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -84,7 +86,8 @@ const ForecastChart = observer(({ data, index }: ForecastChartData) => {
             </linearGradient>
           </defs>
           <XAxis dataKey="timestamp" hide axisLine={false} />
-          <YAxis hide type="number" domain={["auto", "auto"]} />
+          <YAxis yAxisId="left" hide type="number" domain={["auto", "auto"]} />
+          <YAxis yAxisId="right" hide type="number" domain={["auto", 5]} />
 
           <Tooltip
             labelStyle={{ color: "black" }}

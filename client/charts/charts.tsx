@@ -46,75 +46,81 @@ const Charts = observer(
         </Col>
       </Row>
       <Row className="mt-3 mb-3">
-        <Col xs={6} className="text-left">
-          <Button
-            // variant="link"
-            onClick={() => {
-              appContext.chartsData.setPage(appContext.chartsData.page - 1);
-              appContext.chartsCtrl.reload();
-            }}
-          >
-            Prev
-          </Button>
+        <Col xs={4} className="text-left">
+          <div className="d-grid gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                appContext.chartsData.setPage(appContext.chartsData.page - 1);
+                appContext.chartsCtrl.reload();
+              }}
+            >
+              Prev
+            </Button>
+          </div>
         </Col>
-        <Col xs={6} className="text-right">
-          <Button
-            // variant="outline-secondary"
-            onClick={() => {
-              appContext.chartsData.setPage(
-                appContext.chartsData.page < 0
-                  ? appContext.chartsData.page + 1
-                  : 0
-              );
-              appContext.chartsCtrl.reload();
-            }}
-          >
-            Next
-          </Button>
+        <Col xs={4}>
+          <div className="d-grid gap-2">
+            <DropdownButton
+              id="dropdown-range-button"
+              title={appContext.chartsData.range.split("|")[1]}
+              onSelect={(e) => {
+                appContext.chartsData.setOffset(e);
+                appContext.chartsCtrl.reload();
+              }}
+            >
+              <Dropdown.Item eventKey="3600|1 hour">1 hour</Dropdown.Item>
+              <Dropdown.Item eventKey="10800|3 hours">3 hours</Dropdown.Item>
+              <Dropdown.Item eventKey="21600|6 hours">6 hours</Dropdown.Item>
+              <Dropdown.Item eventKey="43200|12 hours">12 hours</Dropdown.Item>
+              <Dropdown.Item eventKey="86400|1 day">1 day</Dropdown.Item>
+              <Dropdown.Item eventKey="259200|3 days">3 days</Dropdown.Item>
+              <Dropdown.Item eventKey="604800|1 week">1 week</Dropdown.Item>
+              <Dropdown.Item eventKey="2419200|4 weeks">4 weeks</Dropdown.Item>
+              <Dropdown.Item eventKey="31536000|1 year">1 year</Dropdown.Item>
+            </DropdownButton>
+          </div>
+        </Col>
+        <Col xs={4}>
+          <div className="d-grid gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                appContext.chartsData.setPage(
+                  appContext.chartsData.page < 0
+                    ? appContext.chartsData.page + 1
+                    : 0
+                );
+                appContext.chartsCtrl.reload();
+              }}
+            >
+              Next
+            </Button>
+          </div>
         </Col>
       </Row>
       <Myhr />
       <Row>
-        <Col xs={6}>
-          <Text name="Sensor" value="" />
-          <DropdownButton
-            id="dropdown-measurement-button"
-            title={`${appContext.chartsData.measurement.label} ${appContext.chartsData.measurement.unit}`}
-            onSelect={(e) => {
-              appContext.chartsData.setMeasurement(e);
-              appContext.chartsCtrl.reload();
-            }}
-          >
-            {appContext.chartsData.measurements.map((m) => (
-              <Dropdown.Item
-                key={`${m.table}${m.label}`}
-                eventKey={JSON.stringify(m)}
-              >
-                {`${m.label} ${m.unit}`}
-              </Dropdown.Item>
-            ))}
-          </DropdownButton>
-        </Col>
-        <Col xs={6}>
-          <Text name="Range" value="" />
-          <DropdownButton
-            id="dropdown-range-button"
-            title={appContext.chartsData.range.split("|")[1]}
-            onSelect={(e) => {
-              appContext.chartsData.setOffset(e);
-              appContext.chartsCtrl.reload();
-            }}
-          >
-            <Dropdown.Item eventKey="3600|1 hour">1 hour</Dropdown.Item>
-            <Dropdown.Item eventKey="10800|3 hours">3 hours</Dropdown.Item>
-            <Dropdown.Item eventKey="21600|6 hours">6 hours</Dropdown.Item>
-            <Dropdown.Item eventKey="43200|12 hours">12 hours</Dropdown.Item>
-            <Dropdown.Item eventKey="86400|1 day">1 day</Dropdown.Item>
-            <Dropdown.Item eventKey="259200|3 days">3 days</Dropdown.Item>
-            <Dropdown.Item eventKey="604800|1 week">1 week</Dropdown.Item>
-            <Dropdown.Item eventKey="2419200|4 weeks">4 weeks</Dropdown.Item>
-            <Dropdown.Item eventKey="31536000|1 year">1 year</Dropdown.Item>
-          </DropdownButton>
+        <Col xs={12}>
+          <div className="d-grid gap-2">
+            <DropdownButton
+              id="dropdown-measurement-button"
+              title={`${appContext.chartsData.measurement.label} ${appContext.chartsData.measurement.unit}`}
+              onSelect={(e) => {
+                appContext.chartsData.setMeasurement(e);
+                appContext.chartsCtrl.reload();
+              }}
+            >
+              {appContext.chartsData.measurements.map((m) => (
+                <Dropdown.Item
+                  key={`${m.table}${m.label}`}
+                  eventKey={JSON.stringify(m)}
+                >
+                  {`${m.label} ${m.unit}`}
+                </Dropdown.Item>
+              ))}
+            </DropdownButton>
+          </div>
         </Col>
       </Row>
       <Row>
