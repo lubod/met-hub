@@ -1,7 +1,6 @@
 import fetch from "node-fetch";
 import { IStationData, IStationTrendData } from "../../common/stationModel";
 import AuthData from "../auth/authData";
-import ChartsCtrl from "../charts/chartsCtrl";
 import StationData from "./stationData";
 import { IController } from "../../common/controller";
 import { StationCfg } from "../../common/stationCfg";
@@ -17,8 +16,6 @@ class StationCtrl implements IController {
 
   authData: AuthData;
 
-  chartsCtrl: ChartsCtrl;
-
   stationCfg: StationCfg;
 
   listener = (data: IStationData) => {
@@ -27,19 +24,12 @@ class StationCtrl implements IController {
 
   listenerTrend = (data: IStationTrendData) => {
     this.stationData.processTrendData(data);
-    this.chartsCtrl?.reload();
   };
 
-  constructor(
-    socket: any,
-    stationData: StationData,
-    authData: AuthData,
-    chartsCtrl: ChartsCtrl
-  ) {
+  constructor(socket: any, stationData: StationData, authData: AuthData) {
     this.stationData = stationData;
     this.socket = socket;
     this.authData = authData;
-    this.chartsCtrl = chartsCtrl;
     this.stationCfg = new StationCfg(stationData.stationID);
   }
 
@@ -118,7 +108,6 @@ class StationCtrl implements IController {
 
       const newData = await response.json();
       this.stationData.processData(newData);
-      this.stationData.setLoading(false);
     } catch (e) {
       console.error(e);
     }
@@ -162,7 +151,6 @@ class StationCtrl implements IController {
       const newData = await response.json();
       this.stationData.processTrendData(newData);
       // console.info(newData);
-      this.chartsCtrl?.reload();
     } catch (e) {
       console.error(e);
     }

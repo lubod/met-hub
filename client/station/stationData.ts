@@ -99,6 +99,7 @@ class StationData {
       this.data = newData;
       this.checkOldData(new Date());
     }
+    this.loading = false;
   }
 
   processTrendData(newTrendData: IStationTrendData) {

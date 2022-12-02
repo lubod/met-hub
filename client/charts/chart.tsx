@@ -53,7 +53,7 @@ function Chart({
     return moment(label).format("DD.MM.YYYY HH:mm:ss");
   }
 
-  console.info("render chart", color);
+  console.info("render chart", chdata, color);
   return (
     <div className="text-left">
       <ResponsiveContainer width="100%" aspect={5.0 / 4.0}>
@@ -72,7 +72,7 @@ function Chart({
             stroke={color}
             fillOpacity={1}
             fill="url(#colorUv)"
-            isAnimationActive={false}
+            isAnimationActive
           />
           <Line
             type="monotoneX"
@@ -80,7 +80,7 @@ function Chart({
             stroke="#F93154"
             dot={false}
             strokeWidth={2}
-            isAnimationActive={false}
+            isAnimationActive
           />
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">

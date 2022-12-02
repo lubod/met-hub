@@ -87,8 +87,7 @@ export class AppContext {
     this.stationCtrl = new StationCtrl(
       this.socket,
       this.stationData,
-      this.authData,
-      this.chartsCtrl
+      this.authData
     );
     this.domData = new DomData();
     this.domCtrl = new DomCtrl(
@@ -122,12 +121,6 @@ export class AppContext {
 }
 
 const appContext: AppContext = new AppContext();
-
-// autorun(() => {
-/* if (appContext.authData.isAuth === true) {
-    appContext.chartsCtrl.reload();
-  } */
-// });
 
 function render() {
   console.info(

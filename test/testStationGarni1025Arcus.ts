@@ -245,7 +245,7 @@ function main(STATION_ID: string, PASSKEY: string) {
 
   const socket = new MySocket();
   const stationData = new StationData(STATION_ID);
-  const stationCtrl = new StationCtrl(socket, stationData, null, null); // todo
+  const stationCtrl = new StationCtrl(socket, stationData, null); // todo
   stationCtrl.start();
 
   setTimeout(() => postData(data1), 500);

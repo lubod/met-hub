@@ -70,10 +70,11 @@ class ChartsData {
       setMeasurement: action,
       setMeasurements: action,
       setMeasurementObject: action,
-      setOffset: action,
+      setRange: action,
       setPage: action,
       setLoading: action,
       setStationID: action,
+      setNewData: action,
     });
     this.stationID = stationID;
     this.lat = lat;
@@ -112,12 +113,18 @@ class ChartsData {
     this.measurement = measurement;
   }
 
-  setOffset(offset: string) {
-    this.range = offset;
+  setRange(range: string) {
+    this.range = range;
   }
 
   setPage(page: number) {
     this.page = page;
+  }
+
+  setNewData(loading: boolean, newHdata: any, newCdata: CData) {
+    this.hdata = newHdata;
+    this.cdata = newCdata;
+    this.loading = loading;
   }
 }
 

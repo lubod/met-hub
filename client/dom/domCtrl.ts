@@ -15,8 +15,6 @@ class DomCtrl {
 
   socket: any;
 
-  chartsCtrl: ChartsCtrl;
-
   authData: AuthData;
 
   listener = (data: IDomData) => {
@@ -25,7 +23,6 @@ class DomCtrl {
 
   listenerTrend = (data: IDomTrendData) => {
     this.domData.processTrendData(data);
-    this.chartsCtrl?.reload();
   };
 
   constructor(
@@ -37,7 +34,6 @@ class DomCtrl {
     this.domData = domData;
     this.domCfg = new DomCfg();
     this.socket = mySocket;
-    this.chartsCtrl = chartsCtrl;
     this.authData = authData;
   }
 
@@ -99,7 +95,6 @@ class DomCtrl {
 
       const newData = await response.json();
       this.domData.processData(newData);
-      this.domData.setLoading(false);
     } catch (e) {
       console.error(e);
     }
@@ -142,7 +137,6 @@ class DomCtrl {
 
       const newData = await response.json();
       this.domData.processTrendData(newData);
-      this.chartsCtrl?.reload();
     } catch (e) {
       console.error(e);
     }

@@ -10,12 +10,18 @@ class ChartsCtrl {
 
   authData: AuthData;
 
+  timer: any;
+
   constructor(chartsData: ChartsData, authData: AuthData) {
     this.chartsData = chartsData;
     this.authData = authData;
   }
 
-  start() {}
+  start() {
+    this.timer = setInterval(() => {
+      this.reload();
+    }, 60000);
+  }
 
   async reload() {
     this.load(
@@ -32,9 +38,7 @@ class ChartsCtrl {
       return;
     }
     try {
-      this.chartsData.setLoading(true);
-      this.chartsData.setHdata(null);
-      this.chartsData.setCdata(new CData());
+      this.chartsData.setNewData(true, [], new CData());
       const o = parseInt(of.split("|")[0], 10) * 1000;
       // eslint-disable-next-line no-promise-executor-return
       // return new Promise((resolve) => setTimeout(resolve, 2000));
@@ -100,8 +104,7 @@ class ChartsCtrl {
         domainMin = 0;
       }
 
-      this.chartsData.setHdata(newData);
-      this.chartsData.setCdata({
+      this.chartsData.setNewData(false, newData, {
         min,
         max,
         avg,
@@ -115,7 +118,7 @@ class ChartsCtrl {
         last,
       });
       // console.info(min, max, avg, sum);
-      this.chartsData.setLoading(false);
+      // this.chartsData.setLoading(false);
     } catch (e) {
       console.error(e);
     }

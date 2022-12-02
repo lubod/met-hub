@@ -65,7 +65,7 @@ const Charts = observer(
               id="dropdown-range-button"
               title={appContext.chartsData.range.split("|")[1]}
               onSelect={(e) => {
-                appContext.chartsData.setOffset(e);
+                appContext.chartsData.setRange(e);
                 appContext.chartsCtrl.reload();
               }}
             >

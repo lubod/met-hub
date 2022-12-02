@@ -75,6 +75,7 @@ class DomData {
       this.data = newData;
       this.checkOldData(new Date());
     }
+    this.loading = false;
   }
 
   processTrendData(newTrendData: IDomTrendData) {
