@@ -10,8 +10,8 @@ import {
   STATION_MEASUREMENTS,
   STATION_MEASUREMENTS_DESC,
 } from "../../common/stationModel";
-import { MyContainer } from "../data/mycontainer";
-import Text from "../text/text";
+import { MyContainer } from "../misc/mycontainer";
+import Text from "../misc/text";
 
 type HeaderProps = {
   appContext: AppContext;

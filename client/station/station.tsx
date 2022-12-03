@@ -5,14 +5,14 @@ import { Row, Col, Form, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
 import moment from "moment";
 import WindRose from "./wind-rose/wind-rose";
-import DataAlone from "../data/dataAlone";
-import Text from "../text/text";
+import DataAlone from "../misc/dataAlone";
+import Text from "../misc/text";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import { STATION_MEASUREMENTS_DESC } from "../../common/stationModel";
 import { AppContext } from "..";
-import { LoadImg } from "../data/loadImg";
-import { Myhr } from "../data/myhr";
-import { MyContainer } from "../data/mycontainer";
+import { LoadImg } from "../misc/loadImg";
+import { Myhr } from "../misc/myhr";
+import { MyContainer } from "../misc/mycontainer";
 
 type StationProps = {
   appContext: AppContext;

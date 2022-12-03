@@ -4,14 +4,14 @@ import React from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
 import moment from "moment";
-import Text from "../text/text";
+import Text from "../misc/text";
 import Room from "./room/room";
 import DataWithTrend from "../dataWithTrend/dataWithTrend";
 import { DOM_MEASUREMENTS_DESC } from "../../common/domModel";
 import { AppContext } from "..";
-import { LoadImg } from "../data/loadImg";
-import { Myhr } from "../data/myhr";
-import { MyContainer } from "../data/mycontainer";
+import { LoadImg } from "../misc/loadImg";
+import { Myhr } from "../misc/myhr";
+import { MyContainer } from "../misc/mycontainer";
 
 type DomProps = {
   appContext: AppContext;

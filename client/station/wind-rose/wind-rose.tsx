@@ -6,7 +6,7 @@ import { Row, Col } from "react-bootstrap";
 import { AppContext } from "../..";
 import MY_COLORS from "../../../common/colors";
 import { STATION_MEASUREMENTS_DESC } from "../../../common/stationModel";
-import DataAlone from "../../data/dataAlone";
+import DataAlone from "../../misc/dataAlone";
 import DataWithTrend from "../../dataWithTrend/dataWithTrend";
 
 type Wind = {

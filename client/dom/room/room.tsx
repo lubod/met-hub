@@ -5,9 +5,9 @@ import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { DOM_MEASUREMENTS_DESC } from "../../../common/domModel";
 import AuthData from "../../auth/authData";
-import DataAlone from "../../data/dataAlone";
+import DataAlone from "../../misc/dataAlone";
 import DataWithTrend from "../../dataWithTrend/dataWithTrend";
-import Text from "../../text/text";
+import Text from "../../misc/text";
 
 type RoomProps = {
   air: number;

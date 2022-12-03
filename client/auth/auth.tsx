@@ -1,5 +1,5 @@
 import React from "react";
-import { MyContainer } from "../data/mycontainer";
+import { MyContainer } from "../misc/mycontainer";
 import AuthCtrl from "./authCtrl";
 
 type AuthProps = {

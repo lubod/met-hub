@@ -2,12 +2,12 @@ import React from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
 import moment from "moment";
-import Text from "../text/text";
+import Text from "../misc/text";
 import { AppContext } from "..";
 import Data4Forecast from "./data4Forecast";
-import { LoadImg } from "../data/loadImg";
-import { Myhr } from "../data/myhr";
-import { MyContainer } from "../data/mycontainer";
+import { LoadImg } from "../misc/loadImg";
+import { Myhr } from "../misc/myhr";
+import { MyContainer } from "../misc/mycontainer";
 
 type ForecastProps = {
   appContext: AppContext;
@@ -80,6 +80,8 @@ const Forecast = observer(({ appContext }: ForecastProps) => (
               forecastRows={forecastDay.forecastRows}
               cloudAreaFractionSum={forecastDay.cloud_area_fraction_sum}
               index={index}
+              domainTempMax={appContext.forecastData.domainTempMax}
+              domainTempMin={appContext.forecastData.domainTempMin}
             />
           </div>
           {index < numberOfForecastDays - 1 && <Myhr />}

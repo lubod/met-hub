@@ -3,13 +3,13 @@ import { Button, Dropdown, DropdownButton, Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import Chart from "./chart";
-import Text from "../text/text";
+import Text from "../misc/text";
 import WindDirChart from "./windDirChart";
 import RainChart from "./rainChart";
 import { AppContext } from "..";
-import { LoadImg } from "../data/loadImg";
-import { Myhr } from "../data/myhr";
-import { MyContainer } from "../data/mycontainer";
+import { LoadImg } from "../misc/loadImg";
+import { Myhr } from "../misc/myhr";
+import { MyContainer } from "../misc/mycontainer";
 
 type ChartsProps = {
   appContext: AppContext;

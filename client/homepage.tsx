@@ -6,8 +6,8 @@ import Station from "./station/station";
 import Header from "./header/header";
 import { AppContext } from ".";
 import Forecast from "./forecast/forecast";
-import { Myhr } from "./data/myhr";
-import { MyContainer } from "./data/mycontainer";
+import { Myhr } from "./misc/myhr";
+import { MyContainer } from "./misc/mycontainer";
 
 type HomePageProps = {
   appContext: AppContext;

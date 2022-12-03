@@ -18,6 +18,8 @@ type DataProps = {
   forecastRows: IForecastRow[];
   cloudAreaFractionSum: number;
   index: number;
+  domainTempMin: number;
+  domainTempMax: number;
 };
 
 function Data4Forecast({
@@ -33,6 +35,8 @@ function Data4Forecast({
   forecastRows,
   cloudAreaFractionSum,
   index,
+  domainTempMin,
+  domainTempMax,
 }: DataProps) {
   const [hourly, setHourly] = useState(false);
 
@@ -101,7 +105,12 @@ function Data4Forecast({
       </Row>
       <Row className="mb-2">
         <Col xs={12}>
-          <ForecastChart data={forecastRows} index={index} />
+          <ForecastChart
+            data={forecastRows}
+            index={index}
+            domainTempMax={domainTempMax}
+            domainTempMin={domainTempMin}
+          />
         </Col>
       </Row>
       <Row className="my-2">
