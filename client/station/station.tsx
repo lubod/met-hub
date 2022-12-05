@@ -246,7 +246,7 @@ const Station = observer(({ appContext }: StationProps) => {
               <Form.Check
                 type="switch"
                 id="custom-switch"
-                label="Floating data"
+                label="Fix / Floating data"
                 checked={appContext.stationData.floatingRainData}
                 onChange={(e) => {
                   appContext.stationData.setFloatingRainData(e.target.checked);

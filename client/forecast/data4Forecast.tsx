@@ -51,13 +51,12 @@ function Data4Forecast({
         <Col xs={6}>
           <div className={`small ${labelStyle} font-weight-bold`}>{label}</div>
         </Col>
-        <Col xs={1} />
-        <Col xs={4}>
+        <Col xs={5}>
           <Form>
             <Form.Check
               type="switch"
               id="custom-switch"
-              label="Hourly"
+              label="Daily / Hourly"
               checked={hourly}
               onChange={(e) => {
                 setHourly(e.target.checked);

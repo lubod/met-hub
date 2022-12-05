@@ -98,13 +98,12 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
         <Col xs={6}>
           <div className="small font-weight-bold">Charts</div>
         </Col>
-        <Col xs={1} />
-        <Col xs={4}>
+        <Col xs={5}>
           <Form>
             <Form.Check
               type="switch"
               id="custom-switch"
-              label="10 days"
+              label="3 / 10 days"
               checked={days10}
               onChange={(e) => {
                 setDays10(e.target.checked);
@@ -114,7 +113,7 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
           </Form>
         </Col>
       </Row>
-      <Row>
+      <Row className="mb-3">
         {days10 === false && (
           <ForecastChart
             data={[...appContext.forecastData.days.values()]}
