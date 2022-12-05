@@ -2,7 +2,6 @@
 /* eslint-disable camelcase */
 import React, { useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
-import ForecastChart from "./forecastChart";
 import { IForecastRow } from "./forecastData";
 
 type DataProps = {
@@ -17,9 +16,6 @@ type DataProps = {
   symbol_code_18: string;
   forecastRows: IForecastRow[];
   cloudAreaFractionSum: number;
-  index: number;
-  domainTempMin: number;
-  domainTempMax: number;
 };
 
 function Data4Forecast({
@@ -34,9 +30,6 @@ function Data4Forecast({
   symbol_code_18,
   forecastRows,
   cloudAreaFractionSum,
-  index,
-  domainTempMin,
-  domainTempMax,
 }: DataProps) {
   const [hourly, setHourly] = useState(false);
 
@@ -101,16 +94,6 @@ function Data4Forecast({
             {windSpeedMax == null ? "" : (windSpeedMax * 3.6).toFixed(0)}
           </span>
           <span className="small">km/h </span>
-        </Col>
-      </Row>
-      <Row className="mb-2">
-        <Col xs={12}>
-          <ForecastChart
-            data={forecastRows}
-            index={index}
-            domainTempMax={domainTempMax}
-            domainTempMin={domainTempMin}
-          />
         </Col>
       </Row>
       <Row className="my-2">

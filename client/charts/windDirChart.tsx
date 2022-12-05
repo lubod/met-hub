@@ -60,6 +60,8 @@ function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
               tick={{ fill: "white" }}
               tickFormatter={formatXAxis}
               axisLine={false}
+              domain={["auto", "auto"]}
+              scale="time"
             />
             <YAxis
               hide

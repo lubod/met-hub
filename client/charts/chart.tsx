@@ -53,7 +53,7 @@ function Chart({
     return moment(label).format("DD.MM.YYYY HH:mm:ss");
   }
 
-  console.info("render chart", chdata, color);
+  // console.info("render chart", chdata, color);
   return (
     <div className="text-left">
       <ResponsiveContainer width="100%" aspect={5.0 / 4.0}>
@@ -98,6 +98,8 @@ function Chart({
             tick={{ fill: "white" }}
             tickFormatter={formatXAxis}
             axisLine={false}
+            domain={["auto", "auto"]}
+            scale="time"
           />
           <YAxis
             hide

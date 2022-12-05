@@ -93,6 +93,7 @@ class ChartsCtrl {
           }
           total += val;
         }
+        newData[i].timestamp = new Date(newData[i].timestamp).getTime();
       }
       avg = total != null ? (total / newData.length).toFixed(1) : "";
       const sum = total != null ? total.toFixed(1) : "";
@@ -103,6 +104,8 @@ class ChartsCtrl {
       if (y2 !== "") {
         domainMin = 0;
       }
+
+      //  console.info("loaded data", min, max, avg, sum, newData);
 
       this.chartsData.setNewData(false, newData, {
         min,
@@ -117,7 +120,6 @@ class ChartsCtrl {
         couldBeNegative: m.couldBeNegative,
         last,
       });
-      // console.info(min, max, avg, sum);
       // this.chartsData.setLoading(false);
     } catch (e) {
       console.error(e);

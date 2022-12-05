@@ -93,8 +93,6 @@ export default class ForecastData {
 
   setForecast(newForecast: any) {
     this.days = new Map<string, IForecastDay>();
-    let domainTempMax = Number.MIN_VALUE;
-    let domainTempMin = Number.MAX_VALUE;
     for (let i = 0; i < newForecast.properties.timeseries.length; i += 1) {
       const item = newForecast.properties.timeseries[i];
       const timestamp: Date = new Date(item.time);
@@ -174,30 +172,7 @@ export default class ForecastData {
         forecastDay.symbol_code_18 = symbol_code_6h;
       this.days.set(timestamp.toDateString(), forecastDay);
     }
-    const allForecastDays = [...this.days.values()];
-    for (
-      let index = 0;
-      index < Math.min(3, allForecastDays.length);
-      index += 1
-    ) {
-      const forecastDay = allForecastDays[index];
-      if (domainTempMax < forecastDay.air_temperature_max) {
-        domainTempMax = forecastDay.air_temperature_max;
-      }
-      if (domainTempMin > forecastDay.air_temperature_min) {
-        domainTempMin = forecastDay.air_temperature_min;
-      }
-      console.info(
-        "--------DOMAIN",
-        index,
-        domainTempMin,
-        domainTempMax,
-        forecastDay.air_temperature_min,
-        forecastDay.air_temperature_max
-      );
-    }
+
     this.forecast = newForecast;
-    this.domainTempMax = domainTempMax;
-    this.domainTempMin = domainTempMin;
   }
 }
