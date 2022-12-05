@@ -97,6 +97,29 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
       <Myhr />
       <Row>
         <Col xs={6}>
+          <Text
+            name="Sunrise"
+            value={
+              appContext.forecastData.sunrise == null
+                ? "-"
+                : moment(appContext.forecastData.sunrise).format("HH:mm")
+            }
+          />
+        </Col>
+        <Col xs={6}>
+          <Text
+            name="Sunset"
+            value={
+              appContext.forecastData.sunset == null
+                ? "-"
+                : moment(appContext.forecastData.sunset).format("HH:mm")
+            }
+          />
+        </Col>
+      </Row>
+      <Myhr />
+      <Row>
+        <Col xs={6}>
           <div className="small text-white-50 font-weight-bold">
             Temperature <span style={{ color: MY_COLORS.orange }}>&#8226;</span>
           </div>
@@ -129,29 +152,6 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
             index={10}
           />
         )}
-      </Row>
-      <Myhr />
-      <Row>
-        <Col xs={6}>
-          <Text
-            name="Sunrise"
-            value={
-              appContext.forecastData.sunrise == null
-                ? "-"
-                : moment(appContext.forecastData.sunrise).format("HH:mm")
-            }
-          />
-        </Col>
-        <Col xs={6}>
-          <Text
-            name="Sunset"
-            value={
-              appContext.forecastData.sunset == null
-                ? "-"
-                : moment(appContext.forecastData.sunset).format("HH:mm")
-            }
-          />
-        </Col>
       </Row>
     </MyContainer>
   );
