@@ -72,7 +72,7 @@ const ForecastChart = observer(({ data, index }: ForecastChartData) => {
         className="text-center"
         style={{ display: "flex", justifyContent: "center" }}
       >
-        <ResponsiveContainer width="100%" aspect={7.0 / 1.0}>
+        <ResponsiveContainer width="100%" aspect={6.0 / 1.0}>
           <ComposedChart
             data={chdata}
             margin={{
@@ -128,10 +128,21 @@ const ForecastChart = observer(({ data, index }: ForecastChartData) => {
         </ResponsiveContainer>
       </div>
       <div
+        className="text-left small text-white-50 font-weight-bold mb-2"
+        style={{ color: MY_COLORS.purple }}
+      >
+        Rain
+        <span style={{ color: MY_COLORS.purple }}>&#8226;</span>{" "}
+        <span className="">Wind speed</span>
+        <span style={{ color: MY_COLORS.blue }}>&#8226;</span>{" "}
+        <span className="">Clouds</span>
+        <span style={{ color: MY_COLORS.white }}>&#8226;</span>
+      </div>
+      <div
         className="text-center"
         style={{ display: "flex", justifyContent: "center" }}
       >
-        <ResponsiveContainer width="100%" aspect={7.0 / 1.0}>
+        <ResponsiveContainer width="100%" aspect={6.0 / 1.0}>
           <ComposedChart
             data={chdata}
             margin={{

@@ -9,6 +9,7 @@ import { LoadImg } from "../misc/loadImg";
 import { Myhr } from "../misc/myhr";
 import { MyContainer } from "../misc/mycontainer";
 import ForecastChart from "./forecastChart";
+import MY_COLORS from "../../common/colors";
 
 type ForecastProps = {
   appContext: AppContext;
@@ -60,7 +61,7 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
           <Text name="Temperature" value="" />
         </Col>
         <Col xs={4}>
-          <Text name="Precipitation" value="" />
+          <Text name="Rain" value="" />
         </Col>
         <Col xs={4}>
           <Text name="WindSpeed" value="" />
@@ -96,7 +97,9 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
       <Myhr />
       <Row>
         <Col xs={6}>
-          <div className="small font-weight-bold">Charts</div>
+          <div className="small text-white-50 font-weight-bold">
+            Temperature <span style={{ color: MY_COLORS.orange }}>&#8226;</span>
+          </div>
         </Col>
         <Col xs={5}>
           <Form>
