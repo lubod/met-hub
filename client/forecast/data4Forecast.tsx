@@ -1,44 +1,29 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/style-prop-object */
 /* eslint-disable camelcase */
+import moment from "moment";
 import React, { useState } from "react";
-import { Col, Form, Row } from "react-bootstrap";
-import { IForecastRow } from "./forecastData";
+import { Col, Row } from "react-bootstrap";
+import { IForecastDay } from "./forecastData";
 
-type DataProps = {
-  label: string;
-  temperatureMin: number;
-  temperatureMax: number;
-  precipitationSum: number;
-  windSpeedMax: number;
-  symbol_code_00: string;
-  symbol_code_06: string;
-  symbol_code_12: string;
-  symbol_code_18: string;
-  forecastRows: IForecastRow[];
-  cloudAreaFractionSum: number;
+type Data4ForecastProps = {
+  forecastDay: IForecastDay;
+  days10r: boolean;
 };
 
-function Data4Forecast({
-  label,
-  temperatureMax,
-  temperatureMin,
-  precipitationSum,
-  windSpeedMax,
-  symbol_code_00,
-  symbol_code_06,
-  symbol_code_12,
-  symbol_code_18,
-  forecastRows,
-  cloudAreaFractionSum,
-}: DataProps) {
+function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
   const [hourly, setHourly] = useState(false);
 
   let labelStyle = "text-primary";
-  if (precipitationSum == null || precipitationSum === 0) {
+  if (
+    forecastDay.precipitation_amount_sum == null ||
+    forecastDay.precipitation_amount_sum === 0
+  ) {
     labelStyle = "text-warning";
     if (
-      forecastRows.length > 0 &&
-      cloudAreaFractionSum / forecastRows.length > 50
+      forecastDay.forecastRows.length > 0 &&
+      forecastDay.cloud_area_fraction_sum / forecastDay.forecastRows.length > 50
     ) {
       labelStyle = "text-light";
     }
@@ -47,98 +32,97 @@ function Data4Forecast({
   // console.info("render data4forecat");
   return (
     <div className="text-left">
-      <Row className="mb-2">
-        <Col xs={6}>
-          <div className={`small ${labelStyle} font-weight-bold`}>{label}</div>
-        </Col>
-        <Col xs={5}>
-          <Form>
-            <Form.Check
-              type="switch"
-              id="custom-switch"
-              label="Daily / Hourly"
-              checked={hourly}
-              onChange={(e) => {
-                setHourly(e.target.checked);
-              }}
-              className={`small ${labelStyle}`}
-            />
-          </Form>
-        </Col>
-        <Col xs={1} />
-      </Row>
       <Row>
-        <Col xs={4}>
+        <Col xs={3}>
+          <div
+            className={`small ${labelStyle}`}
+            onClick={() => setHourly(!hourly)}
+            style={{ cursor: "pointer" }}
+          >
+            {moment(forecastDay.timestamp).format("ddd")}
+          </div>
+        </Col>
+        <Col xs={3}>
           <span className="h4 mr-1">
-            {temperatureMax == null ? "" : temperatureMax.toFixed(0)}
+            {forecastDay.air_temperature_max == null
+              ? ""
+              : forecastDay.air_temperature_max.toFixed(0)}
           </span>
           <span className="small"> / </span>
           <span className="h4 mr-1">
-            {temperatureMin == null ? "" : temperatureMin.toFixed(0)}
-          </span>
-          <span className="small">°C </span>
-        </Col>
-        <Col xs={4}>
-          <span className="h4 mr-1">
-            {precipitationSum == null || precipitationSum === 0
+            {forecastDay.air_temperature_min == null
               ? ""
-              : precipitationSum.toFixed(1)}
-          </span>
-          <span className="small">
-            {precipitationSum == null || precipitationSum === 0 ? "" : "mm"}
+              : forecastDay.air_temperature_min.toFixed(0)}
           </span>
         </Col>
-        <Col xs={4}>
+        <Col xs={3}>
           <span className="h4 mr-1">
-            {windSpeedMax == null ? "" : (windSpeedMax * 3.6).toFixed(0)}
+            {forecastDay.precipitation_amount_sum == null ||
+            forecastDay.precipitation_amount_sum === 0
+              ? ""
+              : forecastDay.precipitation_amount_sum.toFixed(1)}
           </span>
-          <span className="small">km/h </span>
+        </Col>
+        <Col xs={3}>
+          <span className="h4 mr-1">
+            {forecastDay.wind_speed_max == null
+              ? ""
+              : (forecastDay.wind_speed_max * 3.6).toFixed(0)}
+          </span>
         </Col>
       </Row>
-      <Row className="my-2">
+      <Row className="mb-2">
         <Col xs={3}>
-          {symbol_code_00 && hourly === false && (
-            <img
-              width="40px"
-              height="40px"
-              src={`svg/${symbol_code_00}.svg`}
-              alt={symbol_code_00}
-            />
-          )}
+          {forecastDay.symbol_code_00 &&
+            hourly === false &&
+            days10r === false && (
+              <img
+                width="40px"
+                height="40px"
+                src={`svg/${forecastDay.symbol_code_00}.svg`}
+                alt={forecastDay.symbol_code_00}
+              />
+            )}
         </Col>
         <Col xs={3}>
-          {symbol_code_06 && hourly === false && (
-            <img
-              width="40px"
-              height="40px"
-              src={`svg/${symbol_code_06}.svg`}
-              alt={symbol_code_06}
-            />
-          )}
+          {forecastDay.symbol_code_06 &&
+            hourly === false &&
+            days10r === false && (
+              <img
+                width="40px"
+                height="40px"
+                src={`svg/${forecastDay.symbol_code_06}.svg`}
+                alt={forecastDay.symbol_code_06}
+              />
+            )}
         </Col>
         <Col xs={3}>
-          {symbol_code_12 && hourly === false && (
-            <img
-              width="40px"
-              height="40px"
-              src={`svg/${symbol_code_12}.svg`}
-              alt={symbol_code_12}
-            />
-          )}
+          {forecastDay.symbol_code_12 &&
+            hourly === false &&
+            days10r === false && (
+              <img
+                width="40px"
+                height="40px"
+                src={`svg/${forecastDay.symbol_code_12}.svg`}
+                alt={forecastDay.symbol_code_12}
+              />
+            )}
         </Col>
         <Col xs={3}>
-          {symbol_code_18 && hourly === false && (
-            <img
-              width="40px"
-              height="40px"
-              src={`svg/${symbol_code_18}.svg`}
-              alt={symbol_code_18}
-            />
-          )}
+          {forecastDay.symbol_code_18 &&
+            hourly === false &&
+            days10r === false && (
+              <img
+                width="40px"
+                height="40px"
+                src={`svg/${forecastDay.symbol_code_18}.svg`}
+                alt={forecastDay.symbol_code_18}
+              />
+            )}
         </Col>
       </Row>
       {hourly &&
-        forecastRows.map((forecastRow) => (
+        forecastDay.forecastRows.map((forecastRow) => (
           <Row key={forecastRow.timestamp.getTime()}>
             <Col xs={2}>{forecastRow.timestamp.getHours()}</Col>
             <Col xs={2}>

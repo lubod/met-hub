@@ -15,10 +15,20 @@ type ForecastProps = {
   appContext: AppContext;
 };
 
-const numberOfForecastDays = 3;
+let numberOfForecastDays = 3;
 
 const Forecast = observer(({ appContext }: ForecastProps) => {
+  const [days10r, setDays10r] = useState(false);
   const [days10, setDays10] = useState(false);
+
+  function setDaysRows(show10: boolean) {
+    setDays10r(show10);
+    if (show10) {
+      numberOfForecastDays = 10;
+    } else {
+      numberOfForecastDays = 3;
+    }
+  }
 
   return (
     <MyContainer>
@@ -57,66 +67,47 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
       </Row>
       <Myhr />
       <Row>
-        <Col xs={4}>
-          <Text name="Temperature" value="" />
+        <Col xs={3}>
+          <Text name="Day" value="" />
         </Col>
-        <Col xs={4}>
-          <Text name="Rain" value="" />
+        <Col xs={3}>
+          <Text name="Temperature °C" value="" />
         </Col>
-        <Col xs={4}>
-          <Text name="WindSpeed" value="" />
+        <Col xs={3}>
+          <Text name="Rain mm" value="" />
+        </Col>
+        <Col xs={3}>
+          <Text name="WindSpeed km/h" value="" />
         </Col>
       </Row>
+      <Row>
+        <Col xs={6} />
+        <Col xs={5}>
+          <Form>
+            <Form.Check
+              type="switch"
+              id="custom-switch-1"
+              label="3 / 10 days"
+              checked={days10r}
+              onChange={(e) => {
+                setDaysRows(e.target.checked);
+              }}
+              className="small"
+            />
+          </Form>
+        </Col>
+      </Row>
+      <Myhr />
       {[...appContext.forecastData.days.values()]
         .slice(0, numberOfForecastDays)
         .map((forecastDay, index) => (
           <>
             <div key={forecastDay.timestamp.getTime()}>
-              <Data4Forecast
-                label={forecastDay.timestamp
-                  .toDateString()
-                  .substring(
-                    0,
-                    forecastDay.timestamp.toDateString().length - 5
-                  )}
-                temperatureMax={forecastDay.air_temperature_max}
-                temperatureMin={forecastDay.air_temperature_min}
-                precipitationSum={forecastDay.precipitation_amount_sum}
-                windSpeedMax={forecastDay.wind_speed_max}
-                symbol_code_00={forecastDay.symbol_code_00}
-                symbol_code_06={forecastDay.symbol_code_06}
-                symbol_code_12={forecastDay.symbol_code_12}
-                symbol_code_18={forecastDay.symbol_code_18}
-                forecastRows={forecastDay.forecastRows}
-                cloudAreaFractionSum={forecastDay.cloud_area_fraction_sum}
-              />
+              <Data4Forecast forecastDay={forecastDay} days10r={days10r} />
             </div>
             {index < numberOfForecastDays - 1 && <Myhr />}
           </>
         ))}
-      <Myhr />
-      <Row>
-        <Col xs={6}>
-          <Text
-            name="Sunrise"
-            value={
-              appContext.forecastData.sunrise == null
-                ? "-"
-                : moment(appContext.forecastData.sunrise).format("HH:mm")
-            }
-          />
-        </Col>
-        <Col xs={6}>
-          <Text
-            name="Sunset"
-            value={
-              appContext.forecastData.sunset == null
-                ? "-"
-                : moment(appContext.forecastData.sunset).format("HH:mm")
-            }
-          />
-        </Col>
-      </Row>
       <Myhr />
       <Row>
         <Col xs={6}>
@@ -152,6 +143,29 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
             index={10}
           />
         )}
+      </Row>
+      <Myhr />
+      <Row>
+        <Col xs={6}>
+          <Text
+            name="Sunrise"
+            value={
+              appContext.forecastData.sunrise == null
+                ? "-"
+                : moment(appContext.forecastData.sunrise).format("HH:mm")
+            }
+          />
+        </Col>
+        <Col xs={6}>
+          <Text
+            name="Sunset"
+            value={
+              appContext.forecastData.sunset == null
+                ? "-"
+                : moment(appContext.forecastData.sunset).format("HH:mm")
+            }
+          />
+        </Col>
       </Row>
     </MyContainer>
   );
