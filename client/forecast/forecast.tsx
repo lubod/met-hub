@@ -16,17 +16,19 @@ type ForecastProps = {
 };
 
 let numberOfForecastDays = 3;
+let daysStyle = "mb-4";
 
 const Forecast = observer(({ appContext }: ForecastProps) => {
   const [days10r, setDays10r] = useState(false);
-  const [days10, setDays10] = useState(false);
 
   function setDaysRows(show10: boolean) {
     setDays10r(show10);
     if (show10) {
       numberOfForecastDays = 10;
+      daysStyle = "";
     } else {
       numberOfForecastDays = 3;
+      daysStyle = "mb-4";
     }
   }
 
@@ -80,7 +82,7 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
           <Text name="WindSpeed km/h" value="" />
         </Col>
       </Row>
-      <Row>
+      <Row className="mb-2">
         <Col xs={6} />
         <Col xs={5}>
           <Form>
@@ -97,17 +99,14 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
           </Form>
         </Col>
       </Row>
-      <Myhr />
       {[...appContext.forecastData.days.values()]
         .slice(0, numberOfForecastDays)
-        .map((forecastDay, index) => (
-          <>
-            <div key={forecastDay.timestamp.getTime()}>
-              <Data4Forecast forecastDay={forecastDay} days10r={days10r} />
-            </div>
-            {index < numberOfForecastDays - 1 && <Myhr />}
-          </>
+        .map((forecastDay) => (
+          <div key={forecastDay.timestamp.getTime()} className={daysStyle}>
+            <Data4Forecast forecastDay={forecastDay} days10r={days10r} />
+          </div>
         ))}
+      {days10r && <div className="mb-4" />}
       <Myhr />
       <Row>
         <Col xs={6}>
@@ -115,29 +114,15 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
             Temperature <span style={{ color: MY_COLORS.orange }}>&#8226;</span>
           </div>
         </Col>
-        <Col xs={5}>
-          <Form>
-            <Form.Check
-              type="switch"
-              id="custom-switch"
-              label="3 / 10 days"
-              checked={days10}
-              onChange={(e) => {
-                setDays10(e.target.checked);
-              }}
-              className="small"
-            />
-          </Form>
-        </Col>
       </Row>
       <Row className="mb-3">
-        {days10 === false && (
+        {days10r === false && (
           <ForecastChart
             data={[...appContext.forecastData.days.values()]}
             index={3}
           />
         )}
-        {days10 === true && (
+        {days10r === true && (
           <ForecastChart
             data={[...appContext.forecastData.days.values()]}
             index={10}

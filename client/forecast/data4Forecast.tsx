@@ -29,6 +29,13 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
     }
   }
 
+  let textStyle = "h4";
+  let gapStyle = "my-2";
+  if (days10r) {
+    textStyle = "small";
+    gapStyle = "mb-1";
+  }
+
   // console.info("render data4forecat");
   return (
     <div className="text-left">
@@ -39,24 +46,26 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
             onClick={() => setHourly(!hourly)}
             style={{ cursor: "pointer" }}
           >
-            {moment(forecastDay.timestamp).format("ddd")}
+            <span className={textStyle}>
+              {moment(forecastDay.timestamp).format("ddd")}
+            </span>
           </div>
         </Col>
         <Col xs={3}>
-          <span className="h4 mr-1">
+          <span className={textStyle}>
             {forecastDay.air_temperature_max == null
               ? ""
               : forecastDay.air_temperature_max.toFixed(0)}
           </span>
-          <span className="small"> / </span>
-          <span className="h4 mr-1">
+          <span className={textStyle}> / </span>
+          <span className={textStyle}>
             {forecastDay.air_temperature_min == null
               ? ""
               : forecastDay.air_temperature_min.toFixed(0)}
           </span>
         </Col>
         <Col xs={3}>
-          <span className="h4 mr-1">
+          <span className={textStyle}>
             {forecastDay.precipitation_amount_sum == null ||
             forecastDay.precipitation_amount_sum === 0
               ? ""
@@ -64,14 +73,14 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
           </span>
         </Col>
         <Col xs={3}>
-          <span className="h4 mr-1">
+          <span className={textStyle}>
             {forecastDay.wind_speed_max == null
               ? ""
               : (forecastDay.wind_speed_max * 3.6).toFixed(0)}
           </span>
         </Col>
       </Row>
-      <Row className="mb-2">
+      <Row className={gapStyle}>
         <Col xs={3}>
           {forecastDay.symbol_code_00 &&
             hourly === false &&
