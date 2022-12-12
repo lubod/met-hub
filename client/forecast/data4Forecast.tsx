@@ -132,7 +132,7 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
       </Row>
       {hourly &&
         forecastDay.forecastRows.map((forecastRow) => (
-          <Row key={forecastRow.timestamp.getTime()}>
+          <Row key={forecastRow.timestamp.getTime()} className="small">
             <Col xs={2}>{forecastRow.timestamp.getHours()}</Col>
             <Col xs={2}>
               <img
