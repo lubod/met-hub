@@ -7,23 +7,23 @@ import moment from "moment";
 import WindRose from "./wind-rose/wind-rose";
 import DataAlone from "../misc/dataAlone";
 import Text from "../misc/text";
-import DataWithTrend from "../dataWithTrend/dataWithTrend";
+import DataWithTrend from "../misc/dataWithTrend";
 import { STATION_MEASUREMENTS_DESC } from "../../common/stationModel";
 import { AppContext } from "..";
 import { LoadImg } from "../misc/loadImg";
 import { Myhr } from "../misc/myhr";
 import { MyContainer } from "../misc/mycontainer";
 
-type StationProps = {
+type Props = {
   appContext: AppContext;
 };
 
-const Station = observer(({ appContext }: StationProps) => {
+const Station = observer(({ appContext }: Props) => {
   console.info(
     "station render",
-    appContext.authData.isAuth,
-    appContext.stationData.oldData,
-    appContext.headerData.stationID
+    appContext.authCtrl.authData.isAuth,
+    appContext.stationCtrl.stationData.oldData,
+    appContext.headerCtrl.headerData.stationID
   );
 
   return (
@@ -43,7 +43,8 @@ const Station = observer(({ appContext }: StationProps) => {
           >
             <LoadImg
               rotate={
-                appContext.stationData.loading || appContext.stationData.oldData
+                appContext.stationCtrl.stationData.loading ||
+                appContext.stationCtrl.stationData.oldData
               }
               src="icons8-refresh-25.svg"
               alt=""
@@ -51,16 +52,20 @@ const Station = observer(({ appContext }: StationProps) => {
           </Button>
         </Col>
       </Row>
-      <Row className={appContext.stationData.oldData ? "text-danger" : ""}>
+      <Row
+        className={
+          appContext.stationCtrl.stationData.oldData ? "text-danger" : ""
+        }
+      >
         <Col xs={6}>
           <Text
             name="Data date"
             value={
-              appContext.stationData.data.timestamp === null
+              appContext.stationCtrl.stationData.data.timestamp === null
                 ? "-"
-                : moment(appContext.stationData.data.timestamp).format(
-                    "DD MMM YYYY"
-                  )
+                : moment(
+                    appContext.stationCtrl.stationData.data.timestamp
+                  ).format("DD MMM YYYY")
             }
           />
         </Col>
@@ -68,39 +73,39 @@ const Station = observer(({ appContext }: StationProps) => {
           <Text
             name="Data time"
             value={
-              appContext.stationData.data.timestamp === null
+              appContext.stationCtrl.stationData.data.timestamp === null
                 ? "-"
-                : moment(appContext.stationData.data.timestamp).format(
-                    "HH:mm:ss"
-                  )
+                : moment(
+                    appContext.stationCtrl.stationData.data.timestamp
+                  ).format("HH:mm:ss")
             }
           />
         </Col>
       </Row>
       <Myhr />
       <WindRose
-        gustTrend={appContext.stationData.trendData.windgust}
-        speedTrend={appContext.stationData.trendData.windspeed}
-        dirTrend={appContext.stationData.trendData.winddir}
+        gustTrend={appContext.stationCtrl.stationData.trendData.windgust}
+        speedTrend={appContext.stationCtrl.stationData.trendData.windspeed}
+        dirTrend={appContext.stationCtrl.stationData.trendData.winddir}
         speed={
-          appContext.stationData.oldData
+          appContext.stationCtrl.stationData.oldData
             ? null
-            : appContext.stationData.data.windspeed
+            : appContext.stationCtrl.stationData.data.windspeed
         }
         dir={
-          appContext.stationData.oldData
+          appContext.stationCtrl.stationData.oldData
             ? null
-            : appContext.stationData.data.winddir
+            : appContext.stationCtrl.stationData.data.winddir
         }
         gust={
-          appContext.stationData.oldData
+          appContext.stationCtrl.stationData.oldData
             ? null
-            : appContext.stationData.data.windgust
+            : appContext.stationCtrl.stationData.data.windgust
         }
         dailyGust={
-          appContext.stationData.oldData
+          appContext.stationCtrl.stationData.oldData
             ? null
-            : appContext.stationData.data.maxdailygust
+            : appContext.stationCtrl.stationData.data.maxdailygust
         }
         appContext={appContext}
         color={STATION_MEASUREMENTS_DESC.WINDDIR.color}
@@ -112,13 +117,13 @@ const Station = observer(({ appContext }: StationProps) => {
           <DataWithTrend
             label={STATION_MEASUREMENTS_DESC.TEMPERATURE.label}
             value={
-              appContext.stationData.oldData
+              appContext.stationCtrl.stationData.oldData
                 ? null
-                : appContext.stationData.data.temp
+                : appContext.stationCtrl.stationData.data.temp
             }
             unit={STATION_MEASUREMENTS_DESC.TEMPERATURE.unit}
             fix={STATION_MEASUREMENTS_DESC.TEMPERATURE.fix}
-            data={appContext.stationData.trendData.temp}
+            data={appContext.stationCtrl.stationData.trendData.temp}
             range={STATION_MEASUREMENTS_DESC.TEMPERATURE.range}
             couldBeNegative={
               STATION_MEASUREMENTS_DESC.TEMPERATURE.couldBeNegative
@@ -135,13 +140,13 @@ const Station = observer(({ appContext }: StationProps) => {
           <DataWithTrend
             label={STATION_MEASUREMENTS_DESC.HUMIDITY.label}
             value={
-              appContext.stationData.oldData
+              appContext.stationCtrl.stationData.oldData
                 ? null
-                : appContext.stationData.data.humidity
+                : appContext.stationCtrl.stationData.data.humidity
             }
             unit={STATION_MEASUREMENTS_DESC.HUMIDITY.unit}
             fix={STATION_MEASUREMENTS_DESC.HUMIDITY.fix}
-            data={appContext.stationData.trendData.humidity}
+            data={appContext.stationCtrl.stationData.trendData.humidity}
             range={STATION_MEASUREMENTS_DESC.HUMIDITY.range}
             couldBeNegative={STATION_MEASUREMENTS_DESC.HUMIDITY.couldBeNegative}
             onClick={() =>
@@ -156,13 +161,13 @@ const Station = observer(({ appContext }: StationProps) => {
           <DataWithTrend
             label={STATION_MEASUREMENTS_DESC.PRESSURE.label}
             value={
-              appContext.stationData.oldData
+              appContext.stationCtrl.stationData.oldData
                 ? null
-                : appContext.stationData.data.pressurerel
+                : appContext.stationCtrl.stationData.data.pressurerel
             }
             unit={STATION_MEASUREMENTS_DESC.PRESSURE.unit}
             fix={STATION_MEASUREMENTS_DESC.PRESSURE.fix}
-            data={appContext.stationData.trendData.pressurerel}
+            data={appContext.stationCtrl.stationData.trendData.pressurerel}
             range={STATION_MEASUREMENTS_DESC.PRESSURE.range}
             couldBeNegative={STATION_MEASUREMENTS_DESC.PRESSURE.couldBeNegative}
             onClick={() =>
@@ -179,13 +184,13 @@ const Station = observer(({ appContext }: StationProps) => {
           <DataWithTrend
             label={STATION_MEASUREMENTS_DESC.SOLAR.label}
             value={
-              appContext.stationData.oldData
+              appContext.stationCtrl.stationData.oldData
                 ? null
-                : appContext.stationData.data.solarradiation
+                : appContext.stationCtrl.stationData.data.solarradiation
             }
             unit={STATION_MEASUREMENTS_DESC.SOLAR.unit}
             fix={STATION_MEASUREMENTS_DESC.SOLAR.fix}
-            data={appContext.stationData.trendData.solarradiation}
+            data={appContext.stationCtrl.stationData.trendData.solarradiation}
             range={STATION_MEASUREMENTS_DESC.SOLAR.range}
             couldBeNegative={STATION_MEASUREMENTS_DESC.SOLAR.couldBeNegative}
             onClick={() =>
@@ -198,13 +203,13 @@ const Station = observer(({ appContext }: StationProps) => {
           <DataWithTrend
             label={STATION_MEASUREMENTS_DESC.UV.label}
             value={
-              appContext.stationData.oldData
+              appContext.stationCtrl.stationData.oldData
                 ? null
-                : appContext.stationData.data.uv
+                : appContext.stationCtrl.stationData.data.uv
             }
             unit={STATION_MEASUREMENTS_DESC.UV.unit}
             fix={STATION_MEASUREMENTS_DESC.UV.fix}
-            data={appContext.stationData.trendData.uv}
+            data={appContext.stationCtrl.stationData.trendData.uv}
             range={STATION_MEASUREMENTS_DESC.UV.range}
             couldBeNegative={STATION_MEASUREMENTS_DESC.UV.couldBeNegative}
             onClick={() =>
@@ -217,13 +222,13 @@ const Station = observer(({ appContext }: StationProps) => {
           <DataWithTrend
             label={STATION_MEASUREMENTS_DESC.RAINRATE.label}
             value={
-              appContext.stationData.oldData
+              appContext.stationCtrl.stationData.oldData
                 ? null
-                : appContext.stationData.data.rainrate
+                : appContext.stationCtrl.stationData.data.rainrate
             }
             unit={STATION_MEASUREMENTS_DESC.RAINRATE.unit}
             fix={STATION_MEASUREMENTS_DESC.RAINRATE.fix}
-            data={appContext.stationData.trendData.rainrate}
+            data={appContext.stationCtrl.stationData.trendData.rainrate}
             range={STATION_MEASUREMENTS_DESC.RAINRATE.range}
             couldBeNegative={STATION_MEASUREMENTS_DESC.RAINRATE.couldBeNegative}
             onClick={() =>
@@ -241,15 +246,17 @@ const Station = observer(({ appContext }: StationProps) => {
           <div className="text-left font-weight-bold">RAIN mm</div>
         </Col>
         <Col xs={6}>
-          {appContext.authData.isAuth && (
+          {appContext.authCtrl.authData.isAuth && (
             <Form>
               <Form.Check
                 type="switch"
                 id="custom-switch"
                 label="Fix / Floating data"
-                checked={appContext.stationData.floatingRainData}
+                checked={appContext.stationCtrl.stationData.floatingRainData}
                 onChange={(e) => {
-                  appContext.stationData.setFloatingRainData(e.target.checked);
+                  appContext.stationCtrl.stationData.setFloatingRainData(
+                    e.target.checked
+                  );
                   if (e.target.checked) {
                     appContext.stationCtrl.fetchRainData();
                   }
@@ -260,16 +267,16 @@ const Station = observer(({ appContext }: StationProps) => {
           )}
         </Col>
       </Row>
-      {appContext.stationData.floatingRainData === false && (
+      {appContext.stationCtrl.stationData.floatingRainData === false && (
         <>
           <Row>
             <Col xs={4}>
               <DataAlone
                 label={STATION_MEASUREMENTS_DESC.EVENTRAIN.label}
                 value={
-                  appContext.stationData.oldData
+                  appContext.stationCtrl.stationData.oldData
                     ? null
-                    : appContext.stationData.data.eventrain
+                    : appContext.stationCtrl.stationData.data.eventrain
                 }
                 unit=""
                 fix={STATION_MEASUREMENTS_DESC.EVENTRAIN.fix}
@@ -279,9 +286,9 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label={STATION_MEASUREMENTS_DESC.HOURLYRAIN.label}
                 value={
-                  appContext.stationData.oldData
+                  appContext.stationCtrl.stationData.oldData
                     ? null
-                    : appContext.stationData.data.hourlyrain
+                    : appContext.stationCtrl.stationData.data.hourlyrain
                 }
                 unit=""
                 fix={STATION_MEASUREMENTS_DESC.HOURLYRAIN.fix}
@@ -291,9 +298,9 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label={STATION_MEASUREMENTS_DESC.DAILYRAIN.label}
                 value={
-                  appContext.stationData.oldData
+                  appContext.stationCtrl.stationData.oldData
                     ? null
-                    : appContext.stationData.data.dailyrain
+                    : appContext.stationCtrl.stationData.data.dailyrain
                 }
                 unit=""
                 fix={STATION_MEASUREMENTS_DESC.DAILYRAIN.fix}
@@ -305,9 +312,9 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label={STATION_MEASUREMENTS_DESC.WEEKLYRAIN.label}
                 value={
-                  appContext.stationData.oldData
+                  appContext.stationCtrl.stationData.oldData
                     ? null
-                    : appContext.stationData.data.weeklyrain
+                    : appContext.stationCtrl.stationData.data.weeklyrain
                 }
                 unit=""
                 fix={STATION_MEASUREMENTS_DESC.WEEKLYRAIN.fix}
@@ -317,9 +324,9 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label={STATION_MEASUREMENTS_DESC.MONTHLYRAIN.label}
                 value={
-                  appContext.stationData.oldData
+                  appContext.stationCtrl.stationData.oldData
                     ? null
-                    : appContext.stationData.data.monthlyrain
+                    : appContext.stationCtrl.stationData.data.monthlyrain
                 }
                 unit=""
                 fix={STATION_MEASUREMENTS_DESC.MONTHLYRAIN.fix}
@@ -329,9 +336,9 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label={STATION_MEASUREMENTS_DESC.TOTALRAIN.label}
                 value={
-                  appContext.stationData.oldData
+                  appContext.stationCtrl.stationData.oldData
                     ? null
-                    : appContext.stationData.data.totalrain
+                    : appContext.stationCtrl.stationData.data.totalrain
                 }
                 unit=""
                 fix={STATION_MEASUREMENTS_DESC.TOTALRAIN.fix}
@@ -340,16 +347,18 @@ const Station = observer(({ appContext }: StationProps) => {
           </Row>
         </>
       )}
-      {appContext.stationData.floatingRainData === true && (
+      {appContext.stationCtrl.stationData.floatingRainData === true && (
         <>
           <Row>
             <Col xs={3}>
               <DataAlone
                 label="1 hour" // todo
                 value={
-                  appContext.stationData.raindata == null
+                  appContext.stationCtrl.stationData.raindata == null
                     ? null
-                    : parseFloat(appContext.stationData.raindata[0].sum)
+                    : parseFloat(
+                        appContext.stationCtrl.stationData.raindata[0].sum
+                      )
                 }
                 unit=""
                 fix={1}
@@ -359,9 +368,11 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label="3 hour" // todo
                 value={
-                  appContext.stationData.raindata == null
+                  appContext.stationCtrl.stationData.raindata == null
                     ? null
-                    : parseFloat(appContext.stationData.raindata[1].sum)
+                    : parseFloat(
+                        appContext.stationCtrl.stationData.raindata[1].sum
+                      )
                 }
                 unit=""
                 fix={1}
@@ -371,9 +382,11 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label="6 hour" // todo
                 value={
-                  appContext.stationData.raindata == null
+                  appContext.stationCtrl.stationData.raindata == null
                     ? null
-                    : parseFloat(appContext.stationData.raindata[2].sum)
+                    : parseFloat(
+                        appContext.stationCtrl.stationData.raindata[2].sum
+                      )
                 }
                 unit=""
                 fix={1}
@@ -383,9 +396,11 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label="12 hour" // todo
                 value={
-                  appContext.stationData.raindata == null
+                  appContext.stationCtrl.stationData.raindata == null
                     ? null
-                    : parseFloat(appContext.stationData.raindata[3].sum)
+                    : parseFloat(
+                        appContext.stationCtrl.stationData.raindata[3].sum
+                      )
                 }
                 unit=""
                 fix={1}
@@ -397,9 +412,11 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label="1 day" // todo
                 value={
-                  appContext.stationData.raindata == null
+                  appContext.stationCtrl.stationData.raindata == null
                     ? null
-                    : parseFloat(appContext.stationData.raindata[4].sum)
+                    : parseFloat(
+                        appContext.stationCtrl.stationData.raindata[4].sum
+                      )
                 }
                 unit=""
                 fix={1}
@@ -409,9 +426,11 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label="3 days" // todo
                 value={
-                  appContext.stationData.raindata == null
+                  appContext.stationCtrl.stationData.raindata == null
                     ? null
-                    : parseFloat(appContext.stationData.raindata[5].sum)
+                    : parseFloat(
+                        appContext.stationCtrl.stationData.raindata[5].sum
+                      )
                 }
                 unit=""
                 fix={1}
@@ -421,9 +440,11 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label="1 week" // todo
                 value={
-                  appContext.stationData.raindata == null
+                  appContext.stationCtrl.stationData.raindata == null
                     ? null
-                    : parseFloat(appContext.stationData.raindata[6].sum)
+                    : parseFloat(
+                        appContext.stationCtrl.stationData.raindata[6].sum
+                      )
                 }
                 unit=""
                 fix={1}
@@ -433,9 +454,11 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataAlone
                 label="4 weeks" // todo
                 value={
-                  appContext.stationData.raindata == null
+                  appContext.stationCtrl.stationData.raindata == null
                     ? null
-                    : parseFloat(appContext.stationData.raindata[7].sum)
+                    : parseFloat(
+                        appContext.stationCtrl.stationData.raindata[7].sum
+                      )
                 }
                 unit=""
                 fix={1}
@@ -444,7 +467,7 @@ const Station = observer(({ appContext }: StationProps) => {
           </Row>
         </>
       )}
-      {appContext.authData.isAuth && (
+      {appContext.authCtrl.authData.isAuth && (
         <>
           <Myhr />
           <div className="text-left font-weight-bold">IN</div>
@@ -453,13 +476,13 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataWithTrend
                 label={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.label}
                 value={
-                  appContext.stationData.oldData
+                  appContext.stationCtrl.stationData.oldData
                     ? null
-                    : appContext.stationData.data.tempin
+                    : appContext.stationCtrl.stationData.data.tempin
                 }
                 unit={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.unit}
                 fix={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.fix}
-                data={appContext.stationData.trendData.tempin}
+                data={appContext.stationCtrl.stationData.trendData.tempin}
                 range={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.range}
                 couldBeNegative={
                   STATION_MEASUREMENTS_DESC.TEMPERATUREIN.couldBeNegative
@@ -476,13 +499,13 @@ const Station = observer(({ appContext }: StationProps) => {
               <DataWithTrend
                 label={STATION_MEASUREMENTS_DESC.HUMIDITYIN.label}
                 value={
-                  appContext.stationData.oldData
+                  appContext.stationCtrl.stationData.oldData
                     ? null
-                    : appContext.stationData.data.humidityin
+                    : appContext.stationCtrl.stationData.data.humidityin
                 }
                 unit={STATION_MEASUREMENTS_DESC.HUMIDITYIN.unit}
                 fix={STATION_MEASUREMENTS_DESC.HUMIDITYIN.fix}
-                data={appContext.stationData.trendData.humidityin}
+                data={appContext.stationCtrl.stationData.trendData.humidityin}
                 range={STATION_MEASUREMENTS_DESC.HUMIDITYIN.range}
                 couldBeNegative={
                   STATION_MEASUREMENTS_DESC.HUMIDITYIN.couldBeNegative

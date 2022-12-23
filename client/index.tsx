@@ -3,55 +3,32 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import AuthCtrl from "./auth/authCtrl";
-import AuthData from "./auth/authData";
 import MySocket from "./socket";
-import StationData from "./station/stationData";
 import StationCtrl from "./station/stationCtrl";
-import HeaderData from "./header/headerData";
 import HeaderCtrl from "./header/headerCtrl";
 import App from "./app";
-import ChartsData from "./charts/chartsData";
 import ChartsCtrl from "./charts/chartsCtrl";
 import { IMeasurementDesc } from "../common/measurementDesc";
 import "bootstrap/dist/css/bootstrap.css";
-import "./style.scss";
-import ForecastData from "./forecast/forecastData";
+import "./style.css";
 import ForecastCtrl from "./forecast/forecastCtrl";
-import { IController } from "../common/controller";
-import DomData from "./dom/domData";
 import DomCtrl from "./dom/domCtrl";
 import { AllStationsCfgClient } from "../common/allStationsCfgClient";
-import {
-  STATION_MEASUREMENTS,
-  STATION_MEASUREMENTS_DESC,
-} from "../common/stationModel";
 
 export class AppContext {
   socket: MySocket;
 
-  authData: AuthData;
-
   authCtrl: AuthCtrl;
-
-  headerData: HeaderData;
 
   headerCtrl: HeaderCtrl;
 
-  chartsData: ChartsData;
-
   chartsCtrl: ChartsCtrl;
 
-  stationData: StationData;
-
-  stationCtrl: IController;
-
-  domData: DomData;
+  stationCtrl: StationCtrl;
 
   domCtrl: DomCtrl;
 
-  forecastData: ForecastData;
-
-  forecastCrtl: ForecastCtrl;
+  forecastCtrl: ForecastCtrl;
 
   start() {
     const queryParams = new URLSearchParams(window.location.search);
@@ -71,39 +48,23 @@ export class AppContext {
       isExternalID = true;
     }
     this.socket = new MySocket();
-    this.authData = new AuthData();
-    this.authCtrl = new AuthCtrl(this.authData);
-    this.headerData = new HeaderData(headerStationID, isExternalID);
-    this.headerCtrl = new HeaderCtrl(this.headerData);
-    this.chartsData = new ChartsData(
-      headerStationID,
-      AllStationsCfgClient.getStationByID(headerStationID).lat,
-      AllStationsCfgClient.getStationByID(headerStationID).lon,
-      STATION_MEASUREMENTS_DESC.TEMPERATURE,
-      STATION_MEASUREMENTS
-    );
-    this.chartsCtrl = new ChartsCtrl(this.chartsData, this.authData);
-    this.stationData = new StationData(headerStationID);
+    this.authCtrl = new AuthCtrl();
+    this.headerCtrl = new HeaderCtrl(headerStationID, isExternalID);
+    this.chartsCtrl = new ChartsCtrl(headerStationID, this.authCtrl.authData);
     this.stationCtrl = new StationCtrl(
       this.socket,
-      this.stationData,
-      this.authData
-    );
-    this.domData = new DomData();
-    this.domCtrl = new DomCtrl(
-      this.socket,
-      this.domData,
-      this.chartsCtrl,
-      this.authData
-    );
-    this.forecastData = new ForecastData(
       headerStationID,
-      AllStationsCfgClient.getStationByID(headerStationID).lat,
-      AllStationsCfgClient.getStationByID(headerStationID).lon
+      this.authCtrl.authData
     );
-    this.forecastCrtl = new ForecastCtrl(this.forecastData, this.authData);
+    this.domCtrl = new DomCtrl(this.socket, this.authCtrl.authData);
 
-    this.authData.setCallWhenAuthetificated(() => {
+    this.forecastCtrl = new ForecastCtrl(
+      headerStationID,
+      this.authCtrl.authData
+    );
+
+    this.authCtrl.authData.setCallWhenAuthetificated(() => {
+      // todo
       this.chartsCtrl.reload();
     });
     this.authCtrl.start();
@@ -111,11 +72,11 @@ export class AppContext {
     this.chartsCtrl.start();
     this.stationCtrl.start();
     // this.domCtrl.start();
-    this.forecastCrtl.start();
+    this.forecastCtrl.start();
   }
 
   setMeasurementAndLoad(measurementDesc: IMeasurementDesc) {
-    this.chartsData.setMeasurementObject(measurementDesc);
+    this.chartsCtrl.chartsData.setMeasurementObject(measurementDesc);
     this.chartsCtrl.reload();
   }
 }
@@ -125,10 +86,10 @@ const appContext: AppContext = new AppContext();
 function render() {
   console.info(
     "Index render",
-    appContext.authData.isAuth,
+    appContext.authCtrl.authData.isAuth,
     window.location.pathname
   );
-  appContext.authData.setLocation(window.location.pathname);
+  appContext.authCtrl.authData.setLocation(window.location.pathname);
 
   const appContainer = document.getElementById("app");
   ReactDOM.render(

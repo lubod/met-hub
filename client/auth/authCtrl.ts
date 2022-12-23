@@ -9,8 +9,8 @@ export default class AuthCtrl {
 
   timer: any;
 
-  constructor(authData: AuthData) {
-    this.authData = authData;
+  constructor() {
+    this.authData = new AuthData();
   }
 
   getProfile() {

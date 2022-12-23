@@ -20,10 +20,12 @@ type ChartData = {
   xkey: string;
   ykey: string;
   y2key: string;
-  domainMin: number;
-  domainMax: number;
+  yDomainMin: number;
+  yDomainMax: number;
   color: string;
   range: string;
+  xDomainMin: string;
+  xDomainMax: string;
 };
 
 function Chart({
@@ -31,10 +33,12 @@ function Chart({
   xkey,
   ykey,
   y2key,
-  domainMin,
-  domainMax,
+  yDomainMin,
+  yDomainMax,
   color,
   range,
+  xDomainMin,
+  xDomainMax,
 }: ChartData) {
   function formatXAxis(tickItem: string) {
     if (range?.includes("hour")) {
@@ -98,13 +102,13 @@ function Chart({
             tick={{ fill: "white" }}
             tickFormatter={formatXAxis}
             axisLine={false}
-            domain={["auto", "auto"]}
+            domain={[xDomainMin, xDomainMax]}
             scale="time"
           />
           <YAxis
             hide
             type="number"
-            domain={[domainMin, domainMax]}
+            domain={[yDomainMin, yDomainMax]}
             tick={{ fill: "white" }}
           />
           <Tooltip

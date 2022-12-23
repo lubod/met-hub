@@ -3,7 +3,6 @@ import axios from "axios";
 import fetch from "node-fetch";
 import { Pool } from "pg";
 import StationCtrl from "../client/station/stationCtrl";
-import StationData from "../client/station/stationData";
 import MySocket from "../client/socket";
 import {
   IStationData,
@@ -244,8 +243,7 @@ function main(STATION_ID: string, PASSKEY: string) {
   };
 
   const socket = new MySocket();
-  const stationData = new StationData(STATION_ID);
-  const stationCtrl = new StationCtrl(socket, stationData, null); // todo
+  const stationCtrl = new StationCtrl(socket, STATION_ID, null); // todo
   stationCtrl.start();
 
   setTimeout(() => postData(data1), 500);
@@ -255,7 +253,7 @@ function main(STATION_ID: string, PASSKEY: string) {
     expected.timestamp = sd.timestamp; // now
     assert.deepStrictEqual(sd, expected);
     console.info("Redis1 OK");
-    const actual = getClientStationData(stationData.data);
+    const actual = getClientStationData(stationCtrl.stationData.data);
     assert.deepStrictEqual(actual, expected);
     console.info("Client1 OK");
   }, 1000);
@@ -266,7 +264,7 @@ function main(STATION_ID: string, PASSKEY: string) {
     expected.timestamp = sd.timestamp; // now
     assert.deepStrictEqual(sd, expected);
     console.info("Redis2 OK");
-    const actual = getClientStationData(stationData.data);
+    const actual = getClientStationData(stationCtrl.stationData.data);
     assert.deepStrictEqual(actual, expected);
     console.info("Client2 OK");
   }, 2000);
@@ -277,7 +275,7 @@ function main(STATION_ID: string, PASSKEY: string) {
     expected.timestamp = sd.timestamp; // now
     assert.deepStrictEqual(sd, expected);
     console.info("Redis3 OK");
-    const actual = getClientStationData(stationData.data);
+    const actual = getClientStationData(stationCtrl.stationData.data);
     assert.deepStrictEqual(actual, expected);
     console.info("Client3 OK");
   }, 3000);

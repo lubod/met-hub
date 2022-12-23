@@ -3,22 +3,21 @@ import { Row, Col, Button, Form } from "react-bootstrap";
 import { observer } from "mobx-react";
 import moment from "moment";
 import Text from "../misc/text";
-import { AppContext } from "..";
-import Data4Forecast from "./data4Forecast";
 import { LoadImg } from "../misc/loadImg";
 import { Myhr } from "../misc/myhr";
 import { MyContainer } from "../misc/mycontainer";
-import ForecastChart from "./forecastChart";
-import MY_COLORS from "../../common/colors";
+import ForecastTable from "./forecastTable";
+import ForecastCharts from "./forecastCharts";
+import ForecastCtrl from "./forecastCtrl";
 
-type ForecastProps = {
-  appContext: AppContext;
+type Props = {
+  forecastCtrl: ForecastCtrl;
 };
 
 let numberOfForecastDays = 3;
 let daysStyle = "mb-4";
 
-const Forecast = observer(({ appContext }: ForecastProps) => {
+const Forecast = observer(({ forecastCtrl }: Props) => {
   const [days10r, setDays10r] = useState(false);
 
   function setDaysRows(show10: boolean) {
@@ -43,47 +42,20 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
           <Button
             variant="link btn-sm"
             onClick={() => {
-              appContext.forecastCrtl.fetchData();
-              appContext.forecastCrtl.fetchAstronomicalData(new Date());
+              forecastCtrl.fetchData();
+              forecastCtrl.fetchAstronomicalData(new Date());
             }}
           >
             <LoadImg
-              rotate={appContext.forecastData.loading}
+              rotate={forecastCtrl.forecastData.loading}
               src="icons8-refresh-25.svg"
               alt=""
             />
           </Button>
         </Col>
       </Row>
-      <Row className="">
-        <div className="text-left my-2">
-          <div className="small text-white-50 font-weight-bold">
-            Data and weather icons source:
-          </div>
-          <div className="my-1 small text-white-50 font-weight-bold">
-            <a href="https://www.met.no/en">
-              Norwegian Meteorological Institute
-            </a>
-          </div>
-        </div>
-      </Row>
-      <Myhr />
       <Row>
-        <Col xs={3}>
-          <Text name="Day" value="" />
-        </Col>
-        <Col xs={3}>
-          <Text name="Temperature °C" value="" />
-        </Col>
-        <Col xs={3}>
-          <Text name="Rain mm" value="" />
-        </Col>
-        <Col xs={3}>
-          <Text name="WindSpeed km/h" value="" />
-        </Col>
-      </Row>
-      <Row className="mb-2">
-        <Col xs={6} />
+        <Col xs={4} />
         <Col xs={5}>
           <Form>
             <Form.Check
@@ -99,45 +71,44 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
           </Form>
         </Col>
       </Row>
-      {[...appContext.forecastData.days.values()]
-        .slice(0, numberOfForecastDays)
-        .map((forecastDay) => (
-          <div key={forecastDay.timestamp.getTime()} className={daysStyle}>
-            <Data4Forecast forecastDay={forecastDay} days10r={days10r} />
-          </div>
-        ))}
-      {days10r && <div className="mb-4" />}
-      <Myhr />
-      <Row>
-        <Col xs={6}>
-          <div className="small text-white-50 font-weight-bold">
-            Temperature <span style={{ color: MY_COLORS.orange }}>&#8226;</span>
+      <Row className="">
+        <Col xs={12}>
+          <div className="text-left my-2">
+            <span className="small text-white-50 font-weight-bold">
+              Data & icons source:
+            </span>{" "}
+            <span className="my-1 small text-white-50 font-weight-bold">
+              <a href="https://www.met.no/en">Norwegian Meteo Institute</a>
+            </span>
           </div>
         </Col>
       </Row>
-      <Row className="mb-3">
-        {days10r === false && (
-          <ForecastChart
-            data={[...appContext.forecastData.days.values()]}
-            index={3}
-          />
+      <Myhr />
+      <ForecastTable
+        days={[...forecastCtrl.forecastData.days.values()].slice(
+          0,
+          numberOfForecastDays
         )}
-        {days10r === true && (
-          <ForecastChart
-            data={[...appContext.forecastData.days.values()]}
-            index={10}
-          />
+        daysStyle={daysStyle}
+        days10r={days10r}
+      />
+      <Myhr />
+      <ForecastCharts
+        days={[...forecastCtrl.forecastData.days.values()].slice(
+          0,
+          numberOfForecastDays
         )}
-      </Row>
+        days10r={days10r}
+      />
       <Myhr />
       <Row>
         <Col xs={6}>
           <Text
             name="Sunrise"
             value={
-              appContext.forecastData.sunrise == null
+              forecastCtrl.forecastData.sunrise == null
                 ? "-"
-                : moment(appContext.forecastData.sunrise).format("HH:mm")
+                : moment(forecastCtrl.forecastData.sunrise).format("HH:mm")
             }
           />
         </Col>
@@ -145,9 +116,9 @@ const Forecast = observer(({ appContext }: ForecastProps) => {
           <Text
             name="Sunset"
             value={
-              appContext.forecastData.sunset == null
+              forecastCtrl.forecastData.sunset == null
                 ? "-"
-                : moment(appContext.forecastData.sunset).format("HH:mm")
+                : moment(forecastCtrl.forecastData.sunset).format("HH:mm")
             }
           />
         </Col>

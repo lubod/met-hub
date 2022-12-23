@@ -6,21 +6,21 @@ import Chart from "./chart";
 import Text from "../misc/text";
 import WindDirChart from "./windDirChart";
 import RainChart from "./rainChart";
-import { AppContext } from "..";
 import { LoadImg } from "../misc/loadImg";
 import { Myhr } from "../misc/myhr";
 import { MyContainer } from "../misc/mycontainer";
+import ChartsCtrl from "./chartsCtrl";
 
 type ChartsProps = {
-  appContext: AppContext;
+  chartsCtrl: ChartsCtrl;
 };
 
 const Charts = observer(
   ({
-    appContext,
+    chartsCtrl,
   }: // range
   ChartsProps) => (
-    // console.info("render charts", appContext.chartsData);
+    // console.info("render charts", chartsData);
     // const map = useMap();
     // map.invalidateSize();
     <MyContainer>
@@ -33,12 +33,12 @@ const Charts = observer(
           <Button
             variant="link btn-sm"
             onClick={() => {
-              appContext.chartsData.setPage(0);
-              appContext.chartsCtrl.reload();
+              chartsCtrl.chartsData.setPage(0);
+              chartsCtrl.reload();
             }}
           >
             <LoadImg
-              rotate={appContext.chartsData.loading}
+              rotate={chartsCtrl.chartsData.loading}
               src="icons8-refresh-25.svg"
               alt=""
             />
@@ -51,8 +51,8 @@ const Charts = observer(
             <Button
               variant="secondary"
               onClick={() => {
-                appContext.chartsData.setPage(appContext.chartsData.page - 1);
-                appContext.chartsCtrl.reload();
+                chartsCtrl.chartsData.setPage(chartsCtrl.chartsData.page - 1);
+                chartsCtrl.reload();
               }}
             >
               Prev
@@ -63,10 +63,10 @@ const Charts = observer(
           <div className="d-grid gap-2">
             <DropdownButton
               id="dropdown-range-button"
-              title={appContext.chartsData.range.split("|")[1]}
+              title={chartsCtrl.chartsData.range.split("|")[1]}
               onSelect={(e) => {
-                appContext.chartsData.setRange(e);
-                appContext.chartsCtrl.reload();
+                chartsCtrl.chartsData.setRange(e);
+                chartsCtrl.reload();
               }}
             >
               <Dropdown.Item eventKey="3600|1 hour">1 hour</Dropdown.Item>
@@ -86,12 +86,12 @@ const Charts = observer(
             <Button
               variant="secondary"
               onClick={() => {
-                appContext.chartsData.setPage(
-                  appContext.chartsData.page < 0
-                    ? appContext.chartsData.page + 1
+                chartsCtrl.chartsData.setPage(
+                  chartsCtrl.chartsData.page < 0
+                    ? chartsCtrl.chartsData.page + 1
                     : 0
                 );
-                appContext.chartsCtrl.reload();
+                chartsCtrl.reload();
               }}
             >
               Next
@@ -105,13 +105,13 @@ const Charts = observer(
           <div className="d-grid gap-2">
             <DropdownButton
               id="dropdown-measurement-button"
-              title={`${appContext.chartsData.measurement.label} ${appContext.chartsData.measurement.unit}`}
+              title={`${chartsCtrl.chartsData.measurement.label} ${chartsCtrl.chartsData.measurement.unit}`}
               onSelect={(e) => {
-                appContext.chartsData.setMeasurement(e);
-                appContext.chartsCtrl.reload();
+                chartsCtrl.chartsData.setMeasurement(e);
+                chartsCtrl.reload();
               }}
             >
-              {appContext.chartsData.measurements.map((m) => (
+              {chartsCtrl.chartsData.measurements.map((m) => (
                 <Dropdown.Item
                   key={`${m.table}${m.label}`}
                   eventKey={JSON.stringify(m)}
@@ -128,9 +128,9 @@ const Charts = observer(
           <Text
             name="Last"
             value={
-              appContext.chartsData.cdata.last == null
+              chartsCtrl.chartsData.cdata.last == null
                 ? ""
-                : appContext.chartsData.cdata.last
+                : chartsCtrl.chartsData.cdata.last
             }
           />
         </Col>
@@ -138,9 +138,9 @@ const Charts = observer(
           <Text
             name="Page"
             value={
-              appContext.chartsData.page == null
+              chartsCtrl.chartsData.page == null
                 ? ""
-                : appContext.chartsData.page.toFixed(0)
+                : chartsCtrl.chartsData.page.toFixed(0)
             }
           />
         </Col>
@@ -148,9 +148,9 @@ const Charts = observer(
           <Text
             name="Sum"
             value={
-              appContext.chartsData.cdata.sum == null
+              chartsCtrl.chartsData.cdata.sum == null
                 ? ""
-                : appContext.chartsData.cdata.sum
+                : chartsCtrl.chartsData.cdata.sum
             }
           />
         </Col>
@@ -160,9 +160,9 @@ const Charts = observer(
           <Text
             name="Min"
             value={
-              appContext.chartsData.cdata.min == null
+              chartsCtrl.chartsData.cdata.min == null
                 ? ""
-                : appContext.chartsData.cdata.min.toFixed(1)
+                : chartsCtrl.chartsData.cdata.min.toFixed(1)
             }
           />
         </Col>
@@ -170,48 +170,50 @@ const Charts = observer(
           <Text
             name="Max"
             value={
-              appContext.chartsData.cdata.max == null
+              chartsCtrl.chartsData.cdata.max == null
                 ? ""
-                : appContext.chartsData.cdata.max.toFixed(1)
+                : chartsCtrl.chartsData.cdata.max.toFixed(1)
             }
           />
         </Col>
         <Col xs={4}>
-          <Text name="Avg" value={appContext.chartsData.cdata.avg} />
+          <Text name="Avg" value={chartsCtrl.chartsData.cdata.avg} />
         </Col>
       </Row>
       <Myhr />
       <Row>
-        {appContext.chartsData.measurement.chartType === "" && (
+        {chartsCtrl.chartsData.measurement.chartType === "" && (
           <Chart
-            chdata={appContext.chartsData.hdata}
+            chdata={chartsCtrl.chartsData.hdata}
             xkey="timestamp"
-            ykey={appContext.chartsData.measurement.col}
-            y2key={appContext.chartsData.measurement.col2}
-            domainMin={appContext.chartsData.cdata.domainMin}
-            domainMax={appContext.chartsData.cdata.domainMax}
-            color={appContext.chartsData.measurement.color}
-            range={appContext.chartsData.cdata.range}
+            ykey={chartsCtrl.chartsData.measurement.col}
+            y2key={chartsCtrl.chartsData.measurement.col2}
+            yDomainMin={chartsCtrl.chartsData.cdata.yDomainMin}
+            yDomainMax={chartsCtrl.chartsData.cdata.yDomainMax}
+            color={chartsCtrl.chartsData.measurement.color}
+            range={chartsCtrl.chartsData.cdata.range}
+            xDomainMin={chartsCtrl.chartsData.cdata.xDomainMin}
+            xDomainMax={chartsCtrl.chartsData.cdata.xDomainMax}
           />
         )}
-        {appContext.chartsData.measurement.chartType === "winddir" && (
+        {chartsCtrl.chartsData.measurement.chartType === "winddir" && (
           <WindDirChart
-            chdata={appContext.chartsData.hdata}
+            chdata={chartsCtrl.chartsData.hdata}
             xkey="timestamp"
-            ykey={appContext.chartsData.measurement.col}
-            color={appContext.chartsData.measurement.color}
-            range={appContext.chartsData.cdata.range}
+            ykey={chartsCtrl.chartsData.measurement.col}
+            color={chartsCtrl.chartsData.measurement.color}
+            range={chartsCtrl.chartsData.cdata.range}
           />
         )}
-        {appContext.chartsData.measurement.chartType === "rain" && (
+        {chartsCtrl.chartsData.measurement.chartType === "rain" && (
           <RainChart
-            chdata={appContext.chartsData.hdata}
+            chdata={chartsCtrl.chartsData.hdata}
             xkey="timestamp"
-            ykey={appContext.chartsData.measurement.col}
-            domainMin={appContext.chartsData.cdata.domainMin}
-            domainMax={appContext.chartsData.cdata.domainMax}
-            color={appContext.chartsData.measurement.color}
-            range={appContext.chartsData.cdata.range}
+            ykey={chartsCtrl.chartsData.measurement.col}
+            yDomainMin={chartsCtrl.chartsData.cdata.yDomainMin}
+            yDomainMax={chartsCtrl.chartsData.cdata.yDomainMax}
+            color={chartsCtrl.chartsData.measurement.color}
+            range={chartsCtrl.chartsData.cdata.range}
           />
         )}
       </Row>
@@ -224,10 +226,10 @@ const Charts = observer(
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <Marker
-              position={[appContext.chartsData.lat, appContext.chartsData.lon]}
+              position={[chartsCtrl.chartsData.lat, chartsCtrl.chartsData.lon]}
             >
               <Popup>
-                {appContext.chartsData.lat}, {appContext.chartsData.lon}
+                {chartsCtrl.chartsData.lat}, {chartsCtrl.chartsData.lon}
               </Popup>
             </Marker>
           </MapContainer>

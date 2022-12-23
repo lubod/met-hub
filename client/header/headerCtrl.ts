@@ -5,8 +5,8 @@ export default class HeaderCtrl {
 
   timer: any;
 
-  constructor(headerData: HeaderData) {
-    this.headerData = headerData;
+  constructor(defaultStationID: string, isExternalID: boolean) {
+    this.headerData = new HeaderData(defaultStationID, isExternalID);
   }
 
   start() {

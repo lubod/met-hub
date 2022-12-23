@@ -10,7 +10,6 @@ import {
   IDomRoomData,
   IDomTarifData,
 } from "../common/domModel";
-import DomData from "../client/dom/domData";
 import DomCtrl from "../client/dom/domCtrl";
 import MySocket from "../client/socket";
 import AuthData from "../client/auth/authData";
@@ -473,8 +472,7 @@ function main(PASSKEY: string) {
   console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
 
   const socket = new MySocket();
-  const domData = new DomData();
-  const domCtrl = new DomCtrl(socket, domData, null, new AuthData());
+  const domCtrl = new DomCtrl(socket, new AuthData());
   domCtrl.start();
   postData(data1);
 
@@ -483,7 +481,7 @@ function main(PASSKEY: string) {
     assert.deepStrictEqual(sd, dom.decodeData(data1).decoded);
     console.info("Redis1 OK");
     assert.deepStrictEqual(
-      getClientDomData(domData.data),
+      getClientDomData(domCtrl.domData.data),
       dom.decodeData(data1).decoded
     );
     console.info("Client1 OK");

@@ -1,3 +1,4 @@
+import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 import AuthData from "../auth/authData";
 import ForecastData from "./forecastData";
 
@@ -8,8 +9,12 @@ export default class ForecastCtrl {
 
   timer: any;
 
-  constructor(forecastData: ForecastData, authData: AuthData) {
-    this.forecastData = forecastData;
+  constructor(stationID: string, authData: AuthData) {
+    this.forecastData = new ForecastData(
+      stationID,
+      AllStationsCfgClient.getStationByID(stationID).lat, // todo
+      AllStationsCfgClient.getStationByID(stationID).lon
+    );
     this.authData = authData;
   }
 

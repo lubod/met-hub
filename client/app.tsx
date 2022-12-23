@@ -3,6 +3,7 @@ import React from "react";
 import Auth from "./auth/auth";
 import HomePage from "./homepage";
 import { AppContext } from ".";
+import Go from "./go/go";
 
 type AppProps = {
   appContext: AppContext;
@@ -11,18 +12,21 @@ type AppProps = {
 const App = observer(({ appContext }: AppProps) => {
   console.info(
     "App render",
-    appContext.authData.isAuth,
+    appContext.authCtrl.authData.isAuth,
     window.location.pathname,
-    appContext.authData.location
+    appContext.authCtrl.authData.location
   );
 
   return (
     <div className="App">
-      {appContext.authData.location === "/" && (
+      {appContext.authCtrl.authData.location === "/" && (
         <HomePage appContext={appContext} />
       )}
-      {appContext.authData.location === "/callback/" && (
+      {appContext.authCtrl.authData.location === "/callback/" && (
         <Auth authCtrl={appContext.authCtrl} />
+      )}
+      {appContext.authCtrl.authData.location === "/go/" && (
+        <Go appContext={appContext} />
       )}
     </div>
   );

@@ -74,6 +74,7 @@
     "bootstrap": "^5.2.2",
     "cookie-parser": "^1.4.6",
     "crypto-browserify": "^3.12.0",
+    "duckdb": "^0.6.1",
     "express": "^4.18.1",
     "express-http-proxy": "^1.6.3",
     "frameguard": "^4.0.0",

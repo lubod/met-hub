@@ -7,7 +7,7 @@ import { AppContext } from "../..";
 import MY_COLORS from "../../../common/colors";
 import { STATION_MEASUREMENTS_DESC } from "../../../common/stationModel";
 import DataAlone from "../../misc/dataAlone";
-import DataWithTrend from "../../dataWithTrend/dataWithTrend";
+import DataWithTrend from "../../misc/dataWithTrend";
 
 type Wind = {
   speed: number;

@@ -9,35 +9,37 @@ import Header from "./header/header";
 import Dom from "./dom/dom";
 import Forecast from "./forecast/forecast";
 
-type ProtectedProps = {
+type Props = {
   appContext: AppContext;
 };
 
-const Protected = observer(({ appContext }: ProtectedProps) => {
-  console.info("Protected render", appContext.authData.isAuth);
+const Protected = observer(({ appContext }: Props) => {
+  console.info("Protected render", appContext.authCtrl.authData.isAuth);
 
   return (
     <div>
-      {!appContext.authData.isAuth && <HomePage appContext={appContext} />}
-      {appContext.authData.isAuth && (
+      {!appContext.authCtrl.authData.isAuth && (
+        <HomePage appContext={appContext} />
+      )}
+      {appContext.authCtrl.authData.isAuth && (
         <Container className="container-max-width text-center mx-auto">
           <Row className="">
             <Header appContext={appContext} />
           </Row>
           <Row>
             <Col sm={4} className="ps-1 pe-1">
-              {appContext.headerData.stationID !== "dom" && (
+              {appContext.headerCtrl.headerData.stationID !== "dom" && (
                 <Station appContext={appContext} />
               )}
-              {appContext.headerData.stationID === "dom" && (
+              {appContext.headerCtrl.headerData.stationID === "dom" && (
                 <Dom appContext={appContext} />
               )}
             </Col>
             <Col sm={4} className="ps-1 pe-1">
-              <Forecast appContext={appContext} />
+              <Forecast forecastCtrl={appContext.forecastCtrl} />
             </Col>
             <Col sm={4} className="ps-1 pe-1">
-              <Charts appContext={appContext} />
+              <Charts chartsCtrl={appContext.chartsCtrl} />
             </Col>
           </Row>
         </Container>

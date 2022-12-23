@@ -1,6 +1,5 @@
 .bg-very-dark {
   background-color: rgba(0, 0, 0, 0.5);
-  //    background-color: 'linear-gradient(to down, #1a1b1c, red)';
 }
 
 .leaflet-container {
@@ -8,13 +7,4 @@
   width: 100%;
   filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3)
     brightness(0.7) opacity(0.9);
-}
-
-.btn-outline-secondary {
-  color: white !important;
-  border-color: #0dcaf0 !important;
-}
-
-.btn-outline-secondary:disabled {
-  color: #0dcaf0 !important;
 }

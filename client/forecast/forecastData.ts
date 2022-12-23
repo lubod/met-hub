@@ -29,7 +29,21 @@ export interface IForecastDay {
   cloud_area_fraction_sum: number;
 }
 
-export default class ForecastData {
+export interface IForecastData {
+  forecast: any;
+  lat: number;
+  lon: number;
+  astronomicalData: any;
+  sunrise: Date;
+  sunset: Date;
+  days: Map<string, IForecastDay>;
+  domainTempMin: number;
+  domainTempMax: number;
+  loading: boolean;
+  stationID: string;
+}
+
+export default class ForecastData implements IForecastData {
   forecast: any = null;
 
   lat: number = null;

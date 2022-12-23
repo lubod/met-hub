@@ -2,8 +2,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { observer } from "mobx-react";
 import React from "react";
-import Data from "../misc/data";
-import Trend from "../misc/trend";
+import Data from "./data";
+import Trend from "./trend";
 
 type DataWithTrendProps = {
   label: string;

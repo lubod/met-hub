@@ -3,7 +3,6 @@ import axios from "axios";
 import fetch from "node-fetch";
 import { Pool } from "pg";
 import StationCtrl from "../client/station/stationCtrl";
-import StationData from "../client/station/stationData";
 import MySocket from "../client/socket";
 import {
   IStationData,
@@ -262,8 +261,7 @@ function main(STATION_ID: string, PASSKEY: string) {
   };
 
   const socket = new MySocket();
-  const stationData = new StationData(STATION_ID);
-  const stationCtrl = new StationCtrl(socket, stationData, null); // todo
+  const stationCtrl = new StationCtrl(socket, STATION_ID, null); // todo
   stationCtrl.start();
 
   postData(data1);
@@ -272,7 +270,7 @@ function main(STATION_ID: string, PASSKEY: string) {
     assert.deepStrictEqual(sd, station.decodeData(data1).decoded);
     console.info("Redis1 OK");
     assert.deepStrictEqual(
-      getClientStationData(stationData.data),
+      getClientStationData(stationCtrl.stationData.data),
       station.decodeData(data1).decoded
     );
     console.info("Client1 OK");
@@ -283,7 +281,7 @@ function main(STATION_ID: string, PASSKEY: string) {
     assert.deepStrictEqual(sd, station.decodeData(data2).decoded);
     console.info("Redis2 OK");
     assert.deepStrictEqual(
-      getClientStationData(stationData.data),
+      getClientStationData(stationCtrl.stationData.data),
       station.decodeData(data2).decoded
     );
     console.info("Client2 OK");
@@ -294,7 +292,7 @@ function main(STATION_ID: string, PASSKEY: string) {
     assert.deepStrictEqual(sd, station.decodeData(data3).decoded);
     console.info("Redis3 OK");
     assert.deepStrictEqual(
-      getClientStationData(stationData.data),
+      getClientStationData(stationCtrl.stationData.data),
       station.decodeData(data3).decoded
     );
     console.info("Client3 OK");

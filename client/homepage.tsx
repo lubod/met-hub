@@ -14,15 +14,15 @@ type HomePageProps = {
 };
 
 const HomePage = observer(({ appContext }: HomePageProps) => {
-  console.info("Homepage render", appContext.authData.isAuth);
+  console.info("Homepage render", appContext.authCtrl.authData.isAuth);
   let colSize = 4;
-  if (appContext.headerData.isExternalID) {
+  if (appContext.headerCtrl.headerData.isExternalID) {
     colSize = 6;
   }
 
   return (
     <div>
-      {!appContext.authData.isAuth && (
+      {!appContext.authCtrl.authData.isAuth && (
         <Container className="container-max-width text-center mx-auto vh-100">
           <Row className="">
             <Header appContext={appContext} />
@@ -32,9 +32,9 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
               <Station appContext={appContext} />
             </Col>
             <Col sm={colSize} className="ps-1 pe-1">
-              <Forecast appContext={appContext} />
+              <Forecast forecastCtrl={appContext.forecastCtrl} />
             </Col>
-            {appContext.headerData.isExternalID === false && (
+            {appContext.headerCtrl.headerData.isExternalID === false && (
               <Col sm={colSize} className="ps-1 pe-1">
                 <MyContainer>
                   <h1 className="text-primary">met-hub.com</h1>
@@ -57,7 +57,9 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
           </Row>
         </Container>
       )}
-      {appContext.authData.isAuth && <Protected appContext={appContext} />}
+      {appContext.authCtrl.authData.isAuth && (
+        <Protected appContext={appContext} />
+      )}
     </div>
   );
 });

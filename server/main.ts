@@ -5,6 +5,7 @@ import router from "./router";
 import SocketEmitter from "./socketEmitter";
 import Agregator from "./agregator";
 import { AllStationsCfg } from "../common/allStationsCfg";
+// import Go from "./go";
 
 const app = express();
 const http = require("http").Server(app);
@@ -34,6 +35,8 @@ allStationsCfg.readCfg().then(() => {
     allStationsCfg.getMeasurements()
   );
   agregator.start();
+  // const go = new Go();
+  // go.select();
 });
 
 app.use(express.static(__dirname));

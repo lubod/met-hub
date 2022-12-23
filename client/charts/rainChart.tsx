@@ -18,8 +18,8 @@ type ChartData = {
   chdata: {}[];
   xkey: string;
   ykey: string;
-  domainMin: number;
-  domainMax: number;
+  yDomainMin: number;
+  yDomainMax: number;
   color: string;
   range: string;
 };
@@ -28,8 +28,8 @@ function RainChart({
   chdata,
   xkey,
   ykey,
-  domainMin,
-  domainMax,
+  yDomainMin,
+  yDomainMax,
   color,
   range,
 }: ChartData) {
@@ -89,7 +89,7 @@ function RainChart({
           <YAxis
             hide
             type="number"
-            domain={[domainMin, domainMax]}
+            domain={[yDomainMin, yDomainMax]}
             tick={{ fill: "white" }}
           />
           <Tooltip

@@ -1,5 +1,10 @@
 import fetch from "node-fetch";
+import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 import { IMeasurementDesc } from "../../common/measurementDesc";
+import {
+  STATION_MEASUREMENTS,
+  STATION_MEASUREMENTS_DESC,
+} from "../../common/stationModel";
 import AuthData from "../auth/authData";
 import ChartsData, { CData } from "./chartsData";
 
@@ -12,9 +17,15 @@ class ChartsCtrl {
 
   timer: any;
 
-  constructor(chartsData: ChartsData, authData: AuthData) {
-    this.chartsData = chartsData;
+  constructor(stationID: string, authData: AuthData) {
     this.authData = authData;
+    this.chartsData = new ChartsData(
+      stationID,
+      AllStationsCfgClient.getStationByID(stationID).lat,
+      AllStationsCfgClient.getStationByID(stationID).lon,
+      STATION_MEASUREMENTS_DESC.TEMPERATURE,
+      STATION_MEASUREMENTS
+    );
   }
 
   start() {
@@ -97,12 +108,12 @@ class ChartsCtrl {
       }
       avg = total != null ? (total / newData.length).toFixed(1) : "";
       const sum = total != null ? total.toFixed(1) : "";
-      let domainMin = Math.floor(min - (max / 100) * 5);
-      const domainMax = Math.ceil(max + (max / 100) * 5);
+      let yDomainMin = Math.floor(min - (max / 100) * 5);
+      const yDomainMax = Math.ceil(max + (max / 100) * 5);
       const last = newData.length > 0 ? newData[newData.length - 1][y] : null;
 
       if (y2 !== "") {
-        domainMin = 0;
+        yDomainMin = 0;
       }
 
       //  console.info("loaded data", min, max, avg, sum, newData);
@@ -112,13 +123,15 @@ class ChartsCtrl {
         max,
         avg,
         sum,
-        domainMin,
-        domainMax,
+        yDomainMin,
+        yDomainMax,
         label: m.label,
         unit: m.unit,
         range,
         couldBeNegative: m.couldBeNegative,
         last,
+        xDomainMin: start.toISOString(),
+        xDomainMax: end.toISOString(),
       });
       // this.chartsData.setLoading(false);
     } catch (e) {

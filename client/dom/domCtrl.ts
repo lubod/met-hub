@@ -1,7 +1,6 @@
 import fetch from "node-fetch";
 import { DomCfg, IDomData, IDomTrendData } from "../../common/domModel";
 import AuthData from "../auth/authData";
-import ChartsCtrl from "../charts/chartsCtrl";
 import DomData from "./domData";
 
 const ENV = process.env.ENV || "";
@@ -25,13 +24,8 @@ class DomCtrl {
     this.domData.processTrendData(data);
   };
 
-  constructor(
-    mySocket: any,
-    domData: DomData,
-    chartsCtrl: ChartsCtrl,
-    authData: AuthData
-  ) {
-    this.domData = domData;
+  constructor(mySocket: any, authData: AuthData) {
+    this.domData = new DomData();
     this.domCfg = new DomCfg();
     this.socket = mySocket;
     this.authData = authData;

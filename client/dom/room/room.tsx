@@ -6,7 +6,7 @@ import { Row, Col } from "react-bootstrap";
 import { DOM_MEASUREMENTS_DESC } from "../../../common/domModel";
 import AuthData from "../../auth/authData";
 import DataAlone from "../../misc/dataAlone";
-import DataWithTrend from "../../dataWithTrend/dataWithTrend";
+import DataWithTrend from "../../misc/dataWithTrend";
 import Text from "../../misc/text";
 
 type RoomProps = {

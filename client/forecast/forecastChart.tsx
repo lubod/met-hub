@@ -13,12 +13,12 @@ import {
 import MY_COLORS from "../../common/colors";
 import { IForecastDay, IForecastRow } from "./forecastData";
 
-type ForecastChartData = {
+type Props = {
   data: Array<IForecastDay>;
   index: number;
 };
 
-const ForecastChart = observer(({ data, index }: ForecastChartData) => {
+const ForecastChart = observer(({ data, index }: Props) => {
   const chdata = [];
 
   function formatLabel(label: string) {

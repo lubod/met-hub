@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import moment from "moment";
 import Text from "../misc/text";
 import Room from "./room/room";
-import DataWithTrend from "../dataWithTrend/dataWithTrend";
+import DataWithTrend from "../misc/dataWithTrend";
 import { DOM_MEASUREMENTS_DESC } from "../../common/domModel";
 import { AppContext } from "..";
 import { LoadImg } from "../misc/loadImg";
@@ -20,8 +20,8 @@ type DomProps = {
 const Dom = observer(({ appContext }: DomProps) => {
   console.info(
     "dom render",
-    appContext.authData.isAuth,
-    appContext.domData.oldData
+    appContext.authCtrl.authData.isAuth,
+    appContext.domCtrl.domData.oldData
   );
 
   return (
@@ -42,7 +42,8 @@ const Dom = observer(({ appContext }: DomProps) => {
             >
               <LoadImg
                 rotate={
-                  appContext.domData.loading || appContext.domData.oldData
+                  appContext.domCtrl.domData.loading ||
+                  appContext.domCtrl.domData.oldData
                 }
                 src="icons8-refresh-25.svg"
                 alt=""
@@ -50,14 +51,16 @@ const Dom = observer(({ appContext }: DomProps) => {
             </Button>
           </Col>
         </Row>
-        <Row className={appContext.domData.oldData ? "text-danger" : ""}>
+        <Row
+          className={appContext.domCtrl.domData.oldData ? "text-danger" : ""}
+        >
           <Col xs={6}>
             <Text
               name="Data date"
               value={
-                appContext.domData.data.timestamp === null
+                appContext.domCtrl.domData.data.timestamp === null
                   ? "-"
-                  : moment(appContext.domData.data.timestamp).format(
+                  : moment(appContext.domCtrl.domData.data.timestamp).format(
                       "DD MMM YYYY"
                     )
               }
@@ -67,9 +70,11 @@ const Dom = observer(({ appContext }: DomProps) => {
             <Text
               name="Data time"
               value={
-                appContext.domData.data.timestamp === null
+                appContext.domCtrl.domData.data.timestamp === null
                   ? "-"
-                  : moment(appContext.domData.data.timestamp).format("HH:mm:ss")
+                  : moment(appContext.domCtrl.domData.data.timestamp).format(
+                      "HH:mm:ss"
+                    )
               }
             />
           </Col>
@@ -81,11 +86,13 @@ const Dom = observer(({ appContext }: DomProps) => {
             <DataWithTrend
               label="Temperature"
               value={
-                appContext.domData.oldData ? null : appContext.domData.data.temp
+                appContext.domCtrl.domData.oldData
+                  ? null
+                  : appContext.domCtrl.domData.data.temp
               }
               unit="°C"
               fix={1}
-              data={appContext.domData.trendData.temp}
+              data={appContext.domCtrl.domData.trendData.temp}
               range={1.6}
               couldBeNegative
               onClick={() =>
@@ -100,13 +107,13 @@ const Dom = observer(({ appContext }: DomProps) => {
             <DataWithTrend
               label="Humidity"
               value={
-                appContext.domData.oldData
+                appContext.domCtrl.domData.oldData
                   ? null
-                  : appContext.domData.data.humidity
+                  : appContext.domCtrl.domData.data.humidity
               }
               unit="%"
               fix={0}
-              data={appContext.domData.trendData.humidity}
+              data={appContext.domCtrl.domData.trendData.humidity}
               range={10}
               couldBeNegative={false}
               onClick={() =>
@@ -119,11 +126,13 @@ const Dom = observer(({ appContext }: DomProps) => {
             <DataWithTrend
               label="Rain"
               value={
-                appContext.domData.oldData ? null : appContext.domData.data.rain
+                appContext.domCtrl.domData.oldData
+                  ? null
+                  : appContext.domCtrl.domData.data.rain
               }
               unit=""
               fix={0}
-              data={appContext.domData.trendData.rain}
+              data={appContext.domCtrl.domData.trendData.rain}
               range={1}
               couldBeNegative={false}
               onClick={() =>
@@ -142,39 +151,39 @@ const Dom = observer(({ appContext }: DomProps) => {
         </Row>
         <Room
           room="LIVING ROOM"
-          floorTrend={appContext.domData.trendData.obyvacka_podlaha}
-          airTrend={appContext.domData.trendData.obyvacka_vzduch}
+          floorTrend={appContext.domCtrl.domData.trendData.obyvacka_podlaha}
+          airTrend={appContext.domCtrl.domData.trendData.obyvacka_vzduch}
           air={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.obyvacka_vzduch
+              : appContext.domCtrl.domData.data.obyvacka_vzduch
           }
           floor={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.obyvacka_podlaha
+              : appContext.domCtrl.domData.data.obyvacka_podlaha
           }
           required={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.obyvacka_reqall
+              : appContext.domCtrl.domData.data.obyvacka_reqall
           }
           heat={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.obyvacka_kuri
+              : appContext.domCtrl.domData.data.obyvacka_kuri
           }
           summer={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.obyvacka_leto
+              : appContext.domCtrl.domData.data.obyvacka_leto
           }
           low={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.obyvacka_low
+              : appContext.domCtrl.domData.data.obyvacka_low
           }
-          authData={appContext.authData}
+          authData={appContext.authCtrl.authData}
           onClickAir={() =>
             appContext.setMeasurementAndLoad(
               DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR
@@ -189,39 +198,39 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Myhr />
         <Room
           room="GUEST ROOM"
-          floorTrend={appContext.domData.trendData.pracovna_podlaha}
-          airTrend={appContext.domData.trendData.pracovna_vzduch}
+          floorTrend={appContext.domCtrl.domData.trendData.pracovna_podlaha}
+          airTrend={appContext.domCtrl.domData.trendData.pracovna_vzduch}
           air={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.pracovna_vzduch
+              : appContext.domCtrl.domData.data.pracovna_vzduch
           }
           floor={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.pracovna_podlaha
+              : appContext.domCtrl.domData.data.pracovna_podlaha
           }
           required={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.pracovna_reqall
+              : appContext.domCtrl.domData.data.pracovna_reqall
           }
           heat={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.pracovna_kuri
+              : appContext.domCtrl.domData.data.pracovna_kuri
           }
           summer={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.pracovna_leto
+              : appContext.domCtrl.domData.data.pracovna_leto
           }
           low={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.pracovna_low
+              : appContext.domCtrl.domData.data.pracovna_low
           }
-          authData={appContext.authData}
+          authData={appContext.authCtrl.authData}
           onClickAir={() =>
             appContext.setMeasurementAndLoad(
               DOM_MEASUREMENTS_DESC.GUEST_ROOM_AIR
@@ -236,39 +245,39 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Myhr />
         <Room
           room="BED ROOM"
-          floorTrend={appContext.domData.trendData.spalna_podlaha}
-          airTrend={appContext.domData.trendData.spalna_vzduch}
+          floorTrend={appContext.domCtrl.domData.trendData.spalna_podlaha}
+          airTrend={appContext.domCtrl.domData.trendData.spalna_vzduch}
           air={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.spalna_vzduch
+              : appContext.domCtrl.domData.data.spalna_vzduch
           }
           floor={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.spalna_podlaha
+              : appContext.domCtrl.domData.data.spalna_podlaha
           }
           required={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.spalna_reqall
+              : appContext.domCtrl.domData.data.spalna_reqall
           }
           heat={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.spalna_kuri
+              : appContext.domCtrl.domData.data.spalna_kuri
           }
           summer={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.spalna_leto
+              : appContext.domCtrl.domData.data.spalna_leto
           }
           low={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.spalna_low
+              : appContext.domCtrl.domData.data.spalna_low
           }
-          authData={appContext.authData}
+          authData={appContext.authCtrl.authData}
           onClickAir={() =>
             appContext.setMeasurementAndLoad(DOM_MEASUREMENTS_DESC.BED_ROOM_AIR)
           }
@@ -281,39 +290,39 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Myhr />
         <Room
           room="BOYS"
-          floorTrend={appContext.domData.trendData.chalani_podlaha}
-          airTrend={appContext.domData.trendData.chalani_vzduch}
+          floorTrend={appContext.domCtrl.domData.trendData.chalani_podlaha}
+          airTrend={appContext.domCtrl.domData.trendData.chalani_vzduch}
           air={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.chalani_vzduch
+              : appContext.domCtrl.domData.data.chalani_vzduch
           }
           floor={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.chalani_podlaha
+              : appContext.domCtrl.domData.data.chalani_podlaha
           }
           required={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.chalani_reqall
+              : appContext.domCtrl.domData.data.chalani_reqall
           }
           heat={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.chalani_kuri
+              : appContext.domCtrl.domData.data.chalani_kuri
           }
           summer={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.chalani_leto
+              : appContext.domCtrl.domData.data.chalani_leto
           }
           low={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.chalani_low
+              : appContext.domCtrl.domData.data.chalani_low
           }
-          authData={appContext.authData}
+          authData={appContext.authCtrl.authData}
           onClickAir={() =>
             appContext.setMeasurementAndLoad(
               DOM_MEASUREMENTS_DESC.BOYS_ROOM_AIR
@@ -328,39 +337,39 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Myhr />
         <Room
           room="PETRA"
-          floorTrend={appContext.domData.trendData.petra_podlaha}
-          airTrend={appContext.domData.trendData.petra_vzduch}
+          floorTrend={appContext.domCtrl.domData.trendData.petra_podlaha}
+          airTrend={appContext.domCtrl.domData.trendData.petra_vzduch}
           air={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.petra_vzduch
+              : appContext.domCtrl.domData.data.petra_vzduch
           }
           floor={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.petra_podlaha
+              : appContext.domCtrl.domData.data.petra_podlaha
           }
           required={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.petra_reqall
+              : appContext.domCtrl.domData.data.petra_reqall
           }
           heat={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.petra_kuri
+              : appContext.domCtrl.domData.data.petra_kuri
           }
           summer={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.petra_leto
+              : appContext.domCtrl.domData.data.petra_leto
           }
           low={
-            appContext.domData.oldData
+            appContext.domCtrl.domData.oldData
               ? null
-              : appContext.domData.data.petra_low
+              : appContext.domCtrl.domData.data.petra_low
           }
-          authData={appContext.authData}
+          authData={appContext.authCtrl.authData}
           onClickAir={() =>
             appContext.setMeasurementAndLoad(
               DOM_MEASUREMENTS_DESC.PETRA_ROOM_AIR

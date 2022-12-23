@@ -11,9 +11,9 @@ export class CData {
 
   sum: string;
 
-  domainMin: number;
+  yDomainMin: number;
 
-  domainMax: number;
+  yDomainMax: number;
 
   label: string;
 
@@ -24,6 +24,10 @@ export class CData {
   couldBeNegative: boolean;
 
   last: string;
+
+  xDomainMin: string;
+
+  xDomainMax: string;
 }
 
 class ChartsData {

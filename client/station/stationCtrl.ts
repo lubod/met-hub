@@ -26,11 +26,11 @@ class StationCtrl implements IController {
     this.stationData.processTrendData(data);
   };
 
-  constructor(socket: any, stationData: StationData, authData: AuthData) {
-    this.stationData = stationData;
+  constructor(socket: any, stationID: string, authData: AuthData) {
+    this.stationData = new StationData(stationID);
     this.socket = socket;
     this.authData = authData;
-    this.stationCfg = new StationCfg(stationData.stationID);
+    this.stationCfg = new StationCfg(stationID);
   }
 
   setStation(stationID: string) {
