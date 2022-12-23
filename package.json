@@ -78,7 +78,7 @@
     "express": "^4.18.1",
     "express-http-proxy": "^1.6.3",
     "frameguard": "^4.0.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jwk-to-pem": "^2.0.5",
     "leaflet": "^1.9.1",
     "lodash.clonedeep": "^4.5.0",
