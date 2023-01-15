@@ -1,29 +1,95 @@
+/* eslint-disable camelcase */
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
+import moment from "moment";
 import ForecastChart from "./forecastChart";
-import MY_COLORS from "../../common/colors";
-import { IForecastDay } from "./forecastData";
+import { IForecast6h, IForecastDay } from "./forecastData";
+import ForecastChartTemp from "./forecastChartTemp";
 
 type Props = {
   days: Array<IForecastDay>;
+  forecast_6h: Array<IForecast6h>;
   days10r: boolean;
 };
 
-const ForecastCharts = observer(({ days, days10r }: Props) => (
-  <>
-    <Row>
-      <Col xs={6}>
-        <div className="small text-white-50 font-weight-bold">
-          Temperature <span style={{ color: MY_COLORS.orange }}>&#8226;</span>
-        </div>
-      </Col>
-    </Row>
-    <Row className="mb-3">
-      {days10r === false && <ForecastChart data={days} index={3} />}
-      {days10r === true && <ForecastChart data={days} index={10} />}
-    </Row>
-  </>
-));
+const size = "32px";
+
+const ForecastCharts = observer(({ days, days10r, forecast_6h }: Props) => {
+  const filtered = forecast_6h
+    .filter((el, i) => i % 6 === 0)
+    .filter((el, i) => i < 10);
+
+  return (
+    <>
+      <Row className="ms-0 me-0">
+        {filtered.map((item: IForecast6h) => (
+          <Col
+            className="text-center small ps-0 pe-0"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <div>{moment(item.timestamp).format("ddd")}</div>
+          </Col>
+        ))}
+      </Row>
+      <Row className="ms-0 me-0">
+        {filtered.map((item: IForecast6h) => (
+          <Col
+            className="text-center small ps-0 pe-0"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <div>{moment(item.timestamp).format("HH")}</div>
+          </Col>
+        ))}
+      </Row>
+      <Row className="ms-0 me-0">
+        {filtered.map((item) => (
+          <Col
+            className="text-center ps-0 pe-0"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <img
+              width={size}
+              height={size}
+              src={`svg/${item.symbol_code_6h}.svg`}
+              alt={item.symbol_code_6h}
+            />
+          </Col>
+        ))}
+      </Row>
+      <Row className="mb-0">
+        {days10r === false && <ForecastChartTemp data={days} index={3} />}
+        {days10r === true && <ForecastChartTemp data={days} index={10} />}
+      </Row>
+      <Row className="ms-0 me-0">
+        {filtered.map((item: IForecast6h) => (
+          <Col
+            className="text-center small ps-0 pe-0"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <div>
+              {item.air_temperature_max?.toFixed(0)}/
+              {item.air_temperature_min?.toFixed(0)}
+            </div>
+          </Col>
+        ))}
+      </Row>
+      <Row className="mb-3">
+        {days10r === false && <ForecastChart data={days} index={3} />}
+        {days10r === true && <ForecastChart data={days} index={10} />}
+      </Row>
+      <Row className="ms-0 me-0">
+        {filtered.map((item: IForecast6h) => (
+          <Col
+            className="text-center small ps-0 pe-0"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <div>{item.precipitation_amount}</div>
+          </Col>
+        ))}
+      </Row>
+    </>
+  );
+});
 
 export default ForecastCharts;

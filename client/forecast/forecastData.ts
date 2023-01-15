@@ -43,6 +43,17 @@ export interface IForecastData {
   stationID: string;
 }
 
+export interface IForecast6h {
+  timestamp: Date;
+  symbol_code_6h: string;
+  air_temperature_min: number;
+  air_temperature_max: number;
+  precipitation_amount: number;
+  wind_speed_min: number;
+  wind_speed_max: number;
+  cloud_area_fraction_sum: number;
+}
+
 export default class ForecastData implements IForecastData {
   forecast: any = null;
 
@@ -66,6 +77,8 @@ export default class ForecastData implements IForecastData {
 
   stationID: string = null;
 
+  forecast_6h: Array<IForecast6h> = [];
+
   constructor(stationID: string, lat: number, lon: number) {
     makeObservable(this, {
       lat: observable,
@@ -75,6 +88,7 @@ export default class ForecastData implements IForecastData {
       sunset: observable,
       loading: observable,
       stationID: observable,
+      forecast_6h: observable,
       setForecast: action,
       setAstronomicalData: action,
       setStationID: action,
@@ -107,6 +121,7 @@ export default class ForecastData implements IForecastData {
 
   setForecast(newForecast: any) {
     this.days = new Map<string, IForecastDay>();
+    this.forecast_6h = [];
     for (let i = 0; i < newForecast.properties.timeseries.length; i += 1) {
       const item = newForecast.properties.timeseries[i];
       const timestamp: Date = new Date(item.time);
@@ -129,6 +144,12 @@ export default class ForecastData implements IForecastData {
       }
       const symbol_code_1h = item.data.next_1_hours?.summary.symbol_code;
       const symbol_code_6h = item.data.next_6_hours?.summary.symbol_code;
+      const air_temperature_min_6h =
+        item.data.next_6_hours?.details.air_temperature_min;
+      const air_temperature_max_6h =
+        item.data.next_6_hours?.details.air_temperature_max;
+      const precipitation_amount_6h =
+        item.data.next_6_hours?.details.precipitation_amount;
       const forecastRow: IForecastRow = {
         timestamp,
         air_pressure_at_sea_level,
@@ -185,8 +206,18 @@ export default class ForecastData implements IForecastData {
       if (timestamp.getUTCHours() === 18)
         forecastDay.symbol_code_18 = symbol_code_6h;
       this.days.set(timestamp.toDateString(), forecastDay);
+      this.forecast_6h.push({
+        timestamp,
+        symbol_code_6h,
+        air_temperature_min: air_temperature_min_6h,
+        air_temperature_max: air_temperature_max_6h,
+        precipitation_amount: precipitation_amount_6h,
+        wind_speed_min: 0,
+        wind_speed_max: 0,
+        cloud_area_fraction_sum: 0,
+      });
     }
-
+    console.info(this.forecast_6h);
     this.forecast = newForecast;
   }
 }

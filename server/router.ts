@@ -7,6 +7,7 @@ import { IMeasurement } from "./measurement";
 import { loadData, loadRainData } from "./load";
 import { getForecast, getAstronomicalData } from "./forecast";
 import { IStation } from "../common/allStationsCfg";
+import { goSelect } from "./go";
 
 const dom = new Dom();
 const router = express.Router();
@@ -219,6 +220,48 @@ router.post("/setData", (req: any, res: any) => {
 router.post("/setDomData", (req: any, res: any) => {
   setData(req.body.PASSKEY, req.body);
   res.sendStatus(200);
+});
+
+// GO
+
+router.get("/api/goSelect", (req: any, res: any) => {
+  // checkAuth(req);
+  if (
+    req.query.air_temperature_min != null &&
+    req.query.air_temperature_max != null &&
+    req.query.cloud_area_fraction_min != null &&
+    req.query.cloud_area_fraction_max != null &&
+    req.query.fog_area_fraction_min != null &&
+    req.query.fog_area_fraction_max != null &&
+    req.query.wind_speed_min != null &&
+    req.query.wind_speed_max != null &&
+    req.query.hour_min != null &&
+    req.query.hour_max != null &&
+    req.query.precipitation_amount_min != null &&
+    req.query.precipitation_amount_max != null
+  ) {
+    res.type("application/json");
+    goSelect(
+      req.query.air_temperature_min,
+      req.query.air_temperature_max,
+      req.query.cloud_area_fraction_min,
+      req.query.cloud_area_fraction_max,
+      req.query.fog_area_fraction_min,
+      req.query.fog_area_fraction_max,
+      req.query.wind_speed_min,
+      req.query.wind_speed_max,
+      req.query.hour_min,
+      req.query.hour_max,
+      req.query.precipitation_amount_min,
+      req.query.precipitation_amount_max
+    )
+      .then((data) => res.json(data))
+      .catch((e) => {
+        throw new AppError(500, `${e.name}: ${e.message}`, e.stack);
+      });
+  } else {
+    throw new AppError(400, "Invalid params");
+  }
 });
 
 export default router;

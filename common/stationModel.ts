@@ -195,7 +195,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Rain rate",
     col2: "",
     chartType: "",
-    color: MY_COLORS.purple,
+    color: MY_COLORS.blue,
   };
 
   static EVENTRAIN: IMeasurementDesc = {
@@ -208,7 +208,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Event rain",
     col2: "",
     chartType: "",
-    color: MY_COLORS.purple,
+    color: MY_COLORS.blue,
   };
 
   static HOURLYRAIN: IMeasurementDesc = {
@@ -221,7 +221,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Hourly",
     col2: "",
     chartType: "rain",
-    color: MY_COLORS.purple,
+    color: MY_COLORS.blue,
   };
 
   static DAILYRAIN: IMeasurementDesc = {
@@ -234,7 +234,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Daily",
     col2: "",
     chartType: "rain",
-    color: MY_COLORS.purple,
+    color: MY_COLORS.blue,
   };
 
   static WEEKLYRAIN: IMeasurementDesc = {
@@ -247,7 +247,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Weekly",
     col2: "",
     chartType: "rain",
-    color: MY_COLORS.purple,
+    color: MY_COLORS.blue,
   };
 
   static MONTHLYRAIN: IMeasurementDesc = {
@@ -260,7 +260,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Monthly",
     col2: "",
     chartType: "rain",
-    color: MY_COLORS.purple,
+    color: MY_COLORS.blue,
   };
 
   static TOTALRAIN: IMeasurementDesc = {
@@ -273,7 +273,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Total",
     col2: "",
     chartType: "",
-    color: MY_COLORS.purple,
+    color: MY_COLORS.blue,
   };
 
   static WINDDIR: IMeasurementDesc = {
@@ -286,7 +286,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Wind dir",
     col2: "",
     chartType: "winddir",
-    color: MY_COLORS.blue,
+    color: MY_COLORS.purple,
   };
 
   static WINDSPEED: IMeasurementDesc = {
@@ -299,7 +299,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Wind speed",
     col2: "",
     chartType: "",
-    color: MY_COLORS.blue,
+    color: MY_COLORS.purple,
   };
 
   static WINDGUST: IMeasurementDesc = {
@@ -312,7 +312,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Wind gust",
     col2: "",
     chartType: "",
-    color: MY_COLORS.blue,
+    color: MY_COLORS.purple,
   };
 
   static DAILYGUST: IMeasurementDesc = {
@@ -325,7 +325,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Daily gust",
     col2: "",
     chartType: "",
-    color: MY_COLORS.blue,
+    color: MY_COLORS.purple,
   };
 }
 

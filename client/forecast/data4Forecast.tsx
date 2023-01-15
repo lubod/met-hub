@@ -80,56 +80,6 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
           </span>
         </Col>
       </Row>
-      <Row className={gapStyle}>
-        <Col xs={3}>
-          {forecastDay.symbol_code_00 &&
-            hourly === false &&
-            days10r === false && (
-              <img
-                width="40px"
-                height="40px"
-                src={`svg/${forecastDay.symbol_code_00}.svg`}
-                alt={forecastDay.symbol_code_00}
-              />
-            )}
-        </Col>
-        <Col xs={3}>
-          {forecastDay.symbol_code_06 &&
-            hourly === false &&
-            days10r === false && (
-              <img
-                width="40px"
-                height="40px"
-                src={`svg/${forecastDay.symbol_code_06}.svg`}
-                alt={forecastDay.symbol_code_06}
-              />
-            )}
-        </Col>
-        <Col xs={3}>
-          {forecastDay.symbol_code_12 &&
-            hourly === false &&
-            days10r === false && (
-              <img
-                width="40px"
-                height="40px"
-                src={`svg/${forecastDay.symbol_code_12}.svg`}
-                alt={forecastDay.symbol_code_12}
-              />
-            )}
-        </Col>
-        <Col xs={3}>
-          {forecastDay.symbol_code_18 &&
-            hourly === false &&
-            days10r === false && (
-              <img
-                width="40px"
-                height="40px"
-                src={`svg/${forecastDay.symbol_code_18}.svg`}
-                alt={forecastDay.symbol_code_18}
-              />
-            )}
-        </Col>
-      </Row>
       {hourly &&
         forecastDay.forecastRows.map((forecastRow) => (
           <Row key={forecastRow.timestamp.getTime()} className="small">

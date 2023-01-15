@@ -2,8 +2,8 @@ import { observer } from "mobx-react";
 import moment from "moment";
 import React from "react";
 import {
+  Area,
   ComposedChart,
-  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -17,12 +17,27 @@ type Props = {
   index: number;
 };
 
-const ForecastChart = observer(({ data, index }: Props) => {
+const ForecastChartTemp = observer(({ data, index }: Props) => {
   const chdata = [];
 
   function formatLabel(label: string) {
     return moment(label).format("MMM DD HH:mm");
   }
+
+  function roundTo5Min(num: number) {
+    let res = null;
+    res = Math.floor(num / 5) * 5;
+    return res;
+  }
+
+  function roundTo5Max(num: number) {
+    let res = null;
+    res = Math.ceil(num / 5) * 5;
+    return res;
+  }
+
+  let domainTempMax = Number.MIN_SAFE_INTEGER;
+  let domainTempMin = Number.MAX_SAFE_INTEGER;
 
   for (let i = 0; i < data.length; i += 1) {
     if (i >= index) {
@@ -35,23 +50,22 @@ const ForecastChart = observer(({ data, index }: Props) => {
       }
       chdata.push({
         timestamp: forecastRow.timestamp.getTime(),
-        rain: forecastRow.precipitation_amount,
-        wind_speed: (parseFloat(forecastRow.wind_speed) * 3.6).toFixed(1),
-        clouds: forecastRow.cloud_area_fraction,
+        temperature: forecastRow.air_temperature,
       });
+    }
+    if (data[i].air_temperature_max > domainTempMax) {
+      domainTempMax = data[i].air_temperature_max;
+    }
+    if (data[i].air_temperature_min < domainTempMin) {
+      domainTempMin = data[i].air_temperature_min;
     }
   }
 
   console.info("render forecast chart", chdata);
   return (
     <>
-      <div className="text-left small text-white-50 font-weight-bold mb-2 mt-2">
-        Rain
-        <span style={{ color: MY_COLORS.blue }}>&#8226;</span>{" "}
-        <span className="">Wind speed</span>
-        <span style={{ color: MY_COLORS.purple }}>&#8226;</span>{" "}
-        <span className="">Clouds</span>
-        <span style={{ color: MY_COLORS.white }}>&#8226;</span>
+      <div className="small text-white-50 font-weight-bold mt-2">
+        Temperature <span style={{ color: MY_COLORS.orange }}>&#8226;</span>
       </div>
       <div
         className="text-center"
@@ -67,33 +81,29 @@ const ForecastChart = observer(({ data, index }: Props) => {
               bottom: 0,
             }}
           >
-            <Line
-              type="step"
-              dataKey="rain"
-              stroke={MY_COLORS.blue}
-              dot={false}
-              strokeWidth={2}
-              isAnimationActive={false}
-              yAxisId="rain"
-            />
-            <Line
+            <Area
               type="monotoneX"
-              dataKey="wind_speed"
-              stroke={MY_COLORS.purple}
-              dot={false}
-              strokeWidth={2}
+              dataKey="temperature"
+              stroke={MY_COLORS.orange}
+              fillOpacity={1}
+              fill="url(#colorUv)"
               isAnimationActive={false}
-              yAxisId="wind_speed"
+              yAxisId="temperature"
             />
-            <Line
-              type="monotoneX"
-              dataKey="clouds"
-              stroke={MY_COLORS.light}
-              dot={false}
-              strokeWidth={2}
-              isAnimationActive={false}
-              yAxisId="clouds"
-            />
+            <defs>
+              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor={MY_COLORS.orange}
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={MY_COLORS.orange}
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            </defs>
             <XAxis
               dataKey="timestamp"
               hide
@@ -101,10 +111,12 @@ const ForecastChart = observer(({ data, index }: Props) => {
               domain={["auto", "auto"]}
               scale="time"
             />
-            <YAxis yAxisId="rain" hide type="number" domain={[0, 5]} />
-            <YAxis yAxisId="wind_speed" hide type="number" domain={[0, 50]} />
-            <YAxis yAxisId="clouds" hide type="number" domain={[0, 100]} />
-
+            <YAxis
+              yAxisId="temperature"
+              hide
+              type="number"
+              domain={[domainTempMin, domainTempMax]}
+            />
             <Tooltip
               labelStyle={{ color: "black" }}
               itemStyle={{ color: "black" }}
@@ -118,4 +130,4 @@ const ForecastChart = observer(({ data, index }: Props) => {
   );
 });
 
-export default ForecastChart;
+export default ForecastChartTemp;
