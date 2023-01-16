@@ -14,10 +14,10 @@ import { IForecastDay, IForecastRow } from "./forecastData";
 
 type Props = {
   data: Array<IForecastDay>;
-  index: number;
+  lastTimestamp: Date;
 };
 
-const ForecastChart = observer(({ data, index }: Props) => {
+const ForecastChart = observer(({ data, lastTimestamp }: Props) => {
   const chdata = [];
 
   function formatLabel(label: string) {
@@ -25,13 +25,10 @@ const ForecastChart = observer(({ data, index }: Props) => {
   }
 
   for (let i = 0; i < data.length; i += 1) {
-    if (i >= index) {
-      break;
-    }
     for (let j = 0; j < data[i].forecastRows.length; j += 1) {
       const forecastRow: IForecastRow = data[i].forecastRows[j];
-      if (index > 3 && forecastRow.timestamp.getHours() % 6 !== 1) {
-        //       break;
+      if (forecastRow.timestamp.getTime() > lastTimestamp.getTime()) {
+        break;
       }
       chdata.push({
         timestamp: forecastRow.timestamp.getTime(),

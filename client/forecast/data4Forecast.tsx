@@ -30,10 +30,8 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
   }
 
   let textStyle = "h4";
-  let gapStyle = "my-2";
   if (days10r) {
     textStyle = "small";
-    gapStyle = "mb-1";
   }
 
   // console.info("render data4forecat");

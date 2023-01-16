@@ -14,16 +14,17 @@ import { IForecastDay, IForecastRow } from "./forecastData";
 
 type Props = {
   data: Array<IForecastDay>;
-  index: number;
+  lastTimestamp: Date;
 };
 
-const ForecastChartTemp = observer(({ data, index }: Props) => {
+const ForecastChartTemp = observer(({ data, lastTimestamp }: Props) => {
   const chdata = [];
 
   function formatLabel(label: string) {
     return moment(label).format("MMM DD HH:mm");
   }
 
+  /*
   function roundTo5Min(num: number) {
     let res = null;
     res = Math.floor(num / 5) * 5;
@@ -35,18 +36,16 @@ const ForecastChartTemp = observer(({ data, index }: Props) => {
     res = Math.ceil(num / 5) * 5;
     return res;
   }
+*/
 
   let domainTempMax = Number.MIN_SAFE_INTEGER;
   let domainTempMin = Number.MAX_SAFE_INTEGER;
 
   for (let i = 0; i < data.length; i += 1) {
-    if (i >= index) {
-      break;
-    }
     for (let j = 0; j < data[i].forecastRows.length; j += 1) {
       const forecastRow: IForecastRow = data[i].forecastRows[j];
-      if (index > 3 && forecastRow.timestamp.getHours() % 6 !== 1) {
-        //       break;
+      if (forecastRow.timestamp.getTime() > lastTimestamp.getTime()) {
+        break;
       }
       chdata.push({
         timestamp: forecastRow.timestamp.getTime(),

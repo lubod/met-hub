@@ -13,12 +13,18 @@ type Props = {
   days10r: boolean;
 };
 
-const size = "32px";
+const size = "34px";
 
 const ForecastCharts = observer(({ days, days10r, forecast_6h }: Props) => {
   const filtered = forecast_6h
     .filter((el, i) => i % 6 === 0)
-    .filter((el, i) => i < 10);
+    .filter((el, i) => i < 9);
+  let lastTimestamp = null;
+  if (filtered.length > 0) {
+    lastTimestamp = new Date(filtered[filtered.length - 1].timestamp);
+    lastTimestamp.setHours(lastTimestamp.getHours() + 6);
+    console.info(lastTimestamp);
+  }
 
   return (
     <>
@@ -28,7 +34,9 @@ const ForecastCharts = observer(({ days, days10r, forecast_6h }: Props) => {
             className="text-center small ps-0 pe-0"
             style={{ display: "flex", justifyContent: "center" }}
           >
-            <div>{moment(item.timestamp).format("ddd")}</div>
+            <div>
+              {moment(item.timestamp).format("ddd")}
+            </div>
           </Col>
         ))}
       </Row>
@@ -58,8 +66,12 @@ const ForecastCharts = observer(({ days, days10r, forecast_6h }: Props) => {
         ))}
       </Row>
       <Row className="mb-0">
-        {days10r === false && <ForecastChartTemp data={days} index={3} />}
-        {days10r === true && <ForecastChartTemp data={days} index={10} />}
+        {days10r === false && (
+          <ForecastChartTemp data={days} lastTimestamp={lastTimestamp} />
+        )}
+        {days10r === true && (
+          <ForecastChartTemp data={days} lastTimestamp={lastTimestamp} />
+        )}
       </Row>
       <Row className="ms-0 me-0">
         {filtered.map((item: IForecast6h) => (
@@ -75,8 +87,12 @@ const ForecastCharts = observer(({ days, days10r, forecast_6h }: Props) => {
         ))}
       </Row>
       <Row className="mb-3">
-        {days10r === false && <ForecastChart data={days} index={3} />}
-        {days10r === true && <ForecastChart data={days} index={10} />}
+        {days10r === false && (
+          <ForecastChart data={days} lastTimestamp={lastTimestamp} />
+        )}
+        {days10r === true && (
+          <ForecastChart data={days} lastTimestamp={lastTimestamp} />
+        )}
       </Row>
       <Row className="ms-0 me-0">
         {filtered.map((item: IForecast6h) => (
