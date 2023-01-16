@@ -15,7 +15,6 @@ type Props = {
 };
 
 let numberOfForecastDays = 3;
-let daysStyle = "mb-4";
 
 const Forecast = observer(({ forecastCtrl }: Props) => {
   const [days10r, setDays10r] = useState(false);
@@ -24,10 +23,8 @@ const Forecast = observer(({ forecastCtrl }: Props) => {
     setDays10r(show10);
     if (show10) {
       numberOfForecastDays = 10;
-      daysStyle = "";
     } else {
       numberOfForecastDays = 3;
-      daysStyle = "mb-4";
     }
   }
 
@@ -89,14 +86,13 @@ const Forecast = observer(({ forecastCtrl }: Props) => {
           0,
           numberOfForecastDays
         )}
-        daysStyle={daysStyle}
         days10r={days10r}
       />
       <Myhr />
       <ForecastCharts
         days={[...forecastCtrl.forecastData.days.values()]}
         forecast_6h={forecastCtrl.forecastData.forecast_6h}
-        days10r={days10r}
+        forecast_1h={forecastCtrl.forecastData.forecast_1h}
       />
       <Myhr />
       <Row>

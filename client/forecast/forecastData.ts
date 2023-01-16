@@ -25,6 +25,8 @@ export interface IForecastDay {
   symbol_code_06: string;
   symbol_code_12: string;
   symbol_code_18: string;
+  symbol_code_day: string;
+  symbol_code_night: string;
   forecastRows: IForecastRow[];
   cloud_area_fraction_sum: number;
 }
@@ -54,6 +56,15 @@ export interface IForecast6h {
   cloud_area_fraction_sum: number;
 }
 
+export interface IForecast1h {
+  timestamp: Date;
+  symbol_code_1h: string;
+  air_temperature: number;
+  precipitation_amount: number;
+  wind_speed: number;
+  cloud_area_fraction_sum: number;
+}
+
 export default class ForecastData implements IForecastData {
   forecast: any = null;
 
@@ -78,6 +89,8 @@ export default class ForecastData implements IForecastData {
   stationID: string = null;
 
   forecast_6h: Array<IForecast6h> = [];
+
+  forecast_1h: Array<IForecast1h> = [];
 
   constructor(stationID: string, lat: number, lon: number) {
     makeObservable(this, {
@@ -121,6 +134,7 @@ export default class ForecastData implements IForecastData {
 
   setForecast(newForecast: any) {
     this.days = new Map<string, IForecastDay>();
+    this.forecast_1h = [];
     this.forecast_6h = [];
     for (let i = 0; i < newForecast.properties.timeseries.length; i += 1) {
       const item = newForecast.properties.timeseries[i];
@@ -144,6 +158,7 @@ export default class ForecastData implements IForecastData {
       }
       const symbol_code_1h = item.data.next_1_hours?.summary.symbol_code;
       const symbol_code_6h = item.data.next_6_hours?.summary.symbol_code;
+      const symbol_code_12h = item.data.next_12_hours?.summary.symbol_code;
       const air_temperature_min_6h =
         item.data.next_6_hours?.details.air_temperature_min;
       const air_temperature_max_6h =
@@ -165,6 +180,9 @@ export default class ForecastData implements IForecastData {
       let forecastDay: IForecastDay = this.days.get(timestamp.toDateString());
       const air_temperature_f = parseFloat(forecastRow.air_temperature);
       const wind_speed_f = parseFloat(forecastRow.wind_speed);
+      const precipitation_amount_f = parseFloat(
+        forecastRow.precipitation_amount
+      );
       if (forecastDay == null) {
         forecastDay = {
           timestamp,
@@ -176,6 +194,8 @@ export default class ForecastData implements IForecastData {
           symbol_code_06: null,
           symbol_code_12: null,
           symbol_code_18: null,
+          symbol_code_day: null,
+          symbol_code_night: null,
           forecastRows: [forecastRow],
           cloud_area_fraction_sum: cloud_area_fraction,
         };
@@ -197,14 +217,20 @@ export default class ForecastData implements IForecastData {
           forecastDay.wind_speed_max = wind_speed_f;
         }
       }
-      if (timestamp.getUTCHours() === 0)
+      if (timestamp.getUTCHours() === 0) {
         forecastDay.symbol_code_00 = symbol_code_6h;
-      if (timestamp.getUTCHours() === 6)
+      }
+      if (timestamp.getUTCHours() === 6) {
         forecastDay.symbol_code_06 = symbol_code_6h;
-      if (timestamp.getUTCHours() === 12)
+        forecastDay.symbol_code_day = symbol_code_12h;
+      }
+      if (timestamp.getUTCHours() === 12) {
         forecastDay.symbol_code_12 = symbol_code_6h;
-      if (timestamp.getUTCHours() === 18)
+      }
+      if (timestamp.getUTCHours() === 18) {
         forecastDay.symbol_code_18 = symbol_code_6h;
+        forecastDay.symbol_code_night = symbol_code_12h;
+      }
       this.days.set(timestamp.toDateString(), forecastDay);
       this.forecast_6h.push({
         timestamp,
@@ -214,6 +240,14 @@ export default class ForecastData implements IForecastData {
         precipitation_amount: precipitation_amount_6h,
         wind_speed_min: 0,
         wind_speed_max: 0,
+        cloud_area_fraction_sum: 0,
+      });
+      this.forecast_1h.push({
+        timestamp,
+        symbol_code_1h,
+        air_temperature: air_temperature_f,
+        precipitation_amount: precipitation_amount_f,
+        wind_speed: wind_speed_f,
         cloud_area_fraction_sum: 0,
       });
     }

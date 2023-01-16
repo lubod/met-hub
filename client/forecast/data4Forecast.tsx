@@ -38,7 +38,7 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
   return (
     <div className="text-left">
       <Row>
-        <Col xs={3}>
+        <Col xs={4}>
           <div
             className={`small ${labelStyle}`}
             onClick={() => setHourly(!hourly)}
@@ -49,34 +49,40 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
             </span>
           </div>
         </Col>
-        <Col xs={3}>
-          <span className={textStyle}>
-            {forecastDay.air_temperature_max == null
-              ? ""
-              : forecastDay.air_temperature_max.toFixed(0)}
-          </span>
-          <span className={textStyle}> / </span>
-          <span className={textStyle}>
-            {forecastDay.air_temperature_min == null
-              ? ""
-              : forecastDay.air_temperature_min.toFixed(0)}
-          </span>
-        </Col>
-        <Col xs={3}>
-          <span className={textStyle}>
-            {forecastDay.precipitation_amount_sum == null ||
-            forecastDay.precipitation_amount_sum === 0
-              ? ""
-              : forecastDay.precipitation_amount_sum.toFixed(1)}
-          </span>
-        </Col>
-        <Col xs={3}>
-          <span className={textStyle}>
-            {forecastDay.wind_speed_max == null
-              ? ""
-              : (forecastDay.wind_speed_max * 3.6).toFixed(0)}
-          </span>
-        </Col>
+        <Row>
+          <Col xs={4}>
+            <span className={textStyle}>
+              {forecastDay.air_temperature_max == null
+                ? ""
+                : forecastDay.air_temperature_max.toFixed(0)}
+            </span>
+            <span className={textStyle}> / </span>
+            <span className={textStyle}>
+              {forecastDay.air_temperature_min == null
+                ? ""
+                : forecastDay.air_temperature_min.toFixed(0)}
+            </span>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={4}>
+            <span className={textStyle}>
+              {forecastDay.precipitation_amount_sum == null ||
+              forecastDay.precipitation_amount_sum === 0
+                ? ""
+                : forecastDay.precipitation_amount_sum.toFixed(1)}
+            </span>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={4}>
+            <span className={textStyle}>
+              {forecastDay.wind_speed_max == null
+                ? ""
+                : (forecastDay.wind_speed_max * 3.6).toFixed(0)}
+            </span>
+          </Col>
+        </Row>
       </Row>
       {hourly &&
         forecastDay.forecastRows.map((forecastRow) => (

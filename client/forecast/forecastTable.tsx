@@ -1,39 +1,87 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
-import Text from "../misc/text";
-import Data4Forecast from "./data4Forecast";
+import moment from "moment";
 import { IForecastDay } from "./forecastData";
 
 type Props = {
   days: Array<IForecastDay>;
-  daysStyle: string;
   days10r: boolean;
 };
 
-const ForecastTable = observer(({ days, daysStyle, days10r }: Props) => (
-  <>
-    <Row>
-      <Col xs={3}>
-        <Text name="Day" value="" />
-      </Col>
-      <Col xs={3}>
-        <Text name="Temperature °C" value="" />
-      </Col>
-      <Col xs={3}>
-        <Text name="Rain mm" value="" />
-      </Col>
-      <Col xs={3}>
-        <Text name="WindSpeed km/h" value="" />
-      </Col>
-    </Row>
-    {days.map((forecastDay) => (
-      <div key={forecastDay.timestamp.getTime()} className={daysStyle}>
-        <Data4Forecast forecastDay={forecastDay} days10r={days10r} />
-      </div>
-    ))}
-    {days10r && <div className="mb-4" />}
-  </>
-));
+const ForecastTable = observer(({ days, days10r }: Props) => {
+  const labelStyle = "text-secondary";
+  const textStyle = "h4";
+
+  return (
+    <>
+      <Row className="py-2">
+        {days.map((forecastDay) => (
+          <Col xs={4}>
+            <div
+              className={`small ${labelStyle}`}
+              // onClick={() => setHourly(!hourly)}
+              style={{ cursor: "pointer" }}
+            >
+              <span className={textStyle}>
+                {moment(forecastDay.timestamp).format("ddd")}
+              </span>
+            </div>
+          </Col>
+        ))}
+      </Row>
+      <Row className="py-2">
+        {days.map((forecastDay) => (
+          <Col xs={4}>
+            <span className={textStyle}>
+              {forecastDay.air_temperature_max == null
+                ? ""
+                : forecastDay.air_temperature_max.toFixed(0)}
+            </span>
+            <span className={textStyle}> / </span>
+            <span className={textStyle}>
+              {forecastDay.air_temperature_min == null
+                ? ""
+                : forecastDay.air_temperature_min.toFixed(0)}
+            </span>
+            <span className="small">°C</span>
+          </Col>
+        ))}
+      </Row>
+      <Row className="py-2">
+        {days.map((forecastDay) => (
+          <Col xs={4}>
+            <span className={textStyle}>
+              {forecastDay.precipitation_amount_sum == null ||
+              forecastDay.precipitation_amount_sum === 0
+                ? "-"
+                : forecastDay.precipitation_amount_sum.toFixed(1)}
+            </span>
+            <span className="small">
+              {forecastDay.precipitation_amount_sum == null ||
+              forecastDay.precipitation_amount_sum === 0
+                ? ""
+                : "mm"}
+            </span>
+          </Col>
+        ))}
+      </Row>
+      <Row className="py-2">
+        {days.map((forecastDay) => (
+          <Col xs={4}>
+            <span className={textStyle}>
+              {forecastDay.wind_speed_max == null
+                ? ""
+                : (forecastDay.wind_speed_max * 3.6).toFixed(0)}
+            </span>
+            <span className="small">km</span>
+          </Col>
+        ))}
+      </Row>
+
+      {days10r && <div className="mb-4" />}
+    </>
+  );
+});
 
 export default ForecastTable;

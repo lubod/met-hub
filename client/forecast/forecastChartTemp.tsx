@@ -15,9 +15,10 @@ import { IForecastDay, IForecastRow } from "./forecastData";
 type Props = {
   data: Array<IForecastDay>;
   lastTimestamp: Date;
+  hours: number;
 };
 
-const ForecastChartTemp = observer(({ data, lastTimestamp }: Props) => {
+const ForecastChartTemp = observer(({ data, lastTimestamp, hours }: Props) => {
   const chdata = [];
 
   function formatLabel(label: string) {
@@ -41,10 +42,24 @@ const ForecastChartTemp = observer(({ data, lastTimestamp }: Props) => {
   let domainTempMax = Number.MIN_SAFE_INTEGER;
   let domainTempMin = Number.MAX_SAFE_INTEGER;
 
+  if (hours === 24 && data.length > 0 && data[0].forecastRows.length > 0) {
+    for (let h = 0; h < data[0].forecastRows[0].timestamp.getHours(); h += 1) {
+      chdata.push({
+        timestamp:
+          data[0].forecastRows[0].timestamp.getTime() -
+          (data[0].forecastRows[0].timestamp.getHours() - h) * 3600000,
+        temperature: null,
+      });
+    }
+  }
+
   for (let i = 0; i < data.length; i += 1) {
     for (let j = 0; j < data[i].forecastRows.length; j += 1) {
       const forecastRow: IForecastRow = data[i].forecastRows[j];
-      if (forecastRow.timestamp.getTime() > lastTimestamp.getTime()) {
+      if (
+        lastTimestamp != null &&
+        forecastRow.timestamp.getTime() > lastTimestamp.getTime()
+      ) {
         break;
       }
       chdata.push({
@@ -109,6 +124,8 @@ const ForecastChartTemp = observer(({ data, lastTimestamp }: Props) => {
               axisLine={false}
               domain={["auto", "auto"]}
               scale="time"
+              type="number"
+              // tick={{ stroke: "red", strokeWidth: 2 }}
             />
             <YAxis
               yAxisId="temperature"
