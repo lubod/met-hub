@@ -92,6 +92,10 @@ export default class ForecastData implements IForecastData {
 
   forecast_1h: Array<IForecast1h> = [];
 
+  hours: number = 6;
+
+  offset: number = 0;
+
   constructor(stationID: string, lat: number, lon: number) {
     makeObservable(this, {
       lat: observable,
@@ -102,14 +106,27 @@ export default class ForecastData implements IForecastData {
       loading: observable,
       stationID: observable,
       forecast_6h: observable,
+      forecast_1h: observable,
+      hours: observable,
+      offset: observable,
       setForecast: action,
       setAstronomicalData: action,
       setStationID: action,
+      setHours: action,
+      setOffset: action,
     });
 
     this.stationID = stationID;
     this.lat = lat;
     this.lon = lon;
+  }
+
+  setHours(hours: number) {
+    this.hours = hours;
+  }
+
+  setOffset(offset: number) {
+    this.offset = offset;
   }
 
   setStationID(stationID: string, lat: number, lon: number) {

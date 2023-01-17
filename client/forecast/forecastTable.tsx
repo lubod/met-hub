@@ -1,32 +1,102 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { observer } from "mobx-react";
 import moment from "moment";
 import { IForecastDay } from "./forecastData";
+import ForecastCtrl from "./forecastCtrl";
 
 type Props = {
   days: Array<IForecastDay>;
   days10r: boolean;
+  forecastCtrl: ForecastCtrl;
 };
 
-const ForecastTable = observer(({ days, days10r }: Props) => {
+const ForecastTable = observer(({ days, days10r, forecastCtrl }: Props) => {
   const labelStyle = "text-secondary";
   const textStyle = "h4";
+  const size = "34px";
+
+  function calculateOffset(index: number) {
+    if (index === 1) {
+      return days[0].forecastRows.length;
+    }
+    if (index === 2) {
+      return days[0].forecastRows.length + days[1].forecastRows.length;
+    }
+    return 0;
+  }
 
   return (
     <>
       <Row className="py-2">
-        {days.map((forecastDay) => (
+        {days.map((forecastDay, index) => (
           <Col xs={4}>
             <div
               className={`small ${labelStyle}`}
-              // onClick={() => setHourly(!hourly)}
+              onClick={() =>
+                forecastCtrl.forecastData.setOffset(calculateOffset(index))
+              }
               style={{ cursor: "pointer" }}
             >
               <span className={textStyle}>
                 {moment(forecastDay.timestamp).format("ddd")}
               </span>
             </div>
+          </Col>
+        ))}
+      </Row>
+      <Row className="py-2">
+        {days.map((forecastDay, index) => (
+          <Col xs={4}>
+            <span
+              className="text-center"
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              {forecastDay.symbol_code_06 != null && (
+                <img
+                  width={size}
+                  height={size}
+                  src={`svg/${forecastDay.symbol_code_06}.svg`} // TODO
+                  alt={forecastDay.symbol_code_06}
+                  onClick={() =>
+                    forecastCtrl.forecastData.setOffset(
+                      calculateOffset(index) + 6
+                    )
+                  }
+                  style={{ cursor: "pointer" }}
+                />
+              )}
+              {forecastDay.symbol_code_06 == null && <>-</>}
+            </span>
+          </Col>
+        ))}
+      </Row>
+      <Row className="py-2">
+        {days.map((forecastDay, index) => (
+          <Col xs={4}>
+            <span
+              className="text-center"
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              {forecastDay.symbol_code_12 != null && (
+                <img
+                  width={size}
+                  height={size}
+                  src={`svg/${forecastDay.symbol_code_12}.svg`} // TODO
+                  alt={forecastDay.symbol_code_12}
+                  onClick={() =>
+                    forecastCtrl.forecastData.setOffset(
+                      calculateOffset(index) + 12
+                    )
+                  }
+                  style={{ cursor: "pointer" }}
+                />
+              )}
+              {forecastDay.symbol_code_12 == null && <>-</>}
+            </span>
           </Col>
         ))}
       </Row>

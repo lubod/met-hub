@@ -87,12 +87,14 @@ const Forecast = observer(({ forecastCtrl }: Props) => {
           numberOfForecastDays
         )}
         days10r={days10r}
+        forecastCtrl={forecastCtrl}
       />
       <Myhr />
       <ForecastCharts
         days={[...forecastCtrl.forecastData.days.values()]}
         forecast_6h={forecastCtrl.forecastData.forecast_6h}
         forecast_1h={forecastCtrl.forecastData.forecast_1h}
+        forecastCtrl={forecastCtrl}
       />
       <Myhr />
       <Row>
