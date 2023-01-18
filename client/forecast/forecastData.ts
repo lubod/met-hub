@@ -92,7 +92,7 @@ export default class ForecastData implements IForecastData {
 
   forecast_1h: Array<IForecast1h> = [];
 
-  hours: number = 6;
+  hours: number = 1;
 
   offset: number = 0;
 
@@ -259,14 +259,16 @@ export default class ForecastData implements IForecastData {
         wind_speed_max: 0,
         cloud_area_fraction_sum: 0,
       });
-      this.forecast_1h.push({
-        timestamp,
-        symbol_code_1h,
-        air_temperature: air_temperature_f,
-        precipitation_amount: precipitation_amount_f,
-        wind_speed: wind_speed_f,
-        cloud_area_fraction_sum: 0,
-      });
+      if (symbol_code_1h != null) {
+        this.forecast_1h.push({
+          timestamp,
+          symbol_code_1h,
+          air_temperature: air_temperature_f,
+          precipitation_amount: precipitation_amount_f,
+          wind_speed: wind_speed_f,
+          cloud_area_fraction_sum: 0,
+        });
+      }
     }
     console.info(this.forecast_6h);
     this.forecast = newForecast;

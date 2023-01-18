@@ -10,11 +10,10 @@ import ForecastCtrl from "./forecastCtrl";
 
 type Props = {
   days: Array<IForecastDay>;
-  days10r: boolean;
   forecastCtrl: ForecastCtrl;
 };
 
-const ForecastTable = observer(({ days, days10r, forecastCtrl }: Props) => {
+const ForecastTable = observer(({ days, forecastCtrl }: Props) => {
   const labelStyle = "text-secondary";
   const textStyle = "h4";
   const size = "34px";
@@ -27,6 +26,22 @@ const ForecastTable = observer(({ days, days10r, forecastCtrl }: Props) => {
       return days[0].forecastRows.length + days[1].forecastRows.length;
     }
     return 0;
+  }
+
+  function calculateSubOffset6(index: number) {
+    if (index === 0) {
+      const subOffset = 6 - (24 - days[0].forecastRows.length);
+      return subOffset > 0 ? subOffset : 0;
+    }
+    return 6;
+  }
+
+  function calculateSubOffset12(index: number) {
+    if (index === 0) {
+      const subOffset = 12 - (24 - days[0].forecastRows.length);
+      return subOffset > 0 ? subOffset : 0;
+    }
+    return 12;
   }
 
   return (
@@ -63,7 +78,7 @@ const ForecastTable = observer(({ days, days10r, forecastCtrl }: Props) => {
                   alt={forecastDay.symbol_code_06}
                   onClick={() =>
                     forecastCtrl.forecastData.setOffset(
-                      calculateOffset(index) + 6
+                      calculateOffset(index) + calculateSubOffset6(index)
                     )
                   }
                   style={{ cursor: "pointer" }}
@@ -89,7 +104,7 @@ const ForecastTable = observer(({ days, days10r, forecastCtrl }: Props) => {
                   alt={forecastDay.symbol_code_12}
                   onClick={() =>
                     forecastCtrl.forecastData.setOffset(
-                      calculateOffset(index) + 12
+                      calculateOffset(index) + calculateSubOffset12(index)
                     )
                   }
                   style={{ cursor: "pointer" }}
@@ -148,8 +163,6 @@ const ForecastTable = observer(({ days, days10r, forecastCtrl }: Props) => {
           </Col>
         ))}
       </Row>
-
-      {days10r && <div className="mb-4" />}
     </>
   );
 });

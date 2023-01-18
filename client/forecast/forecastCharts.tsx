@@ -37,10 +37,20 @@ const ForecastCharts = observer(
     let firstTimestamp = null;
 
     function changeOffset(direction: number) {
-      if (forecastCtrl.forecastData.offset + direction >= 0) {
+      if (
+        forecastCtrl.forecastData.offset + direction >= 0 &&
+        forecastCtrl.forecastData.offset + direction <= forecast_1h.length - 9
+      ) {
         forecastCtrl.forecastData.setOffset(
           forecastCtrl.forecastData.offset + direction
         );
+      } else if (forecastCtrl.forecastData.offset + direction < 0) {
+        forecastCtrl.forecastData.setOffset(0);
+      } else if (
+        forecastCtrl.forecastData.offset + direction >
+        forecast_1h.length - 9
+      ) {
+        forecastCtrl.forecastData.setOffset(forecast_1h.length - 9);
       }
     }
 
@@ -92,14 +102,18 @@ const ForecastCharts = observer(
       firstTimestamp = filtered24h[0].timestamp;
     }
 
-    console.info(lastTimestamp);
+    console.info(
+      firstTimestamp,
+      lastTimestamp,
+      forecastCtrl.forecastData.offset
+    );
 
     return (
       <>
         <Row className="mb-3">
           <Col xs={4}>
             {forecastCtrl.forecastData.hours === 1 && (
-              <Button variant="secondary" onClick={() => changeOffset(-1)}>
+              <Button variant="secondary" onClick={() => changeOffset(-9)}>
                 Prev
               </Button>
             )}
@@ -113,14 +127,13 @@ const ForecastCharts = observer(
               }}
             >
               <Dropdown.Item eventKey="1">1 hour</Dropdown.Item>
-              <Dropdown.Item eventKey="3">3 hours</Dropdown.Item>
               <Dropdown.Item eventKey="6">6 hours</Dropdown.Item>
               <Dropdown.Item eventKey="24">24 hours</Dropdown.Item>
             </DropdownButton>
           </Col>
           <Col xs={4}>
             {forecastCtrl.forecastData.hours === 1 && (
-              <Button variant="secondary" onClick={() => changeOffset(1)}>
+              <Button variant="secondary" onClick={() => changeOffset(9)}>
                 Next
               </Button>
             )}
@@ -224,12 +237,15 @@ const ForecastCharts = observer(
                     className="text-center ps-0 pe-0 border-start border-secondary"
                     style={{ display: "flex", justifyContent: "center" }}
                   >
-                    <img
-                      width={size}
-                      height={size}
-                      src={`svg/${item.symbol_code_6h}.svg`}
-                      alt={item.symbol_code_6h}
-                    />
+                    {item.symbol_code_6h != null && (
+                      <img
+                        width={size}
+                        height={size}
+                        src={`svg/${item.symbol_code_6h}.svg`}
+                        alt={item.symbol_code_6h}
+                      />
+                    )}
+                    {item.symbol_code_6h == null && <>-</>}
                   </Col>
                 ))}
               </Row>
@@ -291,12 +307,15 @@ const ForecastCharts = observer(
                     className="text-center ps-0 pe-0 border-start border-secondary"
                     style={{ display: "flex", justifyContent: "center" }}
                   >
-                    <img
-                      width={size}
-                      height={size}
-                      src={`svg/${item.symbol_code_1h}.svg`}
-                      alt={item.symbol_code_1h}
-                    />
+                    {item.symbol_code_1h != null && (
+                      <img
+                        width={size}
+                        height={size}
+                        src={`svg/${item.symbol_code_1h}.svg`}
+                        alt={item.symbol_code_1h}
+                      />
+                    )}
+                    {item.symbol_code_1h == null && <>-</>}
                   </Col>
                 ))}
               </MyRow>
