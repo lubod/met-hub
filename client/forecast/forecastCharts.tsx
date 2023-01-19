@@ -59,9 +59,7 @@ const ForecastCharts = observer(
     }
 
     if (forecast_6h.length > 0 && forecastCtrl.forecastData.hours === 6) {
-      filtered6h = forecast_6h
-        .filter((el, i) => i % 6 === 0)
-        .filter((el, i) => i < 9);
+      filtered6h = forecast_6h.filter((el, i) => i < 9);
     }
 
     if (days.length > 0 && forecastCtrl.forecastData.hours === 1) {

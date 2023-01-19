@@ -16,7 +16,7 @@ type Props = {
 const ForecastTable = observer(({ days, forecastCtrl }: Props) => {
   const labelStyle = "text-secondary";
   const textStyle = "h4";
-  const size = "34px";
+  const size = "50px";
 
   function calculateOffset(index: number) {
     if (index === 1) {
@@ -26,14 +26,6 @@ const ForecastTable = observer(({ days, forecastCtrl }: Props) => {
       return days[0].forecastRows.length + days[1].forecastRows.length;
     }
     return 0;
-  }
-
-  function calculateSubOffset6(index: number) {
-    if (index === 0) {
-      const subOffset = 6 - (24 - days[0].forecastRows.length);
-      return subOffset > 0 ? subOffset : 0;
-    }
-    return 6;
   }
 
   function calculateSubOffset12(index: number) {
@@ -70,38 +62,12 @@ const ForecastTable = observer(({ days, forecastCtrl }: Props) => {
               className="text-center"
               style={{ display: "flex", justifyContent: "center" }}
             >
-              {forecastDay.symbol_code_06 != null && (
+              {forecastDay.symbol_code_day != null && (
                 <img
                   width={size}
                   height={size}
-                  src={`svg/${forecastDay.symbol_code_06}.svg`} // TODO
-                  alt={forecastDay.symbol_code_06}
-                  onClick={() =>
-                    forecastCtrl.forecastData.setOffset(
-                      calculateOffset(index) + calculateSubOffset6(index)
-                    )
-                  }
-                  style={{ cursor: "pointer" }}
-                />
-              )}
-              {forecastDay.symbol_code_06 == null && <>-</>}
-            </span>
-          </Col>
-        ))}
-      </Row>
-      <Row className="py-2">
-        {days.map((forecastDay, index) => (
-          <Col xs={4}>
-            <span
-              className="text-center"
-              style={{ display: "flex", justifyContent: "center" }}
-            >
-              {forecastDay.symbol_code_12 != null && (
-                <img
-                  width={size}
-                  height={size}
-                  src={`svg/${forecastDay.symbol_code_12}.svg`} // TODO
-                  alt={forecastDay.symbol_code_12}
+                  src={`svg/${forecastDay.symbol_code_day}.svg`} // TODO
+                  alt={forecastDay.symbol_code_day}
                   onClick={() =>
                     forecastCtrl.forecastData.setOffset(
                       calculateOffset(index) + calculateSubOffset12(index)
@@ -110,7 +76,7 @@ const ForecastTable = observer(({ days, forecastCtrl }: Props) => {
                   style={{ cursor: "pointer" }}
                 />
               )}
-              {forecastDay.symbol_code_12 == null && <>-</>}
+              {forecastDay.symbol_code_day == null && <>-</>}
             </span>
           </Col>
         ))}

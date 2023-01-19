@@ -239,26 +239,35 @@ export default class ForecastData implements IForecastData {
       }
       if (timestamp.getUTCHours() === 6) {
         forecastDay.symbol_code_06 = symbol_code_6h;
-        forecastDay.symbol_code_day = symbol_code_12h;
+        if (symbol_code_12h != null) {
+          forecastDay.symbol_code_day = symbol_code_12h;
+        }
       }
       if (timestamp.getUTCHours() === 12) {
         forecastDay.symbol_code_12 = symbol_code_6h;
       }
       if (timestamp.getUTCHours() === 18) {
         forecastDay.symbol_code_18 = symbol_code_6h;
-        forecastDay.symbol_code_night = symbol_code_12h;
+        if (symbol_code_12h != null) {
+          forecastDay.symbol_code_night = symbol_code_12h;
+        }
+      }
+      if (i === 0) {
+        forecastDay.symbol_code_day = symbol_code_12h;
       }
       this.days.set(timestamp.toDateString(), forecastDay);
-      this.forecast_6h.push({
-        timestamp,
-        symbol_code_6h,
-        air_temperature_min: air_temperature_min_6h,
-        air_temperature_max: air_temperature_max_6h,
-        precipitation_amount: precipitation_amount_6h,
-        wind_speed_min: 0,
-        wind_speed_max: 0,
-        cloud_area_fraction_sum: 0,
-      });
+      if (timestamp.getUTCHours() % 6 === 0 && symbol_code_6h != null) {
+        this.forecast_6h.push({
+          timestamp,
+          symbol_code_6h,
+          air_temperature_min: air_temperature_min_6h,
+          air_temperature_max: air_temperature_max_6h,
+          precipitation_amount: precipitation_amount_6h,
+          wind_speed_min: 0,
+          wind_speed_max: 0,
+          cloud_area_fraction_sum: 0,
+        });
+      }
       if (symbol_code_1h != null) {
         this.forecast_1h.push({
           timestamp,
@@ -270,6 +279,7 @@ export default class ForecastData implements IForecastData {
         });
       }
     }
+    console.info(this.forecast_1h);
     console.info(this.forecast_6h);
     this.forecast = newForecast;
   }
