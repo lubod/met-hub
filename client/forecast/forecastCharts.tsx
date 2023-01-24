@@ -37,20 +37,40 @@ const ForecastCharts = observer(
     let firstTimestamp = null;
 
     function changeOffset(direction: number) {
-      if (
-        forecastCtrl.forecastData.offset + direction >= 0 &&
-        forecastCtrl.forecastData.offset + direction <= forecast_1h.length - 9
-      ) {
-        forecastCtrl.forecastData.setOffset(
-          forecastCtrl.forecastData.offset + direction
-        );
-      } else if (forecastCtrl.forecastData.offset + direction < 0) {
-        forecastCtrl.forecastData.setOffset(0);
-      } else if (
-        forecastCtrl.forecastData.offset + direction >
-        forecast_1h.length - 9
-      ) {
-        forecastCtrl.forecastData.setOffset(forecast_1h.length - 9);
+      if (forecastCtrl.forecastData.hours === 1) {
+        if (
+          forecastCtrl.forecastData.offset1h + direction >= 0 &&
+          forecastCtrl.forecastData.offset1h + direction <=
+            forecast_1h.length - 9
+        ) {
+          forecastCtrl.forecastData.setOffset1h(
+            forecastCtrl.forecastData.offset1h + direction
+          );
+        } else if (forecastCtrl.forecastData.offset1h + direction < 0) {
+          forecastCtrl.forecastData.setOffset1h(0);
+        } else if (
+          forecastCtrl.forecastData.offset1h + direction >
+          forecast_1h.length - 9
+        ) {
+          forecastCtrl.forecastData.setOffset1h(forecast_1h.length - 9);
+        }
+      } else if (forecastCtrl.forecastData.hours === 6) {
+        if (
+          forecastCtrl.forecastData.offset6h + direction >= 0 &&
+          forecastCtrl.forecastData.offset6h + direction <=
+            forecast_6h.length - 9
+        ) {
+          forecastCtrl.forecastData.setOffset6h(
+            forecastCtrl.forecastData.offset6h + direction
+          );
+        } else if (forecastCtrl.forecastData.offset6h + direction < 0) {
+          forecastCtrl.forecastData.setOffset6h(0);
+        } else if (
+          forecastCtrl.forecastData.offset6h + direction >
+          forecast_6h.length - 9
+        ) {
+          forecastCtrl.forecastData.setOffset6h(forecast_6h.length - 9);
+        }
       }
     }
 
@@ -59,18 +79,14 @@ const ForecastCharts = observer(
     }
 
     if (forecast_6h.length > 0 && forecastCtrl.forecastData.hours === 6) {
-      filtered6h = forecast_6h.filter((el, i) => i < 9);
+      filtered6h = forecast_6h
+        .filter((el, i) => i >= forecastCtrl.forecastData.offset6h)
+        .filter((el, i) => i < 9);
     }
 
     if (days.length > 0 && forecastCtrl.forecastData.hours === 1) {
       filtered1h = forecast_1h
-        .filter((el, i) => i >= forecastCtrl.forecastData.offset)
-        .filter((el, i) => i < 9);
-    }
-
-    if (days.length > 0 && forecastCtrl.forecastData.hours === 3) {
-      filtered1h = forecast_1h
-        .filter((el, i) => i % 3 === 0)
+        .filter((el, i) => i >= forecastCtrl.forecastData.offset1h)
         .filter((el, i) => i < 9);
     }
 
@@ -80,11 +96,7 @@ const ForecastCharts = observer(
       firstTimestamp = filtered6h[0].timestamp;
     }
 
-    if (
-      filtered1h.length > 0 &&
-      (forecastCtrl.forecastData.hours === 1 ||
-        forecastCtrl.forecastData.hours === 3)
-    ) {
+    if (filtered1h.length > 0 && forecastCtrl.forecastData.hours === 1) {
       lastTimestamp = new Date(filtered1h[filtered1h.length - 1].timestamp);
       lastTimestamp.setHours(
         lastTimestamp.getHours() + forecastCtrl.forecastData.hours
@@ -103,14 +115,15 @@ const ForecastCharts = observer(
     console.info(
       firstTimestamp,
       lastTimestamp,
-      forecastCtrl.forecastData.offset
+      forecastCtrl.forecastData.offset1h
     );
 
     return (
       <>
         <Row className="mb-3">
           <Col xs={4}>
-            {forecastCtrl.forecastData.hours === 1 && (
+            {(forecastCtrl.forecastData.hours === 1 ||
+              forecastCtrl.forecastData.hours === 6) && (
               <Button variant="secondary" onClick={() => changeOffset(-9)}>
                 Prev
               </Button>
@@ -130,7 +143,8 @@ const ForecastCharts = observer(
             </DropdownButton>
           </Col>
           <Col xs={4}>
-            {forecastCtrl.forecastData.hours === 1 && (
+            {(forecastCtrl.forecastData.hours === 1 ||
+              forecastCtrl.forecastData.hours === 6) && (
               <Button variant="secondary" onClick={() => changeOffset(9)}>
                 Next
               </Button>
@@ -276,8 +290,7 @@ const ForecastCharts = observer(
               </Row>
             </>
           )}
-          {(forecastCtrl.forecastData.hours === 1 ||
-            forecastCtrl.forecastData.hours === 3) && (
+          {forecastCtrl.forecastData.hours === 1 && (
             <>
               <MyRow className="ms-0 me-0">
                 {filtered1h.map((item: IForecast1h) => (

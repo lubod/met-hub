@@ -94,7 +94,9 @@ export default class ForecastData implements IForecastData {
 
   hours: number = 1;
 
-  offset: number = 0;
+  offset1h: number = 0;
+
+  offset6h: number = 0;
 
   constructor(stationID: string, lat: number, lon: number) {
     makeObservable(this, {
@@ -108,12 +110,13 @@ export default class ForecastData implements IForecastData {
       forecast_6h: observable,
       forecast_1h: observable,
       hours: observable,
-      offset: observable,
+      offset1h: observable,
+      offset6h: observable,
       setForecast: action,
       setAstronomicalData: action,
       setStationID: action,
       setHours: action,
-      setOffset: action,
+      setOffset1h: action,
     });
 
     this.stationID = stationID;
@@ -125,8 +128,12 @@ export default class ForecastData implements IForecastData {
     this.hours = hours;
   }
 
-  setOffset(offset: number) {
-    this.offset = offset;
+  setOffset1h(offset1h: number) {
+    this.offset1h = offset1h;
+  }
+
+  setOffset6h(offset6h: number) {
+    this.offset6h = offset6h;
   }
 
   setStationID(stationID: string, lat: number, lon: number) {
@@ -256,7 +263,10 @@ export default class ForecastData implements IForecastData {
         forecastDay.symbol_code_day = symbol_code_12h;
       }
       this.days.set(timestamp.toDateString(), forecastDay);
-      if (timestamp.getUTCHours() % 6 === 0 && symbol_code_6h != null) {
+      if (
+        (timestamp.getUTCHours() % 6 === 0 || i === 0) &&
+        symbol_code_6h != null
+      ) {
         this.forecast_6h.push({
           timestamp,
           symbol_code_6h,

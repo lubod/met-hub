@@ -44,7 +44,7 @@ const ForecastTable = observer(({ days, forecastCtrl }: Props) => {
             <div
               className={`small ${labelStyle}`}
               onClick={() =>
-                forecastCtrl.forecastData.setOffset(calculateOffset(index))
+                forecastCtrl.forecastData.setOffset1h(calculateOffset(index))
               }
               style={{ cursor: "pointer" }}
             >
@@ -69,7 +69,7 @@ const ForecastTable = observer(({ days, forecastCtrl }: Props) => {
                   src={`svg/${forecastDay.symbol_code_day}.svg`} // TODO
                   alt={forecastDay.symbol_code_day}
                   onClick={() =>
-                    forecastCtrl.forecastData.setOffset(
+                    forecastCtrl.forecastData.setOffset1h(
                       calculateOffset(index) + calculateSubOffset12(index)
                     )
                   }
