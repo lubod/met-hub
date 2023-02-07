@@ -6,7 +6,6 @@ import Text from "../misc/text";
 import { LoadImg } from "../misc/loadImg";
 import { Myhr } from "../misc/myhr";
 import { MyContainer } from "../misc/mycontainer";
-import ForecastTable from "./forecastTable";
 import ForecastCharts from "./forecastCharts";
 import ForecastCtrl from "./forecastCtrl";
 
@@ -38,35 +37,6 @@ const Forecast = observer(({ forecastCtrl }: Props) => (
       </Col>
     </Row>
     <Row>
-      <Col xs={4} />
-      <Col xs={5}>-</Col>
-    </Row>
-    <Row className="">
-      <Col xs={12}>
-        <div className="text-left my-2">
-          <span className="small text-white-50 font-weight-bold">
-            Data & icons source:
-          </span>{" "}
-          <span className="my-1 small text-white-50 font-weight-bold">
-            <a href="https://www.met.no/en">Norwegian Meteo Institute</a>
-          </span>
-        </div>
-      </Col>
-    </Row>
-    <Myhr />
-    <ForecastTable
-      days={[...forecastCtrl.forecastData.days.values()].slice(0, 3)}
-      forecastCtrl={forecastCtrl}
-    />
-    <Myhr />
-    <ForecastCharts
-      days={[...forecastCtrl.forecastData.days.values()]}
-      forecast_6h={forecastCtrl.forecastData.forecast_6h}
-      forecast_1h={forecastCtrl.forecastData.forecast_1h}
-      forecastCtrl={forecastCtrl}
-    />
-    <Myhr />
-    <Row>
       <Col xs={6}>
         <Text
           name="Sunrise"
@@ -86,6 +56,26 @@ const Forecast = observer(({ forecastCtrl }: Props) => (
               : moment(forecastCtrl.forecastData.sunset).format("HH:mm")
           }
         />
+      </Col>
+    </Row>
+    <Myhr />
+    <ForecastCharts
+      days={[...forecastCtrl.forecastData.days.values()]}
+      forecast_6h={forecastCtrl.forecastData.forecast_6h}
+      forecast_1h={forecastCtrl.forecastData.forecast_1h}
+      forecastCtrl={forecastCtrl}
+    />
+    <Myhr />
+    <Row className="">
+      <Col xs={12}>
+        <div className="text-left my-2">
+          <span className="small text-white-50 font-weight-bold">
+            Data & icons source:
+          </span>{" "}
+          <span className="my-1 small text-white-50 font-weight-bold">
+            <a href="https://www.met.no/en">Norwegian Meteo Institute</a>
+          </span>
+        </div>
       </Col>
     </Row>
   </MyContainer>

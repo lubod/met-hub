@@ -5,10 +5,10 @@
 import moment from "moment";
 import React, { useState } from "react";
 import { Col, Row } from "react-bootstrap";
-import { IForecastDay } from "./forecastData";
+import { ForecastDay } from "./forecastData";
 
 type Data4ForecastProps = {
-  forecastDay: IForecastDay;
+  forecastDay: ForecastDay;
   days10r: boolean;
 };
 
@@ -17,13 +17,13 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
 
   let labelStyle = "text-primary";
   if (
-    forecastDay.precipitation_amount_sum == null ||
-    forecastDay.precipitation_amount_sum === 0
+    forecastDay.precipitation_amount == null ||
+    forecastDay.precipitation_amount === 0
   ) {
     labelStyle = "text-warning";
     if (
-      forecastDay.forecastRows.length > 0 &&
-      forecastDay.cloud_area_fraction_sum / forecastDay.forecastRows.length > 50
+      forecastDay.rows.length > 0 &&
+      forecastDay.cloud_area_fraction / forecastDay.rows.length > 50
     ) {
       labelStyle = "text-light";
     }
@@ -67,10 +67,10 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
         <Row>
           <Col xs={4}>
             <span className={textStyle}>
-              {forecastDay.precipitation_amount_sum == null ||
-              forecastDay.precipitation_amount_sum === 0
+              {forecastDay.precipitation_amount == null ||
+              forecastDay.precipitation_amount === 0
                 ? ""
-                : forecastDay.precipitation_amount_sum.toFixed(1)}
+                : forecastDay.precipitation_amount.toFixed(1)}
             </span>
           </Col>
         </Row>
@@ -85,7 +85,7 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
         </Row>
       </Row>
       {hourly &&
-        forecastDay.forecastRows.map((forecastRow) => (
+        forecastDay.rows.map((forecastRow) => (
           <Row key={forecastRow.timestamp.getTime()} className="small">
             <Col xs={2}>{forecastRow.timestamp.getHours()}</Col>
             <Col xs={2}>
@@ -104,17 +104,13 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
                 }
               />
             </Col>
+            <Col xs={2}>{forecastRow.air_temperature.toFixed(0)}</Col>
             <Col xs={2}>
-              {parseFloat(forecastRow.air_temperature).toFixed(0)}
-            </Col>
-            <Col xs={2}>
-              {parseFloat(forecastRow.precipitation_amount) === 0
+              {forecastRow.precipitation_amount_row === 0
                 ? ""
-                : forecastRow.precipitation_amount}
+                : forecastRow.precipitation_amount_row}
             </Col>
-            <Col xs={2}>
-              {(parseFloat(forecastRow.wind_speed) * 3.6).toFixed(0)}
-            </Col>
+            <Col xs={2}>{(forecastRow.wind_speed * 3.6).toFixed(0)}</Col>
             <Col xs={2}>
               <svg width="25px" height="25px">
                 <polygon

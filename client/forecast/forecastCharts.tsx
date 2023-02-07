@@ -1,13 +1,19 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable camelcase */
 import React from "react";
 import { Row, Col, DropdownButton, Dropdown, Button } from "react-bootstrap";
 import { observer } from "mobx-react";
-import moment from "moment";
 import styled from "styled-components";
 import ForecastChart from "./forecastChart";
-import { IForecast1h, IForecast6h, IForecastDay } from "./forecastData";
+import {
+  Forecast1h,
+  Forecast6h,
+  ForecastDay,
+  IGetForecastDataToDisplay,
+} from "./forecastData";
 import ForecastChartTemp from "./forecastChartTemp";
 import ForecastCtrl from "./forecastCtrl";
+import { Myhr } from "../misc/myhr";
 
 const ScrollDiv = styled.div`
   // display: flex;
@@ -15,33 +21,135 @@ const ScrollDiv = styled.div`
   // overflow-x: auto;
 `;
 
-const MyRow = styled(Row)`
-  // flex: 0 0 auto;
-`;
+type ColProps = {
+  value: string;
+  extraClass: string;
+};
+
+function MyCol({ value, extraClass }: ColProps) {
+  const style = {
+    display: "flex",
+    justifyContent: "center",
+  };
+  return (
+    <Col
+      className={`text-center small ps-0 pe-0 pb-2 border-start ${extraClass}`}
+      style={style}
+    >
+      {value}
+    </Col>
+  );
+}
+
+type RowsProps = {
+  data: Array<IGetForecastDataToDisplay>;
+};
+
+function MyRows({ data }: RowsProps) {
+  const size = "34px";
+  const rowClassName = "ms-0 me-0";
+
+  return (
+    <>
+      <Row className={rowClassName}>
+        {data.map((item: IGetForecastDataToDisplay) => (
+          <MyCol value={item.getDay()} extraClass="border-secondary" />
+        ))}
+      </Row>
+      <Row className={rowClassName}>
+        {data.map((item: IGetForecastDataToDisplay) => (
+          <MyCol value={item.getDay2()} extraClass="border-secondary" />
+        ))}
+      </Row>
+      <Row className={rowClassName}>
+        {data.map((item: IGetForecastDataToDisplay) => (
+          <Col
+            className="text-center ps-0 pe-0 border-start border-secondary"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            {item.getSymbolCode() != null && (
+              <img
+                width={size}
+                height={size}
+                src={`svg/${item.getSymbolCode()}.svg`} // TODO
+                alt={item.getSymbolCode()}
+              />
+            )}
+            {item.getSymbolCode() == null && <>-</>}
+          </Col>
+        ))}
+      </Row>
+      <Row className={rowClassName}>
+        {data.map((item: IGetForecastDataToDisplay) => (
+          <MyCol value={item.getAirTemperatureMax()} extraClass="border-info" />
+        ))}
+      </Row>
+      <Row className={rowClassName}>
+        {data.map((item: IGetForecastDataToDisplay) => (
+          <MyCol value={item.getAirTemperatureMin()} extraClass="border-info" />
+        ))}
+      </Row>
+      <Row className={rowClassName}>
+        {data.map((item: IGetForecastDataToDisplay) => (
+          <MyCol
+            value={item.getPrecipitationAmount()}
+            extraClass="border-primary"
+          />
+        ))}
+      </Row>
+      <Row className={rowClassName}>
+        {data.map((item: IGetForecastDataToDisplay) => (
+          <MyCol value={item.getCloudAreaFraction()} extraClass="" />
+        ))}
+      </Row>
+      <Row className={rowClassName}>
+        {data.map((item: IGetForecastDataToDisplay) => (
+          <MyCol value={item.getWindSpeed()} extraClass="border-success" />
+        ))}
+      </Row>
+      <Row className={rowClassName}>
+        {data.map((item: IGetForecastDataToDisplay) => (
+          <Col
+            className="text-center ps-0 pe-0 border-start border-success"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <svg width="25px" height="25px">
+              <polygon
+                points="8 3, 12 21, 16 3"
+                fill="white"
+                stroke="white"
+                transform={`rotate(${item.getWindDir()} 12 12)`}
+              />
+            </svg>
+          </Col>
+        ))}
+      </Row>
+    </>
+  );
+}
 
 type Props = {
-  days: Array<IForecastDay>;
-  forecast_6h: Array<IForecast6h>;
-  forecast_1h: Array<IForecast1h>;
+  days: Array<ForecastDay>;
+  forecast_6h: Array<Forecast6h>;
+  forecast_1h: Array<Forecast1h>;
   forecastCtrl: ForecastCtrl;
 };
 
 const ForecastCharts = observer(
   ({ days, forecast_6h, forecast_1h, forecastCtrl }: Props) => {
-    const size = "34px";
-
-    let filtered1h: Array<IForecast1h> = [];
-    let filtered6h: Array<IForecast6h> = [];
-    let filtered24h: Array<IForecastDay> = [];
+    let filtered1h: Array<Forecast1h> = [];
+    let filtered6h: Array<Forecast6h> = [];
+    let filtered24h: Array<ForecastDay> = [];
     let lastTimestamp = null;
     let firstTimestamp = null;
+    const cols = 8;
 
     function changeOffset(direction: number) {
       if (forecastCtrl.forecastData.hours === 1) {
         if (
           forecastCtrl.forecastData.offset1h + direction >= 0 &&
           forecastCtrl.forecastData.offset1h + direction <=
-            forecast_1h.length - 9
+            forecast_1h.length - cols
         ) {
           forecastCtrl.forecastData.setOffset1h(
             forecastCtrl.forecastData.offset1h + direction
@@ -50,15 +158,15 @@ const ForecastCharts = observer(
           forecastCtrl.forecastData.setOffset1h(0);
         } else if (
           forecastCtrl.forecastData.offset1h + direction >
-          forecast_1h.length - 9
+          forecast_1h.length - cols
         ) {
-          forecastCtrl.forecastData.setOffset1h(forecast_1h.length - 9);
+          forecastCtrl.forecastData.setOffset1h(forecast_1h.length - cols);
         }
       } else if (forecastCtrl.forecastData.hours === 6) {
         if (
           forecastCtrl.forecastData.offset6h + direction >= 0 &&
           forecastCtrl.forecastData.offset6h + direction <=
-            forecast_6h.length - 9
+            forecast_6h.length - cols
         ) {
           forecastCtrl.forecastData.setOffset6h(
             forecastCtrl.forecastData.offset6h + direction
@@ -67,27 +175,27 @@ const ForecastCharts = observer(
           forecastCtrl.forecastData.setOffset6h(0);
         } else if (
           forecastCtrl.forecastData.offset6h + direction >
-          forecast_6h.length - 9
+          forecast_6h.length - cols
         ) {
-          forecastCtrl.forecastData.setOffset6h(forecast_6h.length - 9);
+          forecastCtrl.forecastData.setOffset6h(forecast_6h.length - cols);
         }
       }
     }
 
     if (days.length > 0 && forecastCtrl.forecastData.hours === 24) {
-      filtered24h = days.filter((el, i) => i < 9);
+      filtered24h = days.filter((el, i) => i < cols);
     }
 
     if (forecast_6h.length > 0 && forecastCtrl.forecastData.hours === 6) {
       filtered6h = forecast_6h
         .filter((el, i) => i >= forecastCtrl.forecastData.offset6h)
-        .filter((el, i) => i < 9);
+        .filter((el, i) => i < cols);
     }
 
     if (days.length > 0 && forecastCtrl.forecastData.hours === 1) {
       filtered1h = forecast_1h
         .filter((el, i) => i >= forecastCtrl.forecastData.offset1h)
-        .filter((el, i) => i < 9);
+        .filter((el, i) => i < cols);
     }
 
     if (filtered6h.length > 0 && forecastCtrl.forecastData.hours === 6) {
@@ -124,7 +232,7 @@ const ForecastCharts = observer(
           <Col xs={4}>
             {(forecastCtrl.forecastData.hours === 1 ||
               forecastCtrl.forecastData.hours === 6) && (
-              <Button variant="secondary" onClick={() => changeOffset(-9)}>
+              <Button variant="secondary" onClick={() => changeOffset(-cols)}>
                 Prev
               </Button>
             )}
@@ -145,7 +253,7 @@ const ForecastCharts = observer(
           <Col xs={4}>
             {(forecastCtrl.forecastData.hours === 1 ||
               forecastCtrl.forecastData.hours === 6) && (
-              <Button variant="secondary" onClick={() => changeOffset(9)}>
+              <Button variant="secondary" onClick={() => changeOffset(cols)}>
                 Next
               </Button>
             )}
@@ -153,209 +261,15 @@ const ForecastCharts = observer(
         </Row>
         <ScrollDiv>
           {forecastCtrl.forecastData.hours === 24 && (
-            <>
-              <Row className="ms-0 me-0">
-                {filtered24h.map((item: IForecastDay) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>{moment(item.timestamp).format("ddd")}</div>
-                  </Col>
-                ))}
-              </Row>
-              <Row className="ms-0 me-0">
-                {filtered24h.map((item: IForecastDay) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>{moment(item.timestamp).format("HH")}</div>
-                  </Col>
-                ))}
-              </Row>
-              <Row className="ms-0 me-0">
-                {filtered24h.map((item: IForecastDay) => (
-                  <Col
-                    className="text-center ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    {item.symbol_code_day != null && (
-                      <img
-                        width={size}
-                        height={size}
-                        src={`svg/${item.symbol_code_day}.svg`} // TODO
-                        alt={item.symbol_code_day}
-                      />
-                    )}
-                    {item.symbol_code_day == null && <>-</>}
-                  </Col>
-                ))}
-              </Row>
-              <Row className="ms-0 me-0">
-                {filtered24h.map((item: IForecastDay) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>
-                      {item.air_temperature_max?.toFixed(0)}/
-                      {item.air_temperature_min?.toFixed(0)}
-                    </div>
-                  </Col>
-                ))}
-              </Row>
-              <Row className="ms-0 me-0">
-                {filtered24h.map((item: IForecastDay) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>
-                      {item.precipitation_amount_sum === 0
-                        ? "-"
-                        : item.precipitation_amount_sum.toFixed(1)}
-                    </div>
-                  </Col>
-                ))}
-              </Row>
-            </>
+            <MyRows data={filtered24h} />
           )}
           {forecastCtrl.forecastData.hours === 6 && (
-            <>
-              <Row className="ms-0 me-0">
-                {filtered6h.map((item: IForecast6h) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>{moment(item.timestamp).format("ddd")}</div>
-                  </Col>
-                ))}
-              </Row>
-              <Row className="ms-0 me-0">
-                {filtered6h.map((item: IForecast6h) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>{moment(item.timestamp).format("HH")}</div>
-                  </Col>
-                ))}
-              </Row>
-              <Row className="ms-0 me-0">
-                {filtered6h.map((item) => (
-                  <Col
-                    className="text-center ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    {item.symbol_code_6h != null && (
-                      <img
-                        width={size}
-                        height={size}
-                        src={`svg/${item.symbol_code_6h}.svg`}
-                        alt={item.symbol_code_6h}
-                      />
-                    )}
-                    {item.symbol_code_6h == null && <>-</>}
-                  </Col>
-                ))}
-              </Row>
-              <Row className="ms-0 me-0">
-                {filtered6h.map((item: IForecast6h) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>
-                      {item.air_temperature_max?.toFixed(0)}/
-                      {item.air_temperature_min?.toFixed(0)}
-                    </div>
-                  </Col>
-                ))}
-              </Row>
-              <Row className="ms-0 me-0">
-                {filtered6h.map((item: IForecast6h) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>
-                      {item.precipitation_amount === 0
-                        ? "-"
-                        : item.precipitation_amount.toFixed(1)}
-                    </div>
-                  </Col>
-                ))}
-              </Row>
-            </>
+            <MyRows data={filtered6h} />
           )}
           {forecastCtrl.forecastData.hours === 1 && (
-            <>
-              <MyRow className="ms-0 me-0">
-                {filtered1h.map((item: IForecast1h) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>{moment(item.timestamp).format("ddd")}</div>
-                  </Col>
-                ))}
-              </MyRow>
-              <MyRow className="ms-0 me-0">
-                {filtered1h.map((item: IForecast1h) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>{moment(item.timestamp).format("HH")}</div>
-                  </Col>
-                ))}
-              </MyRow>
-              <MyRow className="ms-0 me-0">
-                {filtered1h.map((item: IForecast1h) => (
-                  <Col
-                    className="text-center ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    {item.symbol_code_1h != null && (
-                      <img
-                        width={size}
-                        height={size}
-                        src={`svg/${item.symbol_code_1h}.svg`}
-                        alt={item.symbol_code_1h}
-                      />
-                    )}
-                    {item.symbol_code_1h == null && <>-</>}
-                  </Col>
-                ))}
-              </MyRow>
-              <MyRow className="ms-0 me-0">
-                {filtered1h.map((item: IForecast1h) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>{item.air_temperature.toFixed(0)}</div>
-                  </Col>
-                ))}
-              </MyRow>
-              <MyRow className="ms-0 me-0">
-                {filtered1h.map((item: IForecast1h) => (
-                  <Col
-                    className="text-center small ps-0 pe-0 border-start border-secondary"
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <div>
-                      {item.precipitation_amount === 0
-                        ? "-"
-                        : item.precipitation_amount.toFixed(1)}
-                    </div>
-                  </Col>
-                ))}
-              </MyRow>
-            </>
+            <MyRows data={filtered1h} />
           )}
+          <Myhr className="mt-3" />
           <Row className="mb-0">
             <ForecastChartTemp
               data={days}

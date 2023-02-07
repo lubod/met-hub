@@ -10,10 +10,10 @@ import {
   YAxis,
 } from "recharts";
 import MY_COLORS from "../../common/colors";
-import { IForecastDay, IForecastRow } from "./forecastData";
+import { ForecastDay, ForecastRow } from "./forecastData";
 
 type Props = {
-  data: Array<IForecastDay>;
+  data: Array<ForecastDay>;
   lastTimestamp: Date;
   firstTimestamp: Date;
   hours: number;
@@ -44,24 +44,20 @@ const ForecastChartTemp = observer(
     let domainTempMax = Number.MIN_SAFE_INTEGER;
     let domainTempMin = Number.MAX_SAFE_INTEGER;
 
-    if (hours === 24 && data.length > 0 && data[0].forecastRows.length > 0) {
-      for (
-        let h = 0;
-        h < data[0].forecastRows[0].timestamp.getHours();
-        h += 1
-      ) {
+    if (hours === 24 && data.length > 0 && data[0].rows.length > 0) {
+      for (let h = 0; h < data[0].rows[0].timestamp.getHours(); h += 1) {
         chdata.push({
           timestamp:
-            data[0].forecastRows[0].timestamp.getTime() -
-            (data[0].forecastRows[0].timestamp.getHours() - h) * 3600000,
+            data[0].rows[0].timestamp.getTime() -
+            (data[0].rows[0].timestamp.getHours() - h) * 3600000,
           temperature: null,
         });
       }
     }
 
     for (let i = 0; i < data.length; i += 1) {
-      for (let j = 0; j < data[i].forecastRows.length; j += 1) {
-        const forecastRow: IForecastRow = data[i].forecastRows[j];
+      for (let j = 0; j < data[i].rows.length; j += 1) {
+        const forecastRow: ForecastRow = data[i].rows[j];
         if (
           lastTimestamp != null &&
           forecastRow.timestamp.getTime() > lastTimestamp.getTime()
@@ -91,7 +87,7 @@ const ForecastChartTemp = observer(
     console.info("render forecast chart", chdata);
     return (
       <>
-        <div className="small text-white-50 font-weight-bold mt-3">
+        <div className="small text-white-50 font-weight-bold mt-2">
           Temperature <span style={{ color: MY_COLORS.orange }}>&#8226;</span>
         </div>
         <div

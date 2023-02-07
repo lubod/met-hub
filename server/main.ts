@@ -5,11 +5,40 @@ import router from "./router";
 import SocketEmitter from "./socketEmitter";
 import Agregator from "./agregator";
 import { AllStationsCfg } from "../common/allStationsCfg";
-import Go from "./go";
+// import Go from "./go";
 
 const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
+
+/*
+const { Kafka } = require("kafkajs");
+
+const kafka = new Kafka({
+  clientId: "my-app",
+  brokers: ["localhost:9092"],
+});
+
+const consumer = kafka.consumer({ groupId: "test-group" });
+
+const run = async () => {
+  // Consuming
+  await consumer.connect();
+  await consumer.subscribe({ topic: "test-topic", fromBeginning: true });
+
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }: any) => {
+      console.log({
+        partition,
+        offset: message.offset,
+        value: message.value.toString(),
+      });
+    },
+  });
+};
+
+run().catch(console.error);
+*/
 
 export class AppError {
   code: number;
@@ -35,7 +64,7 @@ allStationsCfg.readCfg().then(() => {
     allStationsCfg.getMeasurements()
   );
   agregator.start();
-  const go = new Go();
+  // const go = new Go();
   // go.start();
 });
 

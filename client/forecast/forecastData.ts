@@ -1,34 +1,119 @@
+/* eslint-disable max-classes-per-file */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 import { action, makeObservable, observable } from "mobx";
+import moment from "moment";
 
-export interface IForecastRow {
-  timestamp: Date;
-  air_pressure_at_sea_level: string;
-  air_temperature: string;
-  cloud_area_fraction: string;
-  relative_humidity: string;
-  wind_from_direction: string;
-  wind_speed: string;
-  precipitation_amount: string;
-  symbol_code_1h: string;
-  symbol_code_6h: string;
+export interface IGetForecastDataToDisplay {
+  getDay(): string;
+  getDay2(): string;
+  getSymbolCode(): string;
+  getAirTemperatureMax(): string;
+  getAirTemperatureMin(): string;
+  getPrecipitationAmount(): string;
+  getWindSpeed(): string;
+  getWindDir(): string;
+  getCloudAreaFraction(): string;
 }
 
-export interface IForecastDay {
+export class ForecastRow {
   timestamp: Date;
+
+  air_pressure_at_sea_level: number;
+
+  air_temperature: number;
+
+  cloud_area_fraction: number;
+
+  relative_humidity: number;
+
+  wind_from_direction: number;
+
+  wind_speed: number;
+
+  precipitation_amount_row: number;
+
+  precipitation_amount_1h: number;
+
+  precipitation_amount_6h: number;
+
+  symbol_code_1h: string;
+
+  symbol_code_6h: string;
+
+  symbol_code_12h: string;
+
+  air_temperature_min_6h: number;
+
+  air_temperature_max_6h: number;
+}
+
+export class ForecastDay implements IGetForecastDataToDisplay {
+  timestamp: Date;
+
   air_temperature_min: number;
+
   air_temperature_max: number;
-  precipitation_amount_sum: number;
+
+  precipitation_amount: number;
+
   wind_speed_max: number;
-  symbol_code_00: string;
-  symbol_code_06: string;
-  symbol_code_12: string;
-  symbol_code_18: string;
+
+  wind_speed_min: number;
+
+  symbol_code_00Z: string;
+
+  symbol_code_06Z: string;
+
+  symbol_code_12Z: string;
+
+  symbol_code_18Z: string;
+
   symbol_code_day: string;
+
   symbol_code_night: string;
-  forecastRows: IForecastRow[];
-  cloud_area_fraction_sum: number;
+
+  cloud_area_fraction: number;
+
+  rows: Array<ForecastRow>;
+
+  getDay(): string {
+    return moment(this.timestamp).format("ddd");
+  }
+
+  getDay2(): string {
+    return moment(this.timestamp).format("DD");
+  }
+
+  getSymbolCode(): string {
+    return this.symbol_code_day;
+  }
+
+  getAirTemperatureMin(): string {
+    return this.air_temperature_min?.toFixed(0);
+  }
+
+  getAirTemperatureMax(): string {
+    return this.air_temperature_max?.toFixed(0);
+  }
+
+  getPrecipitationAmount(): string {
+    return this.precipitation_amount === 0
+      ? "-"
+      : this.precipitation_amount.toFixed(1);
+  }
+
+  getWindSpeed(): string {
+    return (this.wind_speed_max * 3.6).toFixed(0);
+  }
+
+  getWindDir(): string {
+    return "";
+  }
+
+  getCloudAreaFraction(): string {
+    return this.cloud_area_fraction.toFixed(0);
+  }
 }
 
 export interface IForecastData {
@@ -38,31 +123,159 @@ export interface IForecastData {
   astronomicalData: any;
   sunrise: Date;
   sunset: Date;
-  days: Map<string, IForecastDay>;
+  days: Map<string, ForecastDay>;
   domainTempMin: number;
   domainTempMax: number;
   loading: boolean;
   stationID: string;
 }
 
-export interface IForecast6h {
+export class Forecast6h implements IGetForecastDataToDisplay {
   timestamp: Date;
-  symbol_code_6h: string;
+
+  symbol_code: string;
+
   air_temperature_min: number;
+
   air_temperature_max: number;
+
   precipitation_amount: number;
-  wind_speed_min: number;
-  wind_speed_max: number;
-  cloud_area_fraction_sum: number;
+
+  wind_speed: number;
+
+  wind_dir: number;
+
+  cloud_area_fraction: number;
+
+  constructor(
+    timestamp: Date,
+    symbol_code: string,
+    air_temperature_min: number,
+    air_temperature_max: number,
+    precipitation_amount: number,
+    wind_speed: number,
+    wind_dir: number,
+    cloud_area_fraction: number
+  ) {
+    this.timestamp = timestamp;
+    this.symbol_code = symbol_code;
+    this.air_temperature_min = air_temperature_min;
+    this.air_temperature_max = air_temperature_max;
+    this.precipitation_amount = precipitation_amount;
+    this.wind_speed = wind_speed;
+    this.wind_dir = wind_dir;
+    this.cloud_area_fraction = cloud_area_fraction;
+  }
+
+  getDay(): string {
+    return moment(this.timestamp).format("ddd");
+  }
+
+  getDay2(): string {
+    return moment(this.timestamp).format("HH");
+  }
+
+  getSymbolCode(): string {
+    return this.symbol_code;
+  }
+
+  getAirTemperatureMax(): string {
+    return this.air_temperature_max.toFixed(0);
+  }
+
+  getAirTemperatureMin(): string {
+    return this.air_temperature_min.toFixed(0);
+  }
+
+  getPrecipitationAmount(): string {
+    return this.precipitation_amount === 0
+      ? "-"
+      : this.precipitation_amount.toFixed(1);
+  }
+
+  getWindSpeed(): string {
+    return (this.wind_speed * 3.6).toFixed(0);
+  }
+
+  getWindDir(): string {
+    return this.wind_dir.toFixed(0);
+  }
+
+  getCloudAreaFraction(): string {
+    return this.cloud_area_fraction.toFixed(0);
+  }
 }
 
-export interface IForecast1h {
+export class Forecast1h implements IGetForecastDataToDisplay {
   timestamp: Date;
-  symbol_code_1h: string;
+
+  symbol_code: string;
+
   air_temperature: number;
+
   precipitation_amount: number;
+
   wind_speed: number;
-  cloud_area_fraction_sum: number;
+
+  wind_dir: number;
+
+  cloud_area_fraction: number;
+
+  constructor(
+    timestamp: Date,
+    symbol_code: string,
+    air_temperature: number,
+    precipitation_amount: number,
+    wind_speed: number,
+    wind_dir: number,
+    cloud_area_fraction: number
+  ) {
+    this.timestamp = timestamp;
+    this.symbol_code = symbol_code;
+    this.air_temperature = air_temperature;
+    this.precipitation_amount = precipitation_amount;
+    this.wind_speed = wind_speed;
+    this.wind_dir = wind_dir;
+    this.cloud_area_fraction = cloud_area_fraction;
+  }
+
+  getDay(): string {
+    return moment(this.timestamp).format("ddd");
+  }
+
+  getDay2(): string {
+    return moment(this.timestamp).format("HH");
+  }
+
+  getSymbolCode(): string {
+    return this.symbol_code;
+  }
+
+  getAirTemperatureMax(): string {
+    return this.air_temperature.toFixed(0);
+  }
+
+  getAirTemperatureMin(): string {
+    return "-";
+  }
+
+  getPrecipitationAmount(): string {
+    return this.precipitation_amount === 0
+      ? "-"
+      : this.precipitation_amount.toFixed(1);
+  }
+
+  getWindSpeed(): string {
+    return (this.wind_speed * 3.6).toFixed(0);
+  }
+
+  getWindDir(): string {
+    return this.wind_dir.toFixed(0);
+  }
+
+  getCloudAreaFraction(): string {
+    return this.cloud_area_fraction.toFixed(0);
+  }
 }
 
 export default class ForecastData implements IForecastData {
@@ -78,7 +291,7 @@ export default class ForecastData implements IForecastData {
 
   sunset: Date = null;
 
-  days: Map<string, IForecastDay> = new Map<string, IForecastDay>();
+  days: Map<string, ForecastDay> = new Map<string, ForecastDay>();
 
   domainTempMin: number = null;
 
@@ -88,15 +301,17 @@ export default class ForecastData implements IForecastData {
 
   stationID: string = null;
 
-  forecast_6h: Array<IForecast6h> = [];
+  forecast_6h: Array<Forecast6h> = [];
 
-  forecast_1h: Array<IForecast1h> = [];
+  forecast_1h: Array<Forecast1h> = [];
 
-  hours: number = 1;
+  hours: number = 24;
 
   offset1h: number = 0;
 
   offset6h: number = 0;
+
+  rows: Array<ForecastRow> = [];
 
   constructor(stationID: string, lat: number, lon: number) {
     makeObservable(this, {
@@ -156,141 +371,187 @@ export default class ForecastData implements IForecastData {
     );
   }
 
+  calculate() {
+    let dayIndex = 0;
+    let precipitation_amount_uptoFirst6 = 0;
+    let cloud_area_fraction_uptoFirst6 = 0;
+    if (this.rows.length >= 6) {
+      const uptoFirst6 = 6 - (this.rows[0].timestamp.getUTCHours() % 6);
+      for (let rowIndex = 0; rowIndex < uptoFirst6; rowIndex += 1) {
+        console.info("CALCULATE", uptoFirst6, rowIndex, this.rows[rowIndex]);
+        precipitation_amount_uptoFirst6 +=
+          this.rows[rowIndex].precipitation_amount_1h;
+        cloud_area_fraction_uptoFirst6 +=
+          this.rows[rowIndex].cloud_area_fraction;
+      }
+      cloud_area_fraction_uptoFirst6 /= uptoFirst6;
+    }
+    for (const day of this.days.values()) {
+      let rows6h = 0;
+      day.air_temperature_max = Number.MIN_SAFE_INTEGER;
+      day.air_temperature_min = Number.MAX_SAFE_INTEGER;
+      day.wind_speed_max = Number.MIN_SAFE_INTEGER;
+      day.wind_speed_min = Number.MAX_SAFE_INTEGER;
+      day.cloud_area_fraction = 0;
+      day.precipitation_amount = 0;
+
+      if (dayIndex === 0 && day.rows.length > 0) {
+        day.symbol_code_day = day.rows[0].symbol_code_12h;
+        day.precipitation_amount += precipitation_amount_uptoFirst6;
+        day.cloud_area_fraction += cloud_area_fraction_uptoFirst6;
+      }
+      for (let rowIndex = 0; rowIndex < day.rows.length; rowIndex += 1) {
+        const row = day.rows[rowIndex];
+        if (day.wind_speed_max < row.wind_speed) {
+          day.wind_speed_max = row.wind_speed;
+        }
+        if (day.wind_speed_min > row.wind_speed) {
+          day.wind_speed_min = row.wind_speed;
+        }
+        if (day.air_temperature_max < row.air_temperature) {
+          day.air_temperature_max = row.air_temperature;
+        }
+        if (day.air_temperature_min > row.air_temperature) {
+          day.air_temperature_min = row.air_temperature;
+        }
+        switch (row.timestamp.getUTCHours()) {
+          case 0:
+            day.symbol_code_00Z = row.symbol_code_6h;
+            day.precipitation_amount += row.precipitation_amount_6h;
+            day.cloud_area_fraction += row.cloud_area_fraction;
+            rows6h += 1;
+            break;
+          case 6:
+            day.symbol_code_06Z = row.symbol_code_6h;
+            day.symbol_code_day = row.symbol_code_12h;
+            day.precipitation_amount += row.precipitation_amount_6h;
+            day.cloud_area_fraction += row.cloud_area_fraction;
+            rows6h += 1;
+            break;
+          case 12:
+            day.symbol_code_12Z = row.symbol_code_6h;
+            day.precipitation_amount += row.precipitation_amount_6h;
+            day.cloud_area_fraction += row.cloud_area_fraction;
+            rows6h += 1;
+            break;
+          case 18:
+            day.symbol_code_18Z = row.symbol_code_6h;
+            day.symbol_code_night = row.symbol_code_12h;
+            day.precipitation_amount += row.precipitation_amount_6h;
+            day.cloud_area_fraction += row.cloud_area_fraction;
+            rows6h += 1;
+            break;
+          default:
+        }
+        if (
+          (row.timestamp.getUTCHours() % 6 === 0 ||
+            (dayIndex === 0 && rowIndex === 0)) &&
+          row.symbol_code_6h != null
+        ) {
+          this.forecast_6h.push(
+            new Forecast6h(
+              row.timestamp,
+              row.symbol_code_6h,
+              row.air_temperature_min_6h,
+              row.air_temperature_max_6h,
+              dayIndex === 0 && rowIndex === 0
+                ? precipitation_amount_uptoFirst6
+                : row.precipitation_amount_6h,
+              row.wind_speed,
+              row.wind_from_direction,
+              row.cloud_area_fraction
+            )
+          );
+        }
+        if (row.symbol_code_1h != null) {
+          this.forecast_1h.push(
+            new Forecast1h(
+              row.timestamp,
+              row.symbol_code_1h,
+              row.air_temperature,
+              row.precipitation_amount_1h,
+              row.wind_speed,
+              row.wind_from_direction,
+              row.cloud_area_fraction
+            )
+          );
+        }
+      }
+      day.cloud_area_fraction /= rows6h;
+      dayIndex = +1;
+    }
+  }
+
   setForecast(newForecast: any) {
-    this.days = new Map<string, IForecastDay>();
+    this.days = new Map<string, ForecastDay>();
     this.forecast_1h = [];
     this.forecast_6h = [];
+    this.rows = [];
     for (let i = 0; i < newForecast.properties.timeseries.length; i += 1) {
       const item = newForecast.properties.timeseries[i];
-      const timestamp: Date = new Date(item.time);
-      const {
-        air_pressure_at_sea_level,
-        air_temperature,
-        cloud_area_fraction,
-        relative_humidity,
-        wind_from_direction,
-        wind_speed,
-      } = item.data.instant.details;
+      const row = {} as ForecastRow;
+      row.timestamp = new Date(item.time);
+      row.air_pressure_at_sea_level = parseFloat(
+        item.data.instant.details.air_pressure_at_sea_level
+      );
+      row.air_temperature = parseFloat(
+        item.data.instant.details.air_temperature
+      );
+      row.cloud_area_fraction = parseFloat(
+        item.data.instant.details.cloud_area_fraction
+      );
+      row.relative_humidity = parseFloat(
+        item.data.instant.details.relative_humidity
+      );
+      row.wind_from_direction = parseFloat(
+        item.data.instant.details.wind_from_direction
+      );
+      row.wind_speed = parseFloat(item.data.instant.details.wind_speed);
+      row.precipitation_amount_1h =
+        item.data.next_1_hours != null
+          ? parseFloat(item.data.next_1_hours.details.precipitation_amount)
+          : null;
+      row.precipitation_amount_6h =
+        item.data.next_6_hours != null
+          ? parseFloat(item.data.next_6_hours.details.precipitation_amount)
+          : null;
+      row.precipitation_amount_row =
+        row.precipitation_amount_1h != null
+          ? row.precipitation_amount_1h
+          : row.precipitation_amount_6h;
+      row.air_temperature_min_6h =
+        item.data.next_6_hours != null
+          ? parseFloat(item.data.next_6_hours.details.air_temperature_min)
+          : null;
+      row.air_temperature_max_6h =
+        item.data.next_6_hours != null
+          ? parseFloat(item.data.next_6_hours.details.air_temperature_max)
+          : null;
+      row.symbol_code_1h = item.data.next_1_hours?.summary.symbol_code;
+      row.symbol_code_6h = item.data.next_6_hours?.summary.symbol_code;
+      row.symbol_code_12h = item.data.next_12_hours?.summary.symbol_code;
 
-      let precipitation_amount = "0";
-      if (item.data.next_1_hours != null) {
-        precipitation_amount =
-          item.data.next_1_hours.details.precipitation_amount;
-      } else if (item.data.next_6_hours != null) {
-        precipitation_amount =
-          item.data.next_6_hours.details.precipitation_amount;
-      }
-      const symbol_code_1h = item.data.next_1_hours?.summary.symbol_code;
-      const symbol_code_6h = item.data.next_6_hours?.summary.symbol_code;
-      const symbol_code_12h = item.data.next_12_hours?.summary.symbol_code;
-      const air_temperature_min_6h =
-        item.data.next_6_hours?.details.air_temperature_min;
-      const air_temperature_max_6h =
-        item.data.next_6_hours?.details.air_temperature_max;
-      const precipitation_amount_6h =
-        item.data.next_6_hours?.details.precipitation_amount;
-      const forecastRow: IForecastRow = {
-        timestamp,
-        air_pressure_at_sea_level,
-        air_temperature,
-        cloud_area_fraction,
-        relative_humidity,
-        wind_from_direction,
-        wind_speed,
-        precipitation_amount,
-        symbol_code_1h,
-        symbol_code_6h,
-      };
-      let forecastDay: IForecastDay = this.days.get(timestamp.toDateString());
-      const air_temperature_f = parseFloat(forecastRow.air_temperature);
-      const wind_speed_f = parseFloat(forecastRow.wind_speed);
-      const precipitation_amount_f = parseFloat(
-        forecastRow.precipitation_amount
+      this.rows.push(row);
+
+      let forecastDay: ForecastDay = this.days.get(
+        row.timestamp.toDateString()
       );
       if (forecastDay == null) {
-        forecastDay = {
-          timestamp,
-          air_temperature_min: air_temperature_f,
-          air_temperature_max: air_temperature_f,
-          precipitation_amount_sum: 0,
-          wind_speed_max: wind_speed_f,
-          symbol_code_00: null,
-          symbol_code_06: null,
-          symbol_code_12: null,
-          symbol_code_18: null,
-          symbol_code_day: null,
-          symbol_code_night: null,
-          forecastRows: [forecastRow],
-          cloud_area_fraction_sum: cloud_area_fraction,
-        };
+        forecastDay = new ForecastDay();
+        forecastDay.timestamp = row.timestamp;
+        forecastDay.rows = [row];
+        this.days.set(row.timestamp.toDateString(), forecastDay);
       } else {
-        forecastDay.forecastRows.push(forecastRow);
-        if (air_temperature_f > forecastDay.air_temperature_max) {
-          forecastDay.air_temperature_max = air_temperature_f;
-        }
-        if (air_temperature_f < forecastDay.air_temperature_min) {
-          forecastDay.air_temperature_min = air_temperature_f;
-        }
-        forecastDay.precipitation_amount_sum += parseFloat(
-          forecastRow.precipitation_amount
-        );
-        forecastDay.cloud_area_fraction_sum += parseFloat(
-          forecastRow.cloud_area_fraction
-        );
-        if (wind_speed_f > forecastDay.wind_speed_max) {
-          forecastDay.wind_speed_max = wind_speed_f;
-        }
-      }
-      if (timestamp.getUTCHours() === 0) {
-        forecastDay.symbol_code_00 = symbol_code_6h;
-      }
-      if (timestamp.getUTCHours() === 6) {
-        forecastDay.symbol_code_06 = symbol_code_6h;
-        if (symbol_code_12h != null) {
-          forecastDay.symbol_code_day = symbol_code_12h;
-        }
-      }
-      if (timestamp.getUTCHours() === 12) {
-        forecastDay.symbol_code_12 = symbol_code_6h;
-      }
-      if (timestamp.getUTCHours() === 18) {
-        forecastDay.symbol_code_18 = symbol_code_6h;
-        if (symbol_code_12h != null) {
-          forecastDay.symbol_code_night = symbol_code_12h;
-        }
-      }
-      if (i === 0) {
-        forecastDay.symbol_code_day = symbol_code_12h;
-      }
-      this.days.set(timestamp.toDateString(), forecastDay);
-      if (
-        (timestamp.getUTCHours() % 6 === 0 || i === 0) &&
-        symbol_code_6h != null
-      ) {
-        this.forecast_6h.push({
-          timestamp,
-          symbol_code_6h,
-          air_temperature_min: air_temperature_min_6h,
-          air_temperature_max: air_temperature_max_6h,
-          precipitation_amount: precipitation_amount_6h,
-          wind_speed_min: 0,
-          wind_speed_max: 0,
-          cloud_area_fraction_sum: 0,
-        });
-      }
-      if (symbol_code_1h != null) {
-        this.forecast_1h.push({
-          timestamp,
-          symbol_code_1h,
-          air_temperature: air_temperature_f,
-          precipitation_amount: precipitation_amount_f,
-          wind_speed: wind_speed_f,
-          cloud_area_fraction_sum: 0,
-        });
+        forecastDay.rows.push(row);
       }
     }
-    console.info(this.forecast_1h);
-    console.info(this.forecast_6h);
+
+    this.calculate();
+
+    console.info("ROWS", this.rows);
+    console.info("DAYS", this.days);
+    console.info("1h", this.forecast_1h);
+    console.info("6h", this.forecast_6h);
     this.forecast = newForecast;
   }
 }

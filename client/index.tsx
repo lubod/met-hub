@@ -9,11 +9,10 @@ import HeaderCtrl from "./header/headerCtrl";
 import App from "./app";
 import ChartsCtrl from "./charts/chartsCtrl";
 import { IMeasurementDesc } from "../common/measurementDesc";
-import "bootstrap/dist/css/bootstrap.css";
-import "./style.css";
 import ForecastCtrl from "./forecast/forecastCtrl";
 import DomCtrl from "./dom/domCtrl";
 import { AllStationsCfgClient } from "../common/allStationsCfgClient";
+import "./style.scss";
 
 export class AppContext {
   socket: MySocket;
