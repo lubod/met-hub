@@ -45,7 +45,7 @@ type RowsProps = {
   data: Array<IGetForecastDataToDisplay>;
 };
 
-function MyRows({ data }: RowsProps) {
+function MyRows1({ data }: RowsProps) {
   const size = "34px";
   const rowClassName = "ms-0 me-0";
 
@@ -89,6 +89,15 @@ function MyRows({ data }: RowsProps) {
           <MyCol value={item.getAirTemperatureMin()} extraClass="border-info" />
         ))}
       </Row>
+    </>
+  );
+}
+
+function MyRows2({ data }: RowsProps) {
+  const rowClassName = "ms-0 me-0";
+
+  return (
+    <>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
           <MyCol
@@ -261,15 +270,14 @@ const ForecastCharts = observer(
         </Row>
         <ScrollDiv>
           {forecastCtrl.forecastData.hours === 24 && (
-            <MyRows data={filtered24h} />
+            <MyRows1 data={filtered24h} />
           )}
           {forecastCtrl.forecastData.hours === 6 && (
-            <MyRows data={filtered6h} />
+            <MyRows1 data={filtered6h} />
           )}
           {forecastCtrl.forecastData.hours === 1 && (
-            <MyRows data={filtered1h} />
+            <MyRows1 data={filtered1h} />
           )}
-          <Myhr className="mt-3" />
           <Row className="mb-0">
             <ForecastChartTemp
               data={days}
@@ -278,6 +286,16 @@ const ForecastCharts = observer(
               hours={forecastCtrl.forecastData.hours}
             />
           </Row>
+          <Myhr className="mt-3" />
+          {forecastCtrl.forecastData.hours === 24 && (
+            <MyRows2 data={filtered24h} />
+          )}
+          {forecastCtrl.forecastData.hours === 6 && (
+            <MyRows2 data={filtered6h} />
+          )}
+          {forecastCtrl.forecastData.hours === 1 && (
+            <MyRows2 data={filtered1h} />
+          )}
           <Row className="mb-3">
             <ForecastChart
               data={days}

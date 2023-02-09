@@ -100,7 +100,7 @@ const Charts = observer(
         </Col>
       </Row>
       <Myhr />
-      <Row>
+      <Row className="mb-2">
         <Col xs={12}>
           <div className="d-grid gap-2">
             <DropdownButton

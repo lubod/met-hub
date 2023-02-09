@@ -374,20 +374,18 @@ export default class ForecastData implements IForecastData {
   calculate() {
     let dayIndex = 0;
     let precipitation_amount_uptoFirst6 = 0;
-    let cloud_area_fraction_uptoFirst6 = 0;
+    let cloud_area_fraction_avg = [];
+
     if (this.rows.length >= 6) {
       const uptoFirst6 = 6 - (this.rows[0].timestamp.getUTCHours() % 6);
       for (let rowIndex = 0; rowIndex < uptoFirst6; rowIndex += 1) {
         console.info("CALCULATE", uptoFirst6, rowIndex, this.rows[rowIndex]);
         precipitation_amount_uptoFirst6 +=
           this.rows[rowIndex].precipitation_amount_1h;
-        cloud_area_fraction_uptoFirst6 +=
-          this.rows[rowIndex].cloud_area_fraction;
+        cloud_area_fraction_avg.push(this.rows[rowIndex].cloud_area_fraction);
       }
-      cloud_area_fraction_uptoFirst6 /= uptoFirst6;
     }
     for (const day of this.days.values()) {
-      let rows6h = 0;
       day.air_temperature_max = Number.MIN_SAFE_INTEGER;
       day.air_temperature_min = Number.MAX_SAFE_INTEGER;
       day.wind_speed_max = Number.MIN_SAFE_INTEGER;
@@ -398,7 +396,6 @@ export default class ForecastData implements IForecastData {
       if (dayIndex === 0 && day.rows.length > 0) {
         day.symbol_code_day = day.rows[0].symbol_code_12h;
         day.precipitation_amount += precipitation_amount_uptoFirst6;
-        day.cloud_area_fraction += cloud_area_fraction_uptoFirst6;
       }
       for (let rowIndex = 0; rowIndex < day.rows.length; rowIndex += 1) {
         const row = day.rows[rowIndex];
@@ -418,28 +415,32 @@ export default class ForecastData implements IForecastData {
           case 0:
             day.symbol_code_00Z = row.symbol_code_6h;
             day.precipitation_amount += row.precipitation_amount_6h;
-            day.cloud_area_fraction += row.cloud_area_fraction;
-            rows6h += 1;
+            for (let i = 0; i < 6; i += 1) {
+              cloud_area_fraction_avg.push(row.cloud_area_fraction);
+            }
             break;
           case 6:
             day.symbol_code_06Z = row.symbol_code_6h;
             day.symbol_code_day = row.symbol_code_12h;
             day.precipitation_amount += row.precipitation_amount_6h;
-            day.cloud_area_fraction += row.cloud_area_fraction;
-            rows6h += 1;
+            for (let i = 0; i < 6; i += 1) {
+              cloud_area_fraction_avg.push(row.cloud_area_fraction);
+            }
             break;
           case 12:
             day.symbol_code_12Z = row.symbol_code_6h;
             day.precipitation_amount += row.precipitation_amount_6h;
-            day.cloud_area_fraction += row.cloud_area_fraction;
-            rows6h += 1;
+            for (let i = 0; i < 6; i += 1) {
+              cloud_area_fraction_avg.push(row.cloud_area_fraction);
+            }
             break;
           case 18:
             day.symbol_code_18Z = row.symbol_code_6h;
             day.symbol_code_night = row.symbol_code_12h;
             day.precipitation_amount += row.precipitation_amount_6h;
-            day.cloud_area_fraction += row.cloud_area_fraction;
-            rows6h += 1;
+            for (let i = 0; i < 6; i += 1) {
+              cloud_area_fraction_avg.push(row.cloud_area_fraction);
+            }
             break;
           default:
         }
@@ -477,8 +478,12 @@ export default class ForecastData implements IForecastData {
           );
         }
       }
-      day.cloud_area_fraction /= rows6h;
+      day.cloud_area_fraction =
+        cloud_area_fraction_avg.reduce((p, c) => p + c, 0) /
+        cloud_area_fraction_avg.length;
       dayIndex = +1;
+      console.info("CLOUD AVG", cloud_area_fraction_avg);
+      cloud_area_fraction_avg = [];
     }
   }
 

@@ -83,34 +83,6 @@ const Station = observer(({ appContext }: Props) => {
         </Col>
       </Row>
       <Myhr />
-      <WindRose
-        gustTrend={appContext.stationCtrl.stationData.trendData.windgust}
-        speedTrend={appContext.stationCtrl.stationData.trendData.windspeed}
-        dirTrend={appContext.stationCtrl.stationData.trendData.winddir}
-        speed={
-          appContext.stationCtrl.stationData.oldData
-            ? null
-            : appContext.stationCtrl.stationData.data.windspeed
-        }
-        dir={
-          appContext.stationCtrl.stationData.oldData
-            ? null
-            : appContext.stationCtrl.stationData.data.winddir
-        }
-        gust={
-          appContext.stationCtrl.stationData.oldData
-            ? null
-            : appContext.stationCtrl.stationData.data.windgust
-        }
-        dailyGust={
-          appContext.stationCtrl.stationData.oldData
-            ? null
-            : appContext.stationCtrl.stationData.data.maxdailygust
-        }
-        appContext={appContext}
-        color={STATION_MEASUREMENTS_DESC.WINDDIR.color}
-      />
-      <Myhr />
       <div className="text-left font-weight-bold">OUT</div>
       <Row>
         <Col xs={4}>
@@ -240,6 +212,34 @@ const Station = observer(({ appContext }: Props) => {
           />
         </Col>
       </Row>
+      <Myhr />
+      <WindRose
+        gustTrend={appContext.stationCtrl.stationData.trendData.windgust}
+        speedTrend={appContext.stationCtrl.stationData.trendData.windspeed}
+        dirTrend={appContext.stationCtrl.stationData.trendData.winddir}
+        speed={
+          appContext.stationCtrl.stationData.oldData
+            ? null
+            : appContext.stationCtrl.stationData.data.windspeed
+        }
+        dir={
+          appContext.stationCtrl.stationData.oldData
+            ? null
+            : appContext.stationCtrl.stationData.data.winddir
+        }
+        gust={
+          appContext.stationCtrl.stationData.oldData
+            ? null
+            : appContext.stationCtrl.stationData.data.windgust
+        }
+        dailyGust={
+          appContext.stationCtrl.stationData.oldData
+            ? null
+            : appContext.stationCtrl.stationData.data.maxdailygust
+        }
+        appContext={appContext}
+        color={STATION_MEASUREMENTS_DESC.WINDDIR.color}
+      />
       <Myhr />
       <Row>
         <Col xs={6}>

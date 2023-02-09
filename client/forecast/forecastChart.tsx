@@ -33,7 +33,21 @@ const ForecastChart = observer(
           timestamp:
             data[0].rows[0].timestamp.getTime() -
             (data[0].rows[0].timestamp.getHours() - h) * 3600000,
-          temperature: null,
+          rain: null,
+          wind_speed: null,
+          clouds: null,
+        });
+      }
+    }
+
+    if (hours === 6 && data.length > 0 && data[0].rows.length > 0) {
+      const diff = data[0].rows[0].timestamp.getUTCHours() % 6;
+      for (let h = diff; h > 0; h -= 1) {
+        chdata.push({
+          timestamp: data[0].rows[0].timestamp.getTime() - h * 3600000,
+          rain: null,
+          wind_speed: null,
+          clouds: null,
         });
       }
     }
@@ -63,10 +77,10 @@ const ForecastChart = observer(
       }
     }
 
-    console.info("render forecast chart");
+    console.info("render forecast chart", chdata);
     return (
       <>
-        <div className="text-left small text-white-50 font-weight-bold mb-2 mt-2">
+        <div className="text-left small text-white-50 font-weight-bold mb-3 mt-3">
           Rain
           <span style={{ color: MY_COLORS.blue }}>&#8226;</span>{" "}
           <span className="">Clouds</span>
@@ -75,7 +89,7 @@ const ForecastChart = observer(
           <span style={{ color: MY_COLORS.purple }}>&#8226;</span>{" "}
         </div>
         <div
-          className="text-center"
+          className="text-center mb-1"
           style={{ display: "flex", justifyContent: "center" }}
         >
           <ResponsiveContainer width="100%" aspect={5.0 / 1.0}>
