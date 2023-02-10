@@ -60,6 +60,10 @@ export class Dom implements IMeasurement {
     return this.cfg.REDIS_TREND_KEY;
   }
 
+  getKafkaKey(): string {
+    return this.cfg.KAFKA_TOPIC;
+  }
+
   getQueryArray(table: string, data: IDomDataRaw) {
     switch (table) {
       case TABLES.OBYVACKA_VZDUCH:

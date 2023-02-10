@@ -335,4 +335,6 @@ export class DomCfg {
   REDIS_STORE_CHANNEL = "dom-store-pubsub";
 
   REDIS_TREND_KEY = "dom-trend";
+
+  KAFKA_TOPIC = "dom-topic";
 }

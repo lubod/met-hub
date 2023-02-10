@@ -15,7 +15,6 @@ const redisClient = createClient();
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.connect();
 
-/*
 const { Kafka } = require("kafkajs");
 
 const kafka = new Kafka({
@@ -24,7 +23,6 @@ const kafka = new Kafka({
 });
 
 const producer = kafka.producer();
-*/
 
 function checkAuth(req: any) {
   if (req.headers.authorization) {
@@ -207,12 +205,17 @@ function setData(PASSKEY: string, data: any) {
           .catch((e) => {
             throw new AppError(500, `${e.name}: ${e.message}`, e.stack);
           });
-        // producer.connect().then(() =>
-        //  producer.send({
-        //    topic: "test-topic",
-        //    messages: [{ value: "Hello KafkaJS user!" }],
-        //  })
-        // );
+        producer.connect().then(() =>
+          producer.send({
+            topic: "data",
+            messages: [
+              {
+                key: measurement.getKafkaKey(),
+                value: JSON.stringify(decoded),
+              },
+            ],
+          })
+        );
       } else {
         throw new AppError(400, `Old data ${date}`);
       }

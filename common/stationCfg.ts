@@ -40,6 +40,8 @@ export class StationCfg {
 
   REDIS_TREND_KEY: string = null;
 
+  KAFKA_KEY: string = null;
+
   constructor(stationID: string) {
     this.STATION_ID = stationID;
     this.TABLE = `station_${this.STATION_ID}`;
@@ -49,5 +51,6 @@ export class StationCfg {
     this.REDIS_MINUTE_DATA_KEY = `station_${this.STATION_ID}-minute-data`;
     this.REDIS_STORE_CHANNEL = `station_${this.STATION_ID}-store-pubsub`;
     this.REDIS_TREND_KEY = `station_${this.STATION_ID}-trend`;
+    this.KAFKA_KEY = `station_${this.STATION_ID}-key`;
   }
 }

@@ -44,26 +44,25 @@ services:
     image: met-hub-nginx
     container_name: met-hub-nginx
     network_mode: host
+#  zookeeper:
+#    image: docker.io/bitnami/zookeeper:3.8
+#    volumes:
+#      - "zookeeper_data:/bitnami"
+#    environment:
+#      - ALLOW_ANONYMOUS_LOGIN=yes
+#    network_mode: host
+#  kafka:
+#    image: docker.io/bitnami/kafka:3.3
+#    volumes:
+#      - "kafka_data:/bitnami"
+#    environment:
+#      - ALLOW_PLAINTEXT_LISTENER=yes
+#    depends_on:
+#      - zookeeper
+#    network_mode: host
 
-  zookeeper:
-    image: docker.io/bitnami/zookeeper:3.8
-    volumes:
-      - "zookeeper_data:/bitnami"
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    network_mode: host
-  kafka:
-    image: docker.io/bitnami/kafka:3.3
-    volumes:
-      - "kafka_data:/bitnami"
-    environment:
-      - ALLOW_PLAINTEXT_LISTENER=yes
-    depends_on:
-      - zookeeper
-    network_mode: host
-
-volumes:
-  zookeeper_data:
-    driver: local
-  kafka_data:
-    driver: local
+#volumes:
+#  zookeeper_data:
+#    driver: local
+#  kafka_data:
+#    driver: local

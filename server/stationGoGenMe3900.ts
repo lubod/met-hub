@@ -45,6 +45,10 @@ class StationGoGenMe3900 implements IMeasurement {
     return this.cfg.REDIS_TREND_KEY;
   }
 
+  getKafkaKey(): string {
+    return this.cfg.KAFKA_KEY;
+  }
+
   getQueryArray(table: string, data: IStationData) {
     return [
       data.timestamp,

@@ -25,4 +25,6 @@ export interface IMeasurement {
   decodeData(data: any): { date: Date; decoded: {}; toStore: {} };
 
   agregateMinuteData(data: any): any;
+
+  getKafkaKey(): string;
 }
