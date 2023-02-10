@@ -82,7 +82,7 @@ export class ForecastDay implements IGetForecastDataToDisplay {
   }
 
   getDay2(): string {
-    return moment(this.timestamp).format("DD");
+    return moment(this.timestamp).format("Do");
   }
 
   getSymbolCode(): string {

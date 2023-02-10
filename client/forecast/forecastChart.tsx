@@ -17,10 +17,11 @@ type Props = {
   lastTimestamp: Date;
   firstTimestamp: Date;
   hours: number;
+  offset6h: number;
 };
 
 const ForecastChart = observer(
-  ({ data, lastTimestamp, firstTimestamp, hours }: Props) => {
+  ({ data, lastTimestamp, firstTimestamp, hours, offset6h }: Props) => {
     const chdata = [];
 
     function formatLabel(label: string) {
@@ -40,7 +41,12 @@ const ForecastChart = observer(
       }
     }
 
-    if (hours === 6 && data.length > 0 && data[0].rows.length > 0) {
+    if (
+      hours === 6 &&
+      data.length > 0 &&
+      data[0].rows.length > 0 &&
+      offset6h === 0
+    ) {
       const diff = data[0].rows[0].timestamp.getUTCHours() % 6;
       for (let h = diff; h > 0; h -= 1) {
         chdata.push({

@@ -284,6 +284,7 @@ const ForecastCharts = observer(
               lastTimestamp={lastTimestamp}
               firstTimestamp={firstTimestamp}
               hours={forecastCtrl.forecastData.hours}
+              offset6h={forecastCtrl.forecastData.offset6h}
             />
           </Row>
           <Myhr className="mt-3" />
@@ -302,6 +303,7 @@ const ForecastCharts = observer(
               lastTimestamp={lastTimestamp}
               firstTimestamp={firstTimestamp}
               hours={forecastCtrl.forecastData.hours}
+              offset6h={forecastCtrl.forecastData.offset6h}
             />
           </Row>
         </ScrollDiv>
