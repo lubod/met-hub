@@ -98,7 +98,7 @@ const ForecastChart = observer(
           className="text-center mb-1"
           style={{ display: "flex", justifyContent: "center" }}
         >
-          <ResponsiveContainer width="100%" aspect={5.0 / 1.0}>
+          <ResponsiveContainer width="100%" aspect={4.0 / 1.0}>
             <ComposedChart
               data={chdata}
               margin={{

@@ -23,7 +23,7 @@ function Data4Forecast({ forecastDay, days10r }: Data4ForecastProps) {
     labelStyle = "text-warning";
     if (
       forecastDay.rows.length > 0 &&
-      forecastDay.cloud_area_fraction / forecastDay.rows.length > 50
+      forecastDay.cloud_area_fraction_avg / forecastDay.rows.length > 50
     ) {
       labelStyle = "text-light";
     }
