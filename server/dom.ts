@@ -34,6 +34,15 @@ export enum TABLES {
 }
 
 export class Dom implements IMeasurement {
+  agregateMinuteDataFromKafka(minute: number, data: Array<IDomData>): any {
+    const deepCopy = cloneDeep(data[0]); // todo
+    const date = new Date(deepCopy.timestamp);
+    date.setUTCSeconds(0);
+    deepCopy.timestamp = date.toISOString();
+    console.info("Agregated dom minute", deepCopy);
+    return deepCopy;
+  }
+
   cfg: DomCfg = new DomCfg();
 
   getSocketChannel() {
@@ -52,7 +61,7 @@ export class Dom implements IMeasurement {
     return this.cfg.REDIS_MINUTE_DATA_KEY;
   }
 
-  getRedisStoreChannel() {
+  getKafkaStoreTopic() {
     return this.cfg.REDIS_STORE_CHANNEL;
   }
 
@@ -61,7 +70,7 @@ export class Dom implements IMeasurement {
   }
 
   getKafkaKey(): string {
-    return this.cfg.KAFKA_TOPIC;
+    return this.cfg.KAFKA_KEY;
   }
 
   getQueryArray(table: string, data: IDomDataRaw) {

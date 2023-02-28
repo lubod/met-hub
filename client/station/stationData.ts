@@ -97,6 +97,7 @@ class StationData {
     // console.info("process station data", newData, this);
     if (newData != null) {
       this.data = newData;
+      this.data.timestamp = new Date(newData.timestamp);
       this.checkOldData(new Date());
     }
     this.loading = false;

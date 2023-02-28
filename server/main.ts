@@ -11,38 +11,6 @@ const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 
-const { Kafka } = require("kafkajs");
-
-const kafka = new Kafka({
-  clientId: "my-app",
-  brokers: ["localhost:9092"],
-});
-
-const consumer = kafka.consumer({ groupId: "test-group" });
-
-const run = async () => {
-  // Consuming
-  await consumer.connect();
-  await consumer.subscribe({
-    topic: "data",
-    fromBeginning: true,
-  });
-
-  await consumer.run({
-    eachMessage: async ({ topic, partition, message }: any) => {
-      console.log({
-        topic,
-        partition,
-        offset: message.offset,
-        key: message.key.toString(),
-        value: message.value.toString(),
-      });
-    },
-  });
-};
-
-run().catch(console.error);
-
 export class AppError {
   code: number;
 
@@ -105,7 +73,7 @@ io.on("connection", (socket: any) => {
   });
 });
 
-const server = http.listen(8082, () => {
+const server = http.listen(8089, () => {
   const { port } = server.address() as AddressInfo;
 
   console.log("Listening at http://%s:%s", "localhost", port);

@@ -1,5 +1,6 @@
 import express from "express";
 import { createClient } from "redis";
+import { Kafka, Producer } from "kafkajs";
 import verifyToken from "./utils";
 import { socketEmiter, allStationsCfg, AppError } from "./main";
 import { Dom } from "./dom";
@@ -15,14 +16,12 @@ const redisClient = createClient();
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.connect();
 
-const { Kafka } = require("kafkajs");
-
 const kafka = new Kafka({
   clientId: "setData",
   brokers: ["localhost:9092"],
 });
 
-const producer = kafka.producer();
+const producer: Producer = kafka.producer();
 
 function checkAuth(req: any) {
   if (req.headers.authorization) {
@@ -206,6 +205,7 @@ function setData(PASSKEY: string, data: any) {
             throw new AppError(500, `${e.name}: ${e.message}`, e.stack);
           });
         producer.connect().then(() =>
+          // todo
           producer.send({
             topic: "data",
             messages: [

@@ -36,7 +36,9 @@ export class StationCfg {
 
   REDIS_MINUTE_DATA_KEY: string = null;
 
-  REDIS_STORE_CHANNEL: string = null;
+  KAFKA_STORE_TOPIC: string = null;
+
+  KAFKA_DATA_TOPIC: string = null;
 
   REDIS_TREND_KEY: string = null;
 
@@ -49,7 +51,8 @@ export class StationCfg {
     this.SOCKET_TREND_CHANNEL = `station_${this.STATION_ID}-trend`;
     this.REDIS_LAST_DATA_KEY = `station_${this.STATION_ID}-last`;
     this.REDIS_MINUTE_DATA_KEY = `station_${this.STATION_ID}-minute-data`;
-    this.REDIS_STORE_CHANNEL = `station_${this.STATION_ID}-store-pubsub`;
+    this.KAFKA_STORE_TOPIC = `store`;
+    this.KAFKA_DATA_TOPIC = `data`;
     this.REDIS_TREND_KEY = `station_${this.STATION_ID}-trend`;
     this.KAFKA_KEY = `station_${this.STATION_ID}-key`;
   }

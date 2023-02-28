@@ -127,6 +127,7 @@ async function fetchStationData(STATION_ID: string) {
       console.error("auth 401");
     } else {
       const json = await res.json();
+      json.timestamp = new Date(json.timestamp);
       return json;
     }
   } catch (error) {
@@ -230,7 +231,9 @@ function main(STATION_ID: string, PASSKEY: string) {
     solarradiation: decoded.solarradiation.toFixed(1),
     temp: decoded.temp.toFixed(1),
     tempin: decoded.tempin.toFixed(1),
-    timestamp: new Date(`${decoded.timestamp.substr(0, 17)}00.000Z`),
+    timestamp: new Date(
+      `${decoded.timestamp.toISOString().substring(0, 17)}00.000Z`
+    ),
     uv: decoded.uv.toFixed(0),
     winddir: decoded.winddir.toFixed(0),
     windgust: decoded.windgust.toFixed(1),
@@ -283,7 +286,7 @@ function main(STATION_ID: string, PASSKEY: string) {
     const rows = await loadStationData(pgtime, STATION_ID);
     assert.deepStrictEqual(rows, pgData);
     console.info("PG OK");
-  }, 61000 - toMinute);
+  }, 66000 - toMinute);
 }
 
 const allStationsCfg = new AllStationsCfg();

@@ -3,7 +3,7 @@ import MY_COLORS from "./colors";
 import { IMeasurementDesc } from "./measurementDesc";
 
 export interface IStationData {
-  timestamp: string;
+  timestamp: Date;
   place: string;
   tempin: number;
   humidityin: number;
@@ -78,7 +78,7 @@ export interface IStationGoGenMe3900DataRaw {
 }
 
 export interface IStationTrendData {
-  timestamp: Array<string>;
+  timestamp: Array<Date>;
   tempin: Array<number>;
   humidityin: Array<number>;
   temp: Array<number>;

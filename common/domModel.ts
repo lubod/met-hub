@@ -336,5 +336,5 @@ export class DomCfg {
 
   REDIS_TREND_KEY = "dom-trend";
 
-  KAFKA_TOPIC = "dom-topic";
+  KAFKA_KEY = "dom-key";
 }

@@ -8,7 +8,7 @@ export interface IMeasurement {
 
   getRedisMinuteDataKey(): string;
 
-  getRedisStoreChannel(): string;
+  getKafkaStoreTopic(): string;
 
   getRedisTrendKey(): string;
 
@@ -24,7 +24,7 @@ export interface IMeasurement {
 
   decodeData(data: any): { date: Date; decoded: {}; toStore: {} };
 
-  agregateMinuteData(data: any): any;
-
   getKafkaKey(): string;
+
+  agregateMinuteDataFromKafka(minute: number, data: any): any;
 }

@@ -1,9 +1,11 @@
 import { Pool } from "pg";
 import { createClient } from "redis";
+import { KafkaMessage } from "kafkajs";
 import { IStationData } from "../common/stationModel";
 import { IDomDataRaw } from "../common/domModel";
 import { IMeasurement } from "./measurement";
 import { AllStationsCfg, IStation } from "../common/allStationsCfg";
+import KafkaPC from "./kafkaPC";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 5432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -41,7 +43,6 @@ async function store(
       client.query(queryText, queryArray);
       console.info(data.timestamp, queryText);
     }
-
     await client.query("COMMIT");
   } catch (e) {
     await client.query("ROLLBACK");
@@ -52,20 +53,31 @@ async function store(
   }
 }
 
+class SKafkaPC extends KafkaPC {
+  stations: Map<string, IStation>;
+
+  constructor(stations: Map<string, IStation>) {
+    super("store", "store-group");
+    this.stations = stations;
+  }
+
+  processMsg(message: KafkaMessage) {
+    const data = JSON.parse(message.value.toString());
+    data.timestamp = new Date(data.timestamp); // todo
+    const id = message.key.toString().split("_")[1].split("-")[0]; // todo
+    const station: IStation = this.stations.get(id);
+    if (station == null) {
+      console.error("Unknown station id", id);
+    } else {
+      store(station.measurement, data);
+    }
+  }
+}
+
 function main(stations: Map<string, IStation>) {
   console.info(`PG: ${PG_HOST}`);
-
-  for (const station of stations.values()) {
-    redisClientSub.subscribe(
-      station.measurement.getRedisStoreChannel(),
-      (msg: string) => {
-        const data = JSON.parse(msg);
-        data.forEach((element: IDomDataRaw | IStationData) => {
-          store(station.measurement, element);
-        });
-      }
-    );
-  }
+  const kc = new SKafkaPC(stations);
+  kc.startConsumer("store");
 }
 
 const allStationsCfg = new AllStationsCfg();
