@@ -54,6 +54,6 @@ export class StationCfg {
     this.KAFKA_STORE_TOPIC = `store`;
     this.KAFKA_DATA_TOPIC = `data`;
     this.REDIS_TREND_KEY = `station_${this.STATION_ID}-trend`;
-    this.KAFKA_KEY = `station_${this.STATION_ID}-key`;
+    this.KAFKA_KEY = `${this.STATION_ID}`;
   }
 }

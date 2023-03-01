@@ -488,13 +488,13 @@ function main(PASSKEY: string) {
   }, 1000);
 
   setTimeout(async () => {
-    const rows = await loadDomData(pgtime);
+    const row = await loadDomData(pgtime);
     data1.dateutc = `${pgtime}:00`;
-    rows.timestamp = d.toISOString();
-    rows.PASSKEY = PASSKEY;
-    assert.deepStrictEqual(rows, data1);
+    row.timestamp = d.toISOString();
+    row.PASSKEY = PASSKEY;
+    assert.deepStrictEqual(row, data1);
     console.info("PG OK");
-  }, 61000 - toMinute);
+  }, 66000 - toMinute);
 }
 
 const allStationsCfg = new AllStationsCfg();

@@ -64,7 +64,7 @@ class AKafkaPC extends KafkaPC {
         for (const [minute, data] of minuteMap.minutes.entries()) {
           if (minute < cminute) {
             try {
-              console.info(minute, data);
+              // console.info(minute, data);
               const avg = measurement.agregateMinuteDataFromKafka(minute, data);
               this.kafkaProducer.send({
                 topic: measurement.getKafkaStoreTopic(),

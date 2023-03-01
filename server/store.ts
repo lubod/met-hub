@@ -64,7 +64,7 @@ class SKafkaPC extends KafkaPC {
   processMsg(message: KafkaMessage) {
     const data = JSON.parse(message.value.toString());
     data.timestamp = new Date(data.timestamp); // todo
-    const id = message.key.toString().split("_")[1].split("-")[0]; // todo
+    const id = message.key.toString();
     const station: IStation = this.stations.get(id);
     if (station == null) {
       console.error("Unknown station id", id);

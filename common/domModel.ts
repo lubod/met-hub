@@ -332,9 +332,11 @@ export class DomCfg {
 
   REDIS_MINUTE_DATA_KEY = "dom-minute-data";
 
-  REDIS_STORE_CHANNEL = "dom-store-pubsub";
+  KAFKA_STORE_TOPIC = `store`;
+
+  KAFKA_DATA_TOPIC = `data`;
 
   REDIS_TREND_KEY = "dom-trend";
 
-  KAFKA_KEY = "dom-key";
+  KAFKA_KEY = "dom";
 }

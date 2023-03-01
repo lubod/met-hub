@@ -39,7 +39,7 @@ export class Dom implements IMeasurement {
     const date = new Date(deepCopy.timestamp);
     date.setUTCSeconds(0);
     deepCopy.timestamp = date.toISOString();
-    console.info("Agregated dom minute", deepCopy);
+    console.info("Agregated dom minute", deepCopy.timestamp);
     return deepCopy;
   }
 
@@ -62,7 +62,7 @@ export class Dom implements IMeasurement {
   }
 
   getKafkaStoreTopic() {
-    return this.cfg.REDIS_STORE_CHANNEL;
+    return this.cfg.KAFKA_STORE_TOPIC;
   }
 
   getRedisTrendKey() {
@@ -178,7 +178,7 @@ export class Dom implements IMeasurement {
   }
 
   transformTrendData(data: any) {
-    // console.info('transformDomTrendData', data);
+    // console.info("transformDomTrendData", data);
     const tmp = {} as IDomTrendData;
     tmp.timestamp = [];
     tmp.temp = [];
@@ -197,6 +197,7 @@ export class Dom implements IMeasurement {
 
     data.forEach((item: any) => {
       const value: IDomDataRaw = JSON.parse(item);
+      // console.info("value", value);
       tmp.timestamp.push(value.timestamp);
       tmp.temp.push(value.vonku.temp);
       tmp.humidity.push(value.vonku.humidity);

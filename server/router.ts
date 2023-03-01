@@ -211,7 +211,7 @@ function setData(PASSKEY: string, data: any) {
             messages: [
               {
                 key: measurement.getKafkaKey(),
-                value: JSON.stringify(decoded),
+                value: JSON.stringify(toStore),
               },
             ],
           })
