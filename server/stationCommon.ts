@@ -12,6 +12,8 @@ export default abstract class StationCommon implements IMeasurement {
 
   abstract decodeData(data: any): { date: Date; decoded: {}; toStore: {} };
 
+  abstract initWithZeros(): IStationData;
+
   getTables() {
     return [this.cfg.TABLE];
   }
@@ -84,6 +86,7 @@ export default abstract class StationCommon implements IMeasurement {
     tmp.temp = [];
     tmp.humidity = [];
     tmp.pressurerel = [];
+    tmp.pressureabs = [];
     tmp.windgust = [];
     tmp.windspeed = [];
     tmp.winddir = [];
@@ -102,6 +105,7 @@ export default abstract class StationCommon implements IMeasurement {
         tmp.temp.push(value.temp);
         tmp.humidity.push(value.humidity);
         tmp.pressurerel.push(value.pressurerel);
+        tmp.pressureabs.push(value.pressureabs);
         tmp.windgust.push(value.windgust);
         tmp.windspeed.push(value.windspeed);
         tmp.winddir.push(value.winddir);
@@ -134,77 +138,57 @@ export default abstract class StationCommon implements IMeasurement {
       return round((rad2deg(Math.atan2(sinSum, cosSum)) + 360) % 360, 0);
     };
 
-    const initWithZeros = () => {
-      const init: IStationData = {
-        tempin: 0,
-        temp: 0,
-        pressurerel: 0,
-        pressureabs: null, // todo
-        windgust: 0,
-        windspeed: 0,
-        rainrate: 0,
-        solarradiation: 0,
-        uv: 0,
-        humidityin: 0,
-        humidity: 0,
-        winddir: 0,
-        timestamp: null,
-        place: null,
-        maxdailygust: null,
-        eventrain: null,
-        hourlyrain: null,
-        dailyrain: null,
-        weeklyrain: null,
-        monthlyrain: null,
-        totalrain: null,
-        minuterain: null,
-      };
-      return init;
-    };
-
     const sum = (value: IStationData[]) => {
-      const total: IStationData = initWithZeros();
+      const total: IStationData = this.initWithZeros();
 
       for (const item of value) {
-        total.timestamp = item.timestamp;
-        total.tempin += item.tempin;
-        total.humidityin += item.humidityin;
-        total.temp += item.temp;
-        total.humidity += item.humidity;
-        total.pressurerel += item.pressurerel;
-        // total.pressureabs += item.pressureabs;
-        total.windgust += item.windgust;
-        total.windspeed += item.windspeed;
-        //        init.winddir += item.winddir;
-        total.solarradiation += item.solarradiation;
-        total.uv += item.uv;
-        total.rainrate += item.rainrate;
-        total.maxdailygust = item.maxdailygust;
-        total.eventrain = item.eventrain;
-        total.hourlyrain = item.hourlyrain;
-        total.dailyrain = item.dailyrain;
-        total.weeklyrain = item.weeklyrain;
-        total.monthlyrain = item.monthlyrain;
-        total.totalrain = item.totalrain;
-        total.place = item.place;
+        if (total.timestamp != null) total.timestamp = item.timestamp;
+        if (total.tempin != null) total.tempin += item.tempin;
+        if (total.humidityin != null) total.humidityin += item.humidityin;
+        if (total.temp != null) total.temp += item.temp;
+        if (total.humidity != null) total.humidity += item.humidity;
+        if (total.pressurerel != null) total.pressurerel += item.pressurerel;
+        if (total.pressureabs != null) total.pressureabs += item.pressureabs;
+        if (total.windgust != null) total.windgust += item.windgust;
+        if (total.windspeed != null) total.windspeed += item.windspeed;
+        if (total.solarradiation != null)
+          total.solarradiation += item.solarradiation;
+        if (total.uv != null) total.uv += item.uv;
+        if (total.rainrate != null) total.rainrate += item.rainrate;
+        if (total.maxdailygust != null) total.maxdailygust = item.maxdailygust;
+        if (total.eventrain != null) total.eventrain = item.eventrain;
+        if (total.hourlyrain != null) total.hourlyrain = item.hourlyrain;
+        if (total.dailyrain != null) total.dailyrain = item.dailyrain;
+        if (total.weeklyrain != null) total.weeklyrain = item.weeklyrain;
+        if (total.monthlyrain != null) total.monthlyrain = item.monthlyrain;
+        if (total.totalrain != null) total.totalrain = item.totalrain;
+        if (total.place != null) total.place = item.place;
       }
       return total;
     };
 
     const average = (total: IStationData, count: number) => {
       const avg = total;
-      avg.tempin = round(total.tempin / count, 1);
-      avg.temp = round(total.temp / count, 1);
-      avg.pressurerel = round(total.pressurerel / count, 1);
-      // avg.pressureabs = round(total.pressureabs / count, 1);
-      avg.windgust = round(total.windgust / count, 1);
-      avg.windspeed = round(total.windspeed / count, 1);
-      avg.rainrate = round(total.rainrate / count, 1);
-      avg.solarradiation = round(total.solarradiation / count, 0);
-      avg.uv = round(total.uv / count, 0);
-      avg.humidityin = round(total.humidityin / count, 0);
-      avg.humidity = round(total.humidity / count, 0);
-      avg.winddir = round(total.winddir / count, 0);
+      if (total.tempin != null) avg.tempin = round(total.tempin / count, 1);
+      if (total.temp != null) avg.temp = round(total.temp / count, 1);
+      if (total.pressurerel != null)
+        avg.pressurerel = round(total.pressurerel / count, 1);
+      if (total.pressureabs != null)
+        avg.pressureabs = round(total.pressureabs / count, 1);
+      if (total.windgust != null)
+        avg.windgust = round(total.windgust / count, 1);
+      if (total.windspeed != null)
+        avg.windspeed = round(total.windspeed / count, 1);
+      if (total.rainrate != null)
+        avg.rainrate = round(total.rainrate / count, 1);
+      if (total.solarradiation != null)
+        avg.solarradiation = round(total.solarradiation / count, 0);
+      if (total.uv != null) avg.uv = round(total.uv / count, 0);
+      if (total.humidityin != null)
+        avg.humidityin = round(total.humidityin / count, 0);
+      if (total.humidity != null)
+        avg.humidity = round(total.humidity / count, 0);
+      if (total.winddir != null) avg.winddir = round(total.winddir / count, 0);
       return avg;
     };
 

@@ -10,6 +10,7 @@ class StationData {
     humidityin: [],
     temp: [],
     humidity: [],
+    pressureabs: [],
     pressurerel: [],
     windgust: [],
     windspeed: [],

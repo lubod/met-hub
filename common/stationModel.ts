@@ -25,6 +25,7 @@ export interface IStationData {
   monthlyrain: number;
   totalrain: number;
   minuterain: number;
+  dewpt: number;
 }
 
 export interface IStationGarni1025ArcusDataRaw {
@@ -84,6 +85,7 @@ export interface IStationTrendData {
   temp: Array<number>;
   humidity: Array<number>;
   pressurerel: Array<number>;
+  pressureabs: Array<number>;
   windgust: Array<number>;
   windspeed: Array<number>;
   winddir: Array<number>;
@@ -101,7 +103,7 @@ export class STATION_MEASUREMENTS_DESC {
     range: 1.6,
     couldBeNegative: true,
     table: "station",
-    label: "Temperature",
+    label: "Temp",
     col2: "",
     chartType: "",
     color: MY_COLORS.orange,
@@ -192,7 +194,7 @@ export class STATION_MEASUREMENTS_DESC {
     range: 1,
     couldBeNegative: false,
     table: "station",
-    label: "Rain rate",
+    label: "Rain",
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
@@ -296,7 +298,7 @@ export class STATION_MEASUREMENTS_DESC {
     range: 5,
     couldBeNegative: false,
     table: "station",
-    label: "Wind speed",
+    label: "Speed",
     col2: "",
     chartType: "",
     color: MY_COLORS.purple,
@@ -309,7 +311,7 @@ export class STATION_MEASUREMENTS_DESC {
     range: 5,
     couldBeNegative: false,
     table: "station",
-    label: "Wind gust",
+    label: "Gust",
     col2: "",
     chartType: "",
     color: MY_COLORS.purple,
@@ -322,7 +324,7 @@ export class STATION_MEASUREMENTS_DESC {
     range: 5,
     couldBeNegative: false,
     table: "station",
-    label: "Daily gust",
+    label: "Daily",
     col2: "",
     chartType: "",
     color: MY_COLORS.purple,

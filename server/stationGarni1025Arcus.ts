@@ -5,6 +5,35 @@ import {
 import StationCommon from "./stationCommon";
 
 export default class StationGarni1025Arcus extends StationCommon {
+  initWithZeros(): IStationData {
+    const init: IStationData = {
+      tempin: 0,
+      temp: 0,
+      pressurerel: null,
+      pressureabs: 0,
+      windgust: 0,
+      windspeed: 0,
+      rainrate: 0,
+      solarradiation: 0,
+      uv: 0,
+      humidityin: 0,
+      humidity: 0,
+      winddir: 0,
+      timestamp: new Date(0),
+      place: "",
+      maxdailygust: null,
+      eventrain: null,
+      hourlyrain: null,
+      dailyrain: 0,
+      weeklyrain: null,
+      monthlyrain: null,
+      totalrain: null,
+      minuterain: null,
+      dewpt: 0,
+    };
+    return init;
+  }
+
   /*
      {
    ID: '',
@@ -43,8 +72,8 @@ export default class StationGarni1025Arcus extends StationCommon {
     const decoded: IStationData = {
       timestamp: new Date(),
       tempin: round((5 / 9) * (data.indoortempf - 32), 1),
-      pressurerel: round(data.baromin * TO_HPA, 1),
-      pressureabs: null,
+      pressureabs: round(data.baromin * TO_HPA, 1),
+      pressurerel: null,
       temp: round((5 / 9) * (data.tempf - 32), 1),
       windspeed: round(data.windspeedmph * TO_KM, 1),
       windgust: round(data.windgustmph * TO_KM, 1),
@@ -63,6 +92,7 @@ export default class StationGarni1025Arcus extends StationCommon {
       winddir: round(data.winddir * 1.0, 0),
       place: "Demanovska Dolina",
       minuterain: null,
+      dewpt: round((5 / 9) * (data.dewptf - 32), 1),
     };
     const date = new Date(decoded.timestamp);
     const toStore = decoded;

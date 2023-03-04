@@ -135,11 +135,11 @@ const Station = observer(({ appContext }: Props) => {
             value={
               appContext.stationCtrl.stationData.oldData
                 ? null
-                : appContext.stationCtrl.stationData.data.pressurerel
+                : appContext.stationCtrl.stationData.data.pressureabs
             }
             unit={STATION_MEASUREMENTS_DESC.PRESSURE.unit}
             fix={STATION_MEASUREMENTS_DESC.PRESSURE.fix}
-            data={appContext.stationCtrl.stationData.trendData.pressurerel}
+            data={appContext.stationCtrl.stationData.trendData.pressureabs}
             range={STATION_MEASUREMENTS_DESC.PRESSURE.range}
             couldBeNegative={STATION_MEASUREMENTS_DESC.PRESSURE.couldBeNegative}
             onClick={() =>
@@ -251,7 +251,7 @@ const Station = observer(({ appContext }: Props) => {
               <Form.Check
                 type="switch"
                 id="custom-switch"
-                label="Fix / Floating data"
+                label="Fix / Floating"
                 checked={appContext.stationCtrl.stationData.floatingRainData}
                 onChange={(e) => {
                   appContext.stationCtrl.stationData.setFloatingRainData(

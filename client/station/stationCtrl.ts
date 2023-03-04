@@ -121,6 +121,7 @@ class StationCtrl implements IController {
       temp: [],
       humidity: [],
       pressurerel: [],
+      pressureabs: [],
       windgust: [],
       windspeed: [],
       winddir: [],

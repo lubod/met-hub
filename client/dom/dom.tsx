@@ -84,7 +84,7 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Row>
           <Col xs={4}>
             <DataWithTrend
-              label="Temperature"
+              label="Temp"
               value={
                 appContext.domCtrl.domData.oldData
                   ? null
@@ -143,7 +143,7 @@ const Dom = observer(({ appContext }: DomProps) => {
           </Col>
         </Row>
         <Myhr />
-        <Row className="text-left text-primary font-weight-bold">
+        <Row className="text-left text-white-50 font-weight-bold">
           <Col xs={3}>Air</Col>
           <Col xs={3}>Floor</Col>
           <Col xs={3}>Req</Col>

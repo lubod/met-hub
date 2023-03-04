@@ -115,7 +115,7 @@ export class DOM_MEASUREMENTS_DESC {
     range: 1.6,
     couldBeNegative: true,
     table: "vonku",
-    label: "Temperature",
+    label: "Temp",
     col2: "",
     chartType: "",
     color: MY_COLORS.orange,
@@ -149,7 +149,7 @@ export class DOM_MEASUREMENTS_DESC {
 
   static ROOM: IMeasurementDesc = {
     col: "temp",
-    unit: "°C",
+    unit: "",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,

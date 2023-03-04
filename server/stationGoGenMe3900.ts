@@ -5,6 +5,35 @@ import {
 import StationCommon from "./stationCommon";
 
 class StationGoGenMe3900 extends StationCommon {
+  initWithZeros(): IStationData {
+    const init: IStationData = {
+      tempin: 0,
+      temp: 0,
+      pressurerel: 0,
+      pressureabs: 0,
+      windgust: 0,
+      windspeed: 0,
+      rainrate: 0,
+      solarradiation: 0,
+      uv: 0,
+      humidityin: 0,
+      humidity: 0,
+      winddir: 0,
+      timestamp: new Date(0),
+      place: "",
+      maxdailygust: 0,
+      eventrain: 0,
+      hourlyrain: 0,
+      dailyrain: 0,
+      weeklyrain: 0,
+      monthlyrain: 0,
+      totalrain: 0,
+      minuterain: null,
+      dewpt: null,
+    };
+    return init;
+  }
+
   /*
 curl --header "Content-Type: application/json" --request POST --data \
 '{ "PASSKEY": "",
@@ -69,6 +98,7 @@ curl --header "Content-Type: application/json" --request POST --data \
       winddir: round(data.winddir * 1.0, 0),
       place: "Marianka",
       minuterain: null,
+      dewpt: null,
     };
     const date = new Date(decoded.timestamp);
     const toStore = decoded;

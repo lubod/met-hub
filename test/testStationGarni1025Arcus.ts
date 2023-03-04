@@ -187,6 +187,7 @@ function getClientStationData(data: IStationData) {
     monthlyrain: data.monthlyrain,
     totalrain: data.totalrain,
     minuterain: data.minuterain,
+    dewpt: data.dewpt,
   };
   return csd;
 }
@@ -226,7 +227,8 @@ function main(STATION_ID: string, PASSKEY: string) {
     dailyrain: decoded.dailyrain.toFixed(1),
     humidity: decoded.humidity.toFixed(0),
     humidityin: decoded.humidityin.toFixed(0),
-    pressurerel: decoded.pressurerel.toFixed(1),
+    pressureabs: decoded.pressureabs.toFixed(1),
+    pressurerel: decoded.pressurerel,
     rainrate: decoded.rainrate.toFixed(1),
     solarradiation: decoded.solarradiation.toFixed(1),
     temp: decoded.temp.toFixed(1),
@@ -242,7 +244,6 @@ function main(STATION_ID: string, PASSKEY: string) {
     hourlyrain: decoded.hourlyrain,
     weeklyrain: decoded.weeklyrain,
     monthlyrain: decoded.monthlyrain,
-    pressureabs: decoded.pressureabs,
   };
 
   const socket = new MySocket();

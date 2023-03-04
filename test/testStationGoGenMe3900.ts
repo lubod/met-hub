@@ -203,6 +203,7 @@ function getClientStationData(data: IStationData) {
     monthlyrain: data.monthlyrain,
     totalrain: data.totalrain,
     minuterain: data.minuterain,
+    dewpt: data.dewpt,
   };
   return csd;
 }
