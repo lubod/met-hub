@@ -149,8 +149,8 @@ export class STATION_MEASUREMENTS_DESC {
   };
 
   static PRESSURE: IMeasurementDesc = {
-    col: "pressurerel",
-    unit: "hPa",
+    col: "pressureabs",
+    unit: "hP",
     fix: 1,
     range: 1,
     couldBeNegative: false,

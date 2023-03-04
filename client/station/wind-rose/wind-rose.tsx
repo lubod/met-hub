@@ -74,7 +74,7 @@ const WindRose = observer(
       return d;
     }
     // console.info('render windrose', props);
-    const width = 220;
+    const width = 200;
     const height = width;
     const offset = 30;
     const radius = width / 2 - offset;
@@ -97,7 +97,7 @@ const WindRose = observer(
 
     return (
       <Row>
-        <Col xs={8}>
+        <Col xs={8} className="mt-3">
           <div
             style={{ cursor: "pointer" }}
             onClick={() =>
@@ -106,7 +106,7 @@ const WindRose = observer(
               )
             }
           >
-            <svg width="220px" height="220px">
+            <svg width="200px" height="200px">
               <circle
                 cx={width / 2}
                 cy={height / 2}
