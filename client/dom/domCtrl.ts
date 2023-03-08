@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-import { BsPrefixProps } from "react-bootstrap/esm/helpers";
 import { DomCfg, IDomData, IDomTrendData } from "../../common/domModel";
 import AuthData from "../auth/authData";
 import DomData from "./domData";
