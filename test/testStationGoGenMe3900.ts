@@ -264,8 +264,8 @@ function main(STATION_ID: string, PASSKEY: string) {
     windspeed: decoded.windspeed.toFixed(1),
   };
 
-  const socket = new MySocket();
-  const stationCtrl = new StationCtrl(socket, STATION_ID, null); // todo
+  const socket = new MySocket(true);
+  const stationCtrl = new StationCtrl(socket, STATION_ID, null, true); // todo
   stationCtrl.start();
 
   postData(data1);

@@ -1,1 +1,1 @@
-ENV=dev node dist/test/testStationGoGenMe3900.js 
+ENV=dev node esdist/test/testStationGoGenMe3900.js 

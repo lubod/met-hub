@@ -471,8 +471,8 @@ function main(PASSKEY: string) {
 
   console.info("Now, Timestamp, Redis, pgtime, Pg", d, data1.dateutc, pgtime);
 
-  const socket = new MySocket();
-  const domCtrl = new DomCtrl(socket, new AuthData());
+  const socket = new MySocket(true);
+  const domCtrl = new DomCtrl(socket, new AuthData(), true); // todo
   domCtrl.start();
   postData(data1);
 

@@ -5,8 +5,6 @@ import StationData from "./stationData";
 import { IController } from "../../common/controller";
 import { StationCfg } from "../../common/stationCfg";
 
-const ENV = process.env.ENV || "";
-
 class StationCtrl implements IController {
   stationData: StationData;
 
@@ -18,6 +16,8 @@ class StationCtrl implements IController {
 
   stationCfg: StationCfg;
 
+  test: boolean;
+
   listener = (data: IStationData) => {
     this.stationData.processData(data);
   };
@@ -26,11 +26,17 @@ class StationCtrl implements IController {
     this.stationData.processTrendData(data);
   };
 
-  constructor(socket: any, stationID: string, authData: AuthData) {
+  constructor(
+    socket: any,
+    stationID: string,
+    authData: AuthData,
+    test: boolean = false
+  ) {
     this.stationData = new StationData(stationID);
     this.socket = socket;
     this.authData = authData;
     this.stationCfg = new StationCfg(stationID);
+    this.test = test;
   }
 
   setStation(stationID: string) {
@@ -87,7 +93,7 @@ class StationCtrl implements IController {
 
     let url = `/api/getLastData/station/${this.stationCfg.STATION_ID}`;
 
-    if (ENV === "dev") {
+    if (this.test) {
       // test needs this
       url = `http://localhost:18080/api/getLastData/station/${this.stationCfg.STATION_ID}`;
       console.info(url);
@@ -131,10 +137,10 @@ class StationCtrl implements IController {
     } as IStationTrendData;
     let url = `/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
 
-    if (ENV === "dev") {
-      // test needs this
-      url = `http://localhost:18080/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
-      console.info(url);
+    if (this.test) {
+    // test needs this
+     url = `http://localhost:18080/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
+     console.info(url);
     }
 
     try {

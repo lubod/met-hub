@@ -1,1 +1,1 @@
-ENV=dev node dist/test/testStationGarni1025Arcus.js 
+ENV=dev node esdist/test/testStationGarni1025Arcus.js 

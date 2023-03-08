@@ -8,8 +8,6 @@ import {
 import AuthData from "../auth/authData";
 import ChartsData, { CData } from "./chartsData";
 
-// const ENV = process.env.ENV || "";
-
 class ChartsCtrl {
   chartsData: ChartsData;
 

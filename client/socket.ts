@@ -1,18 +1,16 @@
 import socketIOClient from "socket.io-client";
 
-const ENV = process.env.ENV || "";
-
 export default class Socket {
   socket: any;
 
-  constructor() {
+  constructor(test:boolean = false) {
     let url = "/";
 
-    if (ENV === "dev") {
+    if (test) {
       url = "http://localhost:18080/";
     }
     this.socket = socketIOClient(url);
-    console.info("socket");
+    console.info("socket", url);
   }
 
   getSocket() {

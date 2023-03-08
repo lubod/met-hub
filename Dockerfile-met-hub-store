@@ -2,5 +2,5 @@ FROM node:16-alpine AS met-hub-store
 WORKDIR /app
 COPY ./package*.json /app/
 RUN npm install
-COPY dist/be/store.js /app/
+COPY esdist/be/store.js /app/
 CMD ["node", "/app/store.js"]

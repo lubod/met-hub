@@ -8,14 +8,12 @@ export class AllStationsCfgClient {
   static array: Array<IStation> = [];
 
   static async fetchAllStationsCfg() {
-    let url = `/api/getAllStationsCfg`;
-    const ENV = process.env.ENV || "";
-
-    if (ENV === "dev") {
-      // test needs this
-      url = `http://localhost:18080/api/getAllStationsCfg`;
-      console.info(url);
-    }
+    const url = `/api/getAllStationsCfg`;
+    // if (ENV !== "dev") {
+    // test needs this
+    // url = `http://localhost:18080/api/getAllStationsCfg`;
+    // console.info(url);
+    // }
 
     try {
       const response = await fetch(url, {

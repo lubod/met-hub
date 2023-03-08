@@ -1,9 +1,8 @@
 import fetch from "node-fetch";
+import { BsPrefixProps } from "react-bootstrap/esm/helpers";
 import { DomCfg, IDomData, IDomTrendData } from "../../common/domModel";
 import AuthData from "../auth/authData";
 import DomData from "./domData";
-
-const ENV = process.env.ENV || "";
 
 class DomCtrl {
   domData: DomData;
@@ -16,6 +15,8 @@ class DomCtrl {
 
   authData: AuthData;
 
+  test: boolean;
+
   listener = (data: IDomData) => {
     this.domData.processData(data);
   };
@@ -24,11 +25,12 @@ class DomCtrl {
     this.domData.processTrendData(data);
   };
 
-  constructor(mySocket: any, authData: AuthData) {
+  constructor(mySocket: any, authData: AuthData, test:boolean = false) {
     this.domData = new DomData();
     this.domCfg = new DomCfg();
     this.socket = mySocket;
     this.authData = authData;
+    this.test = test;
   }
 
   start() {
@@ -69,7 +71,7 @@ class DomCtrl {
   async fetchData() {
     this.domData.data = { timestamp: null } as IDomData;
     let url = "/api/getLastData/dom";
-    if (ENV === "dev") {
+    if (this.test) {
       url = "http://localhost:18080/api/getLastData/dom";
       console.info(url);
     }
@@ -112,7 +114,7 @@ class DomCtrl {
       petra_podlaha: [],
     } as IDomTrendData;
     let url = "/api/getTrendData/dom";
-    if (ENV === "dev") {
+    if (this.test) {
       url = "http://localhost:18080/api/getTrendData/dom";
       console.info(url);
     }
