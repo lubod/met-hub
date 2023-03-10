@@ -13,6 +13,9 @@ esbuild.build({
   external: ["pg-native"],
   target: "node16",
   minify: true,
+  define: {
+    "process.env.ENV": '"prod"',
+  },
 });
 
 esbuild.build({
@@ -24,6 +27,9 @@ esbuild.build({
   target: "es2022",
   plugins: [sassPlugin()],
   minify: true,
+  define: {
+    "process.env.ENV": '"prod"',
+  },
 });
 
 esbuild.build({
@@ -34,5 +40,7 @@ esbuild.build({
   external: ["pg-native"],
   target: "node16",
   minify: true,
+  define: {
+    "process.env.ENV": '"prod"',
+  },
 });
-

@@ -1,4 +1,4 @@
-export ENV=dev
+# export ENV=dev
 # export NODE_OPTIONS="--max-old-space-size=4096"
 # time npx prettier --write . && time npm run builddev && time sudo docker-compose -f docker-compose-local.yml build && time sudo docker-compose -f docker-compose-local.yml up
 # time npx prettier --write . && 

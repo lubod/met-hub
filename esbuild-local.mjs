@@ -13,6 +13,9 @@ esbuild.build({
   external: ["pg-native"],
   target: "node16",
   minify: false,
+  define: {
+    'process.env.ENV': '"dev"',
+  },
 });
 
 esbuild.build({
@@ -24,6 +27,9 @@ esbuild.build({
   target: "es2022",
   plugins: [sassPlugin()],
   minify: false,
+  define: {
+    'process.env.ENV': '"dev"',
+  },
 });
 
 esbuild.build({
@@ -34,6 +40,9 @@ esbuild.build({
   external: ["pg-native"],
   target: "node16",
   minify: false,
+  define: {
+    'process.env.ENV': '"dev"',
+  },
 });
 
 // let { host, port } = await ctx.serve({

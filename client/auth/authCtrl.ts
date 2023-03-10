@@ -2,7 +2,7 @@
 import axios from "axios";
 import AuthData from "./authData";
 
-const ENV = "prod";
+const ENV = process.env.ENV || "";
 
 export default class AuthCtrl {
   authData: AuthData;
