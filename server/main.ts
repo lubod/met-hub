@@ -1,6 +1,6 @@
 import express from "express";
+import { createClient } from "redis";
 import { AddressInfo } from "net";
-import cookieParser from "cookie-parser";
 import router from "./router";
 import SocketEmitter from "./socketEmitter";
 import Agregator from "./agregator";
@@ -11,7 +11,11 @@ const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 
-export class AppError {
+const redisClient = createClient();
+redisClient.on("error", (err) => console.log("Redis Client Error", err));
+redisClient.connect();
+
+export class AppError extends Error {
   code: number;
 
   msg: string;
@@ -19,9 +23,12 @@ export class AppError {
   stack: string;
 
   constructor(code: number, msg: string, stack?: string) {
+    super(msg);
     this.code = code;
     this.msg = msg;
     this.stack = stack;
+
+    Error.captureStackTrace(this, this.constructor)
   }
 }
 
@@ -46,7 +53,7 @@ app.use(
   })
 );
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.use(express.json());
 

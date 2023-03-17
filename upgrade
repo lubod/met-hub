@@ -25,4 +25,3 @@ sudo docker logs met-hub-nginx
 
 echo "prune"
 sudo docker image prune -a
-

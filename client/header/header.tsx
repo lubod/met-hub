@@ -118,15 +118,7 @@ const Header = observer(({ appContext }: Props) => {
                 variant="primary"
                 onClick={() => appContext.authCtrl.logout()}
               >
-                Logout
-              </Button>
-            )}
-            {!appContext.authCtrl.authData.isAuth && (
-              <Button
-                variant="primary"
-                onClick={() => appContext.authCtrl.login()}
-              >
-                Login
+                Logout {appContext.authCtrl.authData.profile}
               </Button>
             )}
           </Col>

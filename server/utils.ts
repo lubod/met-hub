@@ -1,15 +1,30 @@
 const jwt = require("jsonwebtoken");
 const jwkToPem = require("jwk-to-pem");
 
-const jwk = JSON.parse(process.env.JWK) || {};
-const pem = jwkToPem(jwk.keys[1]);
+const jwkCognito = JSON.parse(process.env.JWK) || {};
+const pem = jwkToPem(jwkCognito.keys[1]);
 
 const CLIENT_ID = process.env.CLIENT_ID || "";
 const USERNAME = process.env.USERNAME || "";
 
 const ENV = process.env.ENV || "";
 
-function verifyToken(token: any) {
+export function createToken(id: string) {
+  const now = Date.now();
+  const durationInSec = 60 * 60 * 24 * 7;
+  const token = jwt.sign(
+    { id, exp: Math.floor(now / 1000) + durationInSec },
+    process.env.MY_JWT_SECRET
+  );
+
+  return {
+    token,
+    duration: durationInSec * 1000,
+    expiresAt: now + durationInSec * 1000,
+  }; // todo
+}
+
+export function verifyCognitoToken(token: any) {
   if (ENV === "dev") {
     return {
       username: "test",
@@ -36,4 +51,16 @@ function verifyToken(token: any) {
   return null;
 }
 
-export default verifyToken;
+export function verifyToken(token: any) {
+  if (token) {
+    try {
+      const decodedToken = jwt.verify(token, process.env.MY_JWT_SECRET);
+      console.info(decodedToken);
+      return decodedToken.id;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  }
+  return null;
+}

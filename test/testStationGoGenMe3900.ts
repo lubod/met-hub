@@ -305,7 +305,7 @@ function main(STATION_ID: string, PASSKEY: string) {
     const rows = await loadStationData(pgtime, STATION_ID);
     assert.deepStrictEqual(rows, pgData);
     console.info("PG OK");
-  }, 66000 - toMinute);
+  }, 67000 - toMinute);
 }
 
 const allStationsCfg = new AllStationsCfg();

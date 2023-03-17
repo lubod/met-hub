@@ -1,6 +1,7 @@
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { observer } from "mobx-react";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import Protected from "./protected";
 import Station from "./station/station";
 import Header from "./header/header";
@@ -8,6 +9,26 @@ import { AppContext } from ".";
 import Forecast from "./forecast/forecast";
 import { Myhr } from "./misc/myhr";
 import { MyContainer } from "./misc/mycontainer";
+import AuthCtrl from "./auth/authCtrl";
+
+async function handleLogin(
+  response: CredentialResponse,
+  authCtrl: AuthCtrl
+) {
+  // console.info("google login", response);
+  const res = await fetch("/api/googleLogin", {
+    method: "POST",
+    body: JSON.stringify({
+      token: response.credential,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const data = await res.json();
+  // console.info(data); // todo
+  authCtrl.authData.setAuth(`${data.given_name.charAt(0)}${data.family_name.charAt(0)}`, data.expiresAt, data.token, null, data.duration );
+}
 
 type HomePageProps = {
   appContext: AppContext;
@@ -49,6 +70,15 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
                     Arcus
                   </p>
                   <p>Login to see more stations and historical data</p>
+                  <GoogleLogin
+                    onSuccess={(credentialResponse) => {
+                      handleLogin(credentialResponse, appContext.authCtrl);
+                    }}
+                    onError={() => {
+                      console.log("Login Failed");
+                    }}
+                    theme="filled_blue"
+                  />
                   <Myhr />
                   <p>- v23 -</p>
                 </MyContainer>

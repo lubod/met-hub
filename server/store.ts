@@ -39,14 +39,14 @@ async function store(
       const queryText = measurement.getQueryText(table);
       // console.info(queryText);
       const queryArray = measurement.getQueryArray(table, data);
-      // console.info(queryArray);
+      //  console.info(queryArray);
       client.query(queryText, queryArray);
-      console.info(data.timestamp, queryText);
+      // console.info(data.timestamp, queryText);
     }
     await client.query("COMMIT");
   } catch (e) {
     await client.query("ROLLBACK");
-    throw e;
+    console.error(e);
   } finally {
     client.release();
     console.info("released");

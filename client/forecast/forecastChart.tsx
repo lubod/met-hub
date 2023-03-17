@@ -109,13 +109,13 @@ const ForecastChart = observer(
               }}
             >
               <Line
-                type="step"
-                dataKey="rain"
-                stroke={MY_COLORS.blue}
+                type="monotoneX"
+                dataKey="clouds"
+                stroke={MY_COLORS.light}
                 dot={false}
                 strokeWidth={2}
                 isAnimationActive={false}
-                yAxisId="rain"
+                yAxisId="clouds"
               />
               <Line
                 type="monotoneX"
@@ -127,13 +127,13 @@ const ForecastChart = observer(
                 yAxisId="wind_speed"
               />
               <Line
-                type="monotoneX"
-                dataKey="clouds"
-                stroke={MY_COLORS.light}
+                type="step"
+                dataKey="rain"
+                stroke={MY_COLORS.blue}
                 dot={false}
                 strokeWidth={2}
                 isAnimationActive={false}
-                yAxisId="clouds"
+                yAxisId="rain"
               />
               <XAxis
                 dataKey="timestamp"

@@ -2,6 +2,7 @@
 /* eslint-disable import/no-import-module-exports */
 import React from "react";
 import ReactDOM from "react-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import AuthCtrl from "./auth/authCtrl";
 import MySocket from "./socket";
 import StationCtrl from "./station/stationCtrl";
@@ -93,7 +94,9 @@ function render() {
   const appContainer = document.getElementById("app");
   ReactDOM.render(
     <div className="App">
-      <App appContext={appContext} />
+      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+        <App appContext={appContext} />
+      </GoogleOAuthProvider>
     </div>,
     appContainer
   );
