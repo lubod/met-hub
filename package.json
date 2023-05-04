@@ -111,7 +111,7 @@
     "react-transition-group": "^4.4.5",
     "recharts": "^2.1.14",
     "redis": "^4.6.5",
-    "socket.io": "^4.5.2",
+    "socket.io": "^4.6.1",
     "socket.io-client": "^4.5.2",
     "styled-components": "^5.3.6",
     "xml-js": "^1.6.11"
