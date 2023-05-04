@@ -7,7 +7,7 @@ export class AllStationsCfgClient {
 
   static array: Array<IStation> = [];
 
-  static async fetchAllStationsCfg() {
+  static async fetchAllStationsCfg():Promise<IStation[]> {
     const url = `/api/getAllStationsCfg`;
     // if (ENV !== "dev") {
     // test needs this
@@ -18,7 +18,7 @@ export class AllStationsCfgClient {
     try {
       const response = await fetch(url, {
         headers: {
-          // Authorization: `Bearer ${props.auth.getToken()}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -28,15 +28,17 @@ export class AllStationsCfgClient {
       }
 
       const cfg = await response.json();
-      console.info(cfg);
+      // console.info(cfg);
 
       for (const station of cfg) {
         AllStationsCfgClient.map.set(station.id, station);
       }
       AllStationsCfgClient.array = cfg;
+      return cfg;
     } catch (e) {
       console.error(e);
     }
+    return null;
   }
 
   static getStations() {

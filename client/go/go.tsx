@@ -32,7 +32,7 @@ const Go = observer(({ appContext }: Props) => {
       // this.forecastData.setLoading(true);
       const response = await fetch(url, {
         headers: {
-          // Authorization: `Bearer ${this.authData.access_token}`,
+          "Content-Type": "application/json",
         },
       });
 

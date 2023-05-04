@@ -6,29 +6,29 @@ import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
 import { isMobile } from "react-device-detect";
 import { AppContext } from "..";
 import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
-import { DOM_MEASUREMENTS, DOM_MEASUREMENTS_DESC } from "../../common/domModel";
-import {
-  STATION_MEASUREMENTS,
-  STATION_MEASUREMENTS_DESC,
-} from "../../common/stationModel";
 import { MyContainer } from "../misc/mycontainer";
 import Text from "../misc/text";
+import { IStation } from "../../common/allStationsCfg";
 
 type Props = {
   appContext: AppContext;
 };
 
 const Header = observer(({ appContext }: Props) => {
-  let { place } = AllStationsCfgClient.getStationByID(
-    appContext.headerCtrl.headerData.stationID
-  );
+  console.info("Header render");
+  const station: IStation = appContext.headerCtrl.headerData.currentStation;
 
-  if (place.length > 8 && isMobile) {
-    place = `${place.substring(0, 7)}~`;
-  }
+  let place: string = "";
+  if (station != null) {
+    place = station.place;
 
-  if (place.length > 60) {
-    place = `${place.substring(0, 59)}~`;
+    if (place.length > 8 && isMobile) {
+      place = `${place.substring(0, 7)}~`;
+    }
+
+    if (place.length > 60) {
+      place = `${place.substring(0, 59)}~`;
+    }
   }
 
   return (
@@ -43,71 +43,28 @@ const Header = observer(({ appContext }: Props) => {
           />
         </Col>
         <Col xs={4}>
-          {appContext.headerCtrl.headerData.isExternalID === false && (
-            <DropdownButton
-              id="dropdown-place-button"
-              title={place}
-              onSelect={(stationID) => {
-                console.info("stationID", stationID);
-                localStorage.setItem("lastStationID", stationID);
-                appContext.headerCtrl.headerData.setStationID(stationID);
-                if (appContext.headerCtrl.headerData.stationID === "dom") {
-                  appContext.chartsCtrl.chartsData.setMeasurements(
-                    DOM_MEASUREMENTS
-                  );
-                  appContext.chartsCtrl.chartsData.setMeasurementObject(
-                    DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR
-                  );
-                  appContext.stationCtrl.stop();
-                  appContext.domCtrl.start();
-                } else {
-                  // todo
-                  appContext.chartsCtrl.chartsData.setMeasurements(
-                    STATION_MEASUREMENTS
-                  );
-                  appContext.chartsCtrl.chartsData.setMeasurementObject(
-                    STATION_MEASUREMENTS_DESC.TEMPERATURE
-                  );
-                  appContext.domCtrl.stop();
-                  appContext.stationCtrl.setStation(stationID);
-                }
-
-                appContext.chartsCtrl.chartsData.setStationID(
-                  stationID,
-                  AllStationsCfgClient.getStationByID(stationID).lat,
-                  AllStationsCfgClient.getStationByID(stationID).lon
-                );
-                appContext.chartsCtrl.reload();
-
-                appContext.forecastCtrl.forecastData.setStationID(
-                  stationID,
-                  AllStationsCfgClient.getStationByID(stationID).lat,
-                  AllStationsCfgClient.getStationByID(stationID).lon
-                );
-                appContext.forecastCtrl.fetchData(); // TODO
-                appContext.forecastCtrl.fetchAstronomicalData(new Date());
-              }}
-            >
-              {[...AllStationsCfgClient.getStations().entries()]
-                .filter(
-                  ([key, value]) =>
-                    key != null &&
-                    (value.public ||
-                      (!value.public && appContext.authCtrl.authData.isAuth))
-                )
-                .map(([fkey, fvalue]) => (
-                  <Dropdown.Item eventKey={fkey}>{fvalue.place}</Dropdown.Item>
+          {appContext.headerCtrl.headerData.isExternalID === false &&
+            appContext.headerCtrl.headerData.allStations != null && (
+              <DropdownButton
+                id="dropdown-place-button"
+                title={place}
+                onSelect={(stationID) => {
+                  const selectedStation =
+                    AllStationsCfgClient.getStationByID(stationID);
+                  appContext.setStation(selectedStation);
+                }}
+              >
+                {appContext.headerCtrl.headerData.allStations.map((s) => (
+                  <Dropdown.Item key={s.id} eventKey={s.id}>
+                    {s.place}
+                  </Dropdown.Item>
                 ))}
-            </DropdownButton>
-          )}
+              </DropdownButton>
+            )}
           {appContext.headerCtrl.headerData.isExternalID === true && (
             <Text
               name=""
-              value={
-                AllStationsCfgClient.getStationByID(
-                  appContext.headerCtrl.headerData.stationID
-                ).place
-              }
+              value={appContext.headerCtrl.headerData.currentStation.place}
             />
           )}
         </Col>
@@ -118,7 +75,8 @@ const Header = observer(({ appContext }: Props) => {
                 variant="primary"
                 onClick={() => appContext.authCtrl.logout()}
               >
-                Logout {appContext.authCtrl.authData.profile}
+                {appContext.authCtrl.authData.given_name.charAt(0) +
+                  appContext.authCtrl.authData.family_name.charAt(0)}
               </Button>
             )}
           </Col>

@@ -1,22 +1,29 @@
 import { action, makeObservable, observable } from "mobx";
+import { IStation } from "../../common/allStationsCfg";
 
 export default class HeaderData {
   ctime: Date = new Date();
 
-  stationID: string = null;
+  currentStation: IStation = null;
 
   isExternalID: boolean = false;
 
-  constructor(defaultStationID: string, isExternalID: boolean) {
+  allStations: Array<IStation> = null;
+
+  constructor() {
     makeObservable(this, {
       ctime: observable,
-      stationID: observable,
+      currentStation: observable,
       isExternalID: observable,
+      allStations: observable,
       setTime: action,
-      setStationID: action,
+      setStation: action,
+      setAllStations: action,
     });
-    this.stationID = defaultStationID;
-    this.isExternalID = isExternalID;
+  }
+
+  setAllStations(allStations: Array<IStation>) {
+    this.allStations = allStations;
   }
 
   setTime(newTime: Date) {
@@ -27,7 +34,7 @@ export default class HeaderData {
     this.isExternalID = isExternalID;
   }
 
-  setStationID(stationID: string) {
-    this.stationID = stationID;
+  setStation(station: IStation) {
+    this.currentStation = station;
   }
 }

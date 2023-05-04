@@ -9,7 +9,7 @@ import {
   IStationGoGenMe3900DataRaw,
 } from "../common/stationModel";
 import StationGoGenMe3900 from "../server/stationGoGenMe3900";
-import { AllStationsCfg } from "../common/allStationsCfg";
+import { AllStationsCfg, IStation } from "../common/allStationsCfg";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
@@ -136,7 +136,7 @@ async function fetchStationData(STATION_ID: string) {
   try {
     const res = await fetch(url, {
       headers: {
-        Authorization: "Bearer 1",
+        "Content-Type": "application/json",
       },
     });
     if (res.status === 401) {
@@ -208,12 +208,12 @@ function getClientStationData(data: IStationData) {
   return csd;
 }
 
-function main(STATION_ID: string, PASSKEY: string) {
-  const station = new StationGoGenMe3900(STATION_ID);
+function main(station: IStation) {
+  const meas = new StationGoGenMe3900(station.id);
 
   console.info(`PG: ${PG_HOST}`);
 
-  const data1 = generateData(new Date(), PASSKEY);
+  const data1 = generateData(new Date(), station.passkey);
   const data2 = generateOffsetData(data1, 5);
   const data3 = generateOffsetData(data1, -5);
   // console.info(data1);
@@ -237,7 +237,7 @@ function main(STATION_ID: string, PASSKEY: string) {
   console.info("Now, Timestamp, Redis, pgtime, Pg", d, data2.dateutc, pgtime);
   console.info("Now, Timestamp, Redis, pgtime, Pg", d, data3.dateutc, pgtime);
 
-  const { decoded } = station.decodeData(data1);
+  const { decoded } = meas.decodeData(data1);
 
   const pgData = {
     eventrain: decoded.eventrain.toFixed(1),
@@ -265,44 +265,45 @@ function main(STATION_ID: string, PASSKEY: string) {
   };
 
   const socket = new MySocket(true);
-  const stationCtrl = new StationCtrl(socket, STATION_ID, null, true); // todo
+  const stationCtrl = new StationCtrl(socket, null, true); // todo
+  stationCtrl.setStation(station);
   stationCtrl.start();
 
   postData(data1);
   setTimeout(async () => {
-    const sd = await fetchStationData(STATION_ID);
-    assert.deepStrictEqual(sd, station.decodeData(data1).decoded);
+    const sd = await fetchStationData(station.id);
+    assert.deepStrictEqual(sd, meas.decodeData(data1).decoded);
     console.info("Redis1 OK");
     assert.deepStrictEqual(
       getClientStationData(stationCtrl.stationData.data),
-      station.decodeData(data1).decoded
+      meas.decodeData(data1).decoded
     );
     console.info("Client1 OK");
   }, 1000);
   setTimeout(() => postData(data2), 1500);
   setTimeout(async () => {
-    const sd = await fetchStationData(STATION_ID);
-    assert.deepStrictEqual(sd, station.decodeData(data2).decoded);
+    const sd = await fetchStationData(station.id);
+    assert.deepStrictEqual(sd, meas.decodeData(data2).decoded);
     console.info("Redis2 OK");
     assert.deepStrictEqual(
       getClientStationData(stationCtrl.stationData.data),
-      station.decodeData(data2).decoded
+      meas.decodeData(data2).decoded
     );
     console.info("Client2 OK");
   }, 2000);
   setTimeout(() => postData(data3), 2500);
   setTimeout(async () => {
-    const sd = await fetchStationData(STATION_ID);
-    assert.deepStrictEqual(sd, station.decodeData(data3).decoded);
+    const sd = await fetchStationData(station.id);
+    assert.deepStrictEqual(sd, meas.decodeData(data3).decoded);
     console.info("Redis3 OK");
     assert.deepStrictEqual(
       getClientStationData(stationCtrl.stationData.data),
-      station.decodeData(data3).decoded
+      meas.decodeData(data3).decoded
     );
     console.info("Client3 OK");
   }, 3000);
   setTimeout(async () => {
-    const rows = await loadStationData(pgtime, STATION_ID);
+    const rows = await loadStationData(pgtime, station.id);
     assert.deepStrictEqual(rows, pgData);
     console.info("PG OK");
   }, 67000 - toMinute);
@@ -311,6 +312,6 @@ function main(STATION_ID: string, PASSKEY: string) {
 const allStationsCfg = new AllStationsCfg();
 allStationsCfg.readCfg().then(() => {
   const STATION_ID = allStationsCfg.getDefaultStationID(); // todo
-  const PASSKEY = allStationsCfg.getStationByID(STATION_ID).passkey;
-  main(STATION_ID, PASSKEY);
+  const station = allStationsCfg.getStationByID(STATION_ID);
+  main(station);
 });

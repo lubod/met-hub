@@ -16,41 +16,45 @@ const Trend = observer(({ data, range, couldBeNegative, color }: TrendData) => {
   let min: number = null;
   let avg: number = null;
   let sum: number = null;
+  let domainMin = null;
+  let domainMax = null;
 
   function round(value: number, precision: number) {
     const multiplier = 10 ** (precision || 0);
     return Math.round(value * multiplier) / multiplier;
   }
 
-  for (let i = 0; i < data.length; i += 1) {
-    if (i === 0) {
-      // eslint-disable-next-line no-multi-assign
-      max = min = sum = data[i];
-    } else {
-      if (data[i] > max) {
-        max = data[i];
-      }
-      if (data[i] < min) {
-        min = data[i];
-      }
-      sum += data[i];
-    }
-  }
-  avg = sum / data.length;
-  let domainMin = round(avg - range / 2, 1);
-  let domainMax = round(avg + range / 2, 1);
-  if (max - min > range) {
-    domainMin = min;
-    domainMax = max;
-  }
-
-  if (domainMin < 0 && couldBeNegative === false) {
-    domainMin = 0;
-  }
-
   const chdata = [];
-  for (let i = 0; i < data.length; i += 1) {
-    chdata.push({ minute: i, value: data[i] });
+  if (data != null) {
+    for (let i = 0; i < data.length; i += 1) {
+      if (i === 0) {
+        // eslint-disable-next-line no-multi-assign
+        max = min = sum = data[i];
+      } else {
+        if (data[i] > max) {
+          max = data[i];
+        }
+        if (data[i] < min) {
+          min = data[i];
+        }
+        sum += data[i];
+      }
+    }
+    avg = sum / data.length;
+    domainMin = round(avg - range / 2, 1);
+    domainMax = round(avg + range / 2, 1);
+    if (max - min > range) {
+      domainMin = min;
+      domainMax = max;
+    }
+
+    if (domainMin < 0 && couldBeNegative === false) {
+      domainMin = 0;
+    }
+
+    for (let i = 0; i < data.length; i += 1) {
+      chdata.push({ minute: i, value: data[i] });
+    }
   }
 
   // console.info("render trend");

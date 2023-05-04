@@ -24,7 +24,7 @@ class DomCtrl {
     this.domData.processTrendData(data);
   };
 
-  constructor(mySocket: any, authData: AuthData, test:boolean = false) {
+  constructor(mySocket: any, authData: AuthData, test: boolean = false) {
     this.domData = new DomData();
     this.domCfg = new DomCfg();
     this.socket = mySocket;
@@ -79,7 +79,7 @@ class DomCtrl {
       this.domData.setLoading(true);
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${this.authData.access_token}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -121,7 +121,7 @@ class DomCtrl {
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${this.authData.access_token}`,
+          "Content-Type": "application/json",
         },
       });
 

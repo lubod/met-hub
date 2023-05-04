@@ -1,6 +1,6 @@
-import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 import AuthData from "../auth/authData";
 import ForecastData from "./forecastData";
+import { IStation } from "../../common/allStationsCfg";
 
 export default class ForecastCtrl {
   forecastData: ForecastData;
@@ -9,12 +9,8 @@ export default class ForecastCtrl {
 
   timer: any;
 
-  constructor(stationID: string, authData: AuthData) {
-    this.forecastData = new ForecastData(
-      stationID,
-      AllStationsCfgClient.getStationByID(stationID).lat, // todo
-      AllStationsCfgClient.getStationByID(stationID).lon
-    );
+  constructor(authData: AuthData) {
+    this.forecastData = new ForecastData();
     this.authData = authData;
   }
 
@@ -27,16 +23,26 @@ export default class ForecastCtrl {
     }, 1800000);
   }
 
+  setStation(station:IStation) {
+    this.forecastData.setStation(station);
+    this.fetchData();
+    this.fetchAstronomicalData(new Date());
+  }
+
   async fetchData() {
     this.forecastData.forecast = null;
-    const url = `/api/getForecast?lat=${this.forecastData.lat}&lon=${this.forecastData.lon}`;
+    if (this.forecastData.station == null) {
+      console.info("no station -> no forecast");
+      return;
+    }
+    const url = `/api/getForecast?lat=${this.forecastData.station.lat}&lon=${this.forecastData.station.lon}`;
     console.info(url);
 
     try {
       this.forecastData.setLoading(true);
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${this.authData.access_token}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -56,15 +62,19 @@ export default class ForecastCtrl {
 
   async fetchAstronomicalData(date: Date) {
     this.forecastData.astronomicalData = null;
-    const url = `/api/getAstronomicalData?lat=${this.forecastData.lat}&lon=${
-      this.forecastData.lon
-    }&date=${date.toISOString()}`;
+    if (this.forecastData.station == null) {
+      console.info("no station -> no astronomical data");
+      return;
+    }
+    const url = `/api/getAstronomicalData?lat=${
+      this.forecastData.station.lat
+    }&lon=${this.forecastData.station.lon}&date=${date.toISOString()}`;
     console.info(url);
 
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${this.authData.access_token}`,
+          "Content-Type": "application/json",
         },
       });
 

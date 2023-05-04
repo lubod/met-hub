@@ -23,7 +23,7 @@ const Station = observer(({ appContext }: Props) => {
     "station render",
     appContext.authCtrl.authData.isAuth,
     appContext.stationCtrl.stationData.oldData,
-    appContext.headerCtrl.headerData.stationID
+    appContext.stationCtrl.stationData.station
   );
 
   return (
@@ -44,7 +44,7 @@ const Station = observer(({ appContext }: Props) => {
             <LoadImg
               rotate={
                 appContext.stationCtrl.stationData.loading ||
-                appContext.stationCtrl.stationData.oldData
+                appContext.stationCtrl.stationData.oldData 
               }
               src="icons8-refresh-25.svg"
               alt=""

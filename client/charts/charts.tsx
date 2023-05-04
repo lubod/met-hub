@@ -219,21 +219,27 @@ const Charts = observer(
       </Row>
       <Myhr />
       <Row>
-        <div>
-          <MapContainer center={[48.6776, 19.699]} zoom={6} scrollWheelZoom>
-            <TileLayer
-              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker
-              position={[chartsCtrl.chartsData.lat, chartsCtrl.chartsData.lon]}
-            >
-              <Popup>
-                {chartsCtrl.chartsData.lat}, {chartsCtrl.chartsData.lon}
-              </Popup>
-            </Marker>
-          </MapContainer>
-        </div>
+        {chartsCtrl.chartsData.station != null && (
+          <div>
+            <MapContainer center={[48.6776, 19.699]} zoom={6} scrollWheelZoom>
+              <TileLayer
+                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker
+                position={[
+                  chartsCtrl.chartsData.station.lat,
+                  chartsCtrl.chartsData.station.lon,
+                ]}
+              >
+                <Popup>
+                  {chartsCtrl.chartsData.station.lat},{" "}
+                  {chartsCtrl.chartsData.station.lon}
+                </Popup>
+              </Marker>
+            </MapContainer>
+          </div>
+        )}
       </Row>
     </MyContainer>
   )

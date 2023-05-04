@@ -83,7 +83,7 @@ const ForecastChart = observer(
       }
     }
 
-    console.info("render forecast chart", chdata);
+    console.info("render forecast chart");
     return (
       <>
         <div className="text-left small text-white-50 font-weight-bold mb-3 mt-3">

@@ -1,6 +1,8 @@
+import { IStation } from "./allStationsCfg";
+
 /* eslint-disable no-unused-vars */
 export interface IController {
-  setStation(stationID: string): any;
+  setStation(station: IStation): any;
 
   start(): any;
 

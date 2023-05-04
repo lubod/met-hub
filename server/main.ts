@@ -1,6 +1,8 @@
 import express from "express";
 import { createClient } from "redis";
 import { AddressInfo } from "net";
+import cookieParser from "cookie-parser";
+import rateLimit from "express-rate-limit";
 import router from "./router";
 import SocketEmitter from "./socketEmitter";
 import Agregator from "./agregator";
@@ -10,10 +12,18 @@ import { AllStationsCfg } from "../common/allStationsCfg";
 const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
+const helmet = require("helmet");
 
 const redisClient = createClient();
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.connect();
+
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 
 export class AppError extends Error {
   code: number;
@@ -28,7 +38,7 @@ export class AppError extends Error {
     this.msg = msg;
     this.stack = stack;
 
-    Error.captureStackTrace(this, this.constructor)
+    Error.captureStackTrace(this, this.constructor);
   }
 }
 
@@ -46,6 +56,7 @@ allStationsCfg.readCfg().then(() => {
   // go.start();
 });
 
+app.use(helmet());
 app.use(express.static(__dirname));
 app.use(
   express.urlencoded({
@@ -53,12 +64,14 @@ app.use(
   })
 );
 
-// app.use(cookieParser());
+app.use(limiter);
+
+app.use(cookieParser());
 
 app.use(express.json());
 
 app.use((req: any, res: any, next: any) => {
-  console.log("ENDPOINT:", req.path);
+  console.log("ENDPOINT:", new Date(), req.path, req.cookies, req.body, req.query, req.params);
   next();
 });
 

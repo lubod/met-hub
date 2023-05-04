@@ -4,6 +4,7 @@ import AuthData from "../auth/authData";
 import StationData from "./stationData";
 import { IController } from "../../common/controller";
 import { StationCfg } from "../../common/stationCfg";
+import { IStation } from "../../common/allStationsCfg";
 
 class StationCtrl implements IController {
   stationData: StationData;
@@ -19,36 +20,24 @@ class StationCtrl implements IController {
   test: boolean;
 
   listener = (data: IStationData) => {
-    this.stationData.processData(data);
+    this.stationData.setData(data);
   };
 
   listenerTrend = (data: IStationTrendData) => {
-    this.stationData.processTrendData(data);
+    this.stationData.setTrendData(data);
   };
 
-  constructor(
-    socket: any,
-    stationID: string,
-    authData: AuthData,
-    test: boolean = false
-  ) {
-    this.stationData = new StationData(stationID);
+  constructor(socket: any, authData: AuthData, test: boolean = false) {
     this.socket = socket;
     this.authData = authData;
-    this.stationCfg = new StationCfg(stationID);
     this.test = test;
+    this.stationData = new StationData();
   }
 
-  setStation(stationID: string) {
+  setStation(station: IStation) {
     this.stop();
-    this.stationCfg = new StationCfg(stationID);
-    this.stationData.ctime = new Date();
-    this.stationData.oldData = true;
-    this.stationData.floatingRainData = false;
-    this.stationData.raindata = null;
-    this.stationData.try = 0;
-    this.stationData.loading = true;
-    this.stationData.stationID = stationID;
+    this.stationCfg = station == null ? null : new StationCfg(station.id);
+    this.stationData.setStation(station);
     this.start();
   }
 
@@ -81,16 +70,18 @@ class StationCtrl implements IController {
   }
 
   stop() {
-    this.socket.getSocket().off(this.stationCfg.SOCKET_CHANNEL, this.listener);
-    this.socket
-      .getSocket()
-      .off(this.stationCfg.SOCKET_TREND_CHANNEL, this.listenerTrend);
+    if (this.stationCfg != null) {
+      this.socket
+        .getSocket()
+        .off(this.stationCfg.SOCKET_CHANNEL, this.listener);
+      this.socket
+        .getSocket()
+        .off(this.stationCfg.SOCKET_TREND_CHANNEL, this.listenerTrend);
+    }
     clearInterval(this.timer);
   }
 
   async fetchData() {
-    this.stationData.data = { timestamp: null } as IStationData;
-
     let url = `/api/getLastData/station/${this.stationCfg.STATION_ID}`;
 
     if (this.test) {
@@ -103,7 +94,7 @@ class StationCtrl implements IController {
       this.stationData.setLoading(true);
       const response = await fetch(url, {
         headers: {
-          // Authorization: `Bearer ${props.auth.getToken()}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -113,40 +104,27 @@ class StationCtrl implements IController {
       }
 
       const newData = await response.json();
-      this.stationData.processData(newData);
+      this.stationData.setData(newData);
+      this.stationData.setLoading(false);
     } catch (e) {
+      this.stationData.setData(null);
       console.error(e);
     }
   }
 
   async fetchTrendData() {
-    this.stationData.trendData = {
-      timestamp: [],
-      tempin: [],
-      humidityin: [],
-      temp: [],
-      humidity: [],
-      pressurerel: [],
-      pressureabs: [],
-      windgust: [],
-      windspeed: [],
-      winddir: [],
-      solarradiation: [],
-      uv: [],
-      rainrate: [],
-    } as IStationTrendData;
     let url = `/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
 
     if (this.test) {
-    // test needs this
-     url = `http://localhost:18080/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
-     console.info(url);
+      // test needs this
+      url = `http://localhost:18080/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
+      console.info(url);
     }
 
     try {
       const response = await fetch(url, {
         headers: {
-          // Authorization: `Bearer ${props.auth.getToken()}`,
+          "Content-Type": "application/json",
         },
       });
 
@@ -156,9 +134,10 @@ class StationCtrl implements IController {
       }
 
       const newData = await response.json();
-      this.stationData.processTrendData(newData);
+      this.stationData.setTrendData(newData);
       // console.info(newData);
     } catch (e) {
+      this.stationData.setTrendData(null);
       console.error(e);
     }
   }
@@ -171,7 +150,7 @@ class StationCtrl implements IController {
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${this.authData.access_token}`,
+          "Content-Type": "application/json",
         },
       });
 

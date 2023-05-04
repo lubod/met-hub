@@ -1,5 +1,6 @@
 import { action, makeObservable, observable } from "mobx";
 import { IStationData, IStationTrendData } from "../../common/stationModel";
+import { IStation } from "../../common/allStationsCfg";
 
 class StationData {
   data: IStationData = {} as IStationData;
@@ -32,9 +33,9 @@ class StationData {
 
   loading: boolean = true;
 
-  stationID: string = null;
+  station: IStation = null;
 
-  constructor(stationID: string) {
+  constructor() {
     makeObservable(this, {
       data: observable,
       trendData: observable,
@@ -42,21 +43,25 @@ class StationData {
       floatingRainData: observable,
       raindata: observable,
       loading: observable,
-      stationID: observable,
-      processData: action,
-      processTrendData: action,
+      station: observable,
+      setData: action,
+      setTrendData: action,
       checkOldData: action,
       setLoading: action,
       setFloatingRainData: action,
       setRaindata: action,
-      setStationID: action,
+      setStation: action,
     });
-    this.stationID = stationID;
-    console.info("OLDDATA", this.oldData);
   }
 
-  setStationID(stationID: string) {
-    this.stationID = stationID;
+  setStation(station: IStation) {
+    this.station = station;
+    this.ctime = new Date();
+    this.oldData = true;
+    this.floatingRainData = false;
+    this.raindata = null;
+    this.try = 0;
+    this.loading = true;
   }
 
   setRaindata(raindata: any) {
@@ -94,20 +99,37 @@ class StationData {
     this.floatingRainData = newFloatingRainData;
   }
 
-  processData(newData: IStationData) {
+  setData(newData: IStationData) {
     // console.info("process station data", newData, this);
     if (newData != null) {
       this.data = newData;
       this.data.timestamp = new Date(newData.timestamp);
       this.checkOldData(new Date());
+    } else {
+      this.data = {} as IStationData;
     }
-    this.loading = false;
   }
 
-  processTrendData(newTrendData: IStationTrendData) {
+  setTrendData(newTrendData: IStationTrendData) {
     // console.info("process station trend data", newTrendData, this);
     if (newTrendData != null) {
       this.trendData = newTrendData;
+    } else {
+      this.trendData = {
+        timestamp: [],
+        tempin: [],
+        humidityin: [],
+        temp: [],
+        humidity: [],
+        pressureabs: [],
+        pressurerel: [],
+        windgust: [],
+        windspeed: [],
+        winddir: [],
+        solarradiation: [],
+        uv: [],
+        rainrate: [],
+      } as IStationTrendData;
     }
   }
 }

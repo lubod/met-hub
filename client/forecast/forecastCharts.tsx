@@ -53,12 +53,12 @@ function MyRows1({ data }: RowsProps) {
     <>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol value={item.getDay()} extraClass="border-secondary" />
+          <MyCol key={item.getDay2()} value={item.getDay()} extraClass="border-secondary" />
         ))}
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol value={item.getDay2()} extraClass="border-secondary" />
+          <MyCol key={item.getDay2()} value={item.getDay2()} extraClass="border-secondary" />
         ))}
       </Row>
       <Row className={rowClassName}>
@@ -66,6 +66,7 @@ function MyRows1({ data }: RowsProps) {
           <Col
             className="text-center ps-0 pe-0 border-start border-secondary"
             style={{ display: "flex", justifyContent: "center" }}
+            key={item.getDay2()}
           >
             {item.getSymbolCode() != null && (
               <img
@@ -81,12 +82,12 @@ function MyRows1({ data }: RowsProps) {
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol value={item.getAirTemperatureMax()} extraClass="border-info" />
+          <MyCol key={item.getDay2()} value={item.getAirTemperatureMax()} extraClass="border-info" />
         ))}
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol value={item.getAirTemperatureMin()} extraClass="border-info" />
+          <MyCol key={item.getDay2()} value={item.getAirTemperatureMin()} extraClass="border-info" />
         ))}
       </Row>
     </>
@@ -103,17 +104,18 @@ function MyRows2({ data }: RowsProps) {
           <MyCol
             value={item.getPrecipitationAmount()}
             extraClass="border-primary"
+            key={item.getDay2()}
           />
         ))}
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol value={item.getCloudAreaFraction()} extraClass="" />
+          <MyCol key={item.getDay2()} value={item.getCloudAreaFraction()} extraClass="" />
         ))}
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol value={item.getWindSpeed()} extraClass="border-success" />
+          <MyCol key={item.getDay2()} value={item.getWindSpeed()} extraClass="border-success" />
         ))}
       </Row>
       <Row className={rowClassName}>
@@ -121,6 +123,7 @@ function MyRows2({ data }: RowsProps) {
           <Col
             className="text-center ps-0 pe-0 border-start border-success"
             style={{ display: "flex", justifyContent: "center" }}
+            key={item.getDay2()}
           >
             <svg width="25px" height="25px">
               <polygon

@@ -1,44 +1,40 @@
+/* eslint-disable camelcase */
 /* eslint-disable max-classes-per-file */
 import { observable, makeObservable, action } from "mobx";
 
 export default class AuthData {
-  profile: string = null;
+  id: string = null;
+
+  given_name: string = null;
+
+  family_name: string = null;
 
   expiresAt: number = null;
+
+  createdAt: number = null;
 
   access_token: string = null;
 
   refresh_token: string = null;
 
-  duration: number = null;
-
   isAuth: boolean = false;
 
   location: string = "/";
 
-  callWhenAuthetificated: Function = null;
-
   constructor() {
     makeObservable(this, {
-      profile: observable,
+      id: observable,
+      given_name: observable,
+      family_name: observable,
       expiresAt: observable,
       access_token: observable,
       refresh_token: observable,
-      duration: observable,
+      createdAt: observable,
       isAuth: observable,
       location: observable,
       setAuth: action,
-      setProfile: action,
       cancelAuth: action,
     });
-  }
-
-  setCallWhenAuthetificated(callWhenAuthetificated: Function) {
-    this.callWhenAuthetificated = callWhenAuthetificated;
-  }
-
-  setProfile(profile: string) {
-    this.profile = profile;
   }
 
   setLocation(location: string) {
@@ -46,27 +42,31 @@ export default class AuthData {
   }
 
   setAuth(
-    profile: string,
+    given_name: string,
+    family_name: string,
     expiresAt: number,
-    accessToken: string,
+    id: string,
     refreshToken: string,
-    duration: number
+    createdAt: number
   ) {
-    this.profile = profile;
+    this.given_name = given_name;
+    this.family_name = family_name;
     this.expiresAt = expiresAt;
-    this.access_token = accessToken;
+    this.id = id;
     this.refresh_token = refreshToken;
-    this.duration = duration;
+    this.createdAt = createdAt;
     this.isAuth = true;
     this.location = "/";
   }
 
   cancelAuth() {
-    this.profile = null;
+    this.id = null;
+    this.given_name = null;
+    this.family_name = null;
     this.expiresAt = null;
     this.access_token = null;
     this.refresh_token = null;
-    this.duration = null;
+    this.createdAt = null;
     this.isAuth = false;
     this.location = "/";
   }

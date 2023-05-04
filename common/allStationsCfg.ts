@@ -16,12 +16,15 @@ export interface IStation {
   id: string;
   measurement: IMeasurement;
   public: boolean;
+  user: string;
 }
 
 export class AllStationsCfg {
   map: Map<string, IStation> = new Map();
 
-  array: Array<IStation> = [];
+  userStations: Map<string, Set<string>> = new Map();
+
+  publicStations: Set<string> = new Set();
 
   passkey2IDMap: Map<string, string> = new Map();
 
@@ -49,16 +52,17 @@ export class AllStationsCfg {
           console.error("Unknown station type", station.type);
       }
       this.map.set(station.id, station);
-      const cStation = {} as IStation;
-      cStation.id = station.id;
-      cStation.lat = station.lat;
-      cStation.lon = station.lon;
-      cStation.place = station.place;
-      cStation.type = station.type;
-      cStation.public = station.public;
-      this.array.push(cStation); // json to client
       this.passkey2IDMap.set(station.passkey, station.id);
+      let mys = this.userStations.get(station.user);
+      if (mys == null) {
+        mys = new Set();
+      }
+      mys.add(station.id);
+      this.userStations.set(station.user, mys);
       this.measurements.push(station.measurement);
+      if (station.public) {
+        this.publicStations.add(station.id);
+      }
     }
     // AllStationsCfg.map.set();
   }
@@ -105,7 +109,15 @@ export class AllStationsCfg {
     return this.map.get(ID);
   }
 
+  getStationsByUser(userID: string) {
+    return this.userStations.get(userID);
+  }
+
   getStationCfg(stationID: string) {
     return new StationCfg(stationID);
+  }
+
+  getPublicStations() {
+    return this.publicStations;
   }
 }

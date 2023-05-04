@@ -67,6 +67,7 @@ function checkInput(
 
 // select timestamp, tempin from station_${stationID} where timestamp >= '2020-08-13 09:20:54+00' and timestamp <= '2020-08-13 10:00:31+00';
 export async function loadData(
+  stationID: string,
   start: Date,
   end: Date,
   measurement: string,
@@ -83,9 +84,12 @@ export async function loadData(
 
     const dbd = measurement.split(":");
     if (dbd.length >= 2) {
-      const table = dbd[0];
+      let table = dbd[0];
       const column = dbd[1];
       const extraColumn = dbd.length >= 3 ? `${dbd[2]}` : "";
+      if (table === "station") {
+        table += `_${  stationID}`;
+      }
 
       if (checkInput(table, column, extraColumn, allStationsCfg)) {
         // select timestamp,sum(rain::int) as rain from vonku group by timestamp order by timestamp asc

@@ -3,6 +3,7 @@
 /* eslint-disable camelcase */
 import { action, makeObservable, observable } from "mobx";
 import moment from "moment";
+import { IStation } from "../../common/allStationsCfg";
 
 export interface IGetForecastDataToDisplay {
   getDay(): string;
@@ -120,8 +121,6 @@ export class ForecastDay implements IGetForecastDataToDisplay {
 
 export interface IForecastData {
   forecast: any;
-  lat: number;
-  lon: number;
   astronomicalData: any;
   sunrise: Date;
   sunset: Date;
@@ -129,7 +128,7 @@ export interface IForecastData {
   domainTempMin: number;
   domainTempMax: number;
   loading: boolean;
-  stationID: string;
+  station: IStation;
 }
 
 export class Forecast6h implements IGetForecastDataToDisplay {
@@ -283,10 +282,6 @@ export class Forecast1h implements IGetForecastDataToDisplay {
 export default class ForecastData implements IForecastData {
   forecast: any = null;
 
-  lat: number = null;
-
-  lon: number = null;
-
   astronomicalData: any = null;
 
   sunrise: Date = null;
@@ -301,7 +296,7 @@ export default class ForecastData implements IForecastData {
 
   loading: boolean = true;
 
-  stationID: string = null;
+  station: IStation = null;
 
   forecast_6h: Array<Forecast6h> = [];
 
@@ -315,15 +310,13 @@ export default class ForecastData implements IForecastData {
 
   rows: Array<ForecastRow> = [];
 
-  constructor(stationID: string, lat: number, lon: number) {
+  constructor() {
     makeObservable(this, {
-      lat: observable,
-      lon: observable,
       days: observable,
       sunrise: observable,
       sunset: observable,
       loading: observable,
-      stationID: observable,
+      station: observable,
       forecast_6h: observable,
       forecast_1h: observable,
       hours: observable,
@@ -331,14 +324,11 @@ export default class ForecastData implements IForecastData {
       offset6h: observable,
       setForecast: action,
       setAstronomicalData: action,
-      setStationID: action,
+      setStation: action,
       setHours: action,
       setOffset1h: action,
+      setLoading: action,
     });
-
-    this.stationID = stationID;
-    this.lat = lat;
-    this.lon = lon;
   }
 
   setHours(hours: number) {
@@ -353,10 +343,8 @@ export default class ForecastData implements IForecastData {
     this.offset6h = offset6h;
   }
 
-  setStationID(stationID: string, lat: number, lon: number) {
-    this.stationID = stationID;
-    this.lat = lat;
-    this.lon = lon;
+  setStation(newStation: IStation) {
+    this.station = newStation;
   }
 
   setLoading(loading: boolean) {
@@ -402,7 +390,7 @@ export default class ForecastData implements IForecastData {
     if (this.rows.length >= 6) {
       const uptoFirst6 = 6 - (this.rows[0].timestamp.getUTCHours() % 6);
       for (let rowIndex = 0; rowIndex < uptoFirst6; rowIndex += 1) {
-        console.info("CALCULATE", uptoFirst6, rowIndex, this.rows[rowIndex]);
+        // console.info("CALCULATE", uptoFirst6, rowIndex, this.rows[rowIndex]);
         precipitation_amount_uptoFirst6 +=
           this.rows[rowIndex].precipitation_amount_1h;
         cloud_area_fractions.push(this.rows[rowIndex].cloud_area_fraction);
@@ -578,10 +566,10 @@ export default class ForecastData implements IForecastData {
 
     this.calculate();
 
-    console.info("ROWS", this.rows);
-    console.info("DAYS", this.days);
-    console.info("1h", this.forecast_1h);
-    console.info("6h", this.forecast_6h);
+    // console.info("ROWS", this.rows);
+    // console.info("DAYS", this.days);
+    // console.info("1h", this.forecast_1h);
+    // console.info("6h", this.forecast_6h);
     this.forecast = newForecast;
   }
 }

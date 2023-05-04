@@ -7,8 +7,8 @@ import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import { loadData, loadRainData } from "./load";
 import { getForecast, getAstronomicalData } from "./forecast";
-import { IStation } from "../common/allStationsCfg";
 import { goSelect } from "./go";
+import { IStation } from "../common/allStationsCfg";
 
 const { OAuth2Client } = require("google-auth-library");
 
@@ -27,18 +27,60 @@ const kafka = new Kafka({
 
 const producer: Producer = kafka.producer();
 
-function checkAuth(req: any) {
-  if (process.env.ENV === "dev") { // todo
-    console.info("dev auth");
-    return;
-  }
-  if (req.headers.authorization) {
-    const user = verifyToken(req.headers.authorization.substr(7));
-    if (user !== null) {
-      return;
+interface IUser {
+  id: any;
+  given_name: string;
+  family_name: string;
+  createdAt: number;
+  expiresAt: number;
+}
+
+async function checkAuth(req: any, silent: boolean = false) {
+  if (req.cookies.jwt) {
+    const { id, exp, iat } = verifyToken(req.cookies.jwt);
+    if (id != null) {
+      const payload = JSON.parse(await redisClient.hGet("USERS", id));
+      // todo check if user still exists
+      return {
+        id,
+        given_name: payload.given_name,
+        family_name: payload.family_name,
+        createdAt: iat * 1000,
+        expiresAt: exp * 1000,
+      } as IUser;
     }
   }
+  if (silent) {
+    return null;
+  }
   throw new AppError(401, "Auth issue");
+}
+
+async function checkAccess(
+  user: IUser,
+  stationID: string,
+  ownerOnly: boolean = true
+) {
+  let mys = null;
+  if (user != null) {
+    mys = allStationsCfg.getStationsByUser(user.id);
+  }
+  const publicStations = allStationsCfg.getPublicStations();
+  console.info(mys, publicStations);
+  if (ownerOnly) {
+    if (mys != null && mys.has(stationID)) {
+      console.info("ACCESS", user, stationID, ownerOnly);
+      return true;
+    }
+  } else if (
+    (publicStations != null && publicStations.has(stationID)) ||
+    (mys != null && mys.has(stationID))
+  ) {
+    console.info("ACCESS", user, stationID, ownerOnly);
+    return true;
+  }
+  console.info("NO ACCESS", user, stationID, ownerOnly);
+  throw new AppError(403, "Access issue");
 }
 
 function catchAsync(fnc: Function) {
@@ -49,6 +91,8 @@ function catchAsync(fnc: Function) {
 // LAST DATA
 
 async function getLastData(measurement: IMeasurement, req: any, res: any) {
+  const user = await checkAuth(req, true);
+  await checkAccess(user, measurement.getStationID(), false);
   const reply = await redisClient.get(measurement.getRedisLastDataKey());
   res.status(200).json(JSON.parse(reply));
 }
@@ -60,7 +104,7 @@ router.get(
       const { measurement } = allStationsCfg.getStationByID(
         req.params.stationID
       );
-      getLastData(measurement, req, res);
+      await getLastData(measurement, req, res);
     } else {
       throw new AppError(400, "Invalid params");
     }
@@ -70,14 +114,15 @@ router.get(
 router.get(
   "/api/getLastData/dom",
   catchAsync(async (req: any, res: any) => {
-    checkAuth(req);
-    getLastData(dom, req, res);
+    await getLastData(dom, req, res);
   })
 );
 
 // TREND DATA
 
 async function getTrendData(measurement: IMeasurement, req: any, res: any) {
+  const user = await checkAuth(req, true);
+  await checkAccess(user, measurement.getStationID(), false);
   const now = Date.now();
   const reply = await redisClient.zRangeByScore(
     measurement.getRedisTrendKey(),
@@ -104,46 +149,61 @@ router.get(
 router.get(
   "/api/getTrendData/dom",
   catchAsync(async (req: any, res: any) => {
-    checkAuth(req);
     await getTrendData(dom, req, res);
   })
 );
 
 // CFG & AUTH
 
+router.get(
+  "/api/logout",
+  catchAsync(async (req: any, res: any) => {
+    res.clearCookie("jwt").status(200).json({});
+  })
+);
+
 router.post(
   "/api/googleLogin",
   catchAsync(async (req: any, res: any) => {
-    const  gtoken  = req.body.token;
+    const gtoken = req.body.token;
+    console.info(req.body, gtoken);
     const ticket = await client.verifyIdToken({
       idToken: gtoken,
       audience: process.env.REACT_APP_GOOGLE_CLIENT_ID,
     });
     const payload = ticket.getPayload();
-    const {token, expiresAt, duration} = createToken(payload.sub);
+    const { token, createdAt, expiresAt } = createToken(payload.sub);
     await redisClient.hSet("USERS", payload.sub, JSON.stringify(payload));
     /*  const user = await db.user.upsert({
     where: { email: email },
     update: { name, picture },
     create: { name, email, picture },
   }); */
-
-    res.status(200).json({token, given_name:payload.given_name, family_name: payload.family_name, expiresAt, duration});
+    res
+      .cookie("jwt", token, {
+        expires: new Date(expiresAt),
+        secure: process.env.ENV !== "dev",
+        httpOnly: true,
+      })
+      .status(200)
+      .json({
+        id: payload.sub,
+        given_name: payload.given_name,
+        family_name: payload.family_name,
+        createdAt,
+        expiresAt,
+      } as IUser);
   })
 );
 
 router.get(
   "/api/getUserProfile",
   catchAsync(async (req: any, res: any) => {
-    if (req.headers.authorization) {
-      const user = verifyToken(req.headers.authorization.substr(7));
-      if (user !== null) {
-        res.status(200).json(user);
-      } else {
-        throw new AppError(401, "Auth issue");
-      }
+    const user = await checkAuth(req, true);
+    if (user != null) {
+      res.status(200).json(user);
     } else {
-      throw new AppError(401, "Auth issue");
+      res.status(200).json(null);
     }
   })
 );
@@ -151,14 +211,42 @@ router.get(
 router.get(
   "/api/getAllStationsCfg",
   catchAsync(async (req: any, res: any) => {
-    if (req.headers.authorization) {
-      const user = verifyToken(req.headers.authorization.substr(7));
-      if (user !== null) {
-        res.status(200).json(allStationsCfg.array); // TODO
-      }
-      res.status(200).json(allStationsCfg.array); // TODO
+    let user = null;
+    const result: Array<IStation> = [];
+    if (req.cookies.jwt) {
+      user = await checkAuth(req);
     }
-    res.status(200).json(allStationsCfg.array);
+    const rs = new Set<string>();
+
+    if (user != null) {
+      const mys = allStationsCfg.getStationsByUser(user.id);
+      if (mys != null) {
+        for (const sid of mys) {
+          rs.add(sid);
+        }
+      }
+    }
+
+    const publicStationIDs = allStationsCfg.getPublicStations();
+    if (publicStationIDs != null) {
+      for (const sid of publicStationIDs) {
+        rs.add(sid);
+      }
+    }
+
+    for (const sid of rs) {
+      const station: IStation = allStationsCfg.getStationByID(sid);
+      const cStation = {} as IStation;
+      cStation.id = station.id;
+      cStation.lat = station.lat;
+      cStation.lon = station.lon;
+      cStation.place = station.place;
+      cStation.type = station.type;
+      cStation.public = station.public;
+      cStation.user = station.user;
+      result.push(cStation);
+    }
+    res.status(200).json(result);
   })
 );
 
@@ -167,8 +255,8 @@ router.get(
 router.get(
   "/api/loadData",
   catchAsync(async (req: any, res: any) => {
-    checkAuth(req);
     if (
+      req.query.stationID != null &&
       req.query.start != null &&
       req.query.end != null &&
       req.query.measurement != null
@@ -176,7 +264,16 @@ router.get(
       const start = new Date(req.query.start);
       const end = new Date(req.query.end);
       const { measurement } = req.query;
-      const data = await loadData(start, end, measurement, allStationsCfg);
+      const { stationID } = req.query;
+      const user = await checkAuth(req, true);
+      await checkAccess(user, stationID);
+      const data = await loadData(
+        stationID,
+        start,
+        end,
+        measurement,
+        allStationsCfg
+      );
       res.status(200).json(data);
     } else {
       throw new AppError(400, "Invalid params");
@@ -187,8 +284,9 @@ router.get(
 router.get(
   "/api/loadRainData/station/:stationID",
   catchAsync(async (req: any, res: any) => {
-    checkAuth(req);
     if (req.params.stationID != null) {
+      const user = await checkAuth(req);
+      await checkAccess(user, req.params.stationID);
       const data = await loadRainData(req.params.stationID);
       res.status(200).json(data);
     } else {

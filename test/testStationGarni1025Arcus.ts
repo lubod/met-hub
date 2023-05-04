@@ -8,7 +8,7 @@ import {
   IStationData,
   IStationGarni1025ArcusDataRaw,
 } from "../common/stationModel";
-import { AllStationsCfg } from "../common/allStationsCfg";
+import { AllStationsCfg, IStation } from "../common/allStationsCfg";
 import StationGarni1025Arcus from "../server/stationGarni1025Arcus";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 15432;
@@ -120,7 +120,7 @@ async function fetchStationData(STATION_ID: string) {
   try {
     const res = await fetch(url, {
       headers: {
-        Authorization: "Bearer 1",
+        "Content-Type": "application/json",
       },
     });
     if (res.status === 401) {
@@ -192,12 +192,12 @@ function getClientStationData(data: IStationData) {
   return csd;
 }
 
-function main(STATION_ID: string, PASSKEY: string) {
-  const station = new StationGarni1025Arcus(STATION_ID);
+function main(station: IStation) {
+  const meas = new StationGarni1025Arcus(station.id);
 
   console.info(`PG: ${PG_HOST}`);
 
-  const data1 = generateData(new Date(), PASSKEY);
+  const data1 = generateData(new Date(), station.passkey);
   const data2 = generateOffsetData(data1, 5);
   const data3 = generateOffsetData(data1, -5);
   // console.info(data1);
@@ -221,7 +221,7 @@ function main(STATION_ID: string, PASSKEY: string) {
   console.info("Now, Timestamp, Redis, pgtime, Pg", d, data2.dateutc, pgtime);
   console.info("Now, Timestamp, Redis, pgtime, Pg", d, data3.dateutc, pgtime);
 
-  const { decoded } = station.decodeData(data1);
+  const { decoded } = meas.decodeData(data1);
 
   const pgData = {
     dailyrain: decoded.dailyrain.toFixed(1),
@@ -247,13 +247,14 @@ function main(STATION_ID: string, PASSKEY: string) {
   };
 
   const socket = new MySocket(true);
-  const stationCtrl = new StationCtrl(socket, STATION_ID, null, true); // todo
+  const stationCtrl = new StationCtrl(socket, null, true); // todo
+  stationCtrl.setStation(station);
   stationCtrl.start();
 
   setTimeout(() => postData(data1), 500);
   setTimeout(async () => {
-    const sd = await fetchStationData(STATION_ID);
-    const expected = station.decodeData(data1).decoded;
+    const sd = await fetchStationData(station.id);
+    const expected = meas.decodeData(data1).decoded;
     expected.timestamp = sd.timestamp; // now
     assert.deepStrictEqual(sd, expected);
     console.info("Redis1 OK");
@@ -263,8 +264,8 @@ function main(STATION_ID: string, PASSKEY: string) {
   }, 1000);
   setTimeout(() => postData(data2), 1500);
   setTimeout(async () => {
-    const sd = await fetchStationData(STATION_ID);
-    const expected = station.decodeData(data2).decoded;
+    const sd = await fetchStationData(station.id);
+    const expected = meas.decodeData(data2).decoded;
     expected.timestamp = sd.timestamp; // now
     assert.deepStrictEqual(sd, expected);
     console.info("Redis2 OK");
@@ -274,8 +275,8 @@ function main(STATION_ID: string, PASSKEY: string) {
   }, 2000);
   setTimeout(() => postData(data3), 2500);
   setTimeout(async () => {
-    const sd = await fetchStationData(STATION_ID);
-    const expected = station.decodeData(data3).decoded;
+    const sd = await fetchStationData(station.id);
+    const expected = meas.decodeData(data3).decoded;
     expected.timestamp = sd.timestamp; // now
     assert.deepStrictEqual(sd, expected);
     console.info("Redis3 OK");
@@ -284,7 +285,7 @@ function main(STATION_ID: string, PASSKEY: string) {
     console.info("Client3 OK");
   }, 3000);
   setTimeout(async () => {
-    const rows = await loadStationData(pgtime, STATION_ID);
+    const rows = await loadStationData(pgtime, station.id);
     assert.deepStrictEqual(rows, pgData);
     console.info("PG OK");
   }, 66000 - toMinute);
@@ -293,6 +294,6 @@ function main(STATION_ID: string, PASSKEY: string) {
 const allStationsCfg = new AllStationsCfg();
 allStationsCfg.readCfg().then(() => {
   const STATION_ID = allStationsCfg.getSecondDefaultStationID(); // todo
-  const PASSKEY = allStationsCfg.getStationByID(STATION_ID).passkey;
-  main(STATION_ID, PASSKEY);
+  const station = allStationsCfg.getStationByID(STATION_ID);
+  main(station);
 });

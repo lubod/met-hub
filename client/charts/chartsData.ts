@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { action, makeObservable, observable } from "mobx";
 import { IMeasurementDesc } from "../../common/measurementDesc";
+import { IStation } from "../../common/allStationsCfg";
 
 export class CData {
   min: number;
@@ -45,19 +46,9 @@ class ChartsData {
 
   loading: boolean = true;
 
-  stationID: string = null;
+  station: IStation = null;
 
-  lat: number = null;
-
-  lon: number = null;
-
-  constructor(
-    stationID: string,
-    lat: number,
-    lon: number,
-    measurement: IMeasurementDesc,
-    measurements: IMeasurementDesc[]
-  ) {
+  constructor() {
     makeObservable(this, {
       hdata: observable,
       cdata: observable,
@@ -66,9 +57,7 @@ class ChartsData {
       measurement: observable,
       measurements: observable,
       loading: observable,
-      stationID: observable,
-      lat: observable,
-      lon: observable,
+      station: observable,
       setHdata: action,
       setCdata: action,
       setMeasurement: action,
@@ -77,20 +66,13 @@ class ChartsData {
       setRange: action,
       setPage: action,
       setLoading: action,
-      setStationID: action,
+      setStation: action,
       setNewData: action,
     });
-    this.stationID = stationID;
-    this.lat = lat;
-    this.lon = lon;
-    this.measurement = measurement;
-    this.measurements = measurements;
   }
 
-  setStationID(stationID: string, lat: number, lon: number) {
-    this.stationID = stationID;
-    this.lat = lat;
-    this.lon = lon;
+  setStation(station: IStation) {
+    this.station = station;
   }
 
   setLoading(loading: boolean) {

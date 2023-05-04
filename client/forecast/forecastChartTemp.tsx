@@ -100,7 +100,7 @@ const ForecastChartTemp = observer(
       }
     }
 
-    console.info("render forecast chart temp", chdata);
+    console.info("render forecast chart temp");
     return (
       <>
         <div className="small text-white-50 font-weight-bold mt-3 mb-3">

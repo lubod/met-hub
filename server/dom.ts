@@ -34,6 +34,12 @@ export enum TABLES {
 }
 
 export class Dom implements IMeasurement {
+  cfg: DomCfg = new DomCfg();
+
+  getStationID(): string {
+    return this.cfg.STATION_ID;
+  }
+
   agregateMinuteDataFromKafka(minute: number, data: Array<IDomData>): any {
     const deepCopy = cloneDeep(data[0]); // todo
     const date = new Date(deepCopy.timestamp);
@@ -42,8 +48,6 @@ export class Dom implements IMeasurement {
     console.info("Agregated dom minute", deepCopy.timestamp);
     return deepCopy;
   }
-
-  cfg: DomCfg = new DomCfg();
 
   getSocketChannel() {
     return this.cfg.SOCKET_CHANNEL;

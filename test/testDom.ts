@@ -303,7 +303,7 @@ async function fetchDomData() {
   try {
     const res = await fetch(url, {
       headers: {
-        Authorization: "Bearer 1",
+        "Content-Type": "application/json",
       },
     });
     if (res.status === 401) {

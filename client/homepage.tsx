@@ -11,11 +11,8 @@ import { Myhr } from "./misc/myhr";
 import { MyContainer } from "./misc/mycontainer";
 import AuthCtrl from "./auth/authCtrl";
 
-async function handleLogin(
-  response: CredentialResponse,
-  authCtrl: AuthCtrl
-) {
-  // console.info("google login", response);
+async function handleLogin(response: CredentialResponse, authCtrl: AuthCtrl) {
+  console.info("google login", response);
   const res = await fetch("/api/googleLogin", {
     method: "POST",
     body: JSON.stringify({
@@ -27,7 +24,14 @@ async function handleLogin(
   });
   const data = await res.json();
   // console.info(data); // todo
-  authCtrl.authData.setAuth(`${data.given_name.charAt(0)}${data.family_name.charAt(0)}`, data.expiresAt, data.token, null, data.duration );
+  authCtrl.setAuth(
+    data.given_name,
+    data.family_name,
+    data.expiresAt,
+    data.id,
+    null,
+    data.createdAt
+  );
 }
 
 type HomePageProps = {
@@ -50,10 +54,14 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
           </Row>
           <Row>
             <Col sm={colSize} className="ps-1 pe-1">
-              <Station appContext={appContext} />
+              {appContext.headerCtrl.headerData.currentStation != null && (
+                <Station appContext={appContext} />
+              )}
             </Col>
             <Col sm={colSize} className="ps-1 pe-1">
-              <Forecast forecastCtrl={appContext.forecastCtrl} />
+              {appContext.headerCtrl.headerData.currentStation != null && (
+                <Forecast forecastCtrl={appContext.forecastCtrl} />
+              )}
             </Col>
             {appContext.headerCtrl.headerData.isExternalID === false && (
               <Col sm={colSize} className="ps-1 pe-1">
@@ -65,10 +73,11 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
                     <a href="https://github.com/lubod/met-hub">met-hub</a>
                   </p>
                   <Myhr />
-                  <p>
-                    Currently you can see data from GoGEN ME 3900 or GARNI 1025
-                    Arcus
-                  </p>
+                  <ul>
+                    Currently you can see data from:
+                    <li>GoGEN ME 3900</li>
+                    <li>GARNI 1025 Arcus</li>
+                  </ul>
                   <p>Login to see more stations and historical data</p>
                   <GoogleLogin
                     onSuccess={(credentialResponse) => {
@@ -80,7 +89,7 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
                     theme="filled_blue"
                   />
                   <Myhr />
-                  <p>- v23 -</p>
+                  <p>- v24 -</p>
                 </MyContainer>
               </Col>
             )}

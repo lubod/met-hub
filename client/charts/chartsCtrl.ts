@@ -1,12 +1,8 @@
 import fetch from "node-fetch";
-import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 import { IMeasurementDesc } from "../../common/measurementDesc";
-import {
-  STATION_MEASUREMENTS,
-  STATION_MEASUREMENTS_DESC,
-} from "../../common/stationModel";
 import AuthData from "../auth/authData";
 import ChartsData, { CData } from "./chartsData";
+import { IStation } from "../../common/allStationsCfg";
 
 class ChartsCtrl {
   chartsData: ChartsData;
@@ -15,15 +11,14 @@ class ChartsCtrl {
 
   timer: any;
 
-  constructor(stationID: string, authData: AuthData) {
+  constructor(authData: AuthData) {
     this.authData = authData;
-    this.chartsData = new ChartsData(
-      stationID,
-      AllStationsCfgClient.getStationByID(stationID).lat,
-      AllStationsCfgClient.getStationByID(stationID).lon,
-      STATION_MEASUREMENTS_DESC.TEMPERATURE,
-      STATION_MEASUREMENTS
-    );
+    this.chartsData = new ChartsData();
+  }
+
+  setStation(station:IStation) {
+    this.chartsData.setStation(station);
+    this.reload();
   }
 
   start() {
@@ -37,13 +32,17 @@ class ChartsCtrl {
       this.chartsData.range,
       this.chartsData.page,
       this.chartsData.measurement,
-      this.chartsData.stationID
+      this.chartsData.station.id
     );
   }
 
   async load(of: string, p: number, m: IMeasurementDesc, stationID: string) {
     if (!this.authData.isAuth) {
       console.info("no auth -> no load");
+      return;
+    }
+    if (m == null || stationID == null) {
+      console.info("no stationID -> no load");
       return;
     }
     try {
@@ -53,12 +52,9 @@ class ChartsCtrl {
       // return new Promise((resolve) => setTimeout(resolve, 2000));
       const start = new Date(Date.now() - o + p * o);
       const end = new Date(Date.now() + p * o);
-      let url = `/api/loadData?start=${start.toISOString()}&end=${end.toISOString()}&measurement=${
+      let url = `/api/loadData?stationID=${stationID}&start=${start.toISOString()}&end=${end.toISOString()}&measurement=${
         m.table
       }`;
-      if (stationID !== "dom") {
-        url += `_${stationID}`;
-      }
       url += `:${m.col}`;
       if (m.col2 !== "") {
         url += `:${m.col2}`;
@@ -67,7 +63,7 @@ class ChartsCtrl {
 
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${this.authData.access_token}`,
+          "Content-Type": "application/json",
         },
       });
 

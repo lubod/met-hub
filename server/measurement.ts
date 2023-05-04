@@ -27,4 +27,6 @@ export interface IMeasurement {
   getKafkaKey(): string;
 
   agregateMinuteDataFromKafka(minute: number, data: any): any;
+
+  getStationID(): string;
 }

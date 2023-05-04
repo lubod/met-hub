@@ -10,6 +10,10 @@ export default abstract class StationCommon implements IMeasurement {
     this.cfg = new StationCfg(stationID);
   }
 
+  getStationID(): string {
+    return this.cfg.STATION_ID;
+  }
+
   abstract decodeData(data: any): { date: Date; decoded: {}; toStore: {} };
 
   abstract initWithZeros(): IStationData;

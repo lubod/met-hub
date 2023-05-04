@@ -339,4 +339,6 @@ export class DomCfg {
   REDIS_TREND_KEY = "dom-trend";
 
   KAFKA_KEY = "dom";
+
+  STATION_ID = "dom";
 }
