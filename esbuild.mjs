@@ -1,6 +1,12 @@
 import * as esbuild from "esbuild";
 import { sassPlugin } from "esbuild-sass-plugin";
 
+const define = {
+  "process.env.ENV": '"prod"',
+  "process.env.REACT_APP_GOOGLE_CLIENT_ID":
+    '"370836834849-c28glrv23rmribefn7r7h9m1rori3vfh.apps.googleusercontent.com"',
+};
+
 esbuild.build({
   entryPoints: [
     "test/testDom.ts",
@@ -13,9 +19,7 @@ esbuild.build({
   external: ["pg-native"],
   target: "node16",
   minify: true,
-  define: {
-    "process.env.ENV": '"prod"',
-  },
+  define,
 });
 
 esbuild.build({
@@ -27,9 +31,7 @@ esbuild.build({
   target: "es2022",
   plugins: [sassPlugin()],
   minify: true,
-  define: {
-    "process.env.ENV": '"prod"',
-  },
+  define,
 });
 
 esbuild.build({
@@ -40,7 +42,5 @@ esbuild.build({
   external: ["pg-native"],
   target: "node16",
   minify: true,
-  define: {
-    "process.env.ENV": '"prod"',
-  },
+  define,
 });
