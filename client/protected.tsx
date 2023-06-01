@@ -28,21 +28,23 @@ const Protected = observer(({ appContext }: Props) => {
           </Row>
           <Row>
             <Col sm={4} className="ps-1 pe-1">
-              {appContext.headerCtrl.headerData.currentStation != null &&
-                appContext.headerCtrl.headerData.currentStation.id !==
-                  "dom" && <Station appContext={appContext} />}
-              {appContext.headerCtrl.headerData.currentStation != null &&
-                appContext.headerCtrl.headerData.currentStation.id ===
-                  "dom" && <Dom appContext={appContext} />}
+              {appContext.stationCtrl.stationData.station != null &&
+                appContext.stationCtrl.stationData.station.id !== "dom" && (
+                  <Station appContext={appContext} />
+                )}
+              {appContext.headerCtrl.headerData.station != null && // todo
+                appContext.headerCtrl.headerData.station.id === "dom" && (
+                  <Dom appContext={appContext} />
+                )}
             </Col>
             <Col sm={4} className="ps-1 pe-1">
-              {appContext.headerCtrl.headerData.currentStation != null && (
+              {appContext.forecastCtrl.forecastData.station != null && (
                 <Forecast forecastCtrl={appContext.forecastCtrl} />
               )}
             </Col>
             <Col sm={4} className="ps-1 pe-1">
-              {appContext.headerCtrl.headerData.currentStation != null && (
-                <Charts chartsCtrl={appContext.chartsCtrl} />
+              {appContext.chartsCtrl.chartsData.station != null && (
+                <Charts appContext={appContext} />
               )}
             </Col>
           </Row>

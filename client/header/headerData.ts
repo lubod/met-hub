@@ -4,7 +4,7 @@ import { IStation } from "../../common/allStationsCfg";
 export default class HeaderData {
   ctime: Date = new Date();
 
-  currentStation: IStation = null;
+  station: IStation = null;
 
   isExternalID: boolean = false;
 
@@ -13,7 +13,7 @@ export default class HeaderData {
   constructor() {
     makeObservable(this, {
       ctime: observable,
-      currentStation: observable,
+      station: observable,
       isExternalID: observable,
       allStations: observable,
       setTime: action,
@@ -35,6 +35,6 @@ export default class HeaderData {
   }
 
   setStation(station: IStation) {
-    this.currentStation = station;
+    this.station = station;
   }
 }

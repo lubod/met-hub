@@ -8,7 +8,6 @@ import { AppContext } from "..";
 import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 import { MyContainer } from "../misc/mycontainer";
 import Text from "../misc/text";
-import { IStation } from "../../common/allStationsCfg";
 
 type Props = {
   appContext: AppContext;
@@ -16,7 +15,7 @@ type Props = {
 
 const Header = observer(({ appContext }: Props) => {
   console.info("Header render");
-  const station: IStation = appContext.headerCtrl.headerData.currentStation;
+  const {station} = appContext.headerCtrl.headerData;
 
   let place: string = "";
   if (station != null) {
@@ -64,7 +63,7 @@ const Header = observer(({ appContext }: Props) => {
           {appContext.headerCtrl.headerData.isExternalID === true && (
             <Text
               name=""
-              value={appContext.headerCtrl.headerData.currentStation.place}
+              value={appContext.headerCtrl.headerData.station.place}
             />
           )}
         </Col>

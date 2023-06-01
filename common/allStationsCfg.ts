@@ -16,7 +16,7 @@ export interface IStation {
   id: string;
   measurement: IMeasurement;
   public: boolean;
-  user: string;
+  owner: string;
 }
 
 export class AllStationsCfg {
@@ -53,12 +53,12 @@ export class AllStationsCfg {
       }
       this.map.set(station.id, station);
       this.passkey2IDMap.set(station.passkey, station.id);
-      let mys = this.userStations.get(station.user);
+      let mys = this.userStations.get(station.owner);
       if (mys == null) {
         mys = new Set();
       }
       mys.add(station.id);
-      this.userStations.set(station.user, mys);
+      this.userStations.set(station.owner, mys);
       this.measurements.push(station.measurement);
       if (station.public) {
         this.publicStations.add(station.id);

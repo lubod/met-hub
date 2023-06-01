@@ -54,12 +54,12 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
           </Row>
           <Row>
             <Col sm={colSize} className="ps-1 pe-1">
-              {appContext.headerCtrl.headerData.currentStation != null && (
+              {appContext.headerCtrl.headerData.station != null && (
                 <Station appContext={appContext} />
               )}
             </Col>
             <Col sm={colSize} className="ps-1 pe-1">
-              {appContext.headerCtrl.headerData.currentStation != null && (
+              {appContext.headerCtrl.headerData.station != null && (
                 <Forecast forecastCtrl={appContext.forecastCtrl} />
               )}
             </Col>

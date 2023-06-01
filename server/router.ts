@@ -243,7 +243,7 @@ router.get(
       cStation.place = station.place;
       cStation.type = station.type;
       cStation.public = station.public;
-      cStation.user = station.user;
+      cStation.owner = station.owner;
       result.push(cStation);
     }
     res.status(200).json(result);

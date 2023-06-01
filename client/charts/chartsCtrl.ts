@@ -16,7 +16,7 @@ class ChartsCtrl {
     this.chartsData = new ChartsData();
   }
 
-  setStation(station:IStation) {
+  setStation(station: IStation) {
     this.chartsData.setStation(station);
     this.reload();
   }
@@ -39,6 +39,10 @@ class ChartsCtrl {
   async load(of: string, p: number, m: IMeasurementDesc, stationID: string) {
     if (!this.authData.isAuth) {
       console.info("no auth -> no load");
+      return;
+    }
+    if (this.authData.id !== this.chartsData.station.owner) {
+      console.info("no owner -> no load");
       return;
     }
     if (m == null || stationID == null) {

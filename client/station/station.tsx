@@ -44,7 +44,7 @@ const Station = observer(({ appContext }: Props) => {
             <LoadImg
               rotate={
                 appContext.stationCtrl.stationData.loading ||
-                appContext.stationCtrl.stationData.oldData 
+                appContext.stationCtrl.stationData.oldData
               }
               src="icons8-refresh-25.svg"
               alt=""
@@ -246,25 +246,27 @@ const Station = observer(({ appContext }: Props) => {
           <div className="text-left font-weight-bold">RAIN mm</div>
         </Col>
         <Col xs={6}>
-          {appContext.authCtrl.authData.isAuth && (
-            <Form>
-              <Form.Check
-                type="switch"
-                id="custom-switch"
-                label="Fix / Floating"
-                checked={appContext.stationCtrl.stationData.floatingRainData}
-                onChange={(e) => {
-                  appContext.stationCtrl.stationData.setFloatingRainData(
-                    e.target.checked
-                  );
-                  if (e.target.checked) {
-                    appContext.stationCtrl.fetchRainData();
-                  }
-                }}
-                className="small text-light"
-              />
-            </Form>
-          )}
+          {appContext.authCtrl.authData.isAuth &&
+            appContext.authCtrl.authData.id ===
+              appContext.stationCtrl.stationData.station.owner && (
+              <Form>
+                <Form.Check
+                  type="switch"
+                  id="custom-switch"
+                  label="Fix / Floating"
+                  checked={appContext.stationCtrl.stationData.floatingRainData}
+                  onChange={(e) => {
+                    appContext.stationCtrl.stationData.setFloatingRainData(
+                      e.target.checked
+                    );
+                    if (e.target.checked) {
+                      appContext.stationCtrl.fetchRainData();
+                    }
+                  }}
+                  className="small text-light"
+                />
+              </Form>
+            )}
         </Col>
       </Row>
       {appContext.stationCtrl.stationData.floatingRainData === false && (
@@ -467,60 +469,62 @@ const Station = observer(({ appContext }: Props) => {
           </Row>
         </>
       )}
-      {appContext.authCtrl.authData.isAuth && (
-        <>
-          <Myhr />
-          <div className="text-left font-weight-bold">IN</div>
-          <Row>
-            <Col xs={6}>
-              <DataWithTrend
-                label={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.label}
-                value={
-                  appContext.stationCtrl.stationData.oldData
-                    ? null
-                    : appContext.stationCtrl.stationData.data.tempin
-                }
-                unit={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.unit}
-                fix={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.fix}
-                data={appContext.stationCtrl.stationData.trendData.tempin}
-                range={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.range}
-                couldBeNegative={
-                  STATION_MEASUREMENTS_DESC.TEMPERATUREIN.couldBeNegative
-                }
-                onClick={() =>
-                  appContext.setMeasurementAndLoad(
-                    STATION_MEASUREMENTS_DESC.TEMPERATUREIN
-                  )
-                }
-                color={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.color}
-              />
-            </Col>
-            <Col xs={6}>
-              <DataWithTrend
-                label={STATION_MEASUREMENTS_DESC.HUMIDITYIN.label}
-                value={
-                  appContext.stationCtrl.stationData.oldData
-                    ? null
-                    : appContext.stationCtrl.stationData.data.humidityin
-                }
-                unit={STATION_MEASUREMENTS_DESC.HUMIDITYIN.unit}
-                fix={STATION_MEASUREMENTS_DESC.HUMIDITYIN.fix}
-                data={appContext.stationCtrl.stationData.trendData.humidityin}
-                range={STATION_MEASUREMENTS_DESC.HUMIDITYIN.range}
-                couldBeNegative={
-                  STATION_MEASUREMENTS_DESC.HUMIDITYIN.couldBeNegative
-                }
-                onClick={() =>
-                  appContext.setMeasurementAndLoad(
-                    STATION_MEASUREMENTS_DESC.HUMIDITYIN
-                  )
-                }
-                color={STATION_MEASUREMENTS_DESC.HUMIDITYIN.color}
-              />
-            </Col>
-          </Row>
-        </>
-      )}
+      {appContext.authCtrl.authData.isAuth &&
+        appContext.authCtrl.authData.id ===
+          appContext.stationCtrl.stationData.station.owner && (
+          <>
+            <Myhr />
+            <div className="text-left font-weight-bold">IN</div>
+            <Row>
+              <Col xs={6}>
+                <DataWithTrend
+                  label={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.label}
+                  value={
+                    appContext.stationCtrl.stationData.oldData
+                      ? null
+                      : appContext.stationCtrl.stationData.data.tempin
+                  }
+                  unit={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.unit}
+                  fix={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.fix}
+                  data={appContext.stationCtrl.stationData.trendData.tempin}
+                  range={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.range}
+                  couldBeNegative={
+                    STATION_MEASUREMENTS_DESC.TEMPERATUREIN.couldBeNegative
+                  }
+                  onClick={() =>
+                    appContext.setMeasurementAndLoad(
+                      STATION_MEASUREMENTS_DESC.TEMPERATUREIN
+                    )
+                  }
+                  color={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.color}
+                />
+              </Col>
+              <Col xs={6}>
+                <DataWithTrend
+                  label={STATION_MEASUREMENTS_DESC.HUMIDITYIN.label}
+                  value={
+                    appContext.stationCtrl.stationData.oldData
+                      ? null
+                      : appContext.stationCtrl.stationData.data.humidityin
+                  }
+                  unit={STATION_MEASUREMENTS_DESC.HUMIDITYIN.unit}
+                  fix={STATION_MEASUREMENTS_DESC.HUMIDITYIN.fix}
+                  data={appContext.stationCtrl.stationData.trendData.humidityin}
+                  range={STATION_MEASUREMENTS_DESC.HUMIDITYIN.range}
+                  couldBeNegative={
+                    STATION_MEASUREMENTS_DESC.HUMIDITYIN.couldBeNegative
+                  }
+                  onClick={() =>
+                    appContext.setMeasurementAndLoad(
+                      STATION_MEASUREMENTS_DESC.HUMIDITYIN
+                    )
+                  }
+                  color={STATION_MEASUREMENTS_DESC.HUMIDITYIN.color}
+                />
+              </Col>
+            </Row>
+          </>
+        )}
     </MyContainer>
   );
 });

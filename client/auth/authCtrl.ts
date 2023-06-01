@@ -19,13 +19,7 @@ export default class AuthCtrl {
   }
 
   checkAuth() {
-    const time = Date.now();
-    //    if (time > this.authData.expiresAt - this.authData.duration / 2) {
-    //      this.handleRefresh();
-    //    }
-    if (time < this.authData.expiresAt) {
-      this.authData.isAuth = true;
-    } else {
+    if (Date.now() > this.authData.expiresAt) {
       this.authData.cancelAuth();
     }
   }
