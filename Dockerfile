@@ -1,15 +1,11 @@
-FROM node:16-alpine AS met-hub
-RUN apk add --no-cache libc6-compat 
-RUN ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
+FROM node:20-alpine AS met-hub
 WORKDIR /app
 COPY ./package*.json /app/
 RUN npm install
 COPY esdist/be/main.js /app/
 CMD ["node", "/app/main.js"]
 
-FROM node:16-alpine AS met-hub-store
-RUN apk add --no-cache libc6-compat 
-RUN ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
+FROM node:20-alpine AS met-hub-store
 WORKDIR /app
 COPY ./package*.json /app/
 RUN npm install
