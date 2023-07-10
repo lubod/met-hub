@@ -23,17 +23,31 @@ const ScrollDiv = styled.div`
 
 type ColProps = {
   value: string;
-  extraClass: string;
+  color: string;
+  maxLimit1: number;
+  maxLimit2: number;
+  maxLimit3: number;
 };
 
-function MyCol({ value, extraClass }: ColProps) {
+function MyCol({ value, color, maxLimit1, maxLimit2, maxLimit3 }: ColProps) {
   const style = {
     display: "flex",
     justifyContent: "center",
   };
+  let bg = "";
+  if (maxLimit1 != null && parseFloat(value) > maxLimit1) {
+    bg = `bg-${color} bg-opacity-10`;
+  }
+  if (maxLimit2 != null && parseFloat(value) > maxLimit2) {
+    bg = `bg-${color} bg-opacity-25`;
+  }
+  if (maxLimit3 != null && parseFloat(value) > maxLimit3) {
+    bg = `bg-${color} bg-opacity-50`;
+  }
+
   return (
     <Col
-      className={`text-center small ps-0 pe-0 pb-2 border-start ${extraClass}`}
+      className={`text-center small ps-0 pe-0 pb-2 border-start border-${color} ${bg}`}
       style={style}
     >
       {value}
@@ -53,12 +67,26 @@ function MyRows1({ data }: RowsProps) {
     <>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol key={item.getDay2()} value={item.getDay()} extraClass="border-secondary" />
+          <MyCol
+            key={item.getDay2()}
+            value={item.getDay()}
+            color="secondary"
+            maxLimit1={null}
+            maxLimit2={null}
+            maxLimit3={null}
+          />
         ))}
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol key={item.getDay2()} value={item.getDay2()} extraClass="border-secondary" />
+          <MyCol
+            key={item.getDay2()}
+            value={item.getDay2()}
+            color="secondary"
+            maxLimit1={null}
+            maxLimit2={null}
+            maxLimit3={null}
+          />
         ))}
       </Row>
       <Row className={rowClassName}>
@@ -82,12 +110,26 @@ function MyRows1({ data }: RowsProps) {
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol key={item.getDay2()} value={item.getAirTemperatureMax()} extraClass="border-info" />
+          <MyCol
+            key={item.getDay2()}
+            value={item.getAirTemperatureMax()}
+            color="info"
+            maxLimit1={24}
+            maxLimit2={29}
+            maxLimit3={34}
+          />
         ))}
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol key={item.getDay2()} value={item.getAirTemperatureMin()} extraClass="border-info" />
+          <MyCol
+            key={item.getDay2()}
+            value={item.getAirTemperatureMin()}
+            color="info"
+            maxLimit1={18}
+            maxLimit2={21}
+            maxLimit3={24}
+          />
         ))}
       </Row>
     </>
@@ -103,19 +145,36 @@ function MyRows2({ data }: RowsProps) {
         {data.map((item: IGetForecastDataToDisplay) => (
           <MyCol
             value={item.getPrecipitationAmount()}
-            extraClass="border-primary"
+            color="primary"
             key={item.getDay2()}
+            maxLimit1={0.01}
+            maxLimit2={3}
+            maxLimit3={10}
           />
         ))}
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol key={item.getDay2()} value={item.getCloudAreaFraction()} extraClass="" />
+          <MyCol
+            key={item.getDay2()}
+            value={item.getCloudAreaFraction()}
+            color="light"
+            maxLimit1={50}
+            maxLimit2={70}
+            maxLimit3={90}
+          />
         ))}
       </Row>
       <Row className={rowClassName}>
         {data.map((item: IGetForecastDataToDisplay) => (
-          <MyCol key={item.getDay2()} value={item.getWindSpeed()} extraClass="border-success" />
+          <MyCol
+            key={item.getDay2()}
+            value={item.getWindSpeed()}
+            color="success"
+            maxLimit1={19}
+            maxLimit2={29}
+            maxLimit3={39}
+          />
         ))}
       </Row>
       <Row className={rowClassName}>
