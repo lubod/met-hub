@@ -188,6 +188,7 @@ export class Dom implements IMeasurement {
     tmp.temp = [];
     tmp.humidity = [];
     tmp.rain = [];
+    tmp.tarif = [];
     tmp.obyvacka_vzduch = [];
     tmp.obyvacka_podlaha = [];
     tmp.pracovna_vzduch = [];
@@ -227,6 +228,7 @@ export class Dom implements IMeasurement {
       temp: data.vonku.temp,
       humidity: data.vonku.humidity,
       rain: data.vonku.rain,
+      tarif: data.tarif.tarif,
       obyvacka_vzduch: data.obyvacka_vzduch.temp,
       obyvacka_podlaha: data.obyvacka_podlaha.temp,
       obyvacka_reqall: data.obyvacka_vzduch.reqall,

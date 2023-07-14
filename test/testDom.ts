@@ -62,7 +62,7 @@ function generateTarifData() {
   const data = {} as IDomTarifData;
 
   data.text = "";
-  data.tarif = 0;
+  data.tarif = 1;
   return data;
 }
 
@@ -414,6 +414,7 @@ function getClientDomData(data: IDomData) {
     temp: data.temp,
     humidity: data.humidity,
     rain: data.rain,
+    tarif: data.tarif,
     obyvacka_vzduch: data.obyvacka_vzduch,
     obyvacka_podlaha: data.obyvacka_podlaha,
     obyvacka_reqall: data.obyvacka_reqall,

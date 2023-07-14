@@ -58,6 +58,7 @@ export interface IDomData {
   temp: number;
   humidity: number;
   rain: number;
+  tarif: number;
   obyvacka_vzduch: number;
   obyvacka_podlaha: number;
   obyvacka_reqall: number;
@@ -95,6 +96,7 @@ export interface IDomTrendData {
   temp: Array<number>;
   humidity: Array<number>;
   rain: Array<number>;
+  tarif: Array<number>;
   obyvacka_vzduch: Array<number>;
   obyvacka_podlaha: Array<number>;
   pracovna_vzduch: Array<number>;
@@ -128,7 +130,7 @@ export class DOM_MEASUREMENTS_DESC {
     range: 10,
     couldBeNegative: false,
     table: "vonku",
-    label: "Humidity",
+    label: "Hum",
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
@@ -145,6 +147,19 @@ export class DOM_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
+  };
+
+  static TARIF: IMeasurementDesc = {
+    col: "tarif",
+    unit: "",
+    fix: 0,
+    range: 1,
+    couldBeNegative: false,
+    table: "tarif",
+    label: "Tarif",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
   };
 
   static ROOM: IMeasurementDesc = {

@@ -82,19 +82,19 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Myhr />
         <div className="text-left font-weight-bold">GARDEN HOUSE</div>
         <Row>
-          <Col xs={4}>
+          <Col xs={3}>
             <DataWithTrend
-              label="Temp"
+              label={DOM_MEASUREMENTS_DESC.TEMPERATURE.label}
               value={
                 appContext.domCtrl.domData.oldData
                   ? null
                   : appContext.domCtrl.domData.data.temp
               }
-              unit="°C"
-              fix={1}
+              unit={DOM_MEASUREMENTS_DESC.TEMPERATURE.unit}
+              fix={DOM_MEASUREMENTS_DESC.TEMPERATURE.fix}
               data={appContext.domCtrl.domData.trendData.temp}
-              range={1.6}
-              couldBeNegative
+              range={DOM_MEASUREMENTS_DESC.TEMPERATURE.range}
+              couldBeNegative={DOM_MEASUREMENTS_DESC.TEMPERATURE.couldBeNegative}
               onClick={() =>
                 appContext.setMeasurementAndLoad(
                   DOM_MEASUREMENTS_DESC.TEMPERATURE
@@ -103,40 +103,59 @@ const Dom = observer(({ appContext }: DomProps) => {
               color={DOM_MEASUREMENTS_DESC.TEMPERATURE.color}
             />
           </Col>
-          <Col xs={4}>
+          <Col xs={3}>
             <DataWithTrend
-              label="Humidity"
+              label={DOM_MEASUREMENTS_DESC.HUMIDITY.label}
               value={
                 appContext.domCtrl.domData.oldData
                   ? null
                   : appContext.domCtrl.domData.data.humidity
               }
-              unit="%"
-              fix={0}
+              unit={DOM_MEASUREMENTS_DESC.HUMIDITY.unit}
+              fix={DOM_MEASUREMENTS_DESC.HUMIDITY.fix}
               data={appContext.domCtrl.domData.trendData.humidity}
-              range={10}
-              couldBeNegative={false}
+              range={DOM_MEASUREMENTS_DESC.HUMIDITY.range}
+              couldBeNegative={DOM_MEASUREMENTS_DESC.HUMIDITY.couldBeNegative}
               onClick={() =>
                 appContext.setMeasurementAndLoad(DOM_MEASUREMENTS_DESC.HUMIDITY)
               }
               color={DOM_MEASUREMENTS_DESC.HUMIDITY.color}
             />
           </Col>
-          <Col xs={4}>
+          <Col xs={3}>
             <DataWithTrend
-              label="Rain"
+              label={DOM_MEASUREMENTS_DESC.RAIN.label}
               value={
                 appContext.domCtrl.domData.oldData
                   ? null
                   : appContext.domCtrl.domData.data.rain
               }
-              unit=""
-              fix={0}
+              unit={DOM_MEASUREMENTS_DESC.RAIN.unit}
+              fix={DOM_MEASUREMENTS_DESC.RAIN.fix}
               data={appContext.domCtrl.domData.trendData.rain}
-              range={1}
-              couldBeNegative={false}
+              range={DOM_MEASUREMENTS_DESC.RAIN.range}
+              couldBeNegative={DOM_MEASUREMENTS_DESC.RAIN.couldBeNegative}
               onClick={() =>
                 appContext.setMeasurementAndLoad(DOM_MEASUREMENTS_DESC.RAIN)
+              } // todo
+              color={DOM_MEASUREMENTS_DESC.RAIN.color}
+            />
+          </Col>
+          <Col xs={3}>
+            <DataWithTrend
+              label={DOM_MEASUREMENTS_DESC.TARIF.label}
+              value={
+                appContext.domCtrl.domData.oldData
+                  ? null
+                  : appContext.domCtrl.domData.data.tarif
+              }
+              unit={DOM_MEASUREMENTS_DESC.TARIF.unit}
+              fix={DOM_MEASUREMENTS_DESC.TARIF.fix}
+              data={appContext.domCtrl.domData.trendData.tarif}
+              range={DOM_MEASUREMENTS_DESC.TARIF.range}
+              couldBeNegative={DOM_MEASUREMENTS_DESC.TARIF.couldBeNegative}
+              onClick={() =>
+                appContext.setMeasurementAndLoad(DOM_MEASUREMENTS_DESC.TARIF)
               } // todo
               color={DOM_MEASUREMENTS_DESC.RAIN.color}
             />
