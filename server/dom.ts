@@ -207,6 +207,7 @@ export class Dom implements IMeasurement {
       tmp.temp.push(value.vonku.temp);
       tmp.humidity.push(value.vonku.humidity);
       tmp.rain.push(value.vonku.rain);
+      tmp.tarif.push(value.tarif.tarif);
       tmp.obyvacka_vzduch.push(value.obyvacka_vzduch.temp);
       tmp.obyvacka_podlaha.push(value.obyvacka_podlaha.temp);
       tmp.pracovna_vzduch.push(value.pracovna_vzduch.temp);
