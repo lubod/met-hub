@@ -157,7 +157,7 @@ const Dom = observer(({ appContext }: DomProps) => {
               onClick={() =>
                 appContext.setMeasurementAndLoad(DOM_MEASUREMENTS_DESC.TARIF)
               } // todo
-              color={DOM_MEASUREMENTS_DESC.RAIN.color}
+              color={DOM_MEASUREMENTS_DESC.TARIF.color}
             />
           </Col>
         </Row>

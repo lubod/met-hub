@@ -117,7 +117,7 @@ export class DOM_MEASUREMENTS_DESC {
     range: 1.6,
     couldBeNegative: true,
     table: "vonku",
-    label: "Temp",
+    label: "T",
     col2: "",
     chartType: "",
     color: MY_COLORS.orange,
@@ -130,7 +130,7 @@ export class DOM_MEASUREMENTS_DESC {
     range: 10,
     couldBeNegative: false,
     table: "vonku",
-    label: "Hum",
+    label: "H",
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
@@ -159,7 +159,7 @@ export class DOM_MEASUREMENTS_DESC {
     label: "Tarif",
     col2: "",
     chartType: "",
-    color: MY_COLORS.orange,
+    color: MY_COLORS.yellow,
   };
 
   static ROOM: IMeasurementDesc = {
