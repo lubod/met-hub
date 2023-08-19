@@ -16,7 +16,10 @@ import "./style.scss";
 import { IStation } from "../common/allStationsCfg";
 import { AllStationsCfgClient } from "../common/allStationsCfgClient";
 import { DOM_MEASUREMENTS, DOM_MEASUREMENTS_DESC } from "../common/domModel";
-import { STATION_MEASUREMENTS, STATION_MEASUREMENTS_DESC } from "../common/stationModel";
+import {
+  STATION_MEASUREMENTS,
+  STATION_MEASUREMENTS_DESC,
+} from "../common/stationModel";
 
 export class AppContext {
   socket: MySocket;
@@ -34,22 +37,6 @@ export class AppContext {
   forecastCtrl: ForecastCtrl;
 
   start() {
-    //    const queryParams = new URLSearchParams(window.location.search);
-    //    const id = queryParams.get("id");
-    //    console.info("External station ID", id);
-    //    const externalStation = AllStationsCfgClient.getStationByID(id);
-    //    const lastStation = AllStationsCfgClient.getStationByID(
-    //      localStorage.getItem("lastStationID")
-    //    );
-    //    let headerStationID = AllStationsCfgClient.getDefaultStationID();
-    //    let isExternalID = false;
-    //    if (lastStation != null && lastStation.public) {
-    //      headerStationID = lastStation.id;
-    //    }
-    //    if (externalStation != null && externalStation.public) {
-    //      headerStationID = externalStation.id;
-    //      isExternalID = true;
-    //    }
     this.socket = new MySocket();
     this.authCtrl = new AuthCtrl(this);
     this.headerCtrl = new HeaderCtrl(this);
@@ -75,7 +62,7 @@ export class AppContext {
       if (station.id === "dom") {
         this.chartsCtrl.chartsData.setMeasurements(DOM_MEASUREMENTS);
         this.chartsCtrl.chartsData.setMeasurementObject(
-          DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR
+          DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR,
         );
         this.stationCtrl.stop();
         this.domCtrl.start();
@@ -83,7 +70,7 @@ export class AppContext {
         // todo
         this.chartsCtrl.chartsData.setMeasurements(STATION_MEASUREMENTS);
         this.chartsCtrl.chartsData.setMeasurementObject(
-          STATION_MEASUREMENTS_DESC.TEMPERATURE
+          STATION_MEASUREMENTS_DESC.TEMPERATURE,
         );
         this.domCtrl.stop();
         this.stationCtrl.setStation(station);
@@ -100,9 +87,17 @@ export class AppContext {
     console.info("fetch cfg");
     const cfg = await AllStationsCfgClient.fetchAllStationsCfg();
     this.headerCtrl.setAllStations(cfg);
-    if (cfg != null) {
+
+    const queryParams = new URLSearchParams(window.location.search);
+    const id = queryParams.get("id");
+    console.info("External station ID", id);
+    const externalStation = AllStationsCfgClient.getStationByID(id);
+    if (externalStation != null && externalStation.public) {
+      this.setStation(externalStation);
+      this.headerCtrl.headerData.setIsExternalID(true);
+    } else if (cfg != null) {
       let lastStation: IStation = AllStationsCfgClient.getStationByID(
-        localStorage.getItem("lastStationID")
+        localStorage.getItem("lastStationID"),
       );
       if (lastStation == null) {
         // eslint-disable-next-line prefer-destructuring
@@ -121,7 +116,7 @@ function render() {
   console.info(
     "Index render",
     appContext.authCtrl.authData.isAuth,
-    window.location.pathname
+    window.location.pathname,
   );
   appContext.authCtrl.authData.setLocation(window.location.pathname);
 
@@ -132,7 +127,7 @@ function render() {
         <App appContext={appContext} />
       </GoogleOAuthProvider>
     </div>,
-    appContainer
+    appContainer,
   );
 }
 
