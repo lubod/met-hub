@@ -78,10 +78,7 @@ export async function getAstronomicalData(
       const message = `An error has occured: ${response.status}`;
       throw new Error(message);
     }
-    const xml = await response.text();
-    const json = JSON.parse(
-      convert.xml2json(xml, { compact: true, spaces: 1 })
-    );
+    const json = await response.json();
     redisClient.set(cacheKey, JSON.stringify(json), {
       EX: 3600,
     });
