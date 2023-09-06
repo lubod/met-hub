@@ -63,7 +63,7 @@ export async function getAstronomicalData(
         return json;
       }
     }
-    const url = `https://api.met.no/weatherapi/sunrise/2.0?lat=${lat}&lon=${lon}&date=${moment(
+    const url = `https://api.met.no/weatherapi/sunrise/3.0/sun?lat=${lat}&lon=${lon}&date=${moment(
       date
     ).format("YYYY-MM-DD")}&offset=+02:00`;
     console.info(`GET ${url}`);
