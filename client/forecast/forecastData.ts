@@ -354,10 +354,10 @@ export default class ForecastData implements IForecastData {
   setAstronomicalData(astronomicalData: any) {
     this.astronomicalData = astronomicalData;
     this.sunrise = new Date(
-      astronomicalData.astrodata.location.time[0].sunrise._attributes.time
+      astronomicalData.properties.sunrise.time
     );
     this.sunset = new Date(
-      astronomicalData.astrodata.location.time[0].sunset._attributes.time
+      astronomicalData.properties.sunset.time
     );
   }
 
