@@ -3,6 +3,8 @@ import { createClient } from "redis";
 import { AddressInfo } from "net";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import cors from "cors";
 import router from "./router";
 import SocketEmitter from "./socketEmitter";
 import Agregator from "./agregator";
@@ -48,8 +50,7 @@ export const socketEmiter = new SocketEmitter();
 export const allStationsCfg = new AllStationsCfg();
 allStationsCfg.readCfg().then(() => {
   const agregator = new Agregator(
-    socketEmiter,
-    allStationsCfg.getMeasurements()
+    allStationsCfg.getMeasurements(),
   );
   agregator.start();
   // const go = new Go();
@@ -57,11 +58,13 @@ allStationsCfg.readCfg().then(() => {
 });
 
 app.use(helmet());
+// app.use(compression());
+app.use(cors());
 app.use(express.static(__dirname));
 app.use(
   express.urlencoded({
     extended: true,
-  })
+  }),
 );
 
 app.use(limiter);
@@ -71,7 +74,15 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use((req: any, res: any, next: any) => {
-  console.log("ENDPOINT:", new Date(), req.path, req.cookies, req.body, req.query, req.params);
+  console.log(
+    "ENDPOINT:",
+    new Date(),
+    req.path,
+    req.cookies,
+    req.body,
+    req.query,
+    req.params,
+  );
   next();
 });
 

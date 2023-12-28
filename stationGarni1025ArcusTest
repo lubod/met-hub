@@ -1,1 +1,0 @@
-ENV=dev node esdist/test/testStationGarni1025Arcus.js 

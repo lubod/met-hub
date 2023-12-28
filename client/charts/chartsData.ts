@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { action, makeObservable, observable } from "mobx";
-import { IMeasurementDesc } from "../../common/measurementDesc";
+import { ISensor } from "../../common/sensor";
 import { IStation } from "../../common/allStationsCfg";
 
 export class CData {
@@ -40,9 +40,9 @@ class ChartsData {
 
   range: string = "86400|1 day";
 
-  measurement: IMeasurementDesc = null;
+  measurement: ISensor = null;
 
-  measurements: IMeasurementDesc[] = null;
+  measurements: ISensor[] = null;
 
   loading: boolean = true;
 
@@ -91,11 +91,11 @@ class ChartsData {
     this.measurement = JSON.parse(measurement);
   }
 
-  setMeasurements(measurements: IMeasurementDesc[]) {
+  setMeasurements(measurements: ISensor[]) {
     this.measurements = measurements;
   }
 
-  setMeasurementObject(measurement: IMeasurementDesc) {
+  setMeasurementObject(measurement: ISensor) {
     this.measurement = measurement;
   }
 

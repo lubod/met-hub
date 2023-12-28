@@ -14,7 +14,7 @@ type Props = {
 };
 
 const Header = observer(({ appContext }: Props) => {
-  console.info("Header render");
+  // console.info("Header render"); 
   const {station} = appContext.headerCtrl.headerData;
 
   let place: string = "";

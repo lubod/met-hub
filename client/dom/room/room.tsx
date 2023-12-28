@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { Row, Col } from "react-bootstrap";
-import { DOM_MEASUREMENTS_DESC } from "../../../common/domModel";
+import { DOM_SENSORS_DESC } from "../../../common/domModel";
 import AuthData from "../../auth/authData";
 import DataAlone from "../../misc/dataAlone";
 import DataWithTrend from "../../misc/dataWithTrend";
@@ -13,9 +13,9 @@ type RoomProps = {
   air: number;
   floor: number;
   required: number;
-  heat: number;
-  summer: number;
-  low: number;
+  heat: boolean;
+  off: boolean;
+  low: boolean;
   room: string;
   airTrend: Array<number>;
   floorTrend: Array<number>;
@@ -30,7 +30,7 @@ const Room = observer(
     floor,
     required,
     heat,
-    summer,
+    off: summer,
     low,
     room,
     airTrend,
@@ -43,44 +43,44 @@ const Room = observer(
       <Row className="text-light">
         <Col xs={3}>
           <DataWithTrend
-            label={DOM_MEASUREMENTS_DESC.ROOM.label}
+            label={DOM_SENSORS_DESC.ROOM.label}
             value={air}
-            unit={DOM_MEASUREMENTS_DESC.ROOM.unit}
-            fix={DOM_MEASUREMENTS_DESC.ROOM.fix}
+            unit={DOM_SENSORS_DESC.ROOM.unit}
+            fix={DOM_SENSORS_DESC.ROOM.fix}
             data={airTrend}
-            range={DOM_MEASUREMENTS_DESC.ROOM.range}
-            couldBeNegative={DOM_MEASUREMENTS_DESC.ROOM.couldBeNegative}
+            range={DOM_SENSORS_DESC.ROOM.range}
+            couldBeNegative={DOM_SENSORS_DESC.ROOM.couldBeNegative}
             onClick={onClickAir}
-            color={DOM_MEASUREMENTS_DESC.ROOM.color}
+            color={DOM_SENSORS_DESC.ROOM.color}
           />
         </Col>
         <Col xs={3}>
           <DataWithTrend
-            label={DOM_MEASUREMENTS_DESC.ROOM.label}
+            label={DOM_SENSORS_DESC.ROOM.label}
             value={floor}
-            unit={DOM_MEASUREMENTS_DESC.ROOM.unit}
-            fix={DOM_MEASUREMENTS_DESC.ROOM.fix}
+            unit={DOM_SENSORS_DESC.ROOM.unit}
+            fix={DOM_SENSORS_DESC.ROOM.fix}
             data={floorTrend}
-            range={DOM_MEASUREMENTS_DESC.ROOM.range}
-            couldBeNegative={DOM_MEASUREMENTS_DESC.ROOM.couldBeNegative}
+            range={DOM_SENSORS_DESC.ROOM.range}
+            couldBeNegative={DOM_SENSORS_DESC.ROOM.couldBeNegative}
             onClick={onClickFloor}
-            color={DOM_MEASUREMENTS_DESC.ROOM.color}
+            color={DOM_SENSORS_DESC.ROOM.color}
           />
         </Col>
         <Col xs={3}>
           <DataAlone
-            label={DOM_MEASUREMENTS_DESC.ROOM.label}
+            label={DOM_SENSORS_DESC.ROOM.label}
             value={required}
-            unit={DOM_MEASUREMENTS_DESC.ROOM.unit}
-            fix={DOM_MEASUREMENTS_DESC.ROOM.fix}
+            unit={DOM_SENSORS_DESC.ROOM.unit}
+            fix={DOM_SENSORS_DESC.ROOM.fix}
           />
         </Col>
         <Col xs={2}>
           <Text
             name=""
-            value={`${heat != null ? heat.toFixed(0) : ""}${
-              summer != null ? summer.toFixed(0) : ""
-            }${low != null ? low.toFixed(0) : ""}`}
+            value={`${heat != null ? Number(heat) : ""}${
+              summer != null ? Number(summer) : ""
+            }${low != null ? Number(low) : ""}`}
           />
         </Col>
       </Row>

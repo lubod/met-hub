@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import MY_COLORS from "./colors";
-import { IMeasurementDesc } from "./measurementDesc";
+import { ISensor } from "./sensor";
+import { propName } from "./units";
 
 export interface IStationData {
   timestamp: Date;
@@ -95,9 +96,11 @@ export interface IStationTrendData {
   minuterain: Array<number>;
 }
 
+const station = {} as IStationData;
+
 export class STATION_MEASUREMENTS_DESC {
-  static TEMPERATURE: IMeasurementDesc = {
-    col: "temp",
+  static TEMPERATURE: ISensor = {
+    col: propName(station).temp,
     unit: "°C",
     fix: 1,
     range: 1.6,
@@ -107,10 +110,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(station).temp,
+    agg: "avg",
   };
 
-  static HUMIDITY: IMeasurementDesc = {
-    col: "humidity",
+  static HUMIDITY: ISensor = {
+    col: propName(station).humidity,
     unit: "%",
     fix: 0,
     range: 10,
@@ -120,10 +125,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
+    id: propName(station).humidity,
+    agg: "avg",
   };
 
-  static TEMPERATUREIN: IMeasurementDesc = {
-    col: "tempin",
+  static TEMPERATUREIN: ISensor = {
+    col: propName(station).tempin,
     unit: "°C",
     fix: 1,
     range: 1.6,
@@ -133,10 +140,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(station).tempin,
+    agg: "avg",
   };
 
-  static HUMIDITYIN: IMeasurementDesc = {
-    col: "humidityin",
+  static HUMIDITYIN: ISensor = {
+    col: propName(station).humidityin,
     unit: "%",
     fix: 0,
     range: 10,
@@ -146,10 +155,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
+    id: propName(station).humidityin,
+    agg: "avg",
   };
 
-  static PRESSURE: IMeasurementDesc = {
-    col: "pressureabs",
+  static PRESSUREABS: ISensor = {
+    col: propName(station).pressureabs,
     unit: "hP",
     fix: 1,
     range: 1,
@@ -159,10 +170,27 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.purple,
+    id: propName(station).pressureabs,
+    agg: "avg",
   };
 
-  static SOLAR: IMeasurementDesc = {
-    col: "solarradiation",
+  static PRESSUREREL: ISensor = {
+    col: propName(station).pressurerel,
+    unit: "hP",
+    fix: 1,
+    range: 1,
+    couldBeNegative: false,
+    table: "station",
+    label: "Pressure",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.purple,
+    id: propName(station).pressurerel,
+    agg: "avg",
+  };
+
+  static SOLAR: ISensor = {
+    col: propName(station).solarradiation,
     unit: "W/m2",
     fix: 0,
     range: 100,
@@ -172,10 +200,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.yellow,
+    id: propName(station).solarradiation,
+    agg: "avg",
   };
 
-  static UV: IMeasurementDesc = {
-    col: "uv",
+  static UV: ISensor = {
+    col: propName(station).uv,
     unit: "",
     fix: 0,
     range: 3,
@@ -185,10 +215,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.yellow,
+    id: propName(station).uv,
+    agg: "avg",
   };
 
-  static RAINRATE: IMeasurementDesc = {
-    col: "rainrate",
+  static RAINRATE: ISensor = {
+    col: propName(station).rainrate,
     unit: "mm",
     fix: 1,
     range: 1,
@@ -198,10 +230,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
+    id: propName(station).rainrate,
+    agg: "avg",
   };
 
-  static EVENTRAIN: IMeasurementDesc = {
-    col: "eventrain",
+  static EVENTRAIN: ISensor = {
+    col: propName(station).eventrain,
     unit: "mm",
     fix: 1,
     range: 1,
@@ -211,10 +245,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
+    id: propName(station).eventrain,
+    agg: "max",
   };
 
-  static HOURLYRAIN: IMeasurementDesc = {
-    col: "hourlyrain",
+  static HOURLYRAIN: ISensor = {
+    col: propName(station).hourlyrain,
     unit: "mm",
     fix: 1,
     range: 1,
@@ -224,10 +260,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "rain",
     color: MY_COLORS.blue,
+    id: propName(station).hourlyrain,
+    agg: "max",
   };
 
-  static DAILYRAIN: IMeasurementDesc = {
-    col: "dailyrain",
+  static DAILYRAIN: ISensor = {
+    col: propName(station).dailyrain,
     unit: "mm",
     fix: 1,
     range: 1,
@@ -237,10 +275,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "rain",
     color: MY_COLORS.blue,
+    id: propName(station).dailyrain,
+    agg: "max",
   };
 
-  static WEEKLYRAIN: IMeasurementDesc = {
-    col: "weeklyrain",
+  static WEEKLYRAIN: ISensor = {
+    col: propName(station).weeklyrain,
     unit: "mm",
     fix: 1,
     range: 1,
@@ -250,10 +290,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "rain",
     color: MY_COLORS.blue,
+    id: propName(station).weeklyrain,
+    agg: "max",
   };
 
-  static MONTHLYRAIN: IMeasurementDesc = {
-    col: "monthlyrain",
+  static MONTHLYRAIN: ISensor = {
+    col: propName(station).monthlyrain,
     unit: "mm",
     fix: 1,
     range: 1,
@@ -263,10 +305,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "rain",
     color: MY_COLORS.blue,
+    id: propName(station).monthlyrain,
+    agg: "max",
   };
 
-  static TOTALRAIN: IMeasurementDesc = {
-    col: "totyalrain",
+  static TOTALRAIN: ISensor = {
+    col: propName(station).totalrain,
     unit: "mm",
     fix: 1,
     range: 1,
@@ -276,10 +320,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
+    id: propName(station).totalrain,
+    agg: "max",
   };
 
-  static WINDDIR: IMeasurementDesc = {
-    col: "winddir",
+  static WINDDIR: ISensor = {
+    col: propName(station).winddir,
     unit: "°",
     fix: 0,
     range: 0,
@@ -289,10 +335,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "winddir",
     color: MY_COLORS.purple,
+    id: propName(station).winddir,
+    agg: "vavg",
   };
 
-  static WINDSPEED: IMeasurementDesc = {
-    col: "windspeed",
+  static WINDSPEED: ISensor = {
+    col: propName(station).windspeed,
     unit: "km/h",
     fix: 1,
     range: 5,
@@ -302,10 +350,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.purple,
+    id: propName(station).windspeed,
+    agg: "avg",
   };
 
-  static WINDGUST: IMeasurementDesc = {
-    col: "windgust",
+  static WINDGUST: ISensor = {
+    col: propName(station).windgust,
     unit: "km/h",
     fix: 1,
     range: 5,
@@ -315,10 +365,12 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.purple,
+    id: propName(station).windgust,
+    agg: "avg",
   };
 
-  static DAILYGUST: IMeasurementDesc = {
-    col: "dailygust",
+  static MAXDAILYGUST: ISensor = {
+    col: propName(station).maxdailygust,
     unit: "km/h",
     fix: 1,
     range: 5,
@@ -328,23 +380,29 @@ export class STATION_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.purple,
+    id: propName(station).maxdailygust,
+    agg: "max",
   };
 }
 
-export const STATION_MEASUREMENTS: IMeasurementDesc[] = [
+export const STATION_SENSORS: ISensor[] = [
   STATION_MEASUREMENTS_DESC.WINDDIR,
   STATION_MEASUREMENTS_DESC.WINDSPEED,
   STATION_MEASUREMENTS_DESC.WINDGUST,
+  STATION_MEASUREMENTS_DESC.MAXDAILYGUST,
   STATION_MEASUREMENTS_DESC.TEMPERATURE,
   STATION_MEASUREMENTS_DESC.HUMIDITY,
-  STATION_MEASUREMENTS_DESC.PRESSURE,
+  STATION_MEASUREMENTS_DESC.PRESSUREABS,
+  STATION_MEASUREMENTS_DESC.PRESSUREREL,
   STATION_MEASUREMENTS_DESC.SOLAR,
   STATION_MEASUREMENTS_DESC.UV,
   STATION_MEASUREMENTS_DESC.RAINRATE,
+  STATION_MEASUREMENTS_DESC.EVENTRAIN,
   STATION_MEASUREMENTS_DESC.HOURLYRAIN,
   STATION_MEASUREMENTS_DESC.DAILYRAIN,
   STATION_MEASUREMENTS_DESC.WEEKLYRAIN,
   STATION_MEASUREMENTS_DESC.MONTHLYRAIN,
+  STATION_MEASUREMENTS_DESC.TOTALRAIN,
   STATION_MEASUREMENTS_DESC.TEMPERATUREIN,
   STATION_MEASUREMENTS_DESC.HUMIDITYIN,
 ];

@@ -1,20 +1,18 @@
 import { Pool } from "pg";
-import { createClient } from "redis";
-import { KafkaMessage } from "kafkajs";
+import { createClient, commandOptions } from "redis";
+import { exit } from "process";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { RedisCommandArgument } from "@redis/client/dist/lib/commands";
 import { IStationData } from "../common/stationModel";
 import { IDomDataRaw } from "../common/domModel";
 import { IMeasurement } from "./measurement";
 import { AllStationsCfg, IStation } from "../common/allStationsCfg";
-import KafkaPC from "./kafkaPC";
 
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 5432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
 const PG_DB = process.env.PG_DB || "postgres";
 const PG_HOST = process.env.PG_HOST || "localhost";
 const PG_USER = process.env.PG_USER || "postgres";
-
-const redisClientSub = createClient();
-redisClientSub.connect();
 
 const pool = new Pool({
   user: PG_USER,
@@ -24,60 +22,107 @@ const pool = new Pool({
   port: PG_PORT,
 });
 
+const client = createClient();
+
+const currentId = "0"; // Start at lowest possible stream ID
+
+function getQuery(id: string, entries: [string, any][]) {
+  let qtext = `insert into station_${id} (`;
+  let qtextv = "";
+  const qarr = [];
+  let i = 1;
+  for (const [sensor, value] of entries) {
+    if (  // todo
+      sensor !== "place" &&
+      sensor !== "maxdailygust" &&
+      sensor !== "dewpt" &&
+      sensor !== "totalrain"
+    ) {
+      if (value != null) {
+        qtext += `${sensor},`;
+        qtextv += `$${i},`;
+        i += 1;
+        qarr.push(value);
+      }
+    }
+  }
+  qtext = qtext.slice(0, -1);
+  qtext += `) values (${qtextv.slice(0, -1)})`;
+  return { qtext, qarr };
+  // return `insert into station_${id} (timestamp, tempin, humidityin, pressurerel, pressureabs, temp, humidity, winddir, windspeed, windgust, rainrate, solarradiation, uv, eventrain, hourlyrain, dailyrain, weeklyrain, monthlyrain) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`;
+}
+
 async function store(
   measurement: IMeasurement,
-  data: IDomDataRaw | IStationData
+  data: IDomDataRaw | IStationData,
 ) {
-  const client = await pool.connect();
+  const dbclient = await pool.connect();
   try {
     console.info(`connected ${data.timestamp}`);
-    await client.query("BEGIN");
-
-    const tables = measurement.getTables();
-    for (const table of tables) {
-      // console.info(table);
-      const queryText = measurement.getQueryText(table);
-      // console.info(queryText);
-      const queryArray = measurement.getQueryArray(table, data);
-      //  console.info(queryArray);
-      client.query(queryText, queryArray);
-      // console.info(data.timestamp, queryText);
-    }
-    await client.query("COMMIT");
+    await dbclient.query("BEGIN");
+    const entries = Object.entries(data);
+    const { qtext, qarr } = getQuery(measurement.getStationID(), entries);
+    dbclient.query(qtext, qarr);
+    await dbclient.query("COMMIT");
   } catch (e) {
-    await client.query("ROLLBACK");
+    await dbclient.query("ROLLBACK");
     console.error(e);
   } finally {
-    client.release();
+    dbclient.release();
     console.info("released");
   }
 }
 
-class SKafkaPC extends KafkaPC {
-  stations: Map<string, IStation>;
+async function main(stations: Map<string, IStation>) {
+  await client.connect();
+  console.info(`PG: ${PG_HOST}`);
 
-  constructor(stations: Map<string, IStation>) {
-    super("store", "store-group");
-    this.stations = stations;
-  }
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await client.xRead(
+        commandOptions({
+          isolated: true,
+        }),
+        [
+          {
+            key: "toStore",
+            id: currentId,
+          },
+        ],
+        {
+          COUNT: 100,
+          BLOCK: 60000,
+        },
+      );
 
-  processMsg(message: KafkaMessage) {
-    const data = JSON.parse(message.value.toString());
-    data.timestamp = new Date(data.timestamp); // todo
-    const id = message.key.toString();
-    const station: IStation = this.stations.get(id);
-    if (station == null) {
-      console.error("Unknown station id", id);
-    } else {
-      store(station.measurement, data);
+      if (response) {
+        const toDel: RedisCommandArgument[] = [];
+        for (const res of response) {
+          console.info(res.name);
+          for (const msg of res.messages) {
+            console.info(msg.id);
+            const o = JSON.parse(msg.message.m);
+            o.timestamp = new Date(o.timestamp);
+            console.info(msg.message.id);
+            store(stations.get(msg.message.id).measurement, o);
+            toDel.push(msg.id);
+          }
+        }
+
+        if (toDel.length > 0) {
+          // eslint-disable-next-line no-await-in-loop
+          await client.xDel("toStore", toDel);
+        }
+      } else {
+        console.log("No new stream entries.");
+      }
+    } catch (err) {
+      console.error(err);
+      exit();
     }
   }
-}
-
-function main(stations: Map<string, IStation>) {
-  console.info(`PG: ${PG_HOST}`);
-  const kc = new SKafkaPC(stations);
-  kc.startConsumer("store");
 }
 
 const allStationsCfg = new AllStationsCfg();

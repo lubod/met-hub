@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { IMeasurementDesc } from "../../common/measurementDesc";
+import { ISensor } from "../../common/sensor";
 import AuthData from "../auth/authData";
 import ChartsData, { CData } from "./chartsData";
 import { IStation } from "../../common/allStationsCfg";
@@ -36,7 +36,7 @@ class ChartsCtrl {
     );
   }
 
-  async load(of: string, p: number, m: IMeasurementDesc, stationID: string) {
+  async load(of: string, p: number, m: ISensor, stationID: string) {
     if (!this.authData.isAuth) {
       console.info("no auth -> no load");
       return;
@@ -56,10 +56,8 @@ class ChartsCtrl {
       // return new Promise((resolve) => setTimeout(resolve, 2000));
       const start = new Date(Date.now() - o + p * o);
       const end = new Date(Date.now() + p * o);
-      let url = `/api/loadData?stationID=${stationID}&start=${start.toISOString()}&end=${end.toISOString()}&measurement=${
-        m.table
-      }`;
-      url += `:${m.col}`;
+      let url = `/api/loadData?stationID=${stationID}&start=${start.toISOString()}&end=${end.toISOString()}&measurement=`
+      url += `${m.col}`;
       if (m.col2 !== "") {
         url += `:${m.col2}`;
       }

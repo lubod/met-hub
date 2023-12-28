@@ -4,7 +4,9 @@ import {
   IDomData,
   IDomDataRaw,
   DomCfg,
+  DOM_SENSORS,
 } from "../common/domModel";
+import { IStationData } from "../common/stationModel";
 import { IMeasurement } from "./measurement";
 
 const cloneDeep = require("lodash.clonedeep");
@@ -40,7 +42,7 @@ export class Dom implements IMeasurement {
     return this.cfg.STATION_ID;
   }
 
-  agregateMinuteDataFromKafka(minute: number, data: Array<IDomData>): any {
+  agregateRawData2Minute(minute: number, data: Array<IDomData>): any {
     const deepCopy = cloneDeep(data[0]); // todo
     const date = new Date(deepCopy.timestamp);
     date.setUTCSeconds(0);
@@ -61,8 +63,12 @@ export class Dom implements IMeasurement {
     return this.cfg.REDIS_LAST_DATA_KEY;
   }
 
-  getRedisMinuteDataKey() {
+  getRedisRawDataKey() {
     return this.cfg.REDIS_MINUTE_DATA_KEY;
+  }
+
+  getRedisTSKeyPrefix() {
+    return this.cfg.REDIS_TS_KEY;
   }
 
   getKafkaStoreTopic() {
@@ -77,108 +83,12 @@ export class Dom implements IMeasurement {
     return this.cfg.KAFKA_KEY;
   }
 
-  getQueryArray(table: string, data: IDomDataRaw) {
-    switch (table) {
-      case TABLES.OBYVACKA_VZDUCH:
-      case TABLES.OBYVACKA_PODLAHA:
-      case TABLES.PRACOVNA_VZDUCH:
-      case TABLES.PRACOVNA_PODLAHA:
-      case TABLES.SPALNA_VZDUCH:
-      case TABLES.SPALNA_PODLAHA:
-      case TABLES.CHALANI_VZDUCH:
-      case TABLES.CHALANI_PODLAHA:
-      case TABLES.PETRA_VZDUCH:
-      case TABLES.PETRA_PODLAHA:
-      case TABLES.ZADVERIE_VZDUCH:
-      case TABLES.ZADVERIE_PODLAHA:
-      case TABLES.CHODBA_VZDUCH:
-      case TABLES.CHODBA_PODLAHA:
-      case TABLES.SATNA_VZDUCH:
-      case TABLES.SATNA_PODLAHA:
-      case TABLES.KUPELNA_HORE:
-      case TABLES.KUPELNA_DOLE:
-        return [
-          data.timestamp,
-          data[table].temp,
-          data[table].req,
-          data[table].reqall,
-          data[table].useroffset,
-          data[table].maxoffset,
-          data[table].kuri,
-          data[table].low,
-          data[table].leto,
-        ];
-      case TABLES.VONKU:
-        return [
-          data.timestamp,
-          data[TABLES.VONKU].temp,
-          data[TABLES.VONKU].humidity,
-          data[TABLES.VONKU].rain,
-        ];
-      case TABLES.TARIF:
-        return [data.timestamp, data[TABLES.TARIF].tarif];
-      default:
-        return null;
-    }
-  }
-
-  getQueryText(table: string) {
-    switch (table) {
-      case TABLES.OBYVACKA_VZDUCH:
-      case TABLES.OBYVACKA_PODLAHA:
-      case TABLES.PRACOVNA_VZDUCH:
-      case TABLES.PRACOVNA_PODLAHA:
-      case TABLES.SPALNA_VZDUCH:
-      case TABLES.SPALNA_PODLAHA:
-      case TABLES.CHALANI_VZDUCH:
-      case TABLES.CHALANI_PODLAHA:
-      case TABLES.PETRA_VZDUCH:
-      case TABLES.PETRA_PODLAHA:
-      case TABLES.ZADVERIE_VZDUCH:
-      case TABLES.ZADVERIE_PODLAHA:
-      case TABLES.CHODBA_VZDUCH:
-      case TABLES.CHODBA_PODLAHA:
-      case TABLES.SATNA_VZDUCH:
-      case TABLES.SATNA_PODLAHA:
-      case TABLES.KUPELNA_HORE:
-      case TABLES.KUPELNA_DOLE:
-        return `insert into ${table}(timestamp, temp, req, reqall, useroffset, maxoffset, kuri, low, leto) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
-      case TABLES.VONKU:
-        return `insert into ${table}(timestamp, temp, humidity, rain) values ($1, $2, $3, $4)`;
-      case TABLES.TARIF:
-        return `insert into ${table}(timestamp, tarif) values ($1, $2)`;
-      default:
-        return null;
-    }
-  }
-
   getTables() {
-    return [
-      TABLES.OBYVACKA_VZDUCH,
-      TABLES.OBYVACKA_PODLAHA,
-      TABLES.PRACOVNA_VZDUCH,
-      TABLES.PRACOVNA_PODLAHA,
-      TABLES.SPALNA_VZDUCH,
-      TABLES.SPALNA_PODLAHA,
-      TABLES.CHALANI_VZDUCH,
-      TABLES.CHALANI_PODLAHA,
-      TABLES.PETRA_VZDUCH,
-      TABLES.PETRA_PODLAHA,
-      TABLES.ZADVERIE_VZDUCH,
-      TABLES.ZADVERIE_PODLAHA,
-      TABLES.CHODBA_VZDUCH,
-      TABLES.CHODBA_PODLAHA,
-      TABLES.SATNA_VZDUCH,
-      TABLES.SATNA_PODLAHA,
-      TABLES.KUPELNA_HORE,
-      TABLES.KUPELNA_DOLE,
-      TABLES.VONKU,
-      TABLES.TARIF,
-    ];
+    return ["station_dom"];
   }
 
-  getColumns() {
-    return this.cfg.COLUMNS;
+  getSensors() {
+    return DOM_SENSORS;
   }
 
   transformTrendData(data: any) {
@@ -189,35 +99,35 @@ export class Dom implements IMeasurement {
     tmp.humidity = [];
     tmp.rain = [];
     tmp.tarif = [];
-    tmp.obyvacka_vzduch = [];
-    tmp.obyvacka_podlaha = [];
-    tmp.pracovna_vzduch = [];
-    tmp.pracovna_podlaha = [];
-    tmp.spalna_vzduch = [];
-    tmp.spalna_podlaha = [];
-    tmp.chalani_vzduch = [];
-    tmp.chalani_podlaha = [];
-    tmp.petra_vzduch = [];
-    tmp.petra_podlaha = [];
+    tmp.living_room_air = [];
+    tmp.living_room_floor = [];
+    tmp.guest_room_air = [];
+    tmp.guest_room_floor = [];
+    tmp.bed_room_air = [];
+    tmp.bed_room_floor = [];
+    tmp.boys_room_air = [];
+    tmp.boys_room_floor = [];
+    tmp.petra_room_air = [];
+    tmp.petra_room_floor = [];
 
     data.forEach((item: any) => {
-      const value: IDomDataRaw = JSON.parse(item);
+      const value: IDomData = JSON.parse(item);
       // console.info("value", value);
       tmp.timestamp.push(value.timestamp);
-      tmp.temp.push(value.vonku.temp);
-      tmp.humidity.push(value.vonku.humidity);
-      tmp.rain.push(value.vonku.rain);
-      tmp.tarif.push(value.tarif.tarif);
-      tmp.obyvacka_vzduch.push(value.obyvacka_vzduch.temp);
-      tmp.obyvacka_podlaha.push(value.obyvacka_podlaha.temp);
-      tmp.pracovna_vzduch.push(value.pracovna_vzduch.temp);
-      tmp.pracovna_podlaha.push(value.pracovna_podlaha.temp);
-      tmp.spalna_vzduch.push(value.spalna_vzduch.temp);
-      tmp.spalna_podlaha.push(value.spalna_podlaha.temp);
-      tmp.chalani_vzduch.push(value.chalani_vzduch.temp);
-      tmp.chalani_podlaha.push(value.chalani_podlaha.temp);
-      tmp.petra_vzduch.push(value.petra_vzduch.temp);
-      tmp.petra_podlaha.push(value.petra_podlaha.temp);
+      tmp.temp.push(value.temp);
+      tmp.humidity.push(value.humidity);
+      tmp.rain.push(value.rain);
+      tmp.tarif.push(value.tarif);
+      tmp.living_room_air.push(value.living_room_air);
+      tmp.living_room_floor.push(value.living_room_floor);
+      tmp.guest_room_air.push(value.guest_room_air);
+      tmp.guest_room_floor.push(value.guest_room_floor);
+      tmp.bed_room_air.push(value.bed_room_air);
+      tmp.bed_room_floor.push(value.bed_room_floor);
+      tmp.boys_room_air.push(value.boys_room_air);
+      tmp.boys_room_floor.push(value.boys_room_floor);
+      tmp.petra_room_air.push(value.petra_room_air);
+      tmp.petra_room_floor.push(value.petra_room_floor);
     });
     return tmp;
   }
@@ -225,45 +135,45 @@ export class Dom implements IMeasurement {
   decodeData(data: IDomDataRaw) {
     //    console.log(data)
     const decoded: IDomData = {
-      timestamp: data.timestamp,
+      timestamp: new Date(data.timestamp),
       temp: data.vonku.temp,
       humidity: data.vonku.humidity,
-      rain: data.vonku.rain,
+      rain: Boolean(data.vonku.rain),
       tarif: data.tarif.tarif,
-      obyvacka_vzduch: data.obyvacka_vzduch.temp,
-      obyvacka_podlaha: data.obyvacka_podlaha.temp,
-      obyvacka_reqall: data.obyvacka_vzduch.reqall,
-      obyvacka_kuri: data.obyvacka_podlaha.kuri,
-      obyvacka_leto: data.obyvacka_podlaha.leto,
-      obyvacka_low: data.obyvacka_podlaha.low,
-      pracovna_vzduch: data.pracovna_vzduch.temp,
-      pracovna_podlaha: data.pracovna_podlaha.temp,
-      pracovna_reqall: data.pracovna_vzduch.reqall,
-      pracovna_kuri: data.pracovna_podlaha.kuri,
-      pracovna_leto: data.pracovna_podlaha.leto,
-      pracovna_low: data.pracovna_podlaha.low,
-      spalna_vzduch: data.spalna_vzduch.temp,
-      spalna_podlaha: data.spalna_podlaha.temp,
-      spalna_reqall: data.spalna_vzduch.reqall,
-      spalna_kuri: data.spalna_podlaha.kuri,
-      spalna_leto: data.spalna_podlaha.leto,
-      spalna_low: data.spalna_podlaha.low,
-      chalani_vzduch: data.chalani_vzduch.temp,
-      chalani_podlaha: data.chalani_podlaha.temp,
-      chalani_reqall: data.chalani_vzduch.reqall,
-      chalani_kuri: data.chalani_podlaha.kuri,
-      chalani_leto: data.chalani_podlaha.leto,
-      chalani_low: data.chalani_podlaha.low,
-      petra_vzduch: data.petra_vzduch.temp,
-      petra_podlaha: data.petra_podlaha.temp,
-      petra_reqall: data.petra_vzduch.reqall,
-      petra_kuri: data.petra_podlaha.kuri,
-      petra_leto: data.petra_podlaha.leto,
-      petra_low: data.petra_podlaha.low,
+      living_room_air: data.obyvacka_vzduch.temp,
+      living_room_floor: data.obyvacka_podlaha.temp,
+      living_room_reqall: data.obyvacka_vzduch.reqall,
+      living_room_heat: Boolean(data.obyvacka_podlaha.kuri),
+      living_room_off: Boolean(data.obyvacka_podlaha.leto),
+      living_room_low: Boolean(data.obyvacka_podlaha.low),
+      guest_room_air: data.pracovna_vzduch.temp,
+      guest_room_floor: data.pracovna_podlaha.temp,
+      guest_room_reqall: data.pracovna_vzduch.reqall,
+      guest_room_heat: Boolean(data.pracovna_podlaha.kuri),
+      guest_room_off: Boolean(data.pracovna_podlaha.leto),
+      guest_room_low: Boolean(data.pracovna_podlaha.low),
+      bed_room_air: data.spalna_vzduch.temp,
+      bed_room_floor: data.spalna_podlaha.temp,
+      bed_room_reqall: data.spalna_vzduch.reqall,
+      bed_room_heat: Boolean(data.spalna_podlaha.kuri),
+      bed_room_off: Boolean(data.spalna_podlaha.leto),
+      bed_room_low: Boolean(data.spalna_podlaha.low),
+      boys_room_air: data.chalani_vzduch.temp,
+      boys_room_floor: data.chalani_podlaha.temp,
+      boys_room_reqall: data.chalani_vzduch.reqall,
+      boys_room_heat: Boolean(data.chalani_podlaha.kuri),
+      boys_room_off: Boolean(data.chalani_podlaha.leto),
+      boys_room_low: Boolean(data.chalani_podlaha.low),
+      petra_room_air: data.petra_vzduch.temp,
+      petra_room_floor: data.petra_podlaha.temp,
+      petra_room_reqall: data.petra_vzduch.reqall,
+      petra_room_heat: Boolean(data.petra_podlaha.kuri),
+      petra_room_off: Boolean(data.petra_podlaha.leto),
+      petra_room_low: Boolean(data.petra_podlaha.low),
       place: "Dom",
     };
     const date = new Date(decoded.timestamp);
-    const toStore = data;
+    const toStore = decoded;
     return { date, decoded, toStore };
   }
 

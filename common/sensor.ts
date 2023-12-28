@@ -1,4 +1,4 @@
-export interface IMeasurementDesc {
+export interface ISensor {
   col: string;
   col2: string;
   unit: string;
@@ -9,4 +9,6 @@ export interface IMeasurementDesc {
   label: string;
   chartType: string;
   color: string;
+  agg: string;
+  id: string;
 }

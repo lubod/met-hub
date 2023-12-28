@@ -18,15 +18,15 @@ type Props = {
   appContext: AppContext;
 };
 
-const Station = observer(({ appContext }: Props) => {
-  console.info(
+const Station = observer(({ appContext }: Props) => 
+  /* console.info( // todo
     "station render",
     appContext.authCtrl.authData.isAuth,
     appContext.stationCtrl.stationData.oldData,
     appContext.stationCtrl.stationData.station
-  );
+  ); */
 
-  return (
+   (
     <MyContainer>
       <Row className="mt-3">
         <Col xs={6} className="text-left font-weight-bold">
@@ -64,7 +64,7 @@ const Station = observer(({ appContext }: Props) => {
               appContext.stationCtrl.stationData.data.timestamp === null
                 ? "-"
                 : moment(
-                    appContext.stationCtrl.stationData.data.timestamp
+                    appContext.stationCtrl.stationData.data.timestamp,
                   ).format("DD MMM YYYY")
             }
           />
@@ -76,7 +76,7 @@ const Station = observer(({ appContext }: Props) => {
               appContext.stationCtrl.stationData.data.timestamp === null
                 ? "-"
                 : moment(
-                    appContext.stationCtrl.stationData.data.timestamp
+                    appContext.stationCtrl.stationData.data.timestamp,
                   ).format("HH:mm:ss")
             }
           />
@@ -102,7 +102,7 @@ const Station = observer(({ appContext }: Props) => {
             }
             onClick={() =>
               appContext.setMeasurementAndLoad(
-                STATION_MEASUREMENTS_DESC.TEMPERATURE
+                STATION_MEASUREMENTS_DESC.TEMPERATURE,
               )
             }
             color={STATION_MEASUREMENTS_DESC.TEMPERATURE.color}
@@ -123,7 +123,7 @@ const Station = observer(({ appContext }: Props) => {
             couldBeNegative={STATION_MEASUREMENTS_DESC.HUMIDITY.couldBeNegative}
             onClick={() =>
               appContext.setMeasurementAndLoad(
-                STATION_MEASUREMENTS_DESC.HUMIDITY
+                STATION_MEASUREMENTS_DESC.HUMIDITY,
               )
             }
             color={STATION_MEASUREMENTS_DESC.HUMIDITY.color}
@@ -131,23 +131,23 @@ const Station = observer(({ appContext }: Props) => {
         </Col>
         <Col xs={4}>
           <DataWithTrend
-            label={STATION_MEASUREMENTS_DESC.PRESSURE.label}
+            label={STATION_MEASUREMENTS_DESC.PRESSUREABS.label}
             value={
               appContext.stationCtrl.stationData.oldData
                 ? null
                 : appContext.stationCtrl.stationData.data.pressureabs
             }
-            unit={STATION_MEASUREMENTS_DESC.PRESSURE.unit}
-            fix={STATION_MEASUREMENTS_DESC.PRESSURE.fix}
+            unit={STATION_MEASUREMENTS_DESC.PRESSUREABS.unit}
+            fix={STATION_MEASUREMENTS_DESC.PRESSUREABS.fix}
             data={appContext.stationCtrl.stationData.trendData.pressureabs}
-            range={STATION_MEASUREMENTS_DESC.PRESSURE.range}
-            couldBeNegative={STATION_MEASUREMENTS_DESC.PRESSURE.couldBeNegative}
+            range={STATION_MEASUREMENTS_DESC.PRESSUREABS.range}
+            couldBeNegative={STATION_MEASUREMENTS_DESC.PRESSUREABS.couldBeNegative}
             onClick={() =>
               appContext.setMeasurementAndLoad(
-                STATION_MEASUREMENTS_DESC.PRESSURE
+                STATION_MEASUREMENTS_DESC.PRESSUREABS,
               )
             }
-            color={STATION_MEASUREMENTS_DESC.PRESSURE.color}
+            color={STATION_MEASUREMENTS_DESC.PRESSUREABS.color}
           />
         </Col>
       </Row>
@@ -205,7 +205,7 @@ const Station = observer(({ appContext }: Props) => {
             couldBeNegative={STATION_MEASUREMENTS_DESC.RAINRATE.couldBeNegative}
             onClick={() =>
               appContext.setMeasurementAndLoad(
-                STATION_MEASUREMENTS_DESC.RAINRATE
+                STATION_MEASUREMENTS_DESC.RAINRATE,
               )
             }
             color={STATION_MEASUREMENTS_DESC.RAINRATE.color}
@@ -257,7 +257,7 @@ const Station = observer(({ appContext }: Props) => {
                   checked={appContext.stationCtrl.stationData.floatingRainData}
                   onChange={(e) => {
                     appContext.stationCtrl.stationData.setFloatingRainData(
-                      e.target.checked
+                      e.target.checked,
                     );
                     if (e.target.checked) {
                       appContext.stationCtrl.fetchRainData();
@@ -359,7 +359,7 @@ const Station = observer(({ appContext }: Props) => {
                   appContext.stationCtrl.stationData.raindata == null
                     ? null
                     : parseFloat(
-                        appContext.stationCtrl.stationData.raindata[0].sum
+                        appContext.stationCtrl.stationData.raindata[0].sum,
                       )
                 }
                 unit=""
@@ -373,7 +373,7 @@ const Station = observer(({ appContext }: Props) => {
                   appContext.stationCtrl.stationData.raindata == null
                     ? null
                     : parseFloat(
-                        appContext.stationCtrl.stationData.raindata[1].sum
+                        appContext.stationCtrl.stationData.raindata[1].sum,
                       )
                 }
                 unit=""
@@ -387,7 +387,7 @@ const Station = observer(({ appContext }: Props) => {
                   appContext.stationCtrl.stationData.raindata == null
                     ? null
                     : parseFloat(
-                        appContext.stationCtrl.stationData.raindata[2].sum
+                        appContext.stationCtrl.stationData.raindata[2].sum,
                       )
                 }
                 unit=""
@@ -401,7 +401,7 @@ const Station = observer(({ appContext }: Props) => {
                   appContext.stationCtrl.stationData.raindata == null
                     ? null
                     : parseFloat(
-                        appContext.stationCtrl.stationData.raindata[3].sum
+                        appContext.stationCtrl.stationData.raindata[3].sum,
                       )
                 }
                 unit=""
@@ -417,7 +417,7 @@ const Station = observer(({ appContext }: Props) => {
                   appContext.stationCtrl.stationData.raindata == null
                     ? null
                     : parseFloat(
-                        appContext.stationCtrl.stationData.raindata[4].sum
+                        appContext.stationCtrl.stationData.raindata[4].sum,
                       )
                 }
                 unit=""
@@ -431,7 +431,7 @@ const Station = observer(({ appContext }: Props) => {
                   appContext.stationCtrl.stationData.raindata == null
                     ? null
                     : parseFloat(
-                        appContext.stationCtrl.stationData.raindata[5].sum
+                        appContext.stationCtrl.stationData.raindata[5].sum,
                       )
                 }
                 unit=""
@@ -445,7 +445,7 @@ const Station = observer(({ appContext }: Props) => {
                   appContext.stationCtrl.stationData.raindata == null
                     ? null
                     : parseFloat(
-                        appContext.stationCtrl.stationData.raindata[6].sum
+                        appContext.stationCtrl.stationData.raindata[6].sum,
                       )
                 }
                 unit=""
@@ -459,7 +459,7 @@ const Station = observer(({ appContext }: Props) => {
                   appContext.stationCtrl.stationData.raindata == null
                     ? null
                     : parseFloat(
-                        appContext.stationCtrl.stationData.raindata[7].sum
+                        appContext.stationCtrl.stationData.raindata[7].sum,
                       )
                 }
                 unit=""
@@ -493,7 +493,7 @@ const Station = observer(({ appContext }: Props) => {
                   }
                   onClick={() =>
                     appContext.setMeasurementAndLoad(
-                      STATION_MEASUREMENTS_DESC.TEMPERATUREIN
+                      STATION_MEASUREMENTS_DESC.TEMPERATUREIN,
                     )
                   }
                   color={STATION_MEASUREMENTS_DESC.TEMPERATUREIN.color}
@@ -516,7 +516,7 @@ const Station = observer(({ appContext }: Props) => {
                   }
                   onClick={() =>
                     appContext.setMeasurementAndLoad(
-                      STATION_MEASUREMENTS_DESC.HUMIDITYIN
+                      STATION_MEASUREMENTS_DESC.HUMIDITYIN,
                     )
                   }
                   color={STATION_MEASUREMENTS_DESC.HUMIDITYIN.color}
@@ -526,7 +526,7 @@ const Station = observer(({ appContext }: Props) => {
           </>
         )}
     </MyContainer>
-  );
-});
+  )
+);
 
 export default Station;

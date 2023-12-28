@@ -2,6 +2,7 @@ import {
   IStationData,
   IStationGarni1025ArcusDataRaw,
 } from "../common/stationModel";
+import { round } from "../common/units";
 import StationCommon from "./stationCommon";
 
 export default class StationGarni1025Arcus extends StationCommon {
@@ -34,39 +35,10 @@ export default class StationGarni1025Arcus extends StationCommon {
     return init;
   }
 
-  /*
-     {
-   ID: '',
-   PASSWORD: '',
-   action: 'updateraww',
-   realtime: '1',
-   rtfreq: '5',
-   dateutc: 'now',
-   baromin: '29.94',
-   tempf: '73.5',
-   dewptf: '63.5',
-   humidity: '71',
-   windspeedmph: '0.0',
-   windgustmph: '0.0',
-   winddir: '6',
-   rainin: '0.0',
-   dailyrainin: '0.0',
-   solarradiation: '0.39',
-   UV: '0.0',
-   indoortempf: '72.8',
-   indoorhumidity: '69'
- }
-*/
-
   decodeData(data: IStationGarni1025ArcusDataRaw) {
     const TO_MM = 25.4;
     const TO_KM = 1.6;
     const TO_HPA = 33.8639;
-
-    function round(value: number, precision: number) {
-      const multiplier = 10 ** (precision || 0);
-      return Math.round(value * multiplier) / multiplier;
-    }
 
     //    console.log(data)
     const decoded: IStationData = {

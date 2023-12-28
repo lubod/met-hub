@@ -234,10 +234,10 @@ const WindRose = observer(
             color={color}
           />
           <DataAlone
-            label={STATION_MEASUREMENTS_DESC.DAILYGUST.label}
+            label={STATION_MEASUREMENTS_DESC.MAXDAILYGUST.label}
             value={dailyGust}
-            unit={STATION_MEASUREMENTS_DESC.DAILYGUST.unit}
-            fix={STATION_MEASUREMENTS_DESC.DAILYGUST.fix}
+            unit={STATION_MEASUREMENTS_DESC.MAXDAILYGUST.unit}
+            fix={STATION_MEASUREMENTS_DESC.MAXDAILYGUST.fix}
           />
         </Col>
       </Row>

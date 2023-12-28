@@ -169,8 +169,16 @@ async function pollData() {
     data[tables[i]] = decoded;
   }
 
-  res = await getExternalData();
-  data.vonku = decodeExternal(res);
+  try {
+    res = await getExternalData();
+    data.vonku = decodeExternal(res);
+  } catch (e) {
+    console.log(e);
+    data.vonku = {} as IDomExternalData;
+    data.vonku.temp = null;
+    data.vonku.humidity = null;
+    data.vonku.rain = null;
+  }
 
   res = await getTarif();
   //    console.log(res);

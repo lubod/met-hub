@@ -64,8 +64,8 @@ export class AllStationsCfg {
         this.publicStations.add(station.id);
       }
     }
-    // AllStationsCfg.map.set();
   }
+  // AllStationsCfg.map.set();
 
   async writeCfg() {
     const redisClient = createClient();

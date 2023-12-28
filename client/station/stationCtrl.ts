@@ -13,6 +13,8 @@ class StationCtrl implements IController {
 
   timer: any;
 
+  timerTrend: any;
+
   authData: AuthData;
 
   stationCfg: StationCfg;
@@ -38,19 +40,22 @@ class StationCtrl implements IController {
     this.stop();
     this.stationCfg = station == null ? null : new StationCfg(station.id);
     this.stationData.setStation(station);
-    this.start();
+    if (!this.test) {
+      // todo
+      this.start();
+    }
   }
 
   start() {
     // console.log("start", new Date());
     this.fetchData();
     this.fetchTrendData();
-    this.socket.getSocket().on(this.stationCfg.SOCKET_CHANNEL, this.listener);
-    this.socket
-      .getSocket()
-      .on(this.stationCfg.SOCKET_TREND_CHANNEL, this.listenerTrend);
+    //    this.socket.getSocket().on(this.stationCfg.SOCKET_CHANNEL, this.listener);
+    //    this.socket
+    //      .getSocket()
+    //      .on(this.stationCfg.SOCKET_TREND_CHANNEL, this.listenerTrend);
     this.timer = setInterval(() => {
-      this.stationData.setTime(new Date());
+      /*      this.stationData.setTime(new Date());
       if (this.stationData.oldData) {
         if (
           this.stationData.try === 0 ||
@@ -65,20 +70,29 @@ class StationCtrl implements IController {
           this.fetchTrendData();
         }
         this.stationData.try += 1;
-      }
-    }, 1000);
+      } */
+      this.fetchData();
+    }, 60000);
+    const now = new Date();
+    this.timerTrend = setInterval(
+      () => {
+        this.fetchTrendData();
+      },
+      (60 - now.getSeconds() + 7) * 1000,
+    );
   }
 
   stop() {
-    if (this.stationCfg != null) {
+    /*    if (this.stationCfg != null) {
       this.socket
         .getSocket()
         .off(this.stationCfg.SOCKET_CHANNEL, this.listener);
       this.socket
         .getSocket()
         .off(this.stationCfg.SOCKET_TREND_CHANNEL, this.listenerTrend);
-    }
+    } */
     clearInterval(this.timer);
+    clearInterval(this.timerTrend);
   }
 
   async fetchData() {

@@ -1,3 +1,7 @@
+import { IDomData } from "../common/domModel";
+import { ISensor } from "../common/sensor";
+import { IStationData } from "../common/stationModel";
+
 /* eslint-disable no-unused-vars */
 export interface IMeasurement {
   getSocketChannel(): string;
@@ -6,27 +10,28 @@ export interface IMeasurement {
 
   getRedisLastDataKey(): string;
 
-  getRedisMinuteDataKey(): string;
+  getRedisRawDataKey(): string;
+
+  getRedisTSKeyPrefix(): string;
 
   getKafkaStoreTopic(): string;
 
   getRedisTrendKey(): string;
 
-  getQueryArray(table: string, data: any): (string | number)[];
-
-  getQueryText(table: string): string;
-
   getTables(): string[];
 
-  getColumns(): string[];
+  getSensors(): ISensor[];
 
   transformTrendData(data: any): {};
 
-  decodeData(data: any): { date: Date; decoded: {}; toStore: {} };
+  decodeData(data: any): {
+    date: Date;
+    decoded: IDomData | IStationData;
+  };
 
   getKafkaKey(): string;
 
-  agregateMinuteDataFromKafka(minute: number, data: any): any;
+  agregateRawData2Minute(minute: number, data: any): any;
 
   getStationID(): string;
 }

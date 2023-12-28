@@ -9,15 +9,15 @@ import StationCtrl from "./station/stationCtrl";
 import HeaderCtrl from "./header/headerCtrl";
 import App from "./app";
 import ChartsCtrl from "./charts/chartsCtrl";
-import { IMeasurementDesc } from "../common/measurementDesc";
+import { ISensor } from "../common/sensor";
 import ForecastCtrl from "./forecast/forecastCtrl";
 import DomCtrl from "./dom/domCtrl";
 import "./style.scss";
 import { IStation } from "../common/allStationsCfg";
 import { AllStationsCfgClient } from "../common/allStationsCfgClient";
-import { DOM_MEASUREMENTS, DOM_MEASUREMENTS_DESC } from "../common/domModel";
+import { DOM_SENSORS, DOM_SENSORS_DESC } from "../common/domModel";
 import {
-  STATION_MEASUREMENTS,
+  STATION_SENSORS,
   STATION_MEASUREMENTS_DESC,
 } from "../common/stationModel";
 
@@ -47,10 +47,24 @@ export class AppContext {
     this.authCtrl.start();
     this.headerCtrl.start();
     this.chartsCtrl.start();
+    this.stationCtrl.start();
+    this.domCtrl.start(); // todo
     this.forecastCtrl.start();
+    // SSE
+    const source = new EventSource(`/events`);
+    source.addEventListener("message", (e) => {
+      console.info("EVENT ", e.data);
+      if (e.data === this.stationCtrl.stationCfg.STATION_ID) {
+        console.info("ME");
+        this.stationCtrl.fetchData(); // todo
+      }
+    });
+    source.addEventListener("error", (e) => {
+      console.error("Error: ", e);
+    });
   }
 
-  setMeasurementAndLoad(measurementDesc: IMeasurementDesc) {
+  setMeasurementAndLoad(measurementDesc: ISensor) {
     this.chartsCtrl.chartsData.setMeasurementObject(measurementDesc);
     this.chartsCtrl.reload();
   }
@@ -60,19 +74,16 @@ export class AppContext {
     if (station != null) {
       localStorage.setItem("lastStationID", station.id);
       if (station.id === "dom") {
-        this.chartsCtrl.chartsData.setMeasurements(DOM_MEASUREMENTS);
+        this.chartsCtrl.chartsData.setMeasurements(DOM_SENSORS);
         this.chartsCtrl.chartsData.setMeasurementObject(
-          DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR,
+          DOM_SENSORS_DESC.LIVING_ROOM_AIR,
         );
-        this.stationCtrl.stop();
-        this.domCtrl.start();
       } else {
         // todo
-        this.chartsCtrl.chartsData.setMeasurements(STATION_MEASUREMENTS);
+        this.chartsCtrl.chartsData.setMeasurements(STATION_SENSORS);
         this.chartsCtrl.chartsData.setMeasurementObject(
           STATION_MEASUREMENTS_DESC.TEMPERATURE,
         );
-        this.domCtrl.stop();
         this.stationCtrl.setStation(station);
       }
     }

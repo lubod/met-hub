@@ -2,23 +2,23 @@ import { action, makeObservable, observable } from "mobx";
 import { IDomData, IDomTrendData } from "../../common/domModel";
 
 class DomData {
-  data: IDomData = { timestamp: "" } as IDomData;
+  data: IDomData = {} as IDomData;
 
   trendData: IDomTrendData = {
     timestamp: [],
     temp: [],
     humidity: [],
     rain: [],
-    obyvacka_vzduch: [],
-    obyvacka_podlaha: [],
-    pracovna_vzduch: [],
-    pracovna_podlaha: [],
-    spalna_vzduch: [],
-    spalna_podlaha: [],
-    chalani_vzduch: [],
-    chalani_podlaha: [],
-    petra_vzduch: [],
-    petra_podlaha: [],
+    living_room_air: [],
+    living_room_floor: [],
+    guest_room_air: [],
+    guest_room_floor: [],
+    bed_room_air: [],
+    bed_room_floor: [],
+    boys_room_air: [],
+    boys_room_floor: [],
+    petra_room_air: [],
+    petra_room_floor: [],
   } as IDomTrendData;
 
   ctime: Date = new Date();

@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-vars */
 import { StationCfg } from "../common/stationCfg";
-import { IStationData, IStationTrendData } from "../common/stationModel";
+import {
+  IStationData,
+  IStationTrendData,
+  STATION_SENSORS,
+} from "../common/stationModel";
+import { deg2rad, rad2deg, round } from "../common/units";
 import { IMeasurement } from "./measurement";
 
 export default abstract class StationCommon implements IMeasurement {
@@ -14,7 +19,11 @@ export default abstract class StationCommon implements IMeasurement {
     return this.cfg.STATION_ID;
   }
 
-  abstract decodeData(data: any): { date: Date; decoded: {}; toStore: {} };
+  abstract decodeData(data: any): {
+    date: Date;
+    decoded: IStationData;
+    toStore: {};
+  };
 
   abstract initWithZeros(): IStationData;
 
@@ -22,8 +31,8 @@ export default abstract class StationCommon implements IMeasurement {
     return [this.cfg.TABLE];
   }
 
-  getColumns() {
-    return this.cfg.COLUMNS;
+  getSensors() {
+    return STATION_SENSORS;
   }
 
   getSocketChannel() {
@@ -38,8 +47,12 @@ export default abstract class StationCommon implements IMeasurement {
     return this.cfg.REDIS_LAST_DATA_KEY;
   }
 
-  getRedisMinuteDataKey() {
+  getRedisRawDataKey() {
     return this.cfg.REDIS_MINUTE_DATA_KEY;
+  }
+
+  getRedisTSKeyPrefix() {
+    return this.cfg.REDIS_TS_KEY_PREFIX;
   }
 
   getKafkaStoreTopic() {
@@ -52,34 +65,6 @@ export default abstract class StationCommon implements IMeasurement {
 
   getKafkaKey(): string {
     return this.cfg.KAFKA_KEY;
-  }
-
-  getQueryArray(_table: string, data: IStationData) {
-    console.info(data);
-    return [
-      data.timestamp.toISOString(),
-      data.tempin,
-      data.humidityin,
-      data.pressurerel,
-      data.pressureabs,
-      data.temp,
-      data.humidity,
-      data.winddir,
-      data.windspeed,
-      data.windgust,
-      data.rainrate,
-      data.solarradiation,
-      data.uv,
-      data.eventrain,
-      data.hourlyrain,
-      data.dailyrain,
-      data.weeklyrain,
-      data.monthlyrain,
-    ];
-  }
-
-  getQueryText() {
-    return `insert into ${this.cfg.TABLE}(timestamp, tempin, humidityin, pressurerel, pressureabs, temp, humidity, winddir, windspeed, windgust, rainrate, solarradiation, uv, eventrain, hourlyrain, dailyrain, weeklyrain, monthlyrain) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`;
   }
 
   transformTrendData(data: any) {
@@ -122,16 +107,7 @@ export default abstract class StationCommon implements IMeasurement {
     return tmp;
   }
 
-  agregateMinuteDataFromKafka(minute: number, data: Array<IStationData>) {
-    const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
-
-    const rad2deg = (radians: number) => radians * (180 / Math.PI);
-
-    const round = (value: number, precision: number) => {
-      const multiplier = 10 ** (precision || 0);
-      return Math.round(value * multiplier) / multiplier;
-    };
-
+  agregateRawData2Minute(minute: number, data: Array<IStationData>) {
     const avgWind = (directions: number[]) => {
       let sinSum = 0;
       let cosSum = 0;

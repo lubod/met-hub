@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import MY_COLORS from "./colors";
-import { IMeasurementDesc } from "./measurementDesc";
+import { ISensor } from "./sensor";
+import { propName } from "./units";
 
 export interface IDomExternalData {
   temp: number;
@@ -53,116 +54,126 @@ export interface IDomDataRaw {
 }
 
 export interface IDomData {
-  timestamp: string;
+  timestamp: Date;
   place: string;
   temp: number;
   humidity: number;
-  rain: number;
+  rain: boolean;
   tarif: number;
-  obyvacka_vzduch: number;
-  obyvacka_podlaha: number;
-  obyvacka_reqall: number;
-  obyvacka_kuri: number;
-  obyvacka_leto: number;
-  obyvacka_low: number;
-  pracovna_vzduch: number;
-  pracovna_podlaha: number;
-  pracovna_reqall: number;
-  pracovna_kuri: number;
-  pracovna_leto: number;
-  pracovna_low: number;
-  spalna_vzduch: number;
-  spalna_podlaha: number;
-  spalna_reqall: number;
-  spalna_kuri: number;
-  spalna_leto: number;
-  spalna_low: number;
-  chalani_vzduch: number;
-  chalani_podlaha: number;
-  chalani_reqall: number;
-  chalani_kuri: number;
-  chalani_leto: number;
-  chalani_low: number;
-  petra_vzduch: number;
-  petra_podlaha: number;
-  petra_reqall: number;
-  petra_kuri: number;
-  petra_leto: number;
-  petra_low: number;
+  living_room_air: number;
+  living_room_floor: number;
+  living_room_reqall: number;
+  living_room_heat: boolean;
+  living_room_off: boolean;
+  living_room_low: boolean;
+  guest_room_air: number;
+  guest_room_floor: number;
+  guest_room_reqall: number;
+  guest_room_heat: boolean;
+  guest_room_off: boolean;
+  guest_room_low: boolean;
+  bed_room_air: number;
+  bed_room_floor: number;
+  bed_room_reqall: number;
+  bed_room_heat: boolean;
+  bed_room_off: boolean;
+  bed_room_low: boolean;
+  boys_room_air: number;
+  boys_room_floor: number;
+  boys_room_reqall: number;
+  boys_room_heat: boolean;
+  boys_room_off: boolean;
+  boys_room_low: boolean;
+  petra_room_air: number;
+  petra_room_floor: number;
+  petra_room_reqall: number;
+  petra_room_heat: boolean;
+  petra_room_off: boolean;
+  petra_room_low: boolean;
 }
 
 export interface IDomTrendData {
-  timestamp: Array<string>;
+  timestamp: Array<Date>;
   temp: Array<number>;
   humidity: Array<number>;
-  rain: Array<number>;
+  rain: Array<boolean>;
   tarif: Array<number>;
-  obyvacka_vzduch: Array<number>;
-  obyvacka_podlaha: Array<number>;
-  pracovna_vzduch: Array<number>;
-  pracovna_podlaha: Array<number>;
-  spalna_vzduch: Array<number>;
-  spalna_podlaha: Array<number>;
-  chalani_vzduch: Array<number>;
-  chalani_podlaha: Array<number>;
-  petra_vzduch: Array<number>;
-  petra_podlaha: Array<number>;
+  living_room_air: Array<number>;
+  living_room_floor: Array<number>;
+  guest_room_air: Array<number>;
+  guest_room_floor: Array<number>;
+  bed_room_air: Array<number>;
+  bed_room_floor: Array<number>;
+  boys_room_air: Array<number>;
+  boys_room_floor: Array<number>;
+  petra_room_air: Array<number>;
+  petra_room_floor: Array<number>;
 }
 
-export class DOM_MEASUREMENTS_DESC {
-  static TEMPERATURE: IMeasurementDesc = {
-    col: "temp",
+const dom = {} as IDomData;
+
+export class DOM_SENSORS_DESC {
+  static TEMPERATURE: ISensor = {
+    col: propName(dom).temp,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: true,
-    table: "vonku",
+    table: "dom",
     label: "T",
     col2: "",
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).temp,
+    agg: "avg",
   };
 
-  static HUMIDITY: IMeasurementDesc = {
-    col: "humidity",
+  static HUMIDITY: ISensor = {
+    col: propName(dom).humidity,
     unit: "%",
     fix: 0,
     range: 10,
     couldBeNegative: false,
-    table: "vonku",
+    table: "dom",
     label: "H",
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
+    id: propName(dom).humidity,
+    agg: "avg",
   };
 
-  static RAIN: IMeasurementDesc = {
-    col: "rain",
+  static RAIN: ISensor = {
+    col: propName(dom).rain,
     unit: "",
     fix: 0,
     range: 1,
     couldBeNegative: false,
-    table: "vonku",
+    table: "dom",
     label: "Rain",
     col2: "",
     chartType: "",
     color: MY_COLORS.blue,
+    id: propName(dom).rain,
+    agg: "max", // todo
   };
 
-  static TARIF: IMeasurementDesc = {
-    col: "tarif",
+  static TARIF: ISensor = {
+    col: propName(dom).tarif,
     unit: "",
     fix: 0,
     range: 1,
     couldBeNegative: false,
-    table: "tarif",
+    table: "dom",
     label: "Tarif",
     col2: "",
     chartType: "",
     color: MY_COLORS.yellow,
+    id: propName(dom).tarif,
+    agg: "max", // todo
   };
 
-  static ROOM: IMeasurementDesc = {
+  static ROOM: ISensor = {
     col: "temp",
     unit: "",
     fix: 1,
@@ -173,172 +184,500 @@ export class DOM_MEASUREMENTS_DESC {
     col2: "",
     chartType: "",
     color: MY_COLORS.orange,
+    id: "temp",
+    agg: "avg",
   };
 
-  static LIVING_ROOM_AIR: IMeasurementDesc = {
-    col: "temp",
+  static LIVING_ROOM_AIR: ISensor = {
+    col: propName(dom).living_room_air,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "obyvacka_vzduch",
+    table: "dom",
     label: "Living room air",
-    col2: "reqall",
+    col2: propName(dom).living_room_reqall,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).living_room_air,
+    agg: "avg",
   };
 
-  static LIVING_ROOM_FLOOR: IMeasurementDesc = {
-    col: "temp",
+  static LIVING_ROOM_FLOOR: ISensor = {
+    col: propName(dom).living_room_floor,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "obyvacka_podlaha",
+    table: "dom",
     label: "Living room floor",
-    col2: "kuri",
+    col2: propName(dom).living_room_heat,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).living_room_floor,
+    agg: "avg",
   };
 
-  static GUEST_ROOM_AIR: IMeasurementDesc = {
-    col: "temp",
+  static LIVING_ROOM_REQALL: ISensor = {
+    col: propName(dom).living_room_reqall,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "pracovna_vzduch",
+    table: "dom",
+    label: "Living room reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).living_room_reqall,
+    agg: "avg",
+  };
+
+  static LIVING_ROOM_HEAT: ISensor = {
+    col: propName(dom).living_room_heat,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Living room heat",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).living_room_heat,
+    agg: "avg",
+  };
+
+  static LIVING_ROOM_OFF: ISensor = {
+    col: propName(dom).living_room_off,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Living room off",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).living_room_off,
+    agg: "avg",
+  };
+
+  static LIVING_ROOM_LOW: ISensor = {
+    col: propName(dom).living_room_low,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Living room low",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).living_room_low,
+    agg: "avg",
+  };
+
+  static GUEST_ROOM_AIR: ISensor = {
+    col: propName(dom).guest_room_air,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
     label: "Guest room air",
-    col2: "reqall",
+    col2: propName(dom).guest_room_reqall,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).guest_room_air,
+    agg: "avg",
   };
 
-  static GUEST_ROOM_FLOOR: IMeasurementDesc = {
-    col: "temp",
+  static GUEST_ROOM_FLOOR: ISensor = {
+    col: propName(dom).guest_room_floor,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "pracovna_podlaha",
+    table: "dom",
     label: "Guest room floor",
-    col2: "kuri",
+    col2: propName(dom).guest_room_heat,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).guest_room_floor,
+    agg: "avg",
   };
 
-  static BED_ROOM_AIR: IMeasurementDesc = {
-    col: "temp",
+  static GUEST_ROOM_REQALL: ISensor = {
+    col: propName(dom).guest_room_reqall,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "spalna_vzduch",
+    table: "dom",
+    label: "Guest room reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).guest_room_reqall,
+    agg: "avg",
+  };
+
+  static GUEST_ROOM_HEAT: ISensor = {
+    col: propName(dom).guest_room_heat,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Guest room heat",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).guest_room_heat,
+    agg: "avg",
+  };
+
+  static GUEST_ROOM_OFF: ISensor = {
+    col: propName(dom).guest_room_off,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Guest room off",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).guest_room_off,
+    agg: "avg",
+  };
+
+  static GUEST_ROOM_LOW: ISensor = {
+    col: propName(dom).guest_room_low,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Guest room low",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).guest_room_low,
+    agg: "avg",
+  };
+
+  static BED_ROOM_AIR: ISensor = {
+    col: propName(dom).bed_room_air,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
     label: "Bed room air",
-    col2: "reqall",
+    col2: propName(dom).bed_room_reqall,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).bed_room_air,
+    agg: "avg",
   };
 
-  static BED_ROOM_FLOOR: IMeasurementDesc = {
-    col: "temp",
+  static BED_ROOM_FLOOR: ISensor = {
+    col: propName(dom).bed_room_floor,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "spalna_podlaha",
+    table: "dom",
     label: "Bed room floor",
-    col2: "kuri",
+    col2: propName(dom).bed_room_heat,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).bed_room_floor,
+    agg: "avg",
   };
 
-  static BOYS_ROOM_AIR: IMeasurementDesc = {
-    col: "temp",
+  static BED_ROOM_REQALL: ISensor = {
+    col: propName(dom).bed_room_reqall,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "chalani_vzduch",
+    table: "dom",
+    label: "Bed room reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bed_room_reqall,
+    agg: "avg",
+  };
+
+  static BED_ROOM_HEAT: ISensor = {
+    col: propName(dom).bed_room_heat,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bed room heat",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bed_room_heat,
+    agg: "avg",
+  };
+
+  static BED_ROOM_OFF: ISensor = {
+    col: propName(dom).bed_room_off,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bed room off",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bed_room_off,
+    agg: "avg",
+  };
+
+  static BED_ROOM_LOW: ISensor = {
+    col: propName(dom).bed_room_low,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bed room low",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bed_room_low,
+    agg: "avg",
+  };
+
+  static BOYS_ROOM_AIR: ISensor = {
+    col: propName(dom).boys_room_air,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
     label: "Boys room air",
-    col2: "reqall",
+    col2: propName(dom).boys_room_reqall,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).boys_room_air,
+    agg: "avg",
   };
 
-  static BOYS_ROOM_FLOOR: IMeasurementDesc = {
-    col: "temp",
+  static BOYS_ROOM_FLOOR: ISensor = {
+    col: propName(dom).boys_room_floor,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "chalani_podlaha",
+    table: "dom",
     label: "Boys room floor",
-    col2: "kuri",
+    col2: propName(dom).boys_room_heat,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).boys_room_floor,
+    agg: "avg",
   };
 
-  static PETRA_ROOM_AIR: IMeasurementDesc = {
-    col: "temp",
+  static BOYS_ROOM_REQALL: ISensor = {
+    col: propName(dom).boys_room_reqall,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "petra_vzduch",
+    table: "dom",
+    label: "Boys room reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).boys_room_reqall,
+    agg: "avg",
+  };
+
+  static BOYS_ROOM_HEAT: ISensor = {
+    col: propName(dom).boys_room_heat,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Boys room heat",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).boys_room_heat,
+    agg: "avg",
+  };
+
+  static BOYS_ROOM_OFF: ISensor = {
+    col: propName(dom).boys_room_off,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Boys room off",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).boys_room_off,
+    agg: "avg",
+  };
+
+  static BOYS_ROOM_LOW: ISensor = {
+    col: propName(dom).boys_room_low,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Boys room low",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).boys_room_low,
+    agg: "avg",
+  };
+
+  static PETRA_ROOM_AIR: ISensor = {
+    col: propName(dom).petra_room_air,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
     label: "Petra room air",
-    col2: "reqall",
+    col2: propName(dom).petra_room_reqall,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).petra_room_air,
+    agg: "avg",
   };
 
-  static PETRA_ROOM_FLOOR: IMeasurementDesc = {
-    col: "temp",
+  static PETRA_ROOM_FLOOR: ISensor = {
+    col: propName(dom).petra_room_floor,
     unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
-    table: "petra_podlaha",
+    table: "dom",
     label: "Petra room floor",
-    col2: "kuri",
+    col2: propName(dom).petra_room_heat,
     chartType: "",
     color: MY_COLORS.orange,
+    id: propName(dom).petra_room_floor,
+    agg: "avg",
+  };
+
+  static PETRA_ROOM_REQALL: ISensor = {
+    col: propName(dom).petra_room_reqall,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Petra room reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).petra_room_reqall,
+    agg: "avg",
+  };
+
+  static PETRA_ROOM_HEAT: ISensor = {
+    col: propName(dom).petra_room_heat,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Petra room heat",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).petra_room_heat,
+    agg: "avg",
+  };
+
+  static PETRA_ROOM_OFF: ISensor = {
+    col: propName(dom).petra_room_off,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Petra room off",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).petra_room_off,
+    agg: "avg",
+  };
+
+  static PETRA_ROOM_LOW: ISensor = {
+    col: propName(dom).petra_room_low,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Petra room low",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).petra_room_low,
+    agg: "avg",
   };
 }
 
-export const DOM_MEASUREMENTS: IMeasurementDesc[] = [
-  DOM_MEASUREMENTS_DESC.TEMPERATURE,
-  DOM_MEASUREMENTS_DESC.HUMIDITY,
-  DOM_MEASUREMENTS_DESC.RAIN,
-  DOM_MEASUREMENTS_DESC.TARIF,
-  DOM_MEASUREMENTS_DESC.LIVING_ROOM_AIR,
-  DOM_MEASUREMENTS_DESC.LIVING_ROOM_FLOOR,
-  DOM_MEASUREMENTS_DESC.GUEST_ROOM_AIR,
-  DOM_MEASUREMENTS_DESC.GUEST_ROOM_FLOOR,
-  DOM_MEASUREMENTS_DESC.BED_ROOM_AIR,
-  DOM_MEASUREMENTS_DESC.BED_ROOM_FLOOR,
-  DOM_MEASUREMENTS_DESC.BOYS_ROOM_AIR,
-  DOM_MEASUREMENTS_DESC.BOYS_ROOM_FLOOR,
-  DOM_MEASUREMENTS_DESC.PETRA_ROOM_AIR,
-  DOM_MEASUREMENTS_DESC.PETRA_ROOM_FLOOR,
+export const DOM_SENSORS: ISensor[] = [
+  DOM_SENSORS_DESC.TEMPERATURE,
+  DOM_SENSORS_DESC.HUMIDITY,
+  DOM_SENSORS_DESC.RAIN,
+  DOM_SENSORS_DESC.TARIF,
+  DOM_SENSORS_DESC.LIVING_ROOM_AIR,
+  DOM_SENSORS_DESC.LIVING_ROOM_FLOOR,
+  DOM_SENSORS_DESC.LIVING_ROOM_REQALL,
+  DOM_SENSORS_DESC.LIVING_ROOM_HEAT,
+  DOM_SENSORS_DESC.LIVING_ROOM_OFF,
+  DOM_SENSORS_DESC.LIVING_ROOM_LOW,
+  DOM_SENSORS_DESC.GUEST_ROOM_AIR,
+  DOM_SENSORS_DESC.GUEST_ROOM_FLOOR,
+  DOM_SENSORS_DESC.GUEST_ROOM_REQALL,
+  DOM_SENSORS_DESC.GUEST_ROOM_HEAT,
+  DOM_SENSORS_DESC.GUEST_ROOM_OFF,
+  DOM_SENSORS_DESC.GUEST_ROOM_LOW,
+  DOM_SENSORS_DESC.BED_ROOM_AIR,
+  DOM_SENSORS_DESC.BED_ROOM_FLOOR,
+  DOM_SENSORS_DESC.BED_ROOM_REQALL,
+  DOM_SENSORS_DESC.BED_ROOM_HEAT,
+  DOM_SENSORS_DESC.BED_ROOM_OFF,
+  DOM_SENSORS_DESC.BED_ROOM_LOW,
+  DOM_SENSORS_DESC.BOYS_ROOM_AIR,
+  DOM_SENSORS_DESC.BOYS_ROOM_FLOOR,
+  DOM_SENSORS_DESC.BOYS_ROOM_REQALL,
+  DOM_SENSORS_DESC.BOYS_ROOM_HEAT,
+  DOM_SENSORS_DESC.BOYS_ROOM_OFF,
+  DOM_SENSORS_DESC.BOYS_ROOM_LOW,
+  DOM_SENSORS_DESC.PETRA_ROOM_AIR,
+  DOM_SENSORS_DESC.PETRA_ROOM_FLOOR,
+  DOM_SENSORS_DESC.PETRA_ROOM_REQALL,
+  DOM_SENSORS_DESC.PETRA_ROOM_HEAT,
+  DOM_SENSORS_DESC.PETRA_ROOM_OFF,
+  DOM_SENSORS_DESC.PETRA_ROOM_LOW,
 ];
 
 export class DomCfg {
   TABLE = "dom";
-
-  COLUMNS = [
-    "temp",
-    "humidity",
-    "rain",
-    "tarif",
-    "req",
-    "reqall",
-    "useroffset",
-    "maxoffset",
-    "kuri",
-    "low",
-    "leto",
-  ];
 
   SOCKET_CHANNEL = "dom";
 
@@ -347,6 +686,8 @@ export class DomCfg {
   REDIS_LAST_DATA_KEY = "dom-last";
 
   REDIS_MINUTE_DATA_KEY = "dom-minute-data";
+
+  REDIS_TS_KEY = "dom-ts";
 
   KAFKA_STORE_TOPIC = `store`;
 

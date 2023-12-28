@@ -1,8 +1,7 @@
 import express from "express";
 import { createClient } from "redis";
-import { Kafka, Producer } from "kafkajs";
 import { createToken, verifyToken } from "./utils";
-import { socketEmiter, allStationsCfg, AppError } from "./main";
+import { allStationsCfg, AppError } from "./main";
 import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import { loadData, loadRainData } from "./load";
@@ -12,20 +11,13 @@ import { IStation } from "../common/allStationsCfg";
 
 const { OAuth2Client } = require("google-auth-library");
 
-const client = new OAuth2Client(process.env.CLIENT_ID);
+const clietOAuth = new OAuth2Client(process.env.CLIENT_ID);
 
 const dom = new Dom();
 const router = express.Router();
 const redisClient = createClient();
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.connect();
-
-const kafka = new Kafka({
-  clientId: "setData",
-  brokers: ["localhost:9092"],
-});
-
-const producer: Producer = kafka.producer();
 
 interface IUser {
   id: any;
@@ -41,13 +33,15 @@ async function checkAuth(req: any, silent: boolean = false) {
     if (id != null) {
       const payload = JSON.parse(await redisClient.hGet("USERS", id));
       // todo check if user still exists
-      return {
-        id,
-        given_name: payload.given_name,
-        family_name: payload.family_name,
-        createdAt: iat * 1000,
-        expiresAt: exp * 1000,
-      } as IUser;
+      if (payload != null) {
+        return {
+          id,
+          given_name: payload.given_name,
+          family_name: payload.family_name,
+          createdAt: iat * 1000,
+          expiresAt: exp * 1000,
+        } as IUser;
+      }
     }
   }
   if (silent) {
@@ -59,7 +53,7 @@ async function checkAuth(req: any, silent: boolean = false) {
 async function checkAccess(
   user: IUser,
   stationID: string,
-  ownerOnly: boolean = true
+  ownerOnly: boolean = true,
 ) {
   let mys = null;
   if (user != null) {
@@ -88,6 +82,49 @@ function catchAsync(fnc: Function) {
     fnc(req, res, next).catch((err: any) => next(err));
   };
 }
+
+// SSE
+
+let clients: any[] = [];
+
+const writeEvent = (data: string) => {
+  clients.forEach((client) => {
+    client.res.write(`data: ${data}\n\n`);
+    console.info(`${client.id} Connection used ${data}`);
+  });
+};
+
+setInterval(() => writeEvent("-ping"), 30000);
+
+function eventHandler(req: any, res: any) {
+  res.writeHead(200, {
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+    "Content-Type": "text/event-stream",
+  });
+
+  const clientId = Date.now();
+  const newClient = {
+    id: clientId,
+    res,
+  };
+  clients.push(newClient);
+  console.info(`${clientId} Connection opened`);
+
+  req.on("close", () => {
+    console.info(`${clientId} Connection closed`);
+    clients = clients.filter((client) => client.id !== clientId);
+  });
+}
+
+router.get("/events", (req: any, res: any) => {
+  if (req.headers.accept === "text/event-stream") {
+    eventHandler(req, res);
+  } else {
+    res.json({ message: "Ok" });
+  }
+});
+
 // LAST DATA
 
 async function getLastData(measurement: IMeasurement, req: any, res: any) {
@@ -102,20 +139,20 @@ router.get(
   catchAsync(async (req: any, res: any) => {
     if (allStationsCfg.getStationByID(req.params.stationID) != null) {
       const { measurement } = allStationsCfg.getStationByID(
-        req.params.stationID
+        req.params.stationID,
       );
       await getLastData(measurement, req, res);
     } else {
       throw new AppError(400, "Invalid params");
     }
-  })
+  }),
 );
 
 router.get(
   "/api/getLastData/dom",
   catchAsync(async (req: any, res: any) => {
     await getLastData(dom, req, res);
-  })
+  }),
 );
 
 // TREND DATA
@@ -127,7 +164,7 @@ async function getTrendData(measurement: IMeasurement, req: any, res: any) {
   const reply = await redisClient.zRangeByScore(
     measurement.getRedisTrendKey(),
     now - 3600000,
-    now
+    now,
   );
   res.status(200).json(measurement.transformTrendData(reply));
 }
@@ -137,20 +174,20 @@ router.get(
   catchAsync(async (req: any, res: any) => {
     if (allStationsCfg.getStationByID(req.params.stationID) != null) {
       const { measurement } = allStationsCfg.getStationByID(
-        req.params.stationID
+        req.params.stationID,
       );
       await getTrendData(measurement, req, res);
     } else {
       throw new AppError(400, "Invalid params");
     }
-  })
+  }),
 );
 
 router.get(
   "/api/getTrendData/dom",
   catchAsync(async (req: any, res: any) => {
     await getTrendData(dom, req, res);
-  })
+  }),
 );
 
 // CFG & AUTH
@@ -159,7 +196,7 @@ router.get(
   "/api/logout",
   catchAsync(async (req: any, res: any) => {
     res.clearCookie("jwt").status(200).json({});
-  })
+  }),
 );
 
 router.post(
@@ -167,7 +204,7 @@ router.post(
   catchAsync(async (req: any, res: any) => {
     const gtoken = req.body.token;
     console.info(req.body, gtoken);
-    const ticket = await client.verifyIdToken({
+    const ticket = await clietOAuth.verifyIdToken({
       idToken: gtoken,
       audience: process.env.REACT_APP_GOOGLE_CLIENT_ID,
     });
@@ -193,7 +230,7 @@ router.post(
         createdAt,
         expiresAt,
       } as IUser);
-  })
+  }),
 );
 
 router.get(
@@ -205,7 +242,7 @@ router.get(
     } else {
       res.status(200).json(null);
     }
-  })
+  }),
 );
 
 router.get(
@@ -247,7 +284,7 @@ router.get(
       result.push(cStation);
     }
     res.status(200).json(result);
-  })
+  }),
 );
 
 // LOAD
@@ -272,13 +309,13 @@ router.get(
         start,
         end,
         measurement,
-        allStationsCfg
+        allStationsCfg,
       );
       res.status(200).json(data);
     } else {
       throw new AppError(400, "Invalid params");
     }
-  })
+  }),
 );
 
 router.get(
@@ -292,7 +329,7 @@ router.get(
     } else {
       throw new AppError(400, "Invalid params");
     }
-  })
+  }),
 );
 
 // FORECAST
@@ -306,7 +343,7 @@ router.get(
     } else {
       throw new AppError(400, "Invalid params");
     }
-  })
+  }),
 );
 
 router.get(
@@ -321,14 +358,14 @@ router.get(
       const data = await getAstronomicalData(
         req.query.lat,
         req.query.lon,
-        new Date(req.query.date)
+        new Date(req.query.date),
       );
       // console.info(data);
       res.status(200).json(data);
     } else {
       throw new AppError(400, "Invalid params");
     }
-  })
+  }),
 );
 
 // SET DATA
@@ -338,30 +375,20 @@ async function setData(PASSKEY: string, data: any) {
     const station: IStation = allStationsCfg.getStationByPasskey(PASSKEY);
     if (station != null) {
       const { measurement } = allStationsCfg.getStationByPasskey(PASSKEY);
-      const { date, decoded, toStore } = measurement.decodeData(data);
+      const { date, decoded } = measurement.decodeData(data);
       const now = Date.now();
       const diff = now - date.getTime();
       if (diff < 3600000) {
-        socketEmiter.emit(measurement.getSocketChannel(), decoded);
         await redisClient
           .multi()
           .set(measurement.getRedisLastDataKey(), JSON.stringify(decoded))
-          .zAdd(measurement.getRedisMinuteDataKey(), {
+          .zAdd(measurement.getRedisRawDataKey(), {
             score: date.getTime(),
-            value: JSON.stringify(toStore),
+            value: JSON.stringify(decoded),
           })
           .exec();
-        await producer.connect();
-        // todo
-        await producer.send({
-          topic: "data",
-          messages: [
-            {
-              key: measurement.getKafkaKey(),
-              value: JSON.stringify(toStore),
-            },
-          ],
-        });
+        // sse
+        writeEvent(station.id);
       } else {
         throw new AppError(400, `Old data ${date}`);
       }
@@ -378,7 +405,7 @@ router.get(
   catchAsync(async (req: any, res: any) => {
     await setData(req.query.ID, req.query);
     res.sendStatus(200);
-  })
+  }),
 );
 
 router.post(
@@ -386,7 +413,7 @@ router.post(
   catchAsync(async (req: any, res: any) => {
     await setData(req.body.PASSKEY, req.body);
     res.sendStatus(200);
-  })
+  }),
 );
 
 router.post(
@@ -394,7 +421,7 @@ router.post(
   catchAsync(async (req: any, res: any) => {
     await setData(req.body.PASSKEY, req.body);
     res.sendStatus(200);
-  })
+  }),
 );
 
 // GO
@@ -429,13 +456,13 @@ router.get(
         req.query.hour_min,
         req.query.hour_max,
         req.query.precipitation_amount_min,
-        req.query.precipitation_amount_max
+        req.query.precipitation_amount_max,
       );
       res.status(200).json(data);
     } else {
       throw new AppError(400, "Invalid params");
     }
-  })
+  }),
 );
 
 export default router;

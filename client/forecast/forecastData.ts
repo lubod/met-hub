@@ -156,7 +156,7 @@ export class Forecast6h implements IGetForecastDataToDisplay {
     precipitation_amount: number,
     wind_speed: number,
     wind_dir: number,
-    cloud_area_fraction: number
+    cloud_area_fraction: number,
   ) {
     this.timestamp = timestamp;
     this.symbol_code = symbol_code;
@@ -229,7 +229,7 @@ export class Forecast1h implements IGetForecastDataToDisplay {
     precipitation_amount: number,
     wind_speed: number,
     wind_dir: number,
-    cloud_area_fraction: number
+    cloud_area_fraction: number,
   ) {
     this.timestamp = timestamp;
     this.symbol_code = symbol_code;
@@ -353,12 +353,8 @@ export default class ForecastData implements IForecastData {
 
   setAstronomicalData(astronomicalData: any) {
     this.astronomicalData = astronomicalData;
-    this.sunrise = new Date(
-      astronomicalData.astrodata.location.time[0].sunrise._attributes.time
-    );
-    this.sunset = new Date(
-      astronomicalData.astrodata.location.time[0].sunset._attributes.time
-    );
+    this.sunrise = new Date(astronomicalData.properties.sunrise.time);
+    this.sunset = new Date(astronomicalData.properties.sunset.time);
   }
 
   calculate() {
@@ -472,8 +468,8 @@ export default class ForecastData implements IForecastData {
                 : row.precipitation_amount_6h,
               row.wind_speed,
               row.wind_from_direction,
-              row.cloud_area_fraction
-            )
+              row.cloud_area_fraction,
+            ),
           );
         }
         if (row.symbol_code_1h != null) {
@@ -485,8 +481,8 @@ export default class ForecastData implements IForecastData {
               row.precipitation_amount_1h,
               row.wind_speed,
               row.wind_from_direction,
-              row.cloud_area_fraction
-            )
+              row.cloud_area_fraction,
+            ),
           );
         }
       }
@@ -510,19 +506,19 @@ export default class ForecastData implements IForecastData {
       const row = {} as ForecastRow;
       row.timestamp = new Date(item.time);
       row.air_pressure_at_sea_level = parseFloat(
-        item.data.instant.details.air_pressure_at_sea_level
+        item.data.instant.details.air_pressure_at_sea_level,
       );
       row.air_temperature = parseFloat(
-        item.data.instant.details.air_temperature
+        item.data.instant.details.air_temperature,
       );
       row.cloud_area_fraction = parseFloat(
-        item.data.instant.details.cloud_area_fraction
+        item.data.instant.details.cloud_area_fraction,
       );
       row.relative_humidity = parseFloat(
-        item.data.instant.details.relative_humidity
+        item.data.instant.details.relative_humidity,
       );
       row.wind_from_direction = parseFloat(
-        item.data.instant.details.wind_from_direction
+        item.data.instant.details.wind_from_direction,
       );
       row.wind_speed = parseFloat(item.data.instant.details.wind_speed);
       row.precipitation_amount_1h =
@@ -552,7 +548,7 @@ export default class ForecastData implements IForecastData {
       this.rows.push(row);
 
       let forecastDay: ForecastDay = this.days.get(
-        row.timestamp.toDateString()
+        row.timestamp.toDateString(),
       );
       if (forecastDay == null) {
         forecastDay = new ForecastDay();

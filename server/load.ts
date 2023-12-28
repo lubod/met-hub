@@ -46,14 +46,16 @@ function minmax(arr: any, index: number, window: number, column: string) {
 
 function checkInput(
   table: string,
+  stationID: string,
   column: string,
   extraColumn: string,
-  allStationsCfg: AllStationsCfg
+  allStationsCfg: AllStationsCfg,
 ) {
-  const stationID = table.startsWith("station") ? table.split("_")[1] : "dom"; // todo
   const station = allStationsCfg.getStationByID(stationID);
   const tables = station.measurement.getTables();
-  const columns = station.measurement.getColumns();
+  const sensors = station.measurement.getSensors();
+  const columns = sensors.map((s) => s.col);
+  // console.info(stationID, table, tables, column, columns);
   if (tables.includes(table) && columns.includes(column)) {
     if (extraColumn === "") {
       return true;
@@ -71,7 +73,7 @@ export async function loadData(
   start: Date,
   end: Date,
   measurement: string,
-  allStationsCfg: AllStationsCfg
+  allStationsCfg: AllStationsCfg,
 ) {
   const timestampStart = `${start
     .toISOString()
@@ -83,15 +85,12 @@ export async function loadData(
     console.info("connected", new Date());
 
     const dbd = measurement.split(":");
-    if (dbd.length >= 2) {
-      let table = dbd[0];
-      const column = dbd[1];
-      const extraColumn = dbd.length >= 3 ? `${dbd[2]}` : "";
-      if (table === "station") {
-        table += `_${  stationID}`;
-      }
+    if (dbd.length >= 1) {
+      const column = dbd[0];
+      const extraColumn = dbd.length >= 2 ? `${dbd[1]}` : "";
+      const table = `station_${stationID}`;
 
-      if (checkInput(table, column, extraColumn, allStationsCfg)) {
+      if (checkInput(table, stationID, column, extraColumn, allStationsCfg)) {
         // select timestamp,sum(rain::int) as rain from vonku group by timestamp order by timestamp asc
         let queryText = `select timestamp,${column}${
           extraColumn === "" ? "" : ","
@@ -137,6 +136,9 @@ export async function loadData(
           return res2;
         }
         return res.rows;
+        // eslint-disable-next-line no-else-return
+      } else {
+        console.error("Wrong input", table, column, extraColumn);
       }
     }
   } catch (e) {

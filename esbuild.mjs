@@ -9,15 +9,13 @@ const define = {
 
 esbuild.build({
   entryPoints: [
-    "test/testDom.ts",
-    "test/testStationGarni1025Arcus.ts",
-    "test/testStationGoGenMe3900.ts",
+    "test/test.ts",
   ],
   bundle: true,
   platform: "node",
   outdir: "esdist/test",
   external: ["pg-native"],
-  target: "node16",
+  target: "node20",
   minify: true,
   define,
 });
@@ -40,7 +38,7 @@ esbuild.build({
   platform: "node",
   outdir: "esdist/be",
   external: ["pg-native"],
-  target: "node16",
+  target: "node20",
   minify: true,
   define,
 });

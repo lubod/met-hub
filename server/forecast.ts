@@ -2,8 +2,6 @@ import moment from "moment";
 import fetch from "node-fetch";
 import { createClient } from "redis";
 
-const convert = require("xml-js");
-
 const redisClient = createClient();
 redisClient.connect();
 
@@ -47,11 +45,11 @@ export async function getForecast(lat: string, lon: string) {
 export async function getAstronomicalData(
   lat: string,
   lon: string,
-  date: Date
+  date: Date,
 ) {
   try {
     const cacheKey = `ASTRONOMICAL_DATA_CACHE_${lat}_${lon}_${moment(
-      date
+      date,
     ).format("YYYY-DD-MM")}`;
     const reply = await redisClient.get(cacheKey);
     // console.info(reply);
@@ -63,13 +61,13 @@ export async function getAstronomicalData(
         return json;
       }
     }
-    const url = `https://api.met.no/weatherapi/sunrise/2.0?lat=${lat}&lon=${lon}&date=${moment(
-      date
+    const url = `https://api.met.no/weatherapi/sunrise/3.0/sun?lat=${lat}&lon=${lon}&date=${moment(
+      date,
     ).format("YYYY-MM-DD")}&offset=+02:00`;
     console.info(`GET ${url}`);
     const response = await fetch(url, {
       headers: {
-        Accept: "text/xml",
+        Accept: "application/json",
         "User-Agent": "met-hub.com",
       },
     });
@@ -78,10 +76,7 @@ export async function getAstronomicalData(
       const message = `An error has occured: ${response.status}`;
       throw new Error(message);
     }
-    const xml = await response.text();
-    const json = JSON.parse(
-      convert.xml2json(xml, { compact: true, spaces: 1 })
-    );
+    const json = await response.json();
     redisClient.set(cacheKey, JSON.stringify(json), {
       EX: 3600,
     });

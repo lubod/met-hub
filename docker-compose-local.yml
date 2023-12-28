@@ -8,7 +8,6 @@ services:
     image: met-hub
     container_name: met-hub
     depends_on:
-      - redis
       - postgres
     env_file:
       - met-hub.env
@@ -20,15 +19,14 @@ services:
     image: met-hub-store
     container_name: met-hub-store
     depends_on:
-      - redis
       - postgres
     env_file:
       - met-hub.env
     network_mode: host
-  redis:
-    image: redis
-    container_name: redis
-    network_mode: host
+#  redis:
+#    image: redis
+#    container_name: redis
+#    network_mode: host
   postgres:
     image: postgres
     container_name: postgres
