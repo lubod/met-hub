@@ -6,7 +6,6 @@ import {
   DomCfg,
   DOM_SENSORS,
 } from "../common/domModel";
-import { IStationData } from "../common/stationModel";
 import { IMeasurement } from "./measurement";
 
 const cloneDeep = require("lodash.clonedeep");

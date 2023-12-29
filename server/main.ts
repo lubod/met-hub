@@ -6,14 +6,12 @@ import rateLimit from "express-rate-limit";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import cors from "cors";
 import router from "./router";
-import SocketEmitter from "./socketEmitter";
 import Agregator from "./agregator";
 import { AllStationsCfg } from "../common/allStationsCfg";
 // import Go from "./go";
 
 const app = express();
 const http = require("http").Server(app);
-const io = require("socket.io")(http);
 const helmet = require("helmet");
 
 const redisClient = createClient();
@@ -44,8 +42,6 @@ export class AppError extends Error {
   }
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export const socketEmiter = new SocketEmitter();
 // AllStationsCfg.writeCfg();
 export const allStationsCfg = new AllStationsCfg();
 allStationsCfg.readCfg().then(() => {
@@ -78,7 +74,7 @@ app.use((req: any, res: any, next: any) => {
     "ENDPOINT:",
     new Date(),
     req.path,
-    req.cookies,
+    // req.cookies,
     req.body,
     req.query,
     req.params,
@@ -92,16 +88,6 @@ app.use(router);
 app.use((err: AppError, req: any, res: any, next: any) => {
   console.error("ERROR:", err);
   res.status(err.code || 500).json({ code: err.code, msg: err.msg });
-});
-
-io.on("connection", (socket: any) => {
-  console.log("a user connected", socket.id);
-  socketEmiter.addSocket(socket);
-
-  socket.on("disconnect", () => {
-    socketEmiter.removeSocket(socket);
-    console.log("A user disconnected", socket.id);
-  });
 });
 
 const server = http.listen(8089, () => {

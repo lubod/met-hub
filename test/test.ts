@@ -1,6 +1,4 @@
 import assert from "assert";
-import StationCtrl from "../client/station/stationCtrl";
-import MySocket from "../client/socket";
 import StationGoGenMe3900 from "../server/stationGoGenMe3900";
 import { AllStationsCfg, IStation } from "../common/allStationsCfg";
 import { GoGenMe3900Simulator } from "./goGenMe3900Simulator";
@@ -10,6 +8,7 @@ import { Garni1025ArcusSimulator } from "./garni1025ArcusSimulator";
 import StationGarni1025Arcus from "../server/stationGarni1025Arcus";
 import { DomSimulator } from "./domSimulator";
 import { Dom } from "../server/dom";
+import { CController } from "../common/controller";
 
 async function main(
   station: IStation,
@@ -42,9 +41,8 @@ async function main(
 
   let { decoded } = meas.decodeData(data1);
   const pgData = simulator.getPGData(decoded);
-  const socket = new MySocket(true);
-  const stationCtrl = new StationCtrl(socket, null, true); // todo
-  stationCtrl.setStation(station);
+  const cCtrl = new CController(null, true); // todo
+  cCtrl.setStation(station);
   const datas = [data1, data2, data3];
 
   for (const data of datas) {
@@ -57,9 +55,11 @@ async function main(
     assert.deepStrictEqual(sd, decoded);
     console.info("Redis OK", station.id);
     // eslint-disable-next-line no-await-in-loop
-    await stationCtrl.fetchData();
+    await cCtrl.fetchData();
     assert.deepStrictEqual(
-      simulator.getClientStationData(stationCtrl.stationData.data),
+      simulator.getClientStationData(
+        station.id === "dom" ? cCtrl.domData.data : cCtrl.stationData.data,
+      ),
       decoded,
     );
     console.info("Client OK", station.id);
@@ -74,25 +74,24 @@ async function main(
 }
 
 const allStationsCfg = new AllStationsCfg();
-allStationsCfg.readCfg().then(() => {
+allStationsCfg.readCfg().then(async () => {
   //  const simulator = new GoGenMe3900Simulator();
   //  const meas = new StationGoGenMe3900(station.id);
   let STATION_ID = allStationsCfg.getSecondDefaultStationID(); // todo
   let station = allStationsCfg.getStationByID(STATION_ID);
   let simulator: CSimulator = new Garni1025ArcusSimulator();
   let meas: IMeasurement = new StationGarni1025Arcus(station.id);
-  main(station, simulator, meas);
+  await main(station, simulator, meas);
 
   STATION_ID = allStationsCfg.getDefaultStationID(); // todo
   station = allStationsCfg.getStationByID(STATION_ID);
   simulator = new GoGenMe3900Simulator();
   meas = new StationGoGenMe3900(station.id);
-  main(station, simulator, meas);
+  await main(station, simulator, meas);
 
   station = allStationsCfg.getStationByID("dom");
   simulator = new DomSimulator();
   meas = new Dom();
-  main(station, simulator, meas);
-      // exit();
-
+  await main(station, simulator, meas);
+  // exit();
 });

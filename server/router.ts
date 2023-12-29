@@ -87,14 +87,14 @@ function catchAsync(fnc: Function) {
 
 let clients: any[] = [];
 
-const writeEvent = (data: string) => {
+export const writeEvent = (data: string, type: "raw" | "ping" | "minute") => {
   clients.forEach((client) => {
-    client.res.write(`data: ${data}\n\n`);
-    console.info(`${client.id} Connection used ${data}`);
+    client.res.write(`data: ${data}:${type}\n\n`);
+    console.info(`${client.id} Connection used ${data} ${type}`);
   });
 };
 
-setInterval(() => writeEvent("-ping"), 30000);
+setInterval(() => writeEvent("-", "ping"), 30000);
 
 function eventHandler(req: any, res: any) {
   res.writeHead(200, {
@@ -374,7 +374,7 @@ async function setData(PASSKEY: string, data: any) {
   if (PASSKEY != null) {
     const station: IStation = allStationsCfg.getStationByPasskey(PASSKEY);
     if (station != null) {
-      const { measurement } = allStationsCfg.getStationByPasskey(PASSKEY);
+      const { measurement } = station;
       const { date, decoded } = measurement.decodeData(data);
       const now = Date.now();
       const diff = now - date.getTime();
@@ -388,7 +388,7 @@ async function setData(PASSKEY: string, data: any) {
           })
           .exec();
         // sse
-        writeEvent(station.id);
+        writeEvent(station.id, "raw");
       } else {
         throw new AppError(400, `Old data ${date}`);
       }

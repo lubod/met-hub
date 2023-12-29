@@ -1,17 +1,14 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable import/no-import-module-exports */
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AuthCtrl from "./auth/authCtrl";
-import MySocket from "./socket";
-import StationCtrl from "./station/stationCtrl";
 import HeaderCtrl from "./header/headerCtrl";
 import App from "./app";
 import ChartsCtrl from "./charts/chartsCtrl";
 import { ISensor } from "../common/sensor";
 import ForecastCtrl from "./forecast/forecastCtrl";
-import DomCtrl from "./dom/domCtrl";
 import "./style.scss";
 import { IStation } from "../common/allStationsCfg";
 import { AllStationsCfgClient } from "../common/allStationsCfgClient";
@@ -20,45 +17,46 @@ import {
   STATION_SENSORS,
   STATION_MEASUREMENTS_DESC,
 } from "../common/stationModel";
+import { CController } from "../common/controller";
 
 export class AppContext {
-  socket: MySocket;
-
   authCtrl: AuthCtrl;
 
   headerCtrl: HeaderCtrl;
 
   chartsCtrl: ChartsCtrl;
 
-  stationCtrl: StationCtrl;
-
-  domCtrl: DomCtrl;
+  cCtrl: CController;
 
   forecastCtrl: ForecastCtrl;
 
+  listener = (e: any) => {
+    const [data, type] = e.data.split(":");
+    // console.info("EVENT ", data, type);
+    if (data === this.cCtrl.getStationID()) {
+      console.info("SSE ME");
+      if (type === "raw") {
+        this.cCtrl.fetchData(); // todo
+      } else if (type === "minute") {
+        this.cCtrl.fetchTrendData();
+      }
+    }
+  };
+
   start() {
-    this.socket = new MySocket();
     this.authCtrl = new AuthCtrl(this);
     this.headerCtrl = new HeaderCtrl(this);
     this.chartsCtrl = new ChartsCtrl(this.authCtrl.authData);
-    this.stationCtrl = new StationCtrl(this.socket, this.authCtrl.authData);
-    this.domCtrl = new DomCtrl(this.socket, this.authCtrl.authData);
+    this.cCtrl = new CController(this.authCtrl.authData);
     this.forecastCtrl = new ForecastCtrl(this.authCtrl.authData);
     this.authCtrl.start();
     this.headerCtrl.start();
     this.chartsCtrl.start();
-    this.stationCtrl.start();
-    this.domCtrl.start(); // todo
+    this.cCtrl.start();
     this.forecastCtrl.start();
     // SSE
     const source = new EventSource(`/events`);
-    source.addEventListener("message", (e) => {
-      console.info("EVENT ", e.data);
-      if (e.data === this.stationCtrl.stationCfg.STATION_ID) {
-        console.info("ME");
-        this.stationCtrl.fetchData(); // todo
-      }
-    });
+    source.addEventListener("message", this.listener);
     source.addEventListener("error", (e) => {
       console.error("Error: ", e);
     });
@@ -71,26 +69,25 @@ export class AppContext {
 
   setStation(station: IStation) {
     console.info("stationID", station);
-    if (station != null) {
-      localStorage.setItem("lastStationID", station.id);
-      if (station.id === "dom") {
-        this.chartsCtrl.chartsData.setMeasurements(DOM_SENSORS);
-        this.chartsCtrl.chartsData.setMeasurementObject(
-          DOM_SENSORS_DESC.LIVING_ROOM_AIR,
-        );
-      } else {
-        // todo
-        this.chartsCtrl.chartsData.setMeasurements(STATION_SENSORS);
-        this.chartsCtrl.chartsData.setMeasurementObject(
-          STATION_MEASUREMENTS_DESC.TEMPERATURE,
-        );
-        this.stationCtrl.setStation(station);
-      }
+    localStorage.setItem("lastStationID", station.id);
+    if (station.id === "dom") {
+      this.chartsCtrl.chartsData.setMeasurements(DOM_SENSORS);
+      this.chartsCtrl.chartsData.setMeasurementObject(
+        DOM_SENSORS_DESC.LIVING_ROOM_AIR,
+      );
+    } else {
+      // todo
+      this.chartsCtrl.chartsData.setMeasurements(STATION_SENSORS);
+      this.chartsCtrl.chartsData.setMeasurementObject(
+        STATION_MEASUREMENTS_DESC.TEMPERATURE,
+      );
     }
 
     this.headerCtrl.setStation(station);
     this.forecastCtrl.setStation(station);
-    this.stationCtrl.setStation(station);
+    this.cCtrl.setStation(station);
+    this.cCtrl.fetchData();
+    this.cCtrl.fetchTrendData();
     this.chartsCtrl.setStation(station);
   }
 
@@ -119,28 +116,27 @@ export class AppContext {
       this.setStation(null);
     }
   }
+
+  render() {
+    console.info(
+      "Index render",
+      this.authCtrl.authData.isAuth,
+      window.location.pathname,
+    );
+    this.authCtrl.authData.setLocation(window.location.pathname);
+
+    const appContainer = document.getElementById("app");
+    const root = createRoot(appContainer); // createRoot(container!) if you use TypeScript
+    root.render(
+      <div className="App">
+        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+          <App appContext={this} />
+        </GoogleOAuthProvider>
+      </div>,
+    );
+  }
 }
 
 const appContext: AppContext = new AppContext();
-
-function render() {
-  console.info(
-    "Index render",
-    appContext.authCtrl.authData.isAuth,
-    window.location.pathname,
-  );
-  appContext.authCtrl.authData.setLocation(window.location.pathname);
-
-  const appContainer = document.getElementById("app");
-  ReactDOM.render(
-    <div className="App">
-      <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-        <App appContext={appContext} />
-      </GoogleOAuthProvider>
-    </div>,
-    appContainer,
-  );
-}
-
 appContext.start();
-render();
+appContext.render();

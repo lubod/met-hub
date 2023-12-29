@@ -1,5 +1,6 @@
 import { action, makeObservable, observable } from "mobx";
 import { IDomData, IDomTrendData } from "../../common/domModel";
+import { IStation } from "../../common/allStationsCfg";
 
 class DomData {
   data: IDomData = {} as IDomData;
@@ -29,6 +30,8 @@ class DomData {
 
   loading: boolean = true;
 
+  station: IStation = null;
+
   constructor() {
     makeObservable(this, {
       data: observable,
@@ -44,6 +47,14 @@ class DomData {
 
   setLoading(loading: boolean) {
     this.loading = loading;
+  }
+
+  setStation(station: IStation) {
+    this.station = station;
+    this.ctime = new Date();
+    this.oldData = true;
+    this.try = 0;
+    this.loading = true;
   }
 
   checkOldData(time: Date) {

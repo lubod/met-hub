@@ -17,14 +17,14 @@ type DomProps = {
   appContext: AppContext;
 };
 
-const Dom = observer(({ appContext }: DomProps) => {
-  console.info(
-    "dom render",
-    appContext.authCtrl.authData.isAuth,
-    appContext.domCtrl.domData.oldData,
-  );
+const Dom = observer(({ appContext }: DomProps) => 
+  // console.info(
+  //   "dom render",
+  //   appContext.authCtrl.authData.isAuth,
+  //   appContext.cCtrl.domData.oldData,
+  // );
 
-  return (
+   (
     <div className="main">
       <MyContainer>
         <Row className="mt-3">
@@ -36,33 +36,26 @@ const Dom = observer(({ appContext }: DomProps) => {
             <Button
               variant="link btn-sm"
               onClick={() => {
-                appContext.domCtrl.fetchData();
-                appContext.domCtrl.fetchTrendData();
+                appContext.cCtrl.fetchData();
+                appContext.cCtrl.fetchTrendData();
               }}
             >
               <LoadImg
-                rotate={
-                  appContext.domCtrl.domData.loading ||
-                  appContext.domCtrl.domData.oldData
-                }
+                rotate={appContext.cCtrl.domData.loading || appContext.cCtrl.domData.oldData}
                 src="icons8-refresh-25.svg"
                 alt=""
               />
             </Button>
           </Col>
         </Row>
-        <Row
-          className={appContext.domCtrl.domData.oldData ? "text-danger" : ""}
-        >
+        <Row className={appContext.cCtrl.domData.oldData ? "text-danger" : ""}>
           <Col xs={6}>
             <Text
               name="Data date"
               value={
-                appContext.domCtrl.domData.data.timestamp === null
+                appContext.cCtrl.domData.data.timestamp === null
                   ? "-"
-                  : moment(appContext.domCtrl.domData.data.timestamp).format(
-                      "DD MMM YYYY",
-                    )
+                  : moment(appContext.cCtrl.domData.data.timestamp).format("DD MMM YYYY")
               }
             />
           </Col>
@@ -70,11 +63,9 @@ const Dom = observer(({ appContext }: DomProps) => {
             <Text
               name="Data time"
               value={
-                appContext.domCtrl.domData.data.timestamp === null
+                appContext.cCtrl.domData.data.timestamp === null
                   ? "-"
-                  : moment(appContext.domCtrl.domData.data.timestamp).format(
-                      "HH:mm:ss",
-                    )
+                  : moment(appContext.cCtrl.domData.data.timestamp).format("HH:mm:ss")
               }
             />
           </Col>
@@ -85,14 +76,10 @@ const Dom = observer(({ appContext }: DomProps) => {
           <Col xs={3}>
             <DataWithTrend
               label={DOM_SENSORS_DESC.TEMPERATURE.label}
-              value={
-                appContext.domCtrl.domData.oldData
-                  ? null
-                  : appContext.domCtrl.domData.data.temp
-              }
+              value={appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.temp}
               unit={DOM_SENSORS_DESC.TEMPERATURE.unit}
               fix={DOM_SENSORS_DESC.TEMPERATURE.fix}
-              data={appContext.domCtrl.domData.trendData.temp}
+              data={appContext.cCtrl.domData.trendData.temp}
               range={DOM_SENSORS_DESC.TEMPERATURE.range}
               couldBeNegative={DOM_SENSORS_DESC.TEMPERATURE.couldBeNegative}
               onClick={() =>
@@ -105,13 +92,11 @@ const Dom = observer(({ appContext }: DomProps) => {
             <DataWithTrend
               label={DOM_SENSORS_DESC.HUMIDITY.label}
               value={
-                appContext.domCtrl.domData.oldData
-                  ? null
-                  : appContext.domCtrl.domData.data.humidity
+                appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.humidity
               }
               unit={DOM_SENSORS_DESC.HUMIDITY.unit}
               fix={DOM_SENSORS_DESC.HUMIDITY.fix}
-              data={appContext.domCtrl.domData.trendData.humidity}
+              data={appContext.cCtrl.domData.trendData.humidity}
               range={DOM_SENSORS_DESC.HUMIDITY.range}
               couldBeNegative={DOM_SENSORS_DESC.HUMIDITY.couldBeNegative}
               onClick={() =>
@@ -124,13 +109,13 @@ const Dom = observer(({ appContext }: DomProps) => {
             <DataWithTrend
               label={DOM_SENSORS_DESC.RAIN.label}
               value={
-                appContext.domCtrl.domData.oldData
+                appContext.cCtrl.domData.oldData
                   ? null
-                  : Number(appContext.domCtrl.domData.data.rain)
+                  : Number(appContext.cCtrl.domData.data.rain)
               }
               unit={DOM_SENSORS_DESC.RAIN.unit}
               fix={DOM_SENSORS_DESC.RAIN.fix}
-              data={appContext.domCtrl.domData.trendData.rain.map((x) => Number(x))}
+              data={appContext.cCtrl.domData.trendData.rain.map((x) => Number(x))}
               range={DOM_SENSORS_DESC.RAIN.range}
               couldBeNegative={DOM_SENSORS_DESC.RAIN.couldBeNegative}
               onClick={() =>
@@ -143,13 +128,11 @@ const Dom = observer(({ appContext }: DomProps) => {
             <DataWithTrend
               label={DOM_SENSORS_DESC.TARIF.label}
               value={
-                appContext.domCtrl.domData.oldData
-                  ? null
-                  : appContext.domCtrl.domData.data.tarif
+                appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.tarif
               }
               unit={DOM_SENSORS_DESC.TARIF.unit}
               fix={DOM_SENSORS_DESC.TARIF.fix}
-              data={appContext.domCtrl.domData.trendData.tarif}
+              data={appContext.cCtrl.domData.trendData.tarif}
               range={DOM_SENSORS_DESC.TARIF.range}
               couldBeNegative={DOM_SENSORS_DESC.TARIF.couldBeNegative}
               onClick={() =>
@@ -168,37 +151,37 @@ const Dom = observer(({ appContext }: DomProps) => {
         </Row>
         <Room
           room="LIVING ROOM"
-          floorTrend={appContext.domCtrl.domData.trendData.living_room_floor}
-          airTrend={appContext.domCtrl.domData.trendData.living_room_air}
+          floorTrend={appContext.cCtrl.domData.trendData.living_room_floor}
+          airTrend={appContext.cCtrl.domData.trendData.living_room_air}
           air={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.living_room_air
+              : appContext.cCtrl.domData.data.living_room_air
           }
           floor={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.living_room_floor
+              : appContext.cCtrl.domData.data.living_room_floor
           }
           required={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.living_room_reqall
+              : appContext.cCtrl.domData.data.living_room_reqall
           }
           heat={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.living_room_heat
+              : appContext.cCtrl.domData.data.living_room_heat
           }
           off={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.living_room_off
+              : appContext.cCtrl.domData.data.living_room_off
           }
           low={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.living_room_low
+              : appContext.cCtrl.domData.data.living_room_low
           }
           authData={appContext.authCtrl.authData}
           onClickAir={() =>
@@ -211,37 +194,31 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Myhr />
         <Room
           room="GUEST ROOM"
-          floorTrend={appContext.domCtrl.domData.trendData.guest_room_floor}
-          airTrend={appContext.domCtrl.domData.trendData.guest_room_air}
+          floorTrend={appContext.cCtrl.domData.trendData.guest_room_floor}
+          airTrend={appContext.cCtrl.domData.trendData.guest_room_air}
           air={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.guest_room_air
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.guest_room_air
           }
           floor={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.guest_room_floor
+              : appContext.cCtrl.domData.data.guest_room_floor
           }
           required={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.guest_room_reqall
+              : appContext.cCtrl.domData.data.guest_room_reqall
           }
           heat={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.guest_room_heat
+              : appContext.cCtrl.domData.data.guest_room_heat
           }
           off={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.guest_room_off
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.guest_room_off
           }
           low={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.guest_room_low
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.guest_room_low
           }
           authData={appContext.authCtrl.authData}
           onClickAir={() =>
@@ -254,37 +231,27 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Myhr />
         <Room
           room="BED ROOM"
-          floorTrend={appContext.domCtrl.domData.trendData.bed_room_floor}
-          airTrend={appContext.domCtrl.domData.trendData.bed_room_air}
+          floorTrend={appContext.cCtrl.domData.trendData.bed_room_floor}
+          airTrend={appContext.cCtrl.domData.trendData.bed_room_air}
           air={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.bed_room_air
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.bed_room_air
           }
           floor={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.bed_room_floor
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.bed_room_floor
           }
           required={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.bed_room_reqall
+              : appContext.cCtrl.domData.data.bed_room_reqall
           }
           heat={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.bed_room_heat
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.bed_room_heat
           }
           off={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.bed_room_off
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.bed_room_off
           }
           low={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.bed_room_low
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.bed_room_low
           }
           authData={appContext.authCtrl.authData}
           onClickAir={() =>
@@ -297,37 +264,29 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Myhr />
         <Room
           room="BOYS"
-          floorTrend={appContext.domCtrl.domData.trendData.boys_room_floor}
-          airTrend={appContext.domCtrl.domData.trendData.boys_room_air}
+          floorTrend={appContext.cCtrl.domData.trendData.boys_room_floor}
+          airTrend={appContext.cCtrl.domData.trendData.boys_room_air}
           air={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.boys_room_air
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.boys_room_air
           }
           floor={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.boys_room_floor
+              : appContext.cCtrl.domData.data.boys_room_floor
           }
           required={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.boys_room_reqall
+              : appContext.cCtrl.domData.data.boys_room_reqall
           }
           heat={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.boys_room_heat
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.boys_room_heat
           }
           off={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.boys_room_off
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.boys_room_off
           }
           low={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.boys_room_low
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.boys_room_low
           }
           authData={appContext.authCtrl.authData}
           onClickAir={() =>
@@ -340,37 +299,31 @@ const Dom = observer(({ appContext }: DomProps) => {
         <Myhr />
         <Room
           room="PETRA"
-          floorTrend={appContext.domCtrl.domData.trendData.petra_room_floor}
-          airTrend={appContext.domCtrl.domData.trendData.petra_room_air}
+          floorTrend={appContext.cCtrl.domData.trendData.petra_room_floor}
+          airTrend={appContext.cCtrl.domData.trendData.petra_room_air}
           air={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.petra_room_air
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.petra_room_air
           }
           floor={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.petra_room_floor
+              : appContext.cCtrl.domData.data.petra_room_floor
           }
           required={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.petra_room_reqall
+              : appContext.cCtrl.domData.data.petra_room_reqall
           }
           heat={
-            appContext.domCtrl.domData.oldData
+            appContext.cCtrl.domData.oldData
               ? null
-              : appContext.domCtrl.domData.data.petra_room_heat
+              : appContext.cCtrl.domData.data.petra_room_heat
           }
           off={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.petra_room_off
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.petra_room_off
           }
           low={
-            appContext.domCtrl.domData.oldData
-              ? null
-              : appContext.domCtrl.domData.data.petra_room_low
+            appContext.cCtrl.domData.oldData ? null : appContext.cCtrl.domData.data.petra_room_low
           }
           authData={appContext.authCtrl.authData}
           onClickAir={() =>
@@ -382,7 +335,7 @@ const Dom = observer(({ appContext }: DomProps) => {
         />
       </MyContainer>
     </div>
-  );
-});
+  )
+);
 
 export default Dom;

@@ -30,7 +30,7 @@ async function handleLogin(response: CredentialResponse, authCtrl: AuthCtrl) {
     data.expiresAt,
     data.id,
     null,
-    data.createdAt
+    data.createdAt,
   );
 }
 

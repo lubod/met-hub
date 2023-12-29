@@ -269,7 +269,7 @@ export class DomSimulator extends CSimulator {
 
   getClientStationData(data: any) {
     const cdd: IDomData = {
-      timestamp: data.timestamp,
+      timestamp: new Date(data.timestamp),
       place: data.place,
       temp: data.temp,
       humidity: data.humidity,
