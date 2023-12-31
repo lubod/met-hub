@@ -34,7 +34,7 @@ class StationGoGenMe3900 extends StationCommon {
     return init;
   }
 
-  decodeData(data: IStationGoGenMe3900DataRaw) {
+  decodeData(data: IStationGoGenMe3900DataRaw, place: string) {
     const TO_MM = 25.4;
     const TO_KM = 1.6;
     const TO_HPA = 33.8639;
@@ -66,7 +66,7 @@ class StationGoGenMe3900 extends StationCommon {
       humidity: round(data.humidity * 1.0, 0),
       humidityin: round(data.humidityin * 1.0, 0),
       winddir: round(data.winddir * 1.0, 0),
-      place: "Marianka",
+      place,
       minuterain: null,
       dewpt: null,
     };

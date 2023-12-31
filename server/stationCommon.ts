@@ -19,7 +19,10 @@ export default abstract class StationCommon implements IMeasurement {
     return this.cfg.STATION_ID;
   }
 
-  abstract decodeData(data: any): {
+  abstract decodeData(
+    data: any,
+    place: string,
+  ): {
     date: Date;
     decoded: IStationData;
     toStore: {};
@@ -180,7 +183,7 @@ export default abstract class StationCommon implements IMeasurement {
       windDir.push(element.winddir);
     });
     avg.winddir = avgWind(windDir);
-    console.info("Agregated station minute", avg.place, minute);
+    console.info("Agregated station minute", new Date(minute), avg.place);
     return avg;
   }
 }

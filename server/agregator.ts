@@ -33,7 +33,11 @@ class Agregator {
     console.info("Agregate", new Date(to));
     for (const meas of this.measurements) {
       // eslint-disable-next-line no-await-in-loop
-      const res = await this.redis.zRange(meas.getRedisRawDataKey(), 0, to);
+      const res = await this.redis.zRangeByScore(
+        meas.getRedisRawDataKey(),
+        0,
+        to,
+      );
       if (res.length > 0) {
         const minuteMap: Map<number, Array<any>> = new Map();
         for (const item of res) {

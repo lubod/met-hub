@@ -39,7 +39,7 @@ async function main(
   console.info("Now, Timestamp, Redis, pgtime, Pg", d, data2.dateutc, pgtime);
   console.info("Now, Timestamp, Redis, pgtime, Pg", d, data3.dateutc, pgtime);
 
-  let { decoded } = meas.decodeData(data1);
+  let { decoded } = meas.decodeData(data1, station.place);
   const pgData = simulator.getPGData(decoded);
   const cCtrl = new CController(null, true); // todo
   cCtrl.setStation(station);
@@ -50,7 +50,7 @@ async function main(
     await simulator.postData(data);
     // eslint-disable-next-line no-await-in-loop
     const sd = await simulator.fetchStationData(station.id);
-    decoded = meas.decodeData(data).decoded;
+    decoded = meas.decodeData(data, station.place).decoded;
     simulator.correctTimestamp(decoded, sd);
     assert.deepStrictEqual(sd, decoded);
     console.info("Redis OK", station.id);

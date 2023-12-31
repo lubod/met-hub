@@ -35,7 +35,7 @@ export default class StationGarni1025Arcus extends StationCommon {
     return init;
   }
 
-  decodeData(data: IStationGarni1025ArcusDataRaw) {
+  decodeData(data: IStationGarni1025ArcusDataRaw, place: string) {
     const TO_MM = 25.4;
     const TO_KM = 1.6;
     const TO_HPA = 33.8639;
@@ -62,7 +62,7 @@ export default class StationGarni1025Arcus extends StationCommon {
       humidity: round(data.humidity * 1.0, 0),
       humidityin: round(data.indoorhumidity * 1.0, 0),
       winddir: round(data.winddir * 1.0, 0),
-      place: "Demanovska Dolina",
+      place,
       minuterain: null,
       dewpt: round((5 / 9) * (data.dewptf - 32), 1),
     };

@@ -46,7 +46,7 @@ export class Dom implements IMeasurement {
     const date = new Date(deepCopy.timestamp);
     date.setUTCSeconds(0);
     deepCopy.timestamp = date.toISOString();
-    console.info("Agregated dom minute", deepCopy.timestamp);
+    console.info("Agregated dom minute", date);
     return deepCopy;
   }
 
@@ -131,7 +131,7 @@ export class Dom implements IMeasurement {
     return tmp;
   }
 
-  decodeData(data: IDomDataRaw) {
+  decodeData(data: IDomDataRaw, place: string) {
     //    console.log(data)
     const decoded: IDomData = {
       timestamp: new Date(data.timestamp),
@@ -169,7 +169,7 @@ export class Dom implements IMeasurement {
       petra_room_heat: Boolean(data.petra_podlaha.kuri),
       petra_room_off: Boolean(data.petra_podlaha.leto),
       petra_room_low: Boolean(data.petra_podlaha.low),
-      place: "Dom",
+      place,
     };
     const date = new Date(decoded.timestamp);
     const toStore = decoded;

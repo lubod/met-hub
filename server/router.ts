@@ -375,7 +375,7 @@ async function setData(PASSKEY: string, data: any) {
     const station: IStation = allStationsCfg.getStationByPasskey(PASSKEY);
     if (station != null) {
       const { measurement } = station;
-      const { date, decoded } = measurement.decodeData(data);
+      const { date, decoded } = measurement.decodeData(data, station.place);
       const now = Date.now();
       const diff = now - date.getTime();
       if (diff < 3600000) {

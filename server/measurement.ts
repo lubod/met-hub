@@ -24,7 +24,10 @@ export interface IMeasurement {
 
   transformTrendData(data: any): {};
 
-  decodeData(data: any): {
+  decodeData(
+    data: any,
+    place: string,
+  ): {
     date: Date;
     decoded: IDomData | IStationData;
   };

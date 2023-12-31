@@ -55,13 +55,10 @@ export class AppContext {
     this.cCtrl.start();
     this.forecastCtrl.start();
     // SSE
-    let source = new EventSource(`/events`);
+    const source = new EventSource(`/events`);
     source.addEventListener("message", this.listener);
     source.addEventListener("error", (e) => {
       console.error("Error: ", e);
-      setTimeout(() => {
-        source = new EventSource(`/events`);
-      }, 60000);
     });
   }
 
