@@ -6,7 +6,7 @@ import rateLimit from "express-rate-limit";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import cors from "cors";
 import router from "./router";
-import Agregator from "./agregator";
+import Agregator from "./aggregator";
 import { AllStationsCfg } from "../common/allStationsCfg";
 // import Go from "./go";
 

@@ -34,7 +34,7 @@ export interface IMeasurement {
 
   getKafkaKey(): string;
 
-  agregateRawData2Minute(minute: number, data: any): any;
+  aggregateRawData2Minute(minute: number, data: any): any;
 
   getStationID(): string;
 }

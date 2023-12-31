@@ -110,7 +110,7 @@ export default abstract class StationCommon implements IMeasurement {
     return tmp;
   }
 
-  agregateRawData2Minute(minute: number, data: Array<IStationData>) {
+  aggregateRawData2Minute(minute: number, data: Array<IStationData>) {
     const avgWind = (directions: number[]) => {
       let sinSum = 0;
       let cosSum = 0;
@@ -183,7 +183,7 @@ export default abstract class StationCommon implements IMeasurement {
       windDir.push(element.winddir);
     });
     avg.winddir = avgWind(windDir);
-    console.info("Agregated station minute", new Date(minute), avg.place);
+    console.info("Aggregated station minute", new Date(minute), avg.place);
     return avg;
   }
 }
