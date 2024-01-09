@@ -3,6 +3,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import ReconnectingEventSource from "reconnecting-eventsource";
 import AuthCtrl from "./auth/authCtrl";
 import HeaderCtrl from "./header/headerCtrl";
 import App from "./app";
@@ -55,7 +57,8 @@ export class AppContext {
     this.cCtrl.start();
     this.forecastCtrl.start();
     // SSE
-    const source = new EventSource(`/events`);
+    // const source = new EventSource(`/events`);
+    const source = new ReconnectingEventSource("/events");
     source.addEventListener("message", this.listener);
     source.addEventListener("error", (e) => {
       console.error("Error: ", e);
