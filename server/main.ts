@@ -75,7 +75,7 @@ app.use((req: any, res: any, next: any) => {
     new Date(),
     req.path,
     // req.cookies,
-    req.body,
+    // req.body,
     req.query,
     req.params,
   );
