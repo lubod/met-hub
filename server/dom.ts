@@ -45,6 +45,7 @@ export class Dom implements IMeasurement {
     const deepCopy = cloneDeep(data[0]); // todo
     const date = new Date(deepCopy.timestamp);
     date.setUTCSeconds(0);
+    date.setUTCMilliseconds(0);
     deepCopy.timestamp = date.toISOString();
     console.info("Aggregated dom minute", date);
     return deepCopy;

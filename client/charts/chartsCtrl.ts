@@ -32,7 +32,7 @@ class ChartsCtrl {
       this.chartsData.range,
       this.chartsData.page,
       this.chartsData.measurement,
-      this.chartsData.station.id
+      this.chartsData.station.id,
     );
   }
 
@@ -50,13 +50,12 @@ class ChartsCtrl {
       return;
     }
     try {
-      this.chartsData.setNewData(true, [], new CData());
       const o = parseInt(of.split("|")[0], 10) * 1000;
       // eslint-disable-next-line no-promise-executor-return
       // return new Promise((resolve) => setTimeout(resolve, 2000));
       const start = new Date(Date.now() - o + p * o);
       const end = new Date(Date.now() + p * o);
-      let url = `/api/loadData?stationID=${stationID}&start=${start.toISOString()}&end=${end.toISOString()}&measurement=`
+      let url = `/api/loadData?stationID=${stationID}&start=${start.toISOString()}&end=${end.toISOString()}&measurement=`;
       url += `${m.col}`;
       if (m.col2 !== "") {
         url += `:${m.col2}`;
@@ -70,6 +69,7 @@ class ChartsCtrl {
       });
 
       if (!response.ok) {
+        this.chartsData.setNewData(true, [], new CData());
         const message = `An error has occured: ${response.status}`;
         throw new Error(message);
       }
