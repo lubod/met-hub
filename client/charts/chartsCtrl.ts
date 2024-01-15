@@ -74,46 +74,31 @@ class ChartsCtrl {
       }
 
       const newData = await response.json();
-      let max: number = null;
-      let min: number = null;
-      let avg: string = null;
-      let total: number = null;
+      console.info(newData);
+      const min = parseFloat(newData.stats[0].min);
+      const max = parseFloat(newData.stats[0].max);
+      const last: string = null;
+      const avg: number = null;
 
+      const total: number = null;
       const range = this.chartsData.range.split("|")[1];
-
-      const y = m.col;
+      // const y = m.col;
       const y2 = m.col2;
-      for (let i = 0; i < newData.length; i += 1) {
-        if (i === 0) {
-          // console.info(newData[i]);
-          const val = parseFloat(newData[i][y]);
-          // eslint-disable-next-line no-multi-assign
-          max = min = total = val;
-        } else {
-          const val = parseFloat(newData[i][y]);
-          if (val > max) {
-            max = val;
-          }
-          if (val < min) {
-            min = val;
-          }
-          total += val;
-        }
-        newData[i].timestamp = new Date(newData[i].timestamp).getTime();
-      }
-      avg = total != null ? (total / newData.length).toFixed(1) : "";
-      const sum = total != null ? total.toFixed(1) : "";
+      const sum = total;
       let yDomainMin = Math.floor(min - (max / 100) * 5);
       const yDomainMax = Math.ceil(max + (max / 100) * 5);
-      const last = newData.length > 0 ? newData[newData.length - 1][y] : null;
+      //      const last = newData.length > 0 ? newData[newData.length - 1][y] : null;
 
       if (y2 !== "") {
         yDomainMin = 0;
       }
 
-      //  console.info("loaded data", min, max, avg, sum, newData);
+      for (const item of newData.data) {
+        item.val = [item.min, item.max];
+      }
+      // console.info("loaded data", min, max, avg, sum, newData);
 
-      this.chartsData.setNewData(false, newData, {
+      this.chartsData.setNewData(false, newData.data, {
         min,
         max,
         avg,

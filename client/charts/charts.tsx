@@ -55,7 +55,7 @@ const Charts = observer(
                   variant="secondary"
                   onClick={() => {
                     appContext.chartsCtrl.chartsData.setPage(
-                      appContext.chartsCtrl.chartsData.page - 1
+                      appContext.chartsCtrl.chartsData.page - 1,
                     );
                     appContext.chartsCtrl.reload();
                   }}
@@ -104,7 +104,7 @@ const Charts = observer(
                     appContext.chartsCtrl.chartsData.setPage(
                       appContext.chartsCtrl.chartsData.page < 0
                         ? appContext.chartsCtrl.chartsData.page + 1
-                        : 0
+                        : 0,
                     );
                     appContext.chartsCtrl.reload();
                   }}
@@ -165,7 +165,7 @@ const Charts = observer(
                 value={
                   appContext.chartsCtrl.chartsData.cdata.sum == null
                     ? ""
-                    : appContext.chartsCtrl.chartsData.cdata.sum
+                    : appContext.chartsCtrl.chartsData.cdata.sum.toFixed(1)
                 }
               />
             </Col>
@@ -194,7 +194,11 @@ const Charts = observer(
             <Col xs={4}>
               <Text
                 name="Avg"
-                value={appContext.chartsCtrl.chartsData.cdata.avg}
+                value={
+                  appContext.chartsCtrl.chartsData.cdata.avg == null
+                    ? ""
+                    : appContext.chartsCtrl.chartsData.cdata.avg.toFixed(1)
+                }
               />
             </Col>
           </Row>
@@ -264,7 +268,7 @@ const Charts = observer(
         )}
       </Row>
     </MyContainer>
-  )
+  ),
 );
 
 export default Charts;

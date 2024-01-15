@@ -8,9 +8,9 @@ export class CData {
 
   max: number;
 
-  avg: string;
+  avg: number;
 
-  sum: string;
+  sum: number;
 
   yDomainMin: number;
 

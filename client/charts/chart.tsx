@@ -56,8 +56,21 @@ function Chart({
   function formatLabel(label: string) {
     return moment(label).format("DD.MM.YYYY HH:mm:ss");
   }
-
-  // console.info("render chart", chdata, color);
+/*
+  console.info(
+    "render chart",
+    chdata,
+    xkey,
+    ykey,
+    y2key,
+    yDomainMin,
+    yDomainMax,
+    color,
+    range,
+    xDomainMin,
+    xDomainMax,
+  );
+  */
   return (
     <div className="text-left">
       <ResponsiveContainer width="100%" aspect={5.0 / 4.0}>
@@ -72,7 +85,7 @@ function Chart({
         >
           <Area
             type="monotoneX"
-            dataKey={ykey}
+            dataKey="val"
             stroke={color}
             fillOpacity={1}
             fill="url(#colorUv)"
@@ -104,6 +117,7 @@ function Chart({
             axisLine={false}
             domain={[xDomainMin, xDomainMax]}
             scale="time"
+            type="number"
           />
           <YAxis
             hide

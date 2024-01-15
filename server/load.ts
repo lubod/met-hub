@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-str */
 import { Pool } from "pg";
 import { AllStationsCfg } from "../common/allStationsCfg";
 
@@ -75,6 +76,9 @@ export async function loadData(
   measurement: string,
   allStationsCfg: AllStationsCfg,
 ) {
+  const diffMinutes = (end.getTime() - start.getTime()) / 1000 / 60;
+  const interval = Math.ceil(diffMinutes / 500.0);
+  console.info(end, start, diffMinutes, interval);
   const timestampStart = `${start
     .toISOString()
     .slice(0, 19)
@@ -91,7 +95,22 @@ export async function loadData(
       const table = `station_${stationID}`;
 
       if (checkInput(table, stationID, column, extraColumn, allStationsCfg)) {
+        let queryText = `WITH intervals as ( \
+            SELECT gs as start, gs + '${interval} minutes'::interval as end, ROW_NUMBER() over () as grp \
+            FROM generate_series ('${timestampStart}', '${timestampEnd}', '${interval} minutes'::interval) gs \
+          ), create_grp as ( \
+            SELECT i.grp, i.start, i.end, s.${column}, s.timestamp \
+            FROM ${table} s \
+            RIGHT JOIN intervals i \
+              ON s.timestamp >= i.start AND s.timestamp < i.end \
+          ) \
+          SELECT grp, EXTRACT(EPOCH FROM start) * 1000 as timestamp, min(${column}), max(${column}) \
+          FROM create_grp \
+          GROUP BY grp, start \
+          ORDER BY grp`;
+
         // select timestamp,sum(rain::int) as rain from vonku group by timestamp order by timestamp asc
+        /*
         let queryText = `select timestamp,${column}${
           extraColumn === "" ? "" : ","
         }${extraColumn} from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
@@ -109,33 +128,17 @@ export async function loadData(
         if (extraColumn === "kuri") {
           queryText = `select timestamp,${column},cast(${extraColumn} as int) as kuri from ${table} where timestamp>='${timestampStart}' and timestamp<='${timestampEnd}' order by timestamp asc`;
         }
-        const res = await client.query(queryText);
+        */
+        const resData = await client.query(queryText);
         // console.log("rows", queryText, typeof res.rows, res.fields);
-        if (res.rows.length > 1500) {
-          const window = Math.ceil(res.rows.length / 1500) * 2;
-          console.info(res.rows.length, window);
-          const res2 = [];
-          let i = 0;
-          for (; i < res.rows.length - window; i += window) {
-            const r = minmax(res.rows, i, window, column);
-            res2.push(res.rows[r.x]);
-            if (r.y != null) {
-              res2.push(res.rows[r.y]);
-            } else {
-              // console.info(null);
-            }
-          }
-          if (res.rows.length - i > 3) {
-            const r = minmax(res.rows, i, res.rows.length - i - 1, column);
-            res2.push(res.rows[r.x]);
-            if (r.y != null) {
-              res2.push(res.rows[r.y]);
-            }
-          }
-          res2.push(res.rows[res.rows.length - 1]);
-          return res2;
-        }
-        return res.rows;
+
+        queryText = `
+        SELECT min(${column}), max(${column}), avg(${column}) \
+        FROM ${table} \
+        WHERE timestamp >= '${timestampStart}' AND timestamp < '${timestampEnd}'`;
+        const resStats = await client.query(queryText);
+
+        return { stats: resStats.rows, data: resData.rows };
         // eslint-disable-next-line no-else-return
       } else {
         console.error("Wrong input", table, column, extraColumn);
