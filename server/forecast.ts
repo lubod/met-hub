@@ -1,5 +1,4 @@
 import moment from "moment";
-import fetch from "node-fetch";
 import { createClient } from "redis";
 
 const redisClient = createClient();

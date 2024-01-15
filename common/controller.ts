@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import AuthData from "../client/auth/authData";
 import DomData from "../client/dom/domData";
 import StationData from "../client/station/stationData";

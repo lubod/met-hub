@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import {
   IStationData,
   IStationGarni1025ArcusDataRaw,

@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { Pool } from "pg";
 import { IDomData } from "../common/domModel";
 import { IStationData } from "../common/stationModel";

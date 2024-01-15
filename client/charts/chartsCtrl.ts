@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { ISensor } from "../../common/sensor";
 import AuthData from "../auth/authData";
 import ChartsData, { CData } from "./chartsData";
