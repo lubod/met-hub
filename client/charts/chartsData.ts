@@ -24,7 +24,9 @@ export class CData {
 
   couldBeNegative: boolean;
 
-  last: string;
+  last: number;
+
+  first: number;
 
   xDomainMin: string;
 

@@ -108,8 +108,26 @@ export async function loadData(
         FROM ${table} \
         WHERE timestamp >= '${timestampStart}' AND timestamp < '${timestampEnd}'`;
         const resStats = await client.query(queryText);
+        const min = resStats.rows.length > 0 ? resStats.rows[0].min : null;
+        const max = resStats.rows.length > 0 ? resStats.rows[0].max : null;
+        const avg = resStats.rows.length > 0 ? resStats.rows[0].avg : null;
 
-        return { stats: resStats.rows, data: resData.rows };
+        queryText = `
+        SELECT ${column} as first \
+        FROM ${table} \
+        WHERE timestamp >= '${timestampStart}' AND timestamp < '${timestampEnd}' ORDER BY timestamp ASC LIMIT 1`;
+        const resStatsF = await client.query(queryText);
+        const first =
+          resStatsF.rows.length > 0 ? resStatsF.rows[0].first : null;
+
+        queryText = `
+        SELECT ${column} as last \
+        FROM ${table} \
+        WHERE timestamp >= '${timestampStart}' AND timestamp < '${timestampEnd}' ORDER BY timestamp DESC LIMIT 1`;
+        const resStatsL = await client.query(queryText);
+        const last = resStatsL.rows.length > 0 ? resStatsL.rows[0].last : null;
+
+        return { stats: { min, max, avg, first, last }, data: resData.rows };
         // eslint-disable-next-line no-else-return
       } else {
         console.error("Wrong input", table, column, extraColumn);

@@ -75,10 +75,11 @@ class ChartsCtrl {
 
       const newData = await response.json();
       console.info(newData);
-      const min = parseFloat(newData.stats[0].min);
-      const max = parseFloat(newData.stats[0].max);
-      const last: string = null;
-      const avg: number = parseFloat(newData.stats[0].avg);
+      const min = parseFloat(newData.stats.min);
+      const max = parseFloat(newData.stats.max);
+      const last = parseFloat(newData.stats.last);
+      const first = parseFloat(newData.stats.first);
+      const avg: number = parseFloat(newData.stats.avg);
 
       const total: number = null;
       const range = this.chartsData.range.split("|")[1];
@@ -110,6 +111,7 @@ class ChartsCtrl {
         range,
         couldBeNegative: m.couldBeNegative,
         last,
+        first,
         xDomainMin: start.toISOString(),
         xDomainMax: end.toISOString(),
       });

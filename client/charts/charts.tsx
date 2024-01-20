@@ -141,11 +141,11 @@ const Charts = observer(
           <Row>
             <Col xs={4}>
               <Text
-                name="Last"
+                name="First"
                 value={
-                  appContext.chartsCtrl.chartsData.cdata.last == null
+                  appContext.chartsCtrl.chartsData.cdata.first == null
                     ? ""
-                    : appContext.chartsCtrl.chartsData.cdata.last
+                    : appContext.chartsCtrl.chartsData.cdata.first.toFixed(1)
                 }
               />
             </Col>
@@ -161,11 +161,11 @@ const Charts = observer(
             </Col>
             <Col xs={4}>
               <Text
-                name="Sum"
+                name="Last"
                 value={
-                  appContext.chartsCtrl.chartsData.cdata.sum == null
+                  appContext.chartsCtrl.chartsData.cdata.last == null
                     ? ""
-                    : appContext.chartsCtrl.chartsData.cdata.sum.toFixed(1)
+                    : appContext.chartsCtrl.chartsData.cdata.last.toFixed(1)
                 }
               />
             </Col>
