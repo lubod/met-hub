@@ -16,35 +16,6 @@ const pool = new Pool({
   port: PG_PORT,
 });
 
-function minmax(arr: any, index: number, window: number, column: string) {
-  let minIndex = index;
-  let maxIndex = index;
-  let minValue = parseFloat(arr[minIndex][column]);
-  let maxValue = parseFloat(arr[maxIndex][column]);
-
-  // const val = parseFloat(arr[index][column]);
-  // console.info("in", val);
-  for (let i = 1; i < window; i += 1) {
-    const value = parseFloat(arr[index + i][column]);
-    // console.info("in", value);
-    if (value < minValue) {
-      minIndex = index + i;
-      minValue = value;
-    } else if (value > maxValue) {
-      maxIndex = index + i;
-      maxValue = value;
-    }
-  }
-  // console.info("push", arr[minIndex], arr[maxIndex]);
-  if (minIndex < maxIndex) {
-    return { x: minIndex, y: maxIndex };
-  }
-  if (minIndex > maxIndex) {
-    return { x: maxIndex, y: minIndex };
-  }
-  return { x: maxIndex, y: null };
-}
-
 function checkInput(
   table: string,
   stationID: string,

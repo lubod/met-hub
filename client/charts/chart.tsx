@@ -31,6 +31,7 @@ type ChartData = {
 function Chart({
   chdata,
   xkey,
+  // eslint-disable-next-line no-unused-vars
   ykey,
   y2key,
   yDomainMin,

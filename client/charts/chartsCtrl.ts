@@ -78,7 +78,7 @@ class ChartsCtrl {
       const min = parseFloat(newData.stats[0].min);
       const max = parseFloat(newData.stats[0].max);
       const last: string = null;
-      const avg: number = null;
+      const avg: number = parseFloat(newData.stats[0].avg);
 
       const total: number = null;
       const range = this.chartsData.range.split("|")[1];
