@@ -40,7 +40,10 @@ class ChartsCtrl {
       console.info("no auth -> no load");
       return;
     }
-    if (this.authData.id !== this.chartsData.station.owner) {
+    if (
+      this.authData.id !== this.chartsData.station.owner &&
+      this.authData.id !== this.authData.admin
+    ) {
       console.info("no owner -> no load");
       return;
     }
@@ -74,7 +77,10 @@ class ChartsCtrl {
       }
 
       const newData = await response.json();
-      console.info(newData);
+      if (newData == null) {
+        this.chartsData.setNewData(true, [], new CData());
+        return;
+      }
       const min = parseFloat(newData.stats.min);
       const max = parseFloat(newData.stats.max);
       const last = parseFloat(newData.stats.last);

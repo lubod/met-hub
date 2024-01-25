@@ -37,30 +37,34 @@ export default class AuthCtrl {
         "Content-Type": "application/json",
       },
     });
-    const user = await res.json();
-    if (user != null) {
+    const json = await res.json();
+    console.info(json);
+    if (json != null) {
+      const { admin, user } = json;
       this.setAuth(
         user.given_name,
         user.family_name,
         user.expiresAt * 1000 + Date.now(),
         user.id,
         null,
-        user.createdAt
+        user.createdAt,
+        admin,
       );
-    }
-    else {
+    } else {
       this.authData.cancelAuth();
       this.appContext.fetchCfg();
     }
   }
 
-  setAuth( // todo
+  setAuth(
+    // todo
     given_name: string,
     family_name: string,
     expiresAt: number,
     id: string,
     refreshToken: string,
-    createdAt: number
+    createdAt: number,
+    admin: string,
   ) {
     this.authData.setAuth(
       given_name,
@@ -68,7 +72,8 @@ export default class AuthCtrl {
       expiresAt,
       id,
       refreshToken,
-      createdAt
+      createdAt,
+      admin,
     );
     this.appContext.fetchCfg();
   }

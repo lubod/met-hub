@@ -21,6 +21,8 @@ export default class AuthData {
 
   location: string = "/";
 
+  admin: string = null;
+
   constructor() {
     makeObservable(this, {
       id: observable,
@@ -32,6 +34,7 @@ export default class AuthData {
       createdAt: observable,
       isAuth: observable,
       location: observable,
+      admin: observable,
       setAuth: action,
       cancelAuth: action,
     });
@@ -47,7 +50,8 @@ export default class AuthData {
     expiresAt: number,
     id: string,
     refreshToken: string,
-    createdAt: number
+    createdAt: number,
+    admin: string
   ) {
     this.given_name = given_name;
     this.family_name = family_name;
@@ -57,6 +61,7 @@ export default class AuthData {
     this.createdAt = createdAt;
     this.isAuth = true;
     this.location = "/";
+    this.admin = admin;
   }
 
   cancelAuth() {
@@ -69,5 +74,6 @@ export default class AuthData {
     this.createdAt = null;
     this.isAuth = false;
     this.location = "/";
+    this.admin = null;
   }
 }

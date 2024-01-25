@@ -24,8 +24,10 @@ const Charts = observer(
     // const map = useMap();
     // map.invalidateSize();
     <MyContainer>
-      {appContext.authCtrl.authData.id ===
-        appContext.chartsCtrl.chartsData.station.owner && (
+      {(appContext.authCtrl.authData.id ===
+        appContext.chartsCtrl.chartsData.station.owner ||
+        appContext.authCtrl.authData.id ===
+          appContext.authCtrl.authData.admin) && (
         <>
           <Row className="mt-3">
             <Col xs={6} className="text-left font-weight-bold">

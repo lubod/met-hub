@@ -243,7 +243,8 @@ router.get(
   catchAsync(async (req: any, res: any) => {
     const user = await checkAuth(req, true);
     if (user != null) {
-      res.status(200).json(user);
+      const admin = await redisClient.hGet("USERS", "admin");
+      res.status(200).json({ admin, user });
     } else {
       res.status(200).json(null);
     }
