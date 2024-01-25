@@ -58,6 +58,11 @@ async function checkAccess(
   let mys = null;
   if (user != null) {
     mys = allStationsCfg.getStationsByUser(user.id);
+    const admin = await redisClient.hGet("USERS", "admin");
+    if (user.id === admin) {
+      console.info("ACCESS ADMIN", user, stationID, ownerOnly);
+      return true;
+    }
   }
   const publicStations = allStationsCfg.getPublicStations();
   console.info(mys, publicStations);

@@ -38,8 +38,7 @@ import { CSimulator } from "./simulator";
 
 // eslint-disable-next-line import/prefer-default-export
 export class GoGenMe3900Simulator extends CSimulator {
-  correctTimestamp() {
-  }
+  correctTimestamp() {}
 
   getPGData(decoded: any) {
     return {
