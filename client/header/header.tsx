@@ -70,13 +70,33 @@ const Header = observer(({ appContext }: Props) => {
         {appContext.headerCtrl.headerData.isExternalID === false && (
           <Col xs={4}>
             {appContext.authCtrl.authData.isAuth && (
-              <Button
-                variant="primary"
-                onClick={() => appContext.authCtrl.logout()}
-              >
-                {appContext.authCtrl.authData.given_name.charAt(0) +
-                  appContext.authCtrl.authData.family_name.charAt(0)}
-              </Button>
+              <>
+                <Button
+                  variant="primary"
+                  onClick={() => appContext.authCtrl.logout()}
+                >
+                  {appContext.authCtrl.authData.given_name.charAt(0) +
+                    appContext.authCtrl.authData.family_name.charAt(0)}
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    appContext.headerCtrl.addStation({
+                      lat: 12.3456,
+                      lon: 12.3456,
+                      type: "GoGen Me 3900",
+                      id: null,
+                      measurement: null,
+                      place: "Nova",
+                      passkey: "ofghaoshdgos",
+                      public: true,
+                      owner: "",
+                    })
+                  }
+                >
+                  Add
+                </Button>
+              </>
             )}
           </Col>
         )}

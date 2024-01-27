@@ -56,7 +56,7 @@ const Station = observer(({ appContext }: Props) => (
         <Text
           name="Data date"
           value={
-            appContext.cCtrl.stationData.data.timestamp === null
+            appContext.cCtrl.stationData.data.timestamp == null
               ? "-"
               : moment(appContext.cCtrl.stationData.data.timestamp).format(
                   "DD MMM YYYY",
@@ -68,7 +68,7 @@ const Station = observer(({ appContext }: Props) => (
         <Text
           name="Data time"
           value={
-            appContext.cCtrl.stationData.data.timestamp === null
+            appContext.cCtrl.stationData.data.timestamp == null
               ? "-"
               : moment(appContext.cCtrl.stationData.data.timestamp).format(
                   "HH:mm:ss",

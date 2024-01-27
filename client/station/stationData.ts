@@ -100,7 +100,7 @@ class StationData {
   }
 
   setData(newData: IStationData) {
-    // console.info("process station data", newData, this);
+    console.info("process station data", newData, this);
     if (newData != null) {
       this.data = newData;
       this.data.timestamp = new Date(newData.timestamp);
