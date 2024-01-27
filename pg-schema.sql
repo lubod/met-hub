@@ -153,7 +153,7 @@ ALTER TABLE public.station_gjr6xkyg OWNER TO postgres;
 --
 
 ALTER TABLE ONLY public.station_gjr6xkyg
-    ADD CONSTRAINT stanica_pkey PRIMARY KEY ("timestamp");
+    ADD CONSTRAINT station_gjr6xkyg_pkey PRIMARY KEY ("timestamp");
 
 
 --

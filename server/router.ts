@@ -4,7 +4,7 @@ import { createToken, verifyToken } from "./utils";
 import { allStationsCfg, AppError } from "./main";
 import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
-import { loadData, loadRainData } from "./load";
+import { loadData, loadRainData } from "./db";
 import { getForecast, getAstronomicalData } from "./forecast";
 import { goSelect } from "./go";
 import { IStation } from "../common/allStationsCfg";
@@ -376,9 +376,15 @@ router.get(
 
 // SET DATA
 
-async function setData(PASSKEY: string, data: any) {
-  if (PASSKEY != null) {
-    const station: IStation = allStationsCfg.getStationByPasskey(PASSKEY);
+async function setData(PASSKEY: string, id: string, data: any) {
+  if (PASSKEY != null || id != null) {
+    let station: IStation = null;
+    if (PASSKEY != null) {
+      station = allStationsCfg.getStationByPasskey(PASSKEY);
+    }
+    if (id != null) {
+      station = allStationsCfg.getStationByID(id);
+    }
     if (station != null) {
       const { measurement } = station;
       const { date, decoded } = measurement.decodeData(data, station.place);
@@ -399,17 +405,17 @@ async function setData(PASSKEY: string, data: any) {
         throw new AppError(400, `Old data ${date}`);
       }
     } else {
-      throw new AppError(400, "Unknown PASSKEY");
+      throw new AppError(400, "Unknown PASSKEY or ID");
     }
   } else {
-    throw new AppError(400, "Invalid PASSKEY");
+    throw new AppError(400, "Invalid PASSKEY or ID");
   }
 }
 
 router.get(
   "/weatherstation/updateweatherstation.php",
   catchAsync(async (req: any, res: any) => {
-    await setData(req.query.ID, req.query);
+    await setData(req.query.ID, null, req.query); // ID is PASSKEY in this case
     res.sendStatus(200);
   }),
 );
@@ -417,7 +423,15 @@ router.get(
 router.post(
   "/setData",
   catchAsync(async (req: any, res: any) => {
-    await setData(req.body.PASSKEY, req.body);
+    await setData(req.body.PASSKEY, null, req.body);
+    res.sendStatus(200);
+  }),
+);
+
+router.post(
+  "/setData/:stationID",
+  catchAsync(async (req: any, res: any) => {
+    await setData(null, req.params.stationID, req.body);
     res.sendStatus(200);
   }),
 );
@@ -425,7 +439,7 @@ router.post(
 router.post(
   "/setDomData",
   catchAsync(async (req: any, res: any) => {
-    await setData(req.body.PASSKEY, req.body);
+    await setData(req.body.PASSKEY, null, req.body);
     res.sendStatus(200);
   }),
 );
@@ -465,6 +479,53 @@ router.get(
         req.query.precipitation_amount_max,
       );
       res.status(200).json(data);
+    } else {
+      throw new AppError(400, "Invalid params");
+    }
+  }),
+);
+
+// add station
+router.post(
+  "/api/addStation",
+  catchAsync(async (req: any, res: any) => {
+    if (
+      req.body.lat != null &&
+      req.body.lon != null &&
+      req.body.place != null &&
+      req.body.type != null &&
+      req.body.passkey != null
+    ) {
+      const user = await checkAuth(req);
+
+      // add station to cfg
+      // lat lon type place passkey owner id
+      const { lat, lon, place, passkey, type } = req.body;
+      const owner = user.id;
+      const id = Math.random().toString(36).substring(2, 10);
+      const exists = allStationsCfg.getStationByPasskey(passkey);
+      if (exists) {
+        throw new AppError(400, `Station with ${passkey} already exists`);
+      }
+      const count = allStationsCfg.getStationsByUser(owner).size;
+      if (count > 10) {
+        // todo
+        throw new AppError(400, `Max number of stations per user: ${count}`);
+      }
+      const station = {} as IStation;
+      station.id = id;
+      station.lat = lat;
+      station.lon = lon;
+      station.owner = owner;
+      station.passkey = passkey;
+      station.place = place;
+      station.measurement = null;
+      station.public = true;
+      station.type = type;
+      allStationsCfg.addStation(station);
+      console.info("ADD", station);
+
+      res.status(200).json({ id });
     } else {
       throw new AppError(400, "Invalid params");
     }

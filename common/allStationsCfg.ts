@@ -6,6 +6,9 @@ import { IMeasurement } from "../server/measurement";
 import StationGarni1025Arcus from "../server/stationGarni1025Arcus";
 import StationGoGenMe3900 from "../server/stationGoGenMe3900";
 import { StationCfg } from "./stationCfg";
+import { create } from "../server/db";
+
+export const ALL_STATIONS_CFG = "ALL_STATIONS_CFG";
 
 export interface IStation {
   lat: number;
@@ -30,50 +33,58 @@ export class AllStationsCfg {
 
   measurements: Array<IMeasurement> = [];
 
+  redisClient: any = null;
+
+  constructor() {
+    this.redisClient = createClient();
+    this.redisClient.connect();
+  }
+
+  getMeas(station: IStation) {
+    switch (station.type) {
+      case "Dom":
+        return new Dom();
+      case "Garni 1025 Arcus":
+        return new StationGarni1025Arcus(station.id);
+      case "GoGen Me 3900":
+        return new StationGoGenMe3900(station.id);
+      default:
+        throw new Error(`Unknown station type ${station.type}`);
+    }
+  }
+
+  set(station: IStation) {
+    this.map.set(station.id, station);
+    this.passkey2IDMap.set(station.passkey, station.id);
+    let mys = this.userStations.get(station.owner);
+    if (mys == null) {
+      mys = new Set();
+    }
+    mys.add(station.id);
+    this.userStations.set(station.owner, mys);
+    this.measurements.push(station.measurement);
+    if (station.public) {
+      this.publicStations.add(station.id);
+    }
+  }
+
   async readCfg() {
     console.log("READ CFG");
-    const redisClient = createClient();
-    redisClient.connect();
-    const reply = await redisClient.hGetAll("ALL_STATIONS_CFG");
+    const reply = await this.redisClient.hGetAll(ALL_STATIONS_CFG);
     for (const item in reply) {
       console.info(reply[item]);
       const station: IStation = JSON.parse(reply[item]);
-      switch (station.type) {
-        case "Dom":
-          station.measurement = new Dom();
-          break;
-        case "Garni 1025 Arcus":
-          station.measurement = new StationGarni1025Arcus(station.id);
-          break;
-        case "GoGen Me 3900":
-          station.measurement = new StationGoGenMe3900(station.id);
-          break;
-        default:
-          console.error("Unknown station type", station.type);
-      }
-      this.map.set(station.id, station);
-      this.passkey2IDMap.set(station.passkey, station.id);
-      let mys = this.userStations.get(station.owner);
-      if (mys == null) {
-        mys = new Set();
-      }
-      mys.add(station.id);
-      this.userStations.set(station.owner, mys);
-      this.measurements.push(station.measurement);
-      if (station.public) {
-        this.publicStations.add(station.id);
-      }
+      station.measurement = this.getMeas(station);
+      this.set(station);
     }
   }
   // AllStationsCfg.map.set();
 
   async writeCfg() {
-    const redisClient = createClient();
-    redisClient.connect();
     console.log("WRITE CFG");
     for (const [key, value] of this.map.entries()) {
       // eslint-disable-next-line no-await-in-loop
-      await redisClient.hSet("ALL_STATIONS_CFG", key, JSON.stringify(value));
+      await this.redisClient.hSet(ALL_STATIONS_CFG, key, JSON.stringify(value));
     }
   }
 
@@ -119,5 +130,17 @@ export class AllStationsCfg {
 
   getPublicStations() {
     return this.publicStations;
+  }
+
+  async addStation(station: IStation) {
+    await this.redisClient.hSet(
+      ALL_STATIONS_CFG,
+      station.id,
+      JSON.stringify(station),
+    ); // todo
+    // eslint-disable-next-line no-param-reassign
+    station.measurement = this.getMeas(station);
+    this.set(station);
+    create(station.id);
   }
 }

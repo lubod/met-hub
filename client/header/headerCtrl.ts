@@ -1,3 +1,4 @@
+import axios from "axios";
 import { AppContext } from "..";
 import { IStation } from "../../common/allStationsCfg";
 import HeaderData from "./headerData";
@@ -26,5 +27,19 @@ export default class HeaderCtrl {
 
   setStation(station: IStation) {
     this.headerData.setStation(station);
+  }
+
+  async addStation(station: IStation) {
+    try {
+      const url = "/api/addStation";
+      console.info(url);
+      await axios.post(url, station, {
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

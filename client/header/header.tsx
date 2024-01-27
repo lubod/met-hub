@@ -14,8 +14,8 @@ type Props = {
 };
 
 const Header = observer(({ appContext }: Props) => {
-  // console.info("Header render"); 
-  const {station} = appContext.headerCtrl.headerData;
+  // console.info("Header render");
+  const { station } = appContext.headerCtrl.headerData;
 
   let place: string = "";
   if (station != null) {
@@ -37,7 +37,7 @@ const Header = observer(({ appContext }: Props) => {
           <Text
             name="Current time"
             value={moment(appContext.headerCtrl.headerData.ctime).format(
-              "HH:mm:ss"
+              "HH:mm:ss",
             )}
           />
         </Col>
