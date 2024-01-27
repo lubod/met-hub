@@ -53,7 +53,7 @@ const Dom = observer(({ appContext }: DomProps) =>
             <Text
               name="Data date"
               value={
-                appContext.cCtrl.domData.data.timestamp === null
+                appContext.cCtrl.domData.data.timestamp == null
                   ? "-"
                   : moment(appContext.cCtrl.domData.data.timestamp).format("DD MMM YYYY")
               }
@@ -63,7 +63,7 @@ const Dom = observer(({ appContext }: DomProps) =>
             <Text
               name="Data time"
               value={
-                appContext.cCtrl.domData.data.timestamp === null
+                appContext.cCtrl.domData.data.timestamp == null
                   ? "-"
                   : moment(appContext.cCtrl.domData.data.timestamp).format("HH:mm:ss")
               }
