@@ -10,16 +10,24 @@ export default class HeaderData {
 
   allStations: Array<IStation> = null;
 
+  showModal: boolean = false;
+
   constructor() {
     makeObservable(this, {
       ctime: observable,
       station: observable,
       isExternalID: observable,
       allStations: observable,
+      showModal: observable,
       setTime: action,
       setStation: action,
       setAllStations: action,
+      setShowModal: action,
     });
+  }
+
+  setShowModal(showModal: boolean) {
+    this.showModal = showModal;
   }
 
   setAllStations(allStations: Array<IStation>) {

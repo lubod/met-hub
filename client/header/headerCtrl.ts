@@ -33,13 +33,15 @@ export default class HeaderCtrl {
     try {
       const url = "/api/addStation";
       console.info(url);
-      await axios.post(url, station, {
+      const res = await axios.post(url, station, {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },
       });
+      return { id: res.data.id, err: "" };
     } catch (error) {
       console.error(error);
+      return { id: "", err: error.response.data.msg };
     }
   }
 }

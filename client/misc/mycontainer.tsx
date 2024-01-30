@@ -15,3 +15,11 @@ export function MyContainer({ children }: Props) {
     </Container>
   );
 }
+
+export function MyModalContainer({ children }: Props) {
+  return (
+    <Container className="text-center text-light border-secondary bg-very-dark rounded mb-2 py-2 h-90">
+      {children}
+    </Container>
+  );
+}

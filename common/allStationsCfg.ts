@@ -55,7 +55,9 @@ export class AllStationsCfg {
 
   set(station: IStation) {
     this.map.set(station.id, station);
-    this.passkey2IDMap.set(station.passkey, station.id);
+    if (station.passkey != null) {
+      this.passkey2IDMap.set(station.passkey, station.id);
+    }
     let mys = this.userStations.get(station.owner);
     if (mys == null) {
       mys = new Set();

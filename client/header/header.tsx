@@ -8,6 +8,7 @@ import { AppContext } from "..";
 import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 import { MyContainer } from "../misc/mycontainer";
 import Text from "../misc/text";
+import AddStation from "./addStation";
 
 type Props = {
   appContext: AppContext;
@@ -31,84 +32,78 @@ const Header = observer(({ appContext }: Props) => {
   }
 
   return (
-    <MyContainer>
-      <Row className="align-items-center">
-        <Col xs={4}>
-          <Text
-            name="Current time"
-            value={moment(appContext.headerCtrl.headerData.ctime).format(
-              "HH:mm:ss",
-            )}
-          />
-        </Col>
-        <Col xs={4}>
-          {appContext.headerCtrl.headerData.isExternalID === false &&
-            appContext.headerCtrl.headerData.allStations != null && (
-              <DropdownButton
-                id="dropdown-place-button"
-                title={place}
-                onSelect={(stationID) => {
-                  const selectedStation =
-                    AllStationsCfgClient.getStationByID(stationID);
-                  appContext.setStation(selectedStation);
-                }}
-              >
-                {appContext.headerCtrl.headerData.allStations.map((s) => (
-                  <Dropdown.Item key={s.id} eventKey={s.id}>
-                    {s.place}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
-            )}
-          {appContext.headerCtrl.headerData.isExternalID === true && (
+    <>
+      <MyContainer>
+        <Row className="align-items-center">
+          <Col xs={4}>
             <Text
-              name=""
-              value={appContext.headerCtrl.headerData.station.place}
+              name="Current time"
+              value={moment(appContext.headerCtrl.headerData.ctime).format(
+                "HH:mm:ss",
+              )}
             />
-          )}
-        </Col>
-        {appContext.headerCtrl.headerData.isExternalID === false && (
+          </Col>
           <Col xs={4}>
-            {appContext.authCtrl.authData.isAuth && (
-              <>
-                <Button
-                  variant="primary"
-                  onClick={() => appContext.authCtrl.logout()}
+            {appContext.headerCtrl.headerData.isExternalID === false &&
+              appContext.headerCtrl.headerData.allStations != null && (
+                <DropdownButton
+                  id="dropdown-place-button"
+                  title={place}
+                  onSelect={(stationID) => {
+                    const selectedStation =
+                      AllStationsCfgClient.getStationByID(stationID);
+                    appContext.setStation(selectedStation);
+                  }}
                 >
-                  {appContext.authCtrl.authData.given_name.charAt(0) +
-                    appContext.authCtrl.authData.family_name.charAt(0)}
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() =>
-                    appContext.headerCtrl.addStation({
-                      lat: 12.3456,
-                      lon: 12.3456,
-                      type: "GoGen Me 3900",
-                      id: null,
-                      measurement: null,
-                      place: "Nova",
-                      passkey: "ofghaoshdgos",
-                      public: true,
-                      owner: "",
-                    })
-                  }
-                >
-                  Add
-                </Button>
-              </>
+                  {appContext.headerCtrl.headerData.allStations.map((s) => (
+                    <Dropdown.Item key={s.id} eventKey={s.id}>
+                      {s.place}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
+              )}
+            {appContext.headerCtrl.headerData.isExternalID === true && (
+              <Text
+                name=""
+                value={appContext.headerCtrl.headerData.station.place}
+              />
             )}
           </Col>
-        )}
-        {appContext.headerCtrl.headerData.isExternalID === true && (
-          <Col xs={4}>
-            <a href="https://www.met-hub.com">
-              <Text name="Powered by" value="www.met-hub.com" />
-            </a>
-          </Col>
-        )}
-      </Row>
-    </MyContainer>
+          {appContext.headerCtrl.headerData.isExternalID === false && (
+            <Col xs={4}>
+              {appContext.authCtrl.authData.isAuth && (
+                <>
+                  <Button
+                    variant="primary"
+                    onClick={() => appContext.authCtrl.logout()}
+                    className="me-2"
+                  >
+                    {appContext.authCtrl.authData.given_name.charAt(0) +
+                      appContext.authCtrl.authData.family_name.charAt(0)}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      appContext.headerCtrl.headerData.setShowModal(true)
+                    }
+                  >
+                    Add
+                  </Button>
+                </>
+              )}
+            </Col>
+          )}
+          {appContext.headerCtrl.headerData.isExternalID === true && (
+            <Col xs={4}>
+              <a href="https://www.met-hub.com">
+                <Text name="Powered by" value="www.met-hub.com" />
+              </a>
+            </Col>
+          )}
+        </Row>
+      </MyContainer>
+      <AddStation appContext={appContext} />
+    </>
   );
 });
 

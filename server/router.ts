@@ -493,14 +493,16 @@ router.post(
       req.body.lat != null &&
       req.body.lon != null &&
       req.body.place != null &&
-      req.body.type != null &&
-      req.body.passkey != null
+      req.body.type != null
     ) {
       const user = await checkAuth(req);
 
       // add station to cfg
       // lat lon type place passkey owner id
       const { lat, lon, place, passkey, type } = req.body;
+      if (type !== "GoGen Me 3900") {
+        throw new AppError(400, `Unknown station type ${type}`);
+      }
       const owner = user.id;
       const id = Math.random().toString(36).substring(2, 10);
       const exists = allStationsCfg.getStationByPasskey(passkey);
@@ -508,7 +510,7 @@ router.post(
         throw new AppError(400, `Station with ${passkey} already exists`);
       }
       const count = allStationsCfg.getStationsByUser(owner).size;
-      if (count > 10) {
+      if (count > 3) {
         // todo
         throw new AppError(400, `Max number of stations per user: ${count}`);
       }
