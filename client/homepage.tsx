@@ -78,7 +78,7 @@ const HomePage = observer(({ appContext }: HomePageProps) => {
                     <li>GoGEN ME 3900</li>
                     <li>GARNI 1025 Arcus</li>
                   </ul>
-                  <p>Login to see more stations and historical data</p>
+                  <p>Login to add your stations and see also historical data</p>
                   <GoogleLogin
                     onSuccess={(credentialResponse) => {
                       handleLogin(credentialResponse, appContext.authCtrl);
