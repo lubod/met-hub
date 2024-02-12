@@ -91,12 +91,17 @@ function catchAsync(fnc: Function) {
 // SSE
 
 let clients: any[] = [];
+let lastEventTime = 0;
 
 export const writeEvent = (data: string, type: "raw" | "ping" | "minute") => {
+  if (type === "ping" && Date.now() - lastEventTime < 30000) {
+    return;
+  }
   clients.forEach((client) => {
     client.res.write(`data: ${data}:${type}\n\n`);
     console.info(`${client.id} Connection used ${data} ${type}`);
   });
+  lastEventTime = Date.now();
 };
 
 setInterval(() => writeEvent("-", "ping"), 30000);

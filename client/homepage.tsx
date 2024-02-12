@@ -31,6 +31,7 @@ async function handleLogin(response: CredentialResponse, authCtrl: AuthCtrl) {
     data.id,
     null,
     data.createdAt,
+    authCtrl.authData.admin,
   );
 }
 
