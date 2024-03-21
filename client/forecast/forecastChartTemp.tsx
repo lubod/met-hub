@@ -102,15 +102,13 @@ const ForecastChartTemp = observer(
 
     console.info("render forecast chart temp");
     return (
-      <>
-        <div className="small text-white-50 font-weight-bold mt-3 mb-3">
-          Temperature <span style={{ color: MY_COLORS.orange }}>&#8226;</span>
+      <div className="flex flex-col">
+        <div className="text-sm text-center text-gray border-gray py-4">
+          Temperature
+          <span className="text-orange border-orange">&#8226;</span>
         </div>
-        <div
-          className="text-center"
-          style={{ display: "flex", justifyContent: "center" }}
-        >
-          <ResponsiveContainer width="100%" aspect={4.0 / 1.0}>
+        <div className="flex justify-center">
+          <ResponsiveContainer width="100%" aspect={5.0 / 1.0}>
             <ComposedChart
               data={chdata}
               margin={{
@@ -167,9 +165,9 @@ const ForecastChartTemp = observer(
             </ComposedChart>
           </ResponsiveContainer>
         </div>
-      </>
+      </div>
     );
-  }
+  },
 );
 
 export default ForecastChartTemp;

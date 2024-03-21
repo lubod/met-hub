@@ -1,11 +1,10 @@
 /* eslint-disable camelcase */
 import React, { useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { observer } from "mobx-react";
 import moment from "moment";
 import { AppContext } from "..";
 import Forecast from "../forecast/forecast";
-import { MyContainer } from "../misc/mycontainer";
+import { Container } from "../misc/container";
 
 type Props = {
   appContext: AppContext;
@@ -58,7 +57,7 @@ const Go = observer(({ appContext }: Props) => {
       <Container className="container-max-width text-center text-light mx-auto vh-100">
         <Row>
           <Col sm={2} className="ps-1 pe-1">
-            <MyContainer>
+            <Container>
               <Form.Group>
                 <Form.Label>
                   Air temperature min: {air_temperature_min}
@@ -160,7 +159,7 @@ const Go = observer(({ appContext }: Props) => {
               <Button variant="primary" type="submit" onClick={() => select()}>
                 Submit
               </Button>
-            </MyContainer>
+            </Container>
           </Col>
           <Col sm={4} className="ps-1 pe-1">
             <Forecast forecastCtrl={appContext.forecastCtrl} />

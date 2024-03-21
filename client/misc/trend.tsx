@@ -1,17 +1,15 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import { observer } from "mobx-react";
 import React from "react";
 import { Area, AreaChart, YAxis } from "recharts";
 
-type TrendData = {
+type Props = {
   data: Array<number>;
   range: number;
   couldBeNegative: boolean;
   color: string;
 };
 
-const Trend = observer(({ data, range, couldBeNegative, color }: TrendData) => {
+const Trend = observer(({ data, range, couldBeNegative, color }: Props) => {
   let max: number = null;
   let min: number = null;
   let avg: number = null;
@@ -59,10 +57,7 @@ const Trend = observer(({ data, range, couldBeNegative, color }: TrendData) => {
 
   // console.info("render trend");
   return (
-    <div
-      className="text-center"
-      style={{ display: "flex", justifyContent: "center" }}
-    >
+    <div className="flex justify-center hover:brightness-50">
       <AreaChart
         width={60}
         height={25}

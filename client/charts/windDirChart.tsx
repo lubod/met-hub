@@ -13,27 +13,19 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { IChartsRange } from "./chartsData";
 
 type ChartData = {
   chdata: {}[];
   xkey: string;
   ykey: string;
   color: string;
-  range: string;
+  range: IChartsRange;
 };
 
 function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
   function formatXAxis(tickItem: string) {
-    if (range?.includes("hour")) {
-      return moment(tickItem).format("HH:mm");
-    }
-    if (range?.includes("week")) {
-      return moment(tickItem).format("DD.MM");
-    }
-    if (range?.includes("year")) {
-      return moment(tickItem).format("MMM");
-    }
-    return moment(tickItem).format("DD MMM HH:mm");
+    return moment(tickItem).format(range.format);
   }
 
   function formatLabel(label: string) {
@@ -44,7 +36,7 @@ function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
   return (
     <div className="text-left">
       {ykey === "winddir" && (
-        <ResponsiveContainer width="100%" aspect={5.0 / 4.0}>
+        <ResponsiveContainer width="100%" aspect={7.0 / 4.0}>
           <ScatterChart
             data={chdata}
             margin={{

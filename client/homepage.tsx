@@ -1,107 +1,54 @@
 import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
 import { observer } from "mobx-react";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import Protected from "./protected";
 import Station from "./station/station";
 import Header from "./header/header";
 import { AppContext } from ".";
 import Forecast from "./forecast/forecast";
-import { Myhr } from "./misc/myhr";
-import { MyContainer } from "./misc/mycontainer";
-import AuthCtrl from "./auth/authCtrl";
+import About from "./about";
+import Charts from "./charts/charts";
+import Dom from "./dom/dom";
 
-async function handleLogin(response: CredentialResponse, authCtrl: AuthCtrl) {
-  console.info("google login", response);
-  const res = await fetch("/api/googleLogin", {
-    method: "POST",
-    body: JSON.stringify({
-      token: response.credential,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-  // console.info(data); // todo
-  authCtrl.setAuth(
-    data.given_name,
-    data.family_name,
-    data.expiresAt,
-    data.id,
-    null,
-    data.createdAt,
-    authCtrl.authData.admin,
-  );
-}
-
-type HomePageProps = {
+type Props = {
   appContext: AppContext;
 };
 
-const HomePage = observer(({ appContext }: HomePageProps) => {
+const HomePage = observer(({ appContext }: Props) => {
   console.info("Homepage render", appContext.authCtrl.authData.isAuth);
-  let colSize = 4;
-  if (appContext.headerCtrl.headerData.isExternalID) {
-    colSize = 6;
-  }
+
+  const showStation: boolean =
+    appContext.headerCtrl.headerData.station != null &&
+    appContext.headerCtrl.headerData.station.id !== "dom";
+  const showDom: boolean =
+    appContext.headerCtrl.headerData.station != null &&
+    appContext.headerCtrl.headerData.station.id === "dom";
+  const showForecast: boolean =
+    appContext.forecastCtrl.forecastData.station != null;
+  const showAbout: boolean =
+    appContext.authCtrl.authData.isAuth === false &&
+    appContext.headerCtrl.headerData.isExternalID === false;
+  const showCharts: boolean =
+    appContext.chartsCtrl.chartsData.station != null &&
+    appContext.authCtrl.authData.isAuth === true &&
+    appContext.headerCtrl.headerData.isExternalID === false;
 
   return (
     <div>
-      {!appContext.authCtrl.authData.isAuth && (
-        <Container className="container-max-width text-center mx-auto vh-100">
-          <Row className="">
-            <Header appContext={appContext} />
-          </Row>
-          <Row>
-            <Col sm={colSize} className="ps-1 pe-1">
-              {appContext.headerCtrl.headerData.station != null && (
-                <Station appContext={appContext} />
-              )}
-            </Col>
-            <Col sm={colSize} className="ps-1 pe-1">
-              {appContext.headerCtrl.headerData.station != null && (
-                <Forecast forecastCtrl={appContext.forecastCtrl} />
-              )}
-            </Col>
-            {appContext.headerCtrl.headerData.isExternalID === false && (
-              <Col sm={colSize} className="ps-1 pe-1">
-                <MyContainer>
-                  <h1 className="text-primary">met-hub.com</h1>
-                  <p>
-                    This is a free site for non-professional meteorological
-                    stations based on open-source project{" "}
-                    <a href="https://github.com/lubod/met-hub">met-hub</a>
-                  </p>
-                  <Myhr />
-                  <ul>
-                    Currently you can see data from:
-                    <li>GoGEN ME 3900</li>
-                    <li>GARNI 1025 Arcus</li>
-                  </ul>
-                  <p>Login to add your stations and see also historical data</p>
-                  <GoogleLogin
-                    onSuccess={(credentialResponse) => {
-                      handleLogin(credentialResponse, appContext.authCtrl);
-                    }}
-                    onError={() => {
-                      console.log("Login Failed");
-                    }}
-                    theme="filled_blue"
-                  />
-                  <Myhr />
-                  <p>- v24 -</p>
-                </MyContainer>
-              </Col>
-            )}
-          </Row>
-        </Container>
-      )}
-      {appContext.authCtrl.authData.isAuth && (
-        <Protected appContext={appContext} />
-      )}
+      <div className="flex flex-col gap-2 container mx-auto">
+        <Header appContext={appContext} />
+        <div className="flex flex-col justify-stretch md:flex-row gap-2">
+          {showStation && <Station appContext={appContext} />}
+          {showDom && <Dom appContext={appContext} />}
+          {showForecast && <Forecast appContext={appContext} />}
+          {showAbout && <About appContext={appContext} />}
+          {showCharts && <Charts appContext={appContext} />}
+        </div>
+      </div>
     </div>
   );
 });
 
 export default HomePage;
+
+// {appContext.authCtrl.authData.isAuth && (
+//  <Charts appContext={appContext} />
+// )}

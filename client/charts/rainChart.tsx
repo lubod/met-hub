@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { IChartsRange } from "./chartsData";
 
 type ChartData = {
   chdata: {}[];
@@ -21,7 +22,7 @@ type ChartData = {
   yDomainMin: number;
   yDomainMax: number;
   color: string;
-  range: string;
+  range: IChartsRange;
 };
 
 function RainChart({
@@ -34,16 +35,7 @@ function RainChart({
   range,
 }: ChartData) {
   function formatXAxis(tickItem: string) {
-    if (range?.includes("hour")) {
-      return moment(tickItem).format("HH:mm");
-    }
-    if (range?.includes("week")) {
-      return moment(tickItem).format("DD.MM");
-    }
-    if (range?.includes("year")) {
-      return moment(tickItem).format("MMM");
-    }
-    return moment(tickItem).format("DD MMM HH:mm");
+    return moment(tickItem).format(range.format);
   }
 
   function formatLabel(label: string) {
@@ -53,7 +45,7 @@ function RainChart({
   // console.info("render chart", chdata, xkey, ykey, y2key, domainMin, domainMax);
   return (
     <div className="text-left">
-      <ResponsiveContainer width="100%" aspect={5.0 / 4.0}>
+      <ResponsiveContainer width="100%" aspect={7.0 / 4.0}>
         <AreaChart
           data={chdata}
           margin={{

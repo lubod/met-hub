@@ -14,50 +14,29 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { AppContext } from "..";
 
 type ChartData = {
   chdata: {}[];
   xkey: string;
-  ykey: string;
-  y2key: string;
-  yDomainMin: number;
-  yDomainMax: number;
-  color: string;
-  range: string;
-  xDomainMin: string;
-  xDomainMax: string;
+  appContext: AppContext;
 };
 
-function Chart({
-  chdata,
-  xkey,
-  // eslint-disable-next-line no-unused-vars
-  ykey,
-  y2key,
-  yDomainMin,
-  yDomainMax,
-  color,
-  range,
-  xDomainMin,
-  xDomainMax,
-}: ChartData) {
+function Chart({ chdata, xkey, appContext }: ChartData) {
+  // const ykey = appContext.chartsCtrl.chartsData.measurement.col;
+  const y2key = appContext.chartsCtrl.chartsData.sensor.col2;
+  const { yDomainMin, yDomainMax, range, xDomainMin, xDomainMax } =
+    appContext.chartsCtrl.chartsData.cdata;
+  const { color } = appContext.chartsCtrl.chartsData.sensor;
+
   function formatXAxis(tickItem: string) {
-    if (range?.includes("hour")) {
-      return moment(tickItem).format("HH:mm");
-    }
-    if (range?.includes("week")) {
-      return moment(tickItem).format("DD.MM");
-    }
-    if (range?.includes("year")) {
-      return moment(tickItem).format("MMM");
-    }
-    return moment(tickItem).format("DD MMM HH:mm");
+    return moment(tickItem).format(range.format);
   }
 
   function formatLabel(label: string) {
     return moment(label).format("DD.MM.YYYY HH:mm:ss");
   }
-/*
+  /*
   console.info(
     "render chart",
     chdata,
@@ -74,7 +53,7 @@ function Chart({
   */
   return (
     <div className="text-left">
-      <ResponsiveContainer width="100%" aspect={5.0 / 4.0}>
+      <ResponsiveContainer width="100%" aspect={7.0 / 4.0}>
         <ComposedChart
           data={chdata}
           margin={{

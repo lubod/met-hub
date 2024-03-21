@@ -27,6 +27,8 @@ class StationData {
 
   floatingRainData: boolean = false;
 
+  inData: boolean = false;
+
   raindata: any = null;
 
   try: number = 0;
@@ -41,6 +43,7 @@ class StationData {
       trendData: observable,
       oldData: observable,
       floatingRainData: observable,
+      inData: observable,
       raindata: observable,
       loading: observable,
       station: observable,
@@ -51,6 +54,7 @@ class StationData {
       setFloatingRainData: action,
       setRaindata: action,
       setStation: action,
+      setInData: action,
     });
   }
 
@@ -97,6 +101,10 @@ class StationData {
 
   setFloatingRainData(newFloatingRainData: boolean) {
     this.floatingRainData = newFloatingRainData;
+  }
+
+  setInData(newInData: boolean) {
+    this.inData = newInData;
   }
 
   setData(newData: IStationData) {

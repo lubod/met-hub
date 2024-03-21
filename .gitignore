@@ -7,3 +7,7 @@ default
 .redis-stations.cfg
 esbuild-local.mjs
 .TODO
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

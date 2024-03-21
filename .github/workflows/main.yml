@@ -17,8 +17,9 @@ jobs:
       - name: npm install & build
         uses: actions/setup-node@v3
         with:
-          node-version: "16.x"
+          node-version: "20.x"
       - run: npm install
+      - run: npx tailwindcss -o esdist/fe/tailwind.css
       - run: NODE_OPTIONS="--max-old-space-size=4096" node esbuild.mjs
       - run: echo "docker build."
       - run: docker build -f Dockerfile-met-hub -t ghcr.io/lubod/met-hub:latest .

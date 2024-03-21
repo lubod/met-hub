@@ -1,6 +1,6 @@
 import { ISensor } from "../../common/sensor";
 import AuthData from "../auth/authData";
-import ChartsData, { CData } from "./chartsData";
+import ChartsData, { CData, IChartsRange } from "./chartsData";
 import { IStation } from "../../common/allStationsCfg";
 
 class ChartsCtrl {
@@ -30,12 +30,12 @@ class ChartsCtrl {
     this.load(
       this.chartsData.range,
       this.chartsData.page,
-      this.chartsData.measurement,
+      this.chartsData.sensor,
       this.chartsData.station.id,
     );
   }
 
-  async load(of: string, p: number, m: ISensor, stationID: string) {
+  async load(range: IChartsRange, p: number, m: ISensor, stationID: string) {
     if (!this.authData.isAuth) {
       console.info("no auth -> no load");
       return;
@@ -52,7 +52,7 @@ class ChartsCtrl {
       return;
     }
     try {
-      const o = parseInt(of.split("|")[0], 10) * 1000;
+      const o = range.sec * 1000;
       // eslint-disable-next-line no-promise-executor-return
       // return new Promise((resolve) => setTimeout(resolve, 2000));
       const start = new Date(Date.now() - o + p * o);
@@ -81,14 +81,17 @@ class ChartsCtrl {
         this.chartsData.setNewData(true, [], new CData());
         return;
       }
-      const min = parseFloat(newData.stats.min);
-      const max = parseFloat(newData.stats.max);
-      const last = parseFloat(newData.stats.last);
-      const first = parseFloat(newData.stats.first);
-      const avg: number = parseFloat(newData.stats.avg);
+      const min = newData.stats.min ? parseFloat(newData.stats.min) : null;
+      const max = newData.stats.max ? parseFloat(newData.stats.max) : null;
+      const last = newData.stats.last ? parseFloat(newData.stats.last) : null;
+      const first = newData.stats.first
+        ? parseFloat(newData.stats.first)
+        : null;
+      const avg: number = newData.stats.avg
+        ? parseFloat(newData.stats.avg)
+        : null;
 
       const total: number = null;
-      const range = this.chartsData.range.split("|")[1];
       // const y = m.col;
       const y2 = m.col2;
       const sum = total;

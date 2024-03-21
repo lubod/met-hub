@@ -2,4 +2,5 @@
 # export NODE_OPTIONS="--max-old-space-size=4096"
 # time npx prettier --write . && time npm run builddev && time sudo docker-compose -f docker-compose-local.yml build && time sudo docker-compose -f docker-compose-local.yml up
 # time npx prettier --write . && 
+npx tailwindcss -o esdist/fe/tailwind.css
 time node esbuild-local.mjs && time sudo docker-compose -f docker-compose-local.yml build && time sudo docker-compose -f docker-compose-local.yml up

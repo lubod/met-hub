@@ -1,110 +1,76 @@
+/* eslint-disable prefer-template */
 /* eslint-disable no-param-reassign */
 import { observer } from "mobx-react";
-import moment from "moment";
 import React from "react";
-import { Row, Col, Button, Dropdown, DropdownButton } from "react-bootstrap";
-import { isMobile } from "react-device-detect";
+// import { isMobile } from "react-device-detect";
 import { AppContext } from "..";
-import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
-import { MyContainer } from "../misc/mycontainer";
-import Text from "../misc/text";
-import AddStation from "./addStation";
+import { Container } from "../misc/container";
+import StringData from "../misc/stringData";
+import Time from "../misc/time";
+import HeaderDropdown from "./headerDropdown";
+import HeaderStationsList from "./headerStationsList";
+import HeaderModal from "./headerModal";
 
 type Props = {
   appContext: AppContext;
 };
 
-const Header = observer(({ appContext }: Props) => {
+const Header = observer(({ appContext }: Props) => (
   // console.info("Header render");
-  const { station } = appContext.headerCtrl.headerData;
 
-  let place: string = "";
-  if (station != null) {
-    place = station.place;
-
-    if (place.length > 8 && isMobile) {
-      place = `${place.substring(0, 7)}~`;
-    }
-
-    if (place.length > 60) {
-      place = `${place.substring(0, 59)}~`;
-    }
-  }
-
-  return (
-    <>
-      <MyContainer>
-        <Row className="align-items-center">
-          <Col xs={4}>
-            <Text
-              name="Current time"
-              value={moment(appContext.headerCtrl.headerData.ctime).format(
-                "HH:mm:ss",
-              )}
-            />
-          </Col>
-          <Col xs={4}>
-            {appContext.headerCtrl.headerData.isExternalID === false &&
-              appContext.headerCtrl.headerData.allStations != null && (
-                <DropdownButton
-                  id="dropdown-place-button"
-                  title={place}
-                  onSelect={(stationID) => {
-                    const selectedStation =
-                      AllStationsCfgClient.getStationByID(stationID);
-                    appContext.setStation(selectedStation);
-                  }}
-                >
-                  {appContext.headerCtrl.headerData.allStations.map((s) => (
-                    <Dropdown.Item key={s.id} eventKey={s.id}>
-                      {s.place}
-                    </Dropdown.Item>
-                  ))}
-                </DropdownButton>
-              )}
-            {appContext.headerCtrl.headerData.isExternalID === true && (
-              <Text
-                name=""
-                value={appContext.headerCtrl.headerData.station.place}
-              />
-            )}
-          </Col>
-          {appContext.headerCtrl.headerData.isExternalID === false && (
-            <Col xs={4}>
-              {appContext.authCtrl.authData.isAuth && (
-                <>
-                  <Button
-                    variant="primary"
-                    onClick={() => appContext.authCtrl.logout()}
-                    className="me-2"
-                  >
-                    {appContext.authCtrl.authData.given_name.charAt(0) +
-                      appContext.authCtrl.authData.family_name.charAt(0)}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={() =>
-                      appContext.headerCtrl.headerData.setShowModal(true)
-                    }
-                  >
-                    Add
-                  </Button>
-                </>
-              )}
-            </Col>
-          )}
-          {appContext.headerCtrl.headerData.isExternalID === true && (
-            <Col xs={4}>
-              <a href="https://www.met-hub.com">
-                <Text name="Powered by" value="www.met-hub.com" />
-              </a>
-            </Col>
-          )}
-        </Row>
-      </MyContainer>
-      <AddStation appContext={appContext} />
-    </>
-  );
-});
+  <Container>
+    <div className="flex flex-row justify-between">
+      <Time
+        label="Current time"
+        time={appContext.headerCtrl.headerData.ctime}
+        format="HH:mm:ss"
+        old={false}
+      />
+      {appContext.headerCtrl.headerData.isExternalID === false &&
+        appContext.headerCtrl.headerData.allStations != null && (
+          <div className="flex flex-col justify-center">
+            <HeaderStationsList appContext={appContext} />
+          </div>
+        )}
+      {appContext.headerCtrl.headerData.isExternalID === true && (
+        <div className="flex flex-col justify-center">
+          <StringData
+            label=""
+            value={appContext.headerCtrl.headerData.station.place}
+          />
+        </div>
+      )}
+      {appContext.headerCtrl.headerData.isExternalID === false && (
+        <nav className="flex flex-col justify-center">
+          <HeaderModal appContext={appContext} />
+          <HeaderDropdown appContext={appContext} />
+        </nav>
+      )}
+      {appContext.headerCtrl.headerData.isExternalID === true && (
+        <div>
+          <a href="https://www.met-hub.com">
+            <StringData label="Powered by" value="www.met-hub.com" />
+          </a>
+        </div>
+      )}
+    </div>
+  </Container>
+));
 
 export default Header;
+
+//       <AddStation appContext={appContext} />
+/*
+className="bg-blue text-light rounded-md hover:bg-blue2 py-1.5 px-3"
+>
+</button>
+<button
+type="button"
+onClick={() =>
+  appContext.headerCtrl.headerData.setShowModal(true)
+}
+className="bg-gray2 text-light rounded-md hover:bg-gray3 py-1.5 px-3"
+>
+Add
+</button>
+*/

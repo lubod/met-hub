@@ -279,6 +279,17 @@ export class Forecast1h implements IGetForecastDataToDisplay {
   }
 }
 
+export interface IForecastStep {
+  display: string;
+  hours: number;
+}
+
+export const forecastHours: Array<IForecastStep> = [
+  { display: "24 hours", hours: 24 },
+  { display: "6 hours", hours: 6 },
+  { display: "1 hour", hours: 1 },
+];
+
 export default class ForecastData implements IForecastData {
   forecast: any = null;
 
@@ -302,7 +313,7 @@ export default class ForecastData implements IForecastData {
 
   forecast_1h: Array<Forecast1h> = [];
 
-  hours: number = 24;
+  step: IForecastStep = forecastHours[0];
 
   offset1h: number = 0;
 
@@ -319,20 +330,20 @@ export default class ForecastData implements IForecastData {
       station: observable,
       forecast_6h: observable,
       forecast_1h: observable,
-      hours: observable,
+      step: observable,
       offset1h: observable,
       offset6h: observable,
       setForecast: action,
       setAstronomicalData: action,
       setStation: action,
-      setHours: action,
+      setStep: action,
       setOffset1h: action,
       setLoading: action,
     });
   }
 
-  setHours(hours: number) {
-    this.hours = hours;
+  setStep(step: IForecastStep) {
+    this.step = step;
   }
 
   setOffset1h(offset1h: number) {

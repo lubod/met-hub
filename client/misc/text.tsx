@@ -1,16 +1,16 @@
-import { observer } from "mobx-react";
+/* eslint-disable react/require-default-props */
 import React from "react";
 
-type DataProps = {
-  name: string;
-  value: string;
+type Props = {
+  children?: any;
 };
 
-const Text = observer((props: DataProps) => (
-  <div className="text-left my-2">
-    <div className="small text-white-50 font-weight-bold">{props.name}</div>
-    <span className="h4 mr-1">{props.value == null ? "-" : props.value}</span>
-  </div>
-));
+function Text({ children }: Props) {
+  return (
+    <div className="text-md text-light font-normal font-sans text-center">
+      {children}
+    </div>
+  );
+}
 
 export default Text;

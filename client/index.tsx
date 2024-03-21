@@ -11,7 +11,7 @@ import App from "./app";
 import ChartsCtrl from "./charts/chartsCtrl";
 import { ISensor } from "../common/sensor";
 import ForecastCtrl from "./forecast/forecastCtrl";
-import "./style.scss";
+import "./styles.css";
 import { IStation } from "../common/allStationsCfg";
 import { AllStationsCfgClient } from "../common/allStationsCfgClient";
 import { DOM_SENSORS, DOM_SENSORS_DESC } from "../common/domModel";
@@ -66,7 +66,7 @@ export class AppContext {
   }
 
   setMeasurementAndLoad(measurementDesc: ISensor) {
-    this.chartsCtrl.chartsData.setMeasurementObject(measurementDesc);
+    this.chartsCtrl.chartsData.setSensor(measurementDesc);
     this.chartsCtrl.reload();
   }
 
@@ -74,14 +74,12 @@ export class AppContext {
     console.info("stationID", station);
     localStorage.setItem("lastStationID", station.id);
     if (station.id === "dom") {
-      this.chartsCtrl.chartsData.setMeasurements(DOM_SENSORS);
-      this.chartsCtrl.chartsData.setMeasurementObject(
-        DOM_SENSORS_DESC.LIVING_ROOM_AIR,
-      );
+      this.chartsCtrl.chartsData.setAllSensors(DOM_SENSORS);
+      this.chartsCtrl.chartsData.setSensor(DOM_SENSORS_DESC.LIVING_ROOM_AIR);
     } else {
       // todo
-      this.chartsCtrl.chartsData.setMeasurements(STATION_SENSORS);
-      this.chartsCtrl.chartsData.setMeasurementObject(
+      this.chartsCtrl.chartsData.setAllSensors(STATION_SENSORS);
+      this.chartsCtrl.chartsData.setSensor(
         STATION_MEASUREMENTS_DESC.TEMPERATURE,
       );
     }
