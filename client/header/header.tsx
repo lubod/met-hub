@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import React from "react";
 // import { isMobile } from "react-device-detect";
 import { AppContext } from "..";
-import { Container } from "../misc/container";
+import { HeaderContainer } from "../misc/container";
 import StringData from "../misc/stringData";
 import Time from "../misc/time";
 import HeaderDropdown from "./headerDropdown";
@@ -18,7 +18,7 @@ type Props = {
 const Header = observer(({ appContext }: Props) => (
   // console.info("Header render");
 
-  <Container>
+  <HeaderContainer>
     <div className="flex flex-row justify-between">
       <Time
         label="Current time"
@@ -54,23 +54,7 @@ const Header = observer(({ appContext }: Props) => (
         </div>
       )}
     </div>
-  </Container>
+  </HeaderContainer>
 ));
 
 export default Header;
-
-//       <AddStation appContext={appContext} />
-/*
-className="bg-blue text-light rounded-md hover:bg-blue2 py-1.5 px-3"
->
-</button>
-<button
-type="button"
-onClick={() =>
-  appContext.headerCtrl.headerData.setShowModal(true)
-}
-className="bg-gray2 text-light rounded-md hover:bg-gray3 py-1.5 px-3"
->
-Add
-</button>
-*/

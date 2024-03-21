@@ -1,11 +1,10 @@
 import { observer } from "mobx-react";
-import moment from "moment";
+// import moment from "moment";
 import React from "react";
 import {
   Area,
   ComposedChart,
-  ResponsiveContainer,
-  Tooltip,
+  //   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
@@ -18,20 +17,20 @@ type Props = {
   firstTimestamp: Date;
   hours: number;
   offset6h: number;
+  width: number;
 };
 
 const ForecastChartTemp = observer(
-  ({ data, lastTimestamp, firstTimestamp, hours, offset6h }: Props) => {
+  ({ data, lastTimestamp, firstTimestamp, hours, offset6h, width }: Props) => {
     const chdata = [];
-
+    /*
     function formatLabel(label: string) {
       return moment(label).format("MMM DD HH:mm");
     }
-
+    */
     /*
   function roundTo5Min(num: number) {
     let res = null;
-    res = Math.floor(num / 5) * 5;
     return res;
   }
 
@@ -107,63 +106,63 @@ const ForecastChartTemp = observer(
           Temperature
           <span className="text-orange border-orange">&#8226;</span>
         </div>
-        <div className="flex justify-center">
-          <ResponsiveContainer width="100%" aspect={5.0 / 1.0}>
-            <ComposedChart
-              data={chdata}
-              margin={{
-                top: 0,
-                right: 0,
-                left: 0,
-                bottom: 0,
-              }}
-            >
-              <Area
-                type="monotoneX"
-                dataKey="temperature"
-                stroke={MY_COLORS.orange}
-                fillOpacity={1}
-                fill="url(#colorUv)"
-                isAnimationActive={false}
-                yAxisId="temperature"
-              />
-              <defs>
-                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor={MY_COLORS.orange}
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor={MY_COLORS.orange}
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              </defs>
-              <XAxis
-                dataKey="timestamp"
-                hide
-                axisLine={false}
-                domain={["auto", "auto"]}
-                scale="time"
-                type="number"
-                // tick={{ stroke: "red", strokeWidth: 2 }}
-              />
-              <YAxis
-                yAxisId="temperature"
-                hide
-                type="number"
-                domain={[domainTempMin, domainTempMax]}
-              />
-              <Tooltip
+        <div className="">
+          <ComposedChart
+            height={70}
+            width={width}
+            data={chdata}
+            margin={{
+              top: 0,
+              right: 0,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <Area
+              type="monotoneX"
+              dataKey="temperature"
+              stroke={MY_COLORS.orange}
+              fillOpacity={1}
+              fill="url(#colorUv)"
+              isAnimationActive={false}
+              yAxisId="temperature"
+            />
+            <defs>
+              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor={MY_COLORS.orange}
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={MY_COLORS.orange}
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            </defs>
+            <XAxis
+              dataKey="timestamp"
+              hide
+              axisLine={false}
+              domain={["auto", "auto"]}
+              scale="time"
+              type="number"
+              // tick={{ stroke: "red", strokeWidth: 2 }}
+            />
+            <YAxis
+              yAxisId="temperature"
+              hide
+              type="number"
+              domain={[domainTempMin, domainTempMax]}
+            />
+            {/* } <Tooltip
                 labelStyle={{ color: "black" }}
                 itemStyle={{ color: "black" }}
                 // eslint-disable-next-line react/jsx-no-bind
                 labelFormatter={formatLabel}
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
+            /> */}
+          </ComposedChart>
         </div>
       </div>
     );

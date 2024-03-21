@@ -15,6 +15,7 @@ export interface IGetForecastDataToDisplay {
   getWindSpeed(): string;
   getWindDir(): string;
   getCloudAreaFraction(): string;
+  getTimestamp(): Date;
 }
 
 export class ForecastRow {
@@ -117,6 +118,10 @@ export class ForecastDay implements IGetForecastDataToDisplay {
   getCloudAreaFraction(): string {
     return this.cloud_area_fraction_avg.toFixed(0);
   }
+
+  getTimestamp(): Date {
+    return this.timestamp;
+  }
 }
 
 export interface IForecastData {
@@ -205,6 +210,10 @@ export class Forecast6h implements IGetForecastDataToDisplay {
   getCloudAreaFraction(): string {
     return this.cloud_area_fraction.toFixed(0);
   }
+
+  getTimestamp(): Date {
+    return this.timestamp;
+  }
 }
 
 export class Forecast1h implements IGetForecastDataToDisplay {
@@ -276,6 +285,10 @@ export class Forecast1h implements IGetForecastDataToDisplay {
 
   getCloudAreaFraction(): string {
     return this.cloud_area_fraction.toFixed(0);
+  }
+
+  getTimestamp(): Date {
+    return this.timestamp;
   }
 }
 

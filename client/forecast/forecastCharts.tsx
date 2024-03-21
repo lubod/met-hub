@@ -36,7 +36,7 @@ function Cell({ value, color, maxLimit1, maxLimit2, maxLimit3 }: CellProps) {
 
   return (
     <div
-      className={`text-center text-light border-s border-${color} ${bg} basis-full text-sm pb-3`}
+      className={`text-center text-light border-s border-${color} ${bg} basis-full text-sm pb-3 min-w-11`}
     >
       {value}
     </div>
@@ -79,7 +79,7 @@ function MyRows1({ data }: RowsProps) {
       <div className="flex flex-row">
         {data.map((item: IGetForecastDataToDisplay) => (
           <div
-            className="text-center border-s border-gray2 flex justify-center basis-full"
+            className="text-center border-s border-gray2 flex justify-center basis-full min-w-11"
             key={item.getDay() + item.getDay2()}
           >
             {item.getSymbolCode() != null && (
@@ -164,7 +164,7 @@ function MyRows2({ data }: RowsProps) {
       <div className="flex flex-row">
         {data.map((item: IGetForecastDataToDisplay) => (
           <div
-            className="text-center border-s border-purple flex justify-center basis-full"
+            className="text-center border-s border-purple flex justify-center basis-full min-w-11"
             key={item.getDay() + item.getDay2()}
           >
             <svg width="25px" height="25px">
@@ -191,87 +191,33 @@ type Props = {
 
 const ForecastCharts = observer(
   ({ days, forecast_6h, forecast_1h, forecastCtrl }: Props) => {
-    let filtered1h: Array<Forecast1h> = [];
-    let filtered6h: Array<Forecast6h> = [];
-    let filtered24h: Array<ForecastDay> = [];
     let lastTimestamp = null;
     let firstTimestamp = null;
-    const cols = 8;
-
-    function changeOffset(direction: number) {
-      if (forecastCtrl.forecastData.step.hours === 1) {
-        if (
-          forecastCtrl.forecastData.offset1h + direction >= 0 &&
-          forecastCtrl.forecastData.offset1h + direction <=
-            forecast_1h.length - cols
-        ) {
-          forecastCtrl.forecastData.setOffset1h(
-            forecastCtrl.forecastData.offset1h + direction,
-          );
-        } else if (forecastCtrl.forecastData.offset1h + direction < 0) {
-          forecastCtrl.forecastData.setOffset1h(0);
-        } else if (
-          forecastCtrl.forecastData.offset1h + direction >
-          forecast_1h.length - cols
-        ) {
-          forecastCtrl.forecastData.setOffset1h(forecast_1h.length - cols);
-        }
-      } else if (forecastCtrl.forecastData.step.hours === 6) {
-        if (
-          forecastCtrl.forecastData.offset6h + direction >= 0 &&
-          forecastCtrl.forecastData.offset6h + direction <=
-            forecast_6h.length - cols
-        ) {
-          forecastCtrl.forecastData.setOffset6h(
-            forecastCtrl.forecastData.offset6h + direction,
-          );
-        } else if (forecastCtrl.forecastData.offset6h + direction < 0) {
-          forecastCtrl.forecastData.setOffset6h(0);
-        } else if (
-          forecastCtrl.forecastData.offset6h + direction >
-          forecast_6h.length - cols
-        ) {
-          forecastCtrl.forecastData.setOffset6h(forecast_6h.length - cols);
-        }
-      }
-    }
-
-    if (days.length > 0 && forecastCtrl.forecastData.step.hours === 24) {
-      filtered24h = days.filter((el, i) => i < cols);
+    let cols;
+    switch (forecastCtrl.forecastData.step.hours) {
+      case 1:
+        cols = forecast_1h.length;
+        break;
+      case 6:
+        cols = forecast_6h.length;
+        break;
+      default:
+        cols = days.length;
     }
 
     if (forecast_6h.length > 0 && forecastCtrl.forecastData.step.hours === 6) {
-      filtered6h = forecast_6h
-        .filter((el, i) => i >= forecastCtrl.forecastData.offset6h)
-        .filter((el, i) => i < cols);
+      lastTimestamp = new Date(forecast_6h[forecast_6h.length - 1].timestamp);
+      firstTimestamp = forecast_6h[0].timestamp;
     }
 
-    if (days.length > 0 && forecastCtrl.forecastData.step.hours === 1) {
-      filtered1h = forecast_1h
-        .filter((el, i) => i >= forecastCtrl.forecastData.offset1h)
-        .filter((el, i) => i < cols);
+    if (forecast_1h.length > 0 && forecastCtrl.forecastData.step.hours === 1) {
+      lastTimestamp = new Date(forecast_1h[forecast_1h.length - 1].timestamp);
+      firstTimestamp = forecast_1h[0].timestamp;
     }
 
-    if (filtered6h.length > 0 && forecastCtrl.forecastData.step.hours === 6) {
-      lastTimestamp = new Date(filtered6h[filtered6h.length - 1].timestamp);
-      lastTimestamp.setHours(lastTimestamp.getHours() + 6);
-      firstTimestamp = filtered6h[0].timestamp;
-    }
-
-    if (filtered1h.length > 0 && forecastCtrl.forecastData.step.hours === 1) {
-      lastTimestamp = new Date(filtered1h[filtered1h.length - 1].timestamp);
-      lastTimestamp.setHours(
-        lastTimestamp.getHours() + forecastCtrl.forecastData.step.hours,
-      );
-      firstTimestamp = filtered1h[0].timestamp;
-    }
-
-    if (filtered24h.length > 0 && forecastCtrl.forecastData.step.hours === 24) {
-      lastTimestamp = new Date(filtered24h[filtered24h.length - 1].timestamp);
-      lastTimestamp.setHours(
-        lastTimestamp.getHours() + forecastCtrl.forecastData.step.hours,
-      );
-      firstTimestamp = filtered24h[0].timestamp;
+    if (days.length > 0 && forecastCtrl.forecastData.step.hours === 24) {
+      lastTimestamp = new Date(days[days.length - 1].timestamp);
+      firstTimestamp = days[0].timestamp;
     }
 
     console.info(
@@ -282,61 +228,38 @@ const ForecastCharts = observer(
 
     return (
       <>
-        <div className="mb-4 flex flex-row justify-between">
-          <div>
-            {(forecastCtrl.forecastData.step.hours === 1 ||
-              forecastCtrl.forecastData.step.hours === 6) && (
-              <button
-                className="bg-gray2 text-light py-1.5 px-3 rounded-md hover:bg-gray3"
-                type="button"
-                onClick={() => changeOffset(-cols)}
-              >
-                Prev
-              </button>
-            )}
-          </div>
+        <div className="mb-4 flex flex-row justify-center">
           <ForecastStepsList forecastCtrl={forecastCtrl} />
-          <div>
-            {(forecastCtrl.forecastData.step.hours === 1 ||
-              forecastCtrl.forecastData.step.hours === 6) && (
-              <button
-                className="bg-gray2 text-light rounded-md hover:bg-gray3 py-1.5 px-3"
-                type="button"
-                onClick={() => changeOffset(cols)}
-              >
-                Next
-              </button>
-            )}
-          </div>
         </div>
-        <div>
+        <div className="flex flex-col overflow-x-auto scrollbar-hide">
           {forecastCtrl.forecastData.step.hours === 24 && (
-            <MyRows1 data={filtered24h} />
+            <MyRows1 data={days} />
           )}
           {forecastCtrl.forecastData.step.hours === 6 && (
-            <MyRows1 data={filtered6h} />
+            <MyRows1 data={forecast_6h} />
           )}
           {forecastCtrl.forecastData.step.hours === 1 && (
-            <MyRows1 data={filtered1h} />
+            <MyRows1 data={forecast_1h} />
           )}
-          <div className="mb-0">
+          <div className="">
             <ForecastChartTemp
               data={days}
               lastTimestamp={lastTimestamp}
               firstTimestamp={firstTimestamp}
               hours={forecastCtrl.forecastData.step.hours}
               offset6h={forecastCtrl.forecastData.offset6h}
+              width={cols * 44}
             />
           </div>
           <Myhr />
           {forecastCtrl.forecastData.step.hours === 24 && (
-            <MyRows2 data={filtered24h} />
+            <MyRows2 data={days} />
           )}
           {forecastCtrl.forecastData.step.hours === 6 && (
-            <MyRows2 data={filtered6h} />
+            <MyRows2 data={forecast_6h} />
           )}
           {forecastCtrl.forecastData.step.hours === 1 && (
-            <MyRows2 data={filtered1h} />
+            <MyRows2 data={forecast_1h} />
           )}
           <div className="mb-3">
             <ForecastChart
@@ -345,6 +268,7 @@ const ForecastCharts = observer(
               firstTimestamp={firstTimestamp}
               hours={forecastCtrl.forecastData.step.hours}
               offset6h={forecastCtrl.forecastData.offset6h}
+              width={cols * 44}
             />
           </div>
         </div>

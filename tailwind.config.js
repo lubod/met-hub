@@ -19,5 +19,8 @@ module.exports = {
     },
     extend: {},
   },
-  plugins: [require("@headlessui/tailwindcss")],
+  plugins: [
+    require("@headlessui/tailwindcss"),
+    require("tailwind-scrollbar-hide"),
+  ],
 };

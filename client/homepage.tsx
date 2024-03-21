@@ -32,10 +32,10 @@ const HomePage = observer(({ appContext }: Props) => {
     appContext.headerCtrl.headerData.isExternalID === false;
 
   return (
-    <div>
-      <div className="flex flex-col gap-2 container mx-auto">
+    <div className="flex flex-row justify-center">
+      <div className="flex flex-col gap-2 container">
         <Header appContext={appContext} />
-        <div className="flex flex-col justify-stretch md:flex-row gap-2">
+        <div className="flex flex-col md:place-items-start place-items-center md:flex-row md:justify-center gap-2">
           {showStation && <Station appContext={appContext} />}
           {showDom && <Dom appContext={appContext} />}
           {showForecast && <Forecast appContext={appContext} />}

@@ -109,6 +109,7 @@
     "reconnecting-eventsource": "^1.6.2",
     "redis": "^4.6.12",
     "styled-components": "^6.1.8",
+    "tailwind-scrollbar-hide": "^1.1.7",
     "xml-js": "^1.6.11"
   }
 }
