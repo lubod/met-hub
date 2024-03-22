@@ -10,7 +10,7 @@ type Props = {
 };
 
 const Time = observer(({ label, time, format, old }: Props) => (
-  <div className="flex flex-col text-center min-w-14">
+  <div className="flex flex-col text-center min-w-28">
     <div className="text-sm text-gray font-normal font-sans">{label}</div>
     <div
       className={`text-2xl font-normal font-sans ${old ? "text-red" : "text-light"}`}
