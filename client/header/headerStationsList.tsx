@@ -2,6 +2,7 @@ import { Listbox } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import React from "react";
 import { observer } from "mobx-react";
+import { isMobile } from "react-device-detect";
 import { AppContext } from "..";
 import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 
@@ -17,9 +18,12 @@ const HeaderStationsList = observer(({ appContext }: StepsListProps) => (
     }}
   >
     <div className="relative">
-      <Listbox.Button className="relative w-full min-w-52 rounded-md bg-blue py-1.5 pl-3 pr-8 shadow-lg text-light hover:bg-blue2">
+      <Listbox.Button className="relative w-full md:min-w-52 rounded-md bg-blue py-1.5 pl-3 pr-8 shadow-lg text-light hover:bg-blue2">
         <span className="block truncate">
-          {appContext.headerCtrl.headerData.station.place}
+          {isMobile &&
+          appContext.headerCtrl.headerData.station.place.length > 14
+            ? `${appContext.headerCtrl.headerData.station.place.substring(0, 13)}~`
+            : appContext.headerCtrl.headerData.station.place}
         </span>
         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
           <ChevronUpDownIcon

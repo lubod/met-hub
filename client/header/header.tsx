@@ -2,7 +2,6 @@
 /* eslint-disable no-param-reassign */
 import { observer } from "mobx-react";
 import React from "react";
-// import { isMobile } from "react-device-detect";
 import { AppContext } from "..";
 import { HeaderContainer } from "../misc/container";
 import StringData from "../misc/stringData";
