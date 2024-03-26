@@ -100,13 +100,14 @@ const HeaderModal = observer(({ appContext }: Props) => {
                       </div>
                       <div className="flex flex-col basis-1/2">
                         <label htmlFor="type">Type</label>
-                        <input
-                          type="text"
+                        <select
                           id="type"
                           name="type"
                           className="bg-blue text-light p-1 rounded-md"
                           onChange={(e) => setType(e.target.value)}
-                        />
+                        >
+                          <option value="GoGen Me 3900">GoGen Me 3900</option>
+                        </select>
                       </div>
                     </div>
                     <div className="flex flex-row gap-4">

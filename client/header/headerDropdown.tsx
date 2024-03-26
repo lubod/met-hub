@@ -10,8 +10,8 @@ type Props = {
 };
 
 const HeaderDropdown = observer(({ appContext }: Props) => (
-  <Menu as="div" className="relative">
-    <Menu.Button className="bg-blue text-light rounded-md hover:bg-blue2 pt-1 pb-2.5 px-3">
+  <Menu as="div" className="relative flex flex-row justify-end">
+    <Menu.Button className="bg-blue text-light rounded-md hover:bg-blue2 pt-1 pb-2.5 px-3 justify-self-end">
       ...
     </Menu.Button>
     {appContext.authCtrl.authData.isAuth && (

@@ -508,6 +508,10 @@ router.post(
       if (type !== "GoGen Me 3900") {
         throw new AppError(400, `Unknown station type ${type}`);
       }
+      const trimPlace = place.trim();
+      if (trimPlace === "") {
+        throw new AppError(400, `Empty place ${trimPlace}`);
+      }
       const owner = user.id;
       const id = Math.random().toString(36).substring(2, 10);
       const exists = allStationsCfg.getStationByPasskey(passkey);
@@ -525,7 +529,7 @@ router.post(
       station.lon = lon;
       station.owner = owner;
       station.passkey = passkey;
-      station.place = place;
+      station.place = trimPlace;
       station.measurement = null;
       station.public = true;
       station.type = type;
