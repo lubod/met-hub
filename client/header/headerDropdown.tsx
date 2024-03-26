@@ -43,7 +43,7 @@ const HeaderDropdown = observer(({ appContext }: Props) => (
       </Menu.Items>
     )}
     {!appContext.authCtrl.authData.isAuth && (
-      <Menu.Items className="absolute z-10 right-0 w-52 bg-blue rounded-md mt-1 text-light shadow-lg">
+      <Menu.Items className="absolute z-10 right-0 w-52 bg-blue rounded-md mt-10 text-light shadow-lg">
         <Menu.Item as="div" className="flex w-full items-center rounded-md p-1">
           <GoogleLogin
             onSuccess={(credentialResponse) => {
