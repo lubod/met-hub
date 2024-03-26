@@ -40,7 +40,7 @@ const Header = observer(({ appContext }: Props) => (
         </div>
       )}
       {appContext.headerCtrl.headerData.isExternalID === false && (
-        <nav className="flex flex-col justify-center md:min-w-28">
+        <nav className="flex flex-col justify-center">
           <HeaderModal appContext={appContext} />
           <HeaderDropdown appContext={appContext} />
         </nav>

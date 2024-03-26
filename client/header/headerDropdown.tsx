@@ -10,12 +10,12 @@ type Props = {
 };
 
 const HeaderDropdown = observer(({ appContext }: Props) => (
-  <Menu as="div" className="relative flex flex-row justify-end">
-    <Menu.Button className="bg-blue text-light rounded-md hover:bg-blue2 pt-1 pb-2.5 px-3 justify-self-end">
+  <Menu as="div" className="relative md:min-w-28 flex justify-end">
+    <Menu.Button className="bg-blue text-light rounded-md hover:bg-blue2 pt-1 pb-2.5 px-3">
       ...
     </Menu.Button>
     {appContext.authCtrl.authData.isAuth && (
-      <Menu.Items className="absolute z-10 right-0 w-52 bg-blue rounded-md mt-1 text-light shadow-lg">
+      <Menu.Items className="absolute z-10 right-0 w-52 bg-blue rounded-md mt-10 text-light shadow-lg">
         <Menu.Item as="div" className="flex w-full items-center rounded-md p-1">
           <div className="p-1 text-gray">
             {appContext.authCtrl.authData.given_name}{" "}
