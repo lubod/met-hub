@@ -32,17 +32,25 @@ class DomData {
 
   station: IStation = null;
 
+  upDown = false;
+
   constructor() {
     makeObservable(this, {
       data: observable,
       trendData: observable,
       oldData: observable,
       loading: observable,
+      upDown: observable,
       processData: action,
       processTrendData: action,
       checkOldData: action,
       setLoading: action,
+      setUpDown: action,
     });
+  }
+
+  setUpDown(upDown: boolean) {
+    this.upDown = upDown;
   }
 
   setLoading(loading: boolean) {

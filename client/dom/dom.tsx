@@ -5,7 +5,7 @@ import Myhr from "../misc/myhr";
 import { Container } from "../misc/container";
 import DomHeader from "./domHeader";
 import DomGardenHouse from "./domGardenHouse";
-import DomRooms from "./domRooms";
+import DomRoomsUpDown from "./domRoomsUpDown";
 
 type DomProps = {
   appContext: AppContext;
@@ -23,7 +23,7 @@ const Dom = observer(({ appContext }: DomProps) => (
     <Myhr />
     <DomGardenHouse appContext={appContext} />
     <Myhr />
-    <DomRooms appContext={appContext} />
+    <DomRoomsUpDown appContext={appContext} />
   </Container>
 ));
 

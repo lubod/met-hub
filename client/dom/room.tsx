@@ -39,7 +39,7 @@ const Room = observer(
     onClickFloor,
     old,
   }: RoomProps) => (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div className="flex flex-row justify-center text-light">{room}</div>
       <div className="flex flex-row">
         <div className="flex flex-col basis-1/4">
