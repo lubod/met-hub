@@ -11,7 +11,7 @@ import { IStation } from "../common/allStationsCfg";
 
 const { OAuth2Client } = require("google-auth-library");
 
-const clietOAuth = new OAuth2Client(process.env.CLIENT_ID);
+const clientOAuth = new OAuth2Client(process.env.CLIENT_ID);
 
 const dom = new Dom();
 const router = express.Router();
@@ -214,7 +214,7 @@ router.post(
   catchAsync(async (req: any, res: any) => {
     const gtoken = req.body.token;
     console.info(req.body, gtoken);
-    const ticket = await clietOAuth.verifyIdToken({
+    const ticket = await clientOAuth.verifyIdToken({
       idToken: gtoken,
       audience: process.env.REACT_APP_GOOGLE_CLIENT_ID,
     });
