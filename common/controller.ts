@@ -67,7 +67,7 @@ export class CController {
     this.domData.data = { timestamp: null } as IDomData; // todo
     let url = "/api/getLastData/dom";
     if (this.test) {
-      url = "http://localhost:18080/api/getLastData/dom";
+      url = "http://localhost:8089/api/getLastData/dom";
     }
     console.info(url);
 
@@ -110,7 +110,7 @@ export class CController {
     } as IDomTrendData;
     let url = "/api/getTrendData/dom";
     if (this.test) {
-      url = "http://localhost:18080/api/getTrendData/dom";
+      url = "http://localhost:8089/api/getTrendData/dom";
     }
     console.info(url);
 
@@ -143,7 +143,7 @@ export class CController {
 
     if (this.test) {
       // test needs this
-      url = `http://localhost:18080/api/getLastData/station/${this.stationCfg.STATION_ID}`;
+      url = `http://localhost:8089/api/getLastData/station/${this.stationCfg.STATION_ID}`;
     }
     console.info(url);
 
@@ -179,7 +179,7 @@ export class CController {
 
     if (this.test) {
       // test needs this
-      url = `http://localhost:18080/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
+      url = `http://localhost:8089/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
     }
     console.info(url);
 

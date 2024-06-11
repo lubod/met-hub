@@ -29,7 +29,7 @@ export abstract class CSimulator {
   abstract correctTimestamp(decoded: IDomData | IStationData, sd: any): any;
 
   async fetchStationData(STATION_ID: string) {
-    const url = `http://localhost:18080/api/getLastData/station/${STATION_ID}`;
+    const url = `http://localhost:8089/api/getLastData/station/${STATION_ID}`;
     console.info("GET", url);
 
     try {

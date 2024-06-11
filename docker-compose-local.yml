@@ -35,13 +35,18 @@ services:
 #    environment:
 #      - POSTGRES_HOST_AUTH_METHOD=trust
 #    command: ["postgres", "-c", "log_statement=all"]
-  nginx:
-    build:
-      context: .
-      target: met-hub-nginx
-    image: met-hub-nginx
-    container_name: met-hub-nginx
-    network_mode: host
+
+
+#  nginx:
+#    build:
+#      context: .
+#      target: met-hub-nginx
+#    image: met-hub-nginx
+#    container_name: met-hub-nginx
+#    network_mode: host
+
+
+
 #  zookeeper:
 #    image: docker.io/bitnami/zookeeper:3.8
 #    volumes:

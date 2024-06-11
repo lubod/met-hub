@@ -147,7 +147,7 @@ export class Garni1025ArcusSimulator extends CSimulator {
   async postData(data: any) {
     try {
       await fetch(
-        `http://localhost:18080/weatherstation/updateweatherstation.php?ID=${data.ID}&PASSWORD=${data.PASSWORD}&action=${data.action}&realtime=${data.realtime}&rtfreq=${data.rtfreq}&dateutc=${data.dateutc}&baromin=${data.baromin}&tempf=${data.tempf}&dewptf=${data.dewptf}&humidity=${data.humidity}&windspeedmph=${data.windspeedmph}&windgustmph=${data.windgustmph}&winddir=${data.winddir}&rainin=${data.rainin}&dailyrainin=${data.dailyrainin}&solarradiation=${data.solarradiation}&UV=${data.UV}&indoortempf=${data.indoortempf}&indoorhumidity=${data.indoorhumidity}`,
+        `http://localhost:8089/weatherstation/updateweatherstation.php?ID=${data.ID}&PASSWORD=${data.PASSWORD}&action=${data.action}&realtime=${data.realtime}&rtfreq=${data.rtfreq}&dateutc=${data.dateutc}&baromin=${data.baromin}&tempf=${data.tempf}&dewptf=${data.dewptf}&humidity=${data.humidity}&windspeedmph=${data.windspeedmph}&windgustmph=${data.windgustmph}&winddir=${data.winddir}&rainin=${data.rainin}&dailyrainin=${data.dailyrainin}&solarradiation=${data.solarradiation}&UV=${data.UV}&indoortempf=${data.indoortempf}&indoorhumidity=${data.indoorhumidity}`,
         {
           headers: {
             "Content-Type": "application/json",

@@ -87,6 +87,7 @@
     "gapi-script": "^1.2.0",
     "google-auth-library": "^9.4.2",
     "helmet": "^7.1.0",
+    "helmet-csp": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
     "jwk-to-pem": "^2.0.5",
     "kafkajs": "^2.2.4",

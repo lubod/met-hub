@@ -5,14 +5,20 @@ import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import cors from "cors";
+import path from "path";
 import router from "./router";
 import Agregator from "./aggregator";
 import { AllStationsCfg } from "../common/allStationsCfg";
+
 // import Go from "./go";
 
 const app = express();
 const http = require("http").Server(app);
 const helmet = require("helmet");
+
+const csp = require(`helmet-csp`);
+
+const publicDirectoryPath = path.join(__dirname, "html");
 
 const redisClient = createClient();
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
@@ -45,17 +51,30 @@ export class AppError extends Error {
 // AllStationsCfg.writeCfg();
 export const allStationsCfg = new AllStationsCfg();
 allStationsCfg.readCfg().then(() => {
-  const agregator = new Agregator(
-    allStationsCfg.getMeasurements(),
-  );
+  const agregator = new Agregator(allStationsCfg.getMeasurements());
   agregator.start();
   // const go = new Go();
   // go.start();
 });
 
 app.use(helmet());
+app.use(
+  csp({
+    directives: {
+      defaultSrc: [`'self'`],
+      scriptSrc: [`'self'`, `*.google.com`],
+      frameSrc: [`'self'`, `*.google.com`],
+      connectSrc: [`'self'`, `*.google.com`],
+      imgSrc: [`'self'`, `*.openstreetmap.org`, `unpkg.com`, `data:`],
+    },
+  }),
+);
 // app.use(compression());
 app.use(cors());
+app.use((req, res, next) => {
+  res.setHeader("Cross-origin-Opener-Policy", "same-origin-allow-popups");
+  next();
+});
 app.use(express.static(__dirname));
 app.use(
   express.urlencoded({
@@ -68,6 +87,12 @@ app.use(limiter);
 app.use(cookieParser());
 
 app.use(express.json());
+
+app.use(express.static(publicDirectoryPath));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "html/index.html"));
+});
 
 app.use((req: any, res: any, next: any) => {
   console.log(
@@ -91,7 +116,6 @@ app.use((err: AppError, req: any, res: any, next: any) => {
 });
 
 const server = http.listen(8089, () => {
-  // const server = http.listen(18080, () => {
   const { port } = server.address() as AddressInfo;
 
   console.log("Listening at http://%s:%s", "localhost", port);

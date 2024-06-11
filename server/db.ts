@@ -106,7 +106,7 @@ export async function loadData(
         }
         */
         const resData = await client.query(queryText);
-        // console.log("rows", queryText, typeof res.rows, res.fields);
+        // console.log("rows", resData);
 
         queryText = `
         SELECT min(${column}), max(${column}), avg(${column}) \

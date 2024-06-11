@@ -25,11 +25,11 @@ type ChartData = {
 
 function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
   function formatXAxis(tickItem: string) {
-    return moment(tickItem).format(range.format);
+    return moment(parseInt(tickItem, 10)).format(range.format);
   }
 
   function formatLabel(label: string) {
-    return moment(label).format("DD.MM.YYYY HH:mm:ss");
+    return moment(parseInt(label, 10)).format("DD.MM.YYYY HH:mm:ss");
   }
 
   // console.info("render wind dir chart", chdata, xkey, ykey, y2key, domainMin, domainMax);

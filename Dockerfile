@@ -3,6 +3,11 @@ WORKDIR /app
 COPY ./package*.json /app/
 RUN npm install
 COPY esdist/be/main.js /app/
+COPY esdist/fe/* /app/html/
+COPY public/* /app/html/
+COPY client/index.html /app/html/
+RUN ln -sf /app/html/ /app/html/callback
+RUN ln -sf /app/html/ /app/html/go
 CMD ["node", "/app/main.js"]
 
 FROM node:20-alpine AS met-hub-store
