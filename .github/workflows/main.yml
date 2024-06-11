@@ -34,6 +34,5 @@ jobs:
 
       - run: docker push ghcr.io/lubod/met-hub:latest
       - run: docker push ghcr.io/lubod/met-hub-store:latest
-      - run: docker push ghcr.io/lubod/met-hub-nginx:latest
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
