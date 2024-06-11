@@ -24,7 +24,7 @@ jobs:
       - run: echo "docker build."
       - run: docker build -f Dockerfile-met-hub -t ghcr.io/lubod/met-hub:latest .
       - run: docker build -f Dockerfile-met-hub-store -t ghcr.io/lubod/met-hub-store:latest .
-      - run: docker build -f Dockerfile-met-hub-nginx -t ghcr.io/lubod/met-hub-nginx:latest .
+      #- run: docker build -f Dockerfile-met-hub-nginx -t ghcr.io/lubod/met-hub-nginx:latest .
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
