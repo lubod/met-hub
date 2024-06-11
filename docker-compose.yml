@@ -15,10 +15,10 @@ services:
     image: met-hub-store
     container_name: met-hub-store
     network_mode: host
-  nginx:
-    build:
-      context: .
-      target: met-hub-nginx
-    image: met-hub-nginx
-    container_name: met-hub-nginx
-    network_mode: host
+#  nginx:
+#    build:
+#      context: .
+#      target: met-hub-nginx
+#    image: met-hub-nginx
+#    container_name: met-hub-nginx
+#    network_mode: host
