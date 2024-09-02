@@ -20,7 +20,9 @@ const csp = require(`helmet-csp`);
 
 const publicDirectoryPath = path.join(__dirname, "html");
 
-const redisClient = createClient();
+const redisClient = createClient({
+  url: "redis://localhost:6379",
+});
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.connect();
 
@@ -115,8 +117,8 @@ app.use((err: AppError, req: any, res: any, next: any) => {
   res.status(err.code || 500).json({ code: err.code, msg: err.msg });
 });
 
-const server = http.listen(8089, () => {
-  const { port } = server.address() as AddressInfo;
+const server = http.listen(8089, "0.0.0.0", () => {
+  const addr = server.address() as AddressInfo;
 
-  console.log("Listening at http://%s:%s", "localhost", port);
+  console.log("Listening at ", addr);
 });

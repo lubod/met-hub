@@ -15,7 +15,9 @@ const clientOAuth = new OAuth2Client(process.env.CLIENT_ID);
 
 const dom = new Dom();
 const router = express.Router();
-const redisClient = createClient();
+const redisClient = createClient({
+  url: "redis://localhost:6379",
+});
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 redisClient.connect();
 

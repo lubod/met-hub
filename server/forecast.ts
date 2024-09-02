@@ -1,7 +1,9 @@
 import moment from "moment";
 import { createClient } from "redis";
 
-const redisClient = createClient();
+const redisClient = createClient({
+  url: "redis://localhost:6379",
+});
 redisClient.connect();
 
 export async function getForecast(lat: string, lon: string) {

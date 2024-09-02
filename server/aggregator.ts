@@ -9,7 +9,9 @@ class Agregator {
   measurements: IMeasurement[];
 
   constructor(measurements: IMeasurement[]) {
-    this.redis = createClient();
+    this.redis = createClient({
+      url: "redis://localhost:6379",
+    });
     this.measurements = measurements;
   }
 

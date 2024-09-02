@@ -36,7 +36,9 @@ export class AllStationsCfg {
   redisClient: any = null;
 
   constructor() {
-    this.redisClient = createClient();
+    this.redisClient = createClient({
+      url: "redis://localhost:6379",
+    });
     this.redisClient.connect();
   }
 

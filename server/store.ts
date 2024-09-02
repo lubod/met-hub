@@ -5,8 +5,9 @@ import { RedisCommandArgument } from "@redis/client/dist/lib/commands";
 import { AllStationsCfg, IStation } from "../common/allStationsCfg";
 import { store } from "./db";
 
-
-const client = createClient();
+const client = createClient({
+  url: "redis://localhost:6379",
+});
 
 const currentId = "0"; // Start at lowest possible stream ID
 
