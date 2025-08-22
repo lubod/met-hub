@@ -72,7 +72,7 @@
     "@redis/client": "^1.5.13",
     "@redis/time-series": "^1.0.5",
     "amazon-cognito-identity-js": "^6.3.7",
-    "axios": "^1.7.4",
+    "axios": "^1.8.2",
     "compression": "^1.7.4",
     "connect-redis": "^7.1.0",
     "cookie-parser": "^1.4.7",
