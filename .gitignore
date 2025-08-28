@@ -11,3 +11,5 @@ esbuild-local.mjs
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+.DS_Store
+client/.DS_Store
