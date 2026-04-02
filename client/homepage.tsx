@@ -32,16 +32,24 @@ const HomePage = observer(({ appContext }: Props) => {
     appContext.headerCtrl.headerData.isExternalID === false;
 
   return (
-    <div className="flex flex-row justify-center">
-      <div className="flex flex-col gap-2 container">
+    <div className="max-w-7xl mx-auto px-3 py-3 flex flex-col gap-3">
+      <div className="relative z-50">
         <Header appContext={appContext} />
-        <div className="flex flex-col md:place-items-start place-items-center md:flex-row md:justify-center gap-2">
-          {showStation && <Station appContext={appContext} />}
-          {showDom && <Dom appContext={appContext} />}
-          {showForecast && <Forecast appContext={appContext} />}
-          {showAbout && <About appContext={appContext} />}
-          {showCharts && <Charts appContext={appContext} />}
+      </div>
+      <div className="flex flex-col gap-3 relative z-0">
+        <div className="flex flex-col md:flex-row gap-3">
+          {(showStation || showDom) && (
+            <div className="w-full md:w-96 shrink-0 flex flex-col">
+              {showStation && <Station appContext={appContext} className="h-full" />}
+              {showDom && <Dom appContext={appContext} className="h-full" />}
+            </div>
+          )}
+          <div className="flex flex-col gap-3 flex-1 min-w-0 w-full">
+            {showForecast && <Forecast appContext={appContext} className="h-full" />}
+            {showAbout && <About appContext={appContext} className="h-full !max-w-none" />}
+          </div>
         </div>
+        {showCharts && <Charts appContext={appContext} />}
       </div>
     </div>
   );

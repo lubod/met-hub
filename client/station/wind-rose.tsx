@@ -90,17 +90,21 @@ const WindRose = observer(({ appContext }: Props) => {
     <div className="flex flex-row">
       <div className="flex flex-col py-4 basis-2/3 place-items-center">
         <div
+          className="w-full max-w-[200px] aspect-square"
           style={{ cursor: "pointer" }}
           onClick={() =>
             appContext.setMeasurementAndLoad(STATION_MEASUREMENTS_DESC.WINDDIR)
           }
         >
-          <svg width="200px" height="200px">
+          <svg
+            viewBox={`0 0 ${width} ${height}`}
+            className="w-full h-full"
+          >
             <circle
               cx={width / 2}
               cy={height / 2}
               r={radius}
-              stroke="white"
+              stroke="rgba(255,255,255,0.2)"
               fill="none"
             />
             {[0, 45, 90, 135, 180, 225, 270, 315].map((value) => (
@@ -110,7 +114,7 @@ const WindRose = observer(({ appContext }: Props) => {
                 y1={offset + 4}
                 x2={width / 2}
                 y2={offset + 10}
-                stroke="white"
+                stroke="rgba(255,255,255,0.2)"
                 transform={`rotate(${value} ${width / 2} ${width / 2})`}
               />
             ))}
@@ -138,7 +142,7 @@ const WindRose = observer(({ appContext }: Props) => {
               y={width - 10}
               fontSize="20"
               textAnchor="middle"
-              fill="white"
+              fill="rgba(255,255,255,0.45)"
             >
               S
             </text>
@@ -147,7 +151,7 @@ const WindRose = observer(({ appContext }: Props) => {
               y={width / 2 + 7}
               fontSize="20"
               textAnchor="middle"
-              fill="white"
+              fill="rgba(255,255,255,0.45)"
             >
               W
             </text>
@@ -156,7 +160,7 @@ const WindRose = observer(({ appContext }: Props) => {
               y={width / 2 + 7}
               fontSize="20"
               textAnchor="middle"
-              fill="white"
+              fill="rgba(255,255,255,0.45)"
             >
               E
             </text>
@@ -173,6 +177,7 @@ const WindRose = observer(({ appContext }: Props) => {
               [...Array(Math.floor(dirTrendMap.get(diri) / 4 + 1)).keys()].map(
                 (count) => (
                   <path
+                    key={`${diri}-${count}`}
                     d={describeArc(
                       width / 2,
                       width / 2,

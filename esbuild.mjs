@@ -2,7 +2,7 @@ import * as esbuild from "esbuild";
 import { sassPlugin } from "esbuild-sass-plugin";
 import { execSync } from "child_process";
 
-execSync("npx tailwindcss -o public/tailwind.css --minify", { stdio: "inherit" });
+execSync("npx tailwindcss -i client/styles.css -o public/tailwind.css --minify", { stdio: "inherit" });
 
 const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID
   || "370836834849-c28glrv23rmribefn7r7h9m1rori3vfh.apps.googleusercontent.com";

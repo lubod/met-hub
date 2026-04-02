@@ -275,7 +275,7 @@ router.get(
     let user: IUser | null = null;
     const result: Array<Partial<IStation>> = [];
     if (req.cookies.jwt) {
-      user = await checkAuth(req);
+      user = await checkAuth(req, true);
     }
 
     const rs = new Set<string>();
@@ -338,7 +338,7 @@ router.get(
       }
       const { measurement, stationID } = req.query as { measurement: string; stationID: string };
       const user = await checkAuth(req, true);
-      await checkAccess(user, stationID);
+      await checkAccess(user, stationID, false);
       const data = await loadData(stationID, start, end, measurement, allStationsCfg);
       res.status(200).json(data);
     } else {
@@ -351,8 +351,8 @@ router.get(
   "/api/loadRainData/station/:stationID",
   catchAsync(async (req, res) => {
     const { stationID } = req.params;
-    const user = await checkAuth(req);
-    await checkAccess(user, stationID);
+    const user = await checkAuth(req, true);
+    await checkAccess(user, stationID, false);
     const data = await loadRainData(stationID);
     res.status(200).json(data);
   }),

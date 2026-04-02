@@ -30,7 +30,7 @@ const ChartsHeader = observer(({ appContext }: Props) => (
     </div>
     <div className="flex flex-row justify-between py-2">
       <button
-        className="bg-gray2 text-light py-1.5 px-3 rounded-md hover:bg-gray3"
+        className="btn-glass"
         type="button"
         onClick={() => {
           appContext.chartsCtrl.chartsData.setPage(
@@ -43,7 +43,7 @@ const ChartsHeader = observer(({ appContext }: Props) => (
       </button>
       <ChartsRangeList chartsCtrl={appContext.chartsCtrl} />
       <button
-        className="bg-gray2 text-light rounded-md hover:bg-gray3 py-1.5 px-3"
+        className="btn-glass"
         type="button"
         onClick={() => {
           appContext.chartsCtrl.chartsData.setPage(

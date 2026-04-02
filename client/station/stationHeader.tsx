@@ -31,7 +31,7 @@ const StationHeader = observer(({ appContext }: Props) => (
         />
       </button>
     </div>
-    <div className="text-light flex flex-row">
+    <div className="flex flex-row">
       <div className="flex flex-col gap-4 basis-1/2">
         <Time
           label="Data date"

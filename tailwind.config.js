@@ -7,6 +7,8 @@ module.exports = {
       light: "#f8f9fa",
       dark: "#212529",
       black: "#000000",
+      white: "#ffffff",
+      transparent: "transparent",
       gray: "#989D9B",
       gray2: "#6c757d",
       gray3: "#5E626A",
@@ -16,8 +18,14 @@ module.exports = {
       red: "#dc3545",
       yellow: "#ffc107",
       green: "#198754",
+      cyan: "#22d3ee",
+      teal: "#14b8a6",
     },
-    extend: {},
+    extend: {
+      backdropBlur: {
+        xs: "2px",
+      },
+    },
   },
   plugins: [
     require("@headlessui/tailwindcss"),

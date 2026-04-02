@@ -38,16 +38,13 @@ class ChartsCtrl {
   }
 
   async load(range: IChartsRange, p: number, m: ISensor, stationID: string) {
-    if (!this.authData.isAuth) {
-      console.info("no auth -> no load");
-      return;
-    }
     if (
       !this.chartsData.station.public &&
-      this.authData.id !== this.chartsData.station.owner &&
-      this.authData.id !== this.authData.admin
+      (!this.authData.isAuth ||
+        (this.authData.id !== this.chartsData.station.owner &&
+          this.authData.id !== this.authData.admin))
     ) {
-      console.info("no owner -> no load");
+      console.info("no auth -> no load");
       return;
     }
     if (m == null || stationID == null) {

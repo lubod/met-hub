@@ -29,7 +29,7 @@ services:
     container_name: met-hub-store
     depends_on:
       - redis
-#      - postgres
+      - postgres
     env_file:
       - met-hub.env
     environment:
@@ -43,16 +43,16 @@ services:
       - "6380:6379"
     networks:
       - met-hub-net
-#  postgres:
-#    image: postgres
-#    container_name: postgres
-#    ports:
-#      - "15432:5432"
-#    environment:
-#      - POSTGRES_HOST_AUTH_METHOD=trust
-#    command: ["postgres", "-c", "log_statement=all"]
-#    networks:
-#      - met-hub-net
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - "15432:5432"
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    command: ["postgres", "-c", "log_statement=all"]
+    networks:
+      - met-hub-net
 
 
 #  nginx:

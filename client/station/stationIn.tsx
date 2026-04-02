@@ -9,8 +9,7 @@ type Props = {
 };
 
 const StationIn = observer(({ appContext }: Props) => (
-  <div className="flex flex-row justify-center">
-    <div className="flex flex-col gap-4">
+  <div className="flex flex-row gap-2">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.TEMPERATUREIN}
         value={appContext.cCtrl.stationData.data.tempin}
@@ -31,7 +30,6 @@ const StationIn = observer(({ appContext }: Props) => (
           appContext.setMeasurementAndLoad(STATION_MEASUREMENTS_DESC.HUMIDITYIN)
         }
       />
-    </div>
   </div>
 ));
 

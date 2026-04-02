@@ -7,10 +7,10 @@ type Props = {
 };
 
 const StringData = observer(({ label, value }: Props) => (
-  <div className="flex flex-col text-center">
-    <div className="text-sm text-gray font-normal font-sans">{label}</div>
-    <div className="text-2xl text-light font-normal font-sans">
-      {value == null ? "-" : value}
+  <div className="flex flex-col text-center gap-0.5">
+    <div className="metric-label">{label}</div>
+    <div className="text-xl text-light font-light tracking-tight">
+      {value == null ? "–" : value}
     </div>
   </div>
 ));

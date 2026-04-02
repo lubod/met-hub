@@ -18,22 +18,22 @@ const ChartsRangeList = observer(({ chartsCtrl }: StepsListProps) => (
     }}
   >
     <div className="relative">
-      <Listbox.Button className="relative w-full min-w-32 rounded-md bg-blue py-1.5 pl-3 pr-8 shadow-lg text-light hover:bg-blue2">
+      <Listbox.Button className="glass-select relative w-full min-w-32 !py-1.5 !pl-3 !pr-8">
         <span className="block truncate">
           {chartsCtrl.chartsData.range.display}
         </span>
         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
           <ChevronUpDownIcon
-            className="h-5 w-5 text-light"
+            className="h-5 w-5 text-light opacity-60"
             aria-hidden="true"
           />
         </span>
       </Listbox.Button>
-      <Listbox.Options className="absolute z-10 overflow-auto mt-1 w-full rounded-md bg-blue p-1 shadow-lg text-light">
+      <Listbox.Options className="glass-dropdown absolute z-50 overflow-auto mt-1 w-full p-1 text-light">
         {chartsRanges.map((range) => (
           <Listbox.Option
             key={range.sec}
-            className="bg-blue flex w-full items-center rounded-md p-1 hover:bg-blue2 text-light"
+            className="flex w-full items-center rounded-lg px-2 py-1.5 text-sm text-light hover:bg-white/10 cursor-pointer"
             value={range}
           >
             {range.display}

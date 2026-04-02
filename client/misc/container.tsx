@@ -3,11 +3,12 @@ import React from "react";
 
 type Props = {
   children?: any;
+  className?: string;
 };
 
-export function Container({ children }: Props) {
+export function Container({ children, className = "" }: Props) {
   return (
-    <div className="container bg-black bg-opacity-50 rounded-md p-4 max-w-sm">
+    <div className={`glass rounded-xl p-4 w-full ${className}`}>
       {children}
     </div>
   );
@@ -15,7 +16,7 @@ export function Container({ children }: Props) {
 
 export function HeaderContainer({ children }: Props) {
   return (
-    <div className="container bg-black bg-opacity-50 rounded-md p-4">
+    <div className="glass-header rounded-xl px-4 py-3">
       {children}
     </div>
   );

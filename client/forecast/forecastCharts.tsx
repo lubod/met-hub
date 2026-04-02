@@ -14,6 +14,14 @@ import ForecastCtrl from "./forecastCtrl";
 import Myhr from "../misc/myhr";
 import ForecastStepsList from "./forecastStepList";
 
+const FORECAST_COLORS: Record<string, string> = {
+  gray2: "#6c757d",
+  orange: "#fd7e14",
+  blue: "#0d6efd",
+  light: "#f8f9fa",
+  purple: "#6f42c1",
+};
+
 type CellProps = {
   value: string;
   color: string;
@@ -23,20 +31,19 @@ type CellProps = {
 };
 
 function Cell({ value, color, maxLimit1, maxLimit2, maxLimit3 }: CellProps) {
-  let bg = "";
-  if (maxLimit1 != null && parseFloat(value) > maxLimit1) {
-    bg = `bg-${color} bg-opacity-10`;
-  }
-  if (maxLimit2 != null && parseFloat(value) > maxLimit2) {
-    bg = `bg-${color} bg-opacity-25`;
-  }
-  if (maxLimit3 != null && parseFloat(value) > maxLimit3) {
-    bg = `bg-${color} bg-opacity-50`;
-  }
+  const hex = FORECAST_COLORS[color] ?? "#ffffff";
+  let bgOpacity = 0;
+  if (maxLimit1 != null && parseFloat(value) > maxLimit1) bgOpacity = 0.10;
+  if (maxLimit2 != null && parseFloat(value) > maxLimit2) bgOpacity = 0.25;
+  if (maxLimit3 != null && parseFloat(value) > maxLimit3) bgOpacity = 0.50;
 
   return (
     <div
-      className={`text-center text-light border-s border-${color} ${bg} basis-full text-sm pb-3 min-w-11`}
+      className="text-center text-light border-s basis-full text-sm pb-3 min-w-11"
+      style={{
+        borderLeftColor: hex,
+        backgroundColor: bgOpacity > 0 ? `${hex}${Math.round(bgOpacity * 255).toString(16).padStart(2, "0")}` : undefined,
+      }}
     >
       {value}
     </div>

@@ -18,7 +18,7 @@ const Header = observer(({ appContext }: Props) => (
   // console.info("Header render");
 
   <HeaderContainer>
-    <div className="flex flex-row justify-between">
+    <div className="flex flex-row flex-wrap justify-between gap-2">
       <Time
         label="Current time"
         time={appContext.headerCtrl.headerData.ctime}
@@ -27,12 +27,12 @@ const Header = observer(({ appContext }: Props) => (
       />
       {appContext.headerCtrl.headerData.isExternalID === false &&
         appContext.headerCtrl.headerData.allStations != null && (
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center min-w-0">
             <HeaderStationsList appContext={appContext} />
           </div>
         )}
       {appContext.headerCtrl.headerData.isExternalID === true && (
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col justify-center min-w-0">
           <StringData
             label=""
             value={appContext.headerCtrl.headerData.station.place}
@@ -40,13 +40,13 @@ const Header = observer(({ appContext }: Props) => (
         </div>
       )}
       {appContext.headerCtrl.headerData.isExternalID === false && (
-        <nav className="flex flex-col justify-center">
+        <nav className="flex flex-col justify-center shrink-0">
           <HeaderModal appContext={appContext} />
           <HeaderDropdown appContext={appContext} />
         </nav>
       )}
       {appContext.headerCtrl.headerData.isExternalID === true && (
-        <div>
+        <div className="shrink-0">
           <a href="https://www.met-hub.com">
             <StringData label="Powered by" value="www.met-hub.com" />
           </a>

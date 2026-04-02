@@ -29,7 +29,7 @@ export async function loadData(
   measurement: string,
   allStationsCfg: AllStationsCfg,
 ) {
-  if (!/^[0-9a-f]{8}$/.test(stationID)) {
+  if (!/^[a-z0-9][a-z0-9_-]*$/i.test(stationID) || stationID.length > 64) {
     throw new Error(`Invalid stationID: ${stationID}`);
   }
   const diffMinutes = (end.getTime() - start.getTime()) / 1000 / 60;
@@ -105,7 +105,7 @@ export async function loadData(
 }
 
 export async function loadRainData(stationID: string) {
-  if (!/^[0-9a-f]{8}$/.test(stationID)) {
+  if (!/^[a-z0-9][a-z0-9_-]*$/i.test(stationID) || stationID.length > 64) {
     throw new Error(`Invalid stationID: ${stationID}`);
   }
   const client = await pool.connect();

@@ -25,17 +25,17 @@ const StationOutIn = observer(({ appContext }: Props) => (
                 onChange={(e) => {
                   appContext.cCtrl.stationData.setInData(e);
                 }}
-                className="bg-gray relative inline-flex h-[16px] w-[32px] shrink-0 cursor-pointer rounded-full ease-in-out"
+                className="bg-white/20 border border-white/20 relative inline-flex h-[16px] w-[32px] shrink-0 cursor-pointer rounded-full ease-in-out"
               >
                 {!appContext.cCtrl.stationData.inData && (
-                  <span className="translate-x-0 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-blue shadow-lg ring-0 transition duration-200 ease-in-out" />
+                  <span className="translate-x-0 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-cyan shadow-lg ring-0 transition duration-200 ease-in-out" />
                 )}
                 {appContext.cCtrl.stationData.inData && (
-                  <span className="translate-x-4 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-blue shadow-lg ring-0 transition duration-200 ease-in-out" />
+                  <span className="translate-x-4 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-cyan shadow-lg ring-0 transition duration-200 ease-in-out" />
                 )}
               </Switch>
             </div>
-            <div className="text-md text-light font-normal font-sans text-center">
+            <div className="metric-label">
               OUT / IN
             </div>
           </div>

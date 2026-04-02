@@ -124,7 +124,7 @@ export class STATION_MEASUREMENTS_DESC {
     label: "Humidity",
     col2: "",
     chartType: "",
-    color: MY_COLORS.blue,
+    color: MY_COLORS.cyan,
     id: propName(station).humidity,
     agg: "avg",
   };

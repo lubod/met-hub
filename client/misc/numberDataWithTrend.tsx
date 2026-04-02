@@ -14,10 +14,19 @@ type Props = {
   sensor: ISensor;
 };
 
+const accentClass: Record<string, string> = {
+  "#fd7e14": "metric-card-temp",
+  "#22d3ee": "metric-card-humid",
+  "#6f42c1": "metric-card-press",
+  "#ffc107": "metric-card-solar",
+  "#0d6efd": "metric-card-rain",
+  "#14b8a6": "metric-card-wind",
+};
+
 const NumberDataWithTrend = observer(
   ({ value, trend, old, onClick, sensor }: Props) => (
     <div
-      style={{ cursor: "pointer" }}
+      className={`metric-card ${accentClass[sensor.color] ?? ""}`}
       onClick={onClick}
     >
       <NumberData
@@ -26,12 +35,14 @@ const NumberDataWithTrend = observer(
         unit={sensor.unit}
         fix={sensor.fix}
       />
-      <Trend
-        data={trend}
-        range={sensor.range}
-        couldBeNegative={sensor.couldBeNegative}
-        color={sensor.color}
-      />
+      <div className="trend-wrap">
+        <Trend
+          data={trend}
+          range={sensor.range}
+          couldBeNegative={sensor.couldBeNegative}
+          color={sensor.color}
+        />
+      </div>
     </div>
   ),
 );

@@ -7,7 +7,7 @@ type Props = {
 
 function Heading({ children }: Props) {
   return (
-    <div className="text-4xl text-blue font-normal font-sans text-center">
+    <div className="text-3xl font-light tracking-tight text-white/90 text-center">
       {children}
     </div>
   );

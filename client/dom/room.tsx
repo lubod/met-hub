@@ -41,37 +41,37 @@ const Room = observer(
   }: RoomProps) => (
     <div className="flex flex-col gap-5">
       <div className="flex flex-row justify-center text-light">{room}</div>
-      <div className="flex flex-row">
-        <div className="flex flex-col basis-1/4">
+      <div className="flex flex-row flex-wrap gap-y-4">
+        <div className="flex flex-col basis-1/2 md:basis-1/4">
           <NumberDataWithTrend
-            sensor={DOM_SENSORS_DESC.ROOM}
+            sensor={{ ...DOM_SENSORS_DESC.ROOM, label: "Air" }}
             value={air}
             trend={airTrend}
             onClick={onClickAir}
             old={old}
           />
         </div>
-        <div className="flex flex-col basis-1/4">
+        <div className="flex flex-col basis-1/2 md:basis-1/4">
           <NumberDataWithTrend
-            sensor={DOM_SENSORS_DESC.ROOM}
+            sensor={{ ...DOM_SENSORS_DESC.ROOM, label: "Floor" }}
             value={floor}
             trend={floorTrend}
             onClick={onClickFloor}
             old={old}
           />
         </div>
-        <div className="flex flex-col basis-1/4">
+        <div className="flex flex-col basis-1/2 md:basis-1/4">
           <NumberDataAlone
-            label={DOM_SENSORS_DESC.ROOM.label}
+            label="Req"
             value={required}
             unit={DOM_SENSORS_DESC.ROOM.unit}
             fix={DOM_SENSORS_DESC.ROOM.fix}
             old={old}
           />
         </div>
-        <div className="flex flex-col basis-1/4">
+        <div className="flex flex-col basis-1/2 md:basis-1/4">
           <StringData
-            label=""
+            label="HSL"
             value={`${heat != null ? Number(heat) : ""}${
               summer != null ? Number(summer) : ""
             }${low != null ? Number(low) : ""}`}

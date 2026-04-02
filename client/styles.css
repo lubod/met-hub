@@ -2,3 +2,194 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* ── Animated background ─────────────────────────────────────── */
+body {
+  background: linear-gradient(135deg, #0d0d1a 0%, #0f1a35 35%, #1a0d2e 65%, #0a0d1a 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 25s ease infinite;
+  min-height: 100vh;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Glassmorphism cards ─────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.glass-header {
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Metric cards (clickable sensor tiles) ───────────────────── */
+.metric-card {
+  border-radius: 0.625rem;
+  padding: 0.5rem 0.625rem;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+
+.metric-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+/* per-sensor accent glow on hover */
+.metric-card-temp:hover  { box-shadow: 0 0 18px rgba(253, 126, 20, 0.25); }
+.metric-card-humid:hover { box-shadow: 0 0 18px rgba(34, 211, 238, 0.25); }
+.metric-card-press:hover { box-shadow: 0 0 18px rgba(111, 66, 193, 0.25); }
+.metric-card-solar:hover { box-shadow: 0 0 18px rgba(255, 193, 7, 0.25);  }
+.metric-card-rain:hover  { box-shadow: 0 0 18px rgba(13, 110, 253, 0.25); }
+.metric-card-wind:hover  { box-shadow: 0 0 18px rgba(20, 184, 166, 0.25); }
+
+/* ── Section title chips ─────────────────────────────────────── */
+.section-title {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(248, 249, 250, 0.45);
+}
+
+/* ── Primary metric value ────────────────────────────────────── */
+.metric-value {
+  font-size: 1.75rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: #f8f9fa;
+}
+
+.metric-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(152, 157, 155, 0.8);
+}
+
+/* ── Divider ─────────────────────────────────────────────────── */
+.glass-divider {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin: 0.75rem 0;
+}
+
+/* ── Trend sparkline wrapper ─────────────────────────────────── */
+.trend-wrap {
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.metric-card:hover .trend-wrap {
+  opacity: 1;
+}
+
+/* ── Chart tooltip ───────────────────────────────────────────── */
+.chart-tooltip {
+  background: rgba(10, 10, 26, 0.85) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  color: #f8f9fa;
+  padding: 6px 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* ── Recharts overrides ──────────────────────────────────────── */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255,255,255,0.05) !important;
+}
+
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+/* ── Button base ─────────────────────────────────────────────── */
+.btn-glass {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  color: #f8f9fa;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: background 0.15s, box-shadow 0.15s;
+  cursor: pointer;
+}
+.btn-glass:hover {
+  background: rgba(255,255,255,0.1);
+  box-shadow: 0 0 12px rgba(255,255,255,0.08);
+}
+
+/* ── Select / Listbox ────────────────────────────────────────── */
+.glass-select {
+  background: rgba(13,110,253,0.15);
+  border: 1px solid rgba(13,110,253,0.35);
+  border-radius: 0.5rem;
+  color: #f8f9fa;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.glass-select:hover {
+  background: rgba(13,110,253,0.22);
+  border-color: rgba(13,110,253,0.55);
+}
+
+/* ── Text inputs ─────────────────────────────────────────────── */
+.glass-input {
+  background: rgba(13,110,253,0.12);
+  border: 1px solid rgba(13,110,253,0.3);
+  border-radius: 0.5rem;
+  color: #f8f9fa;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.glass-input:focus {
+  border-color: rgba(13,110,253,0.65);
+  background: rgba(13,110,253,0.2);
+}
+
+/* ── Dropdown panels (Listbox / Menu options) ────────────────── */
+.glass-dropdown {
+  background: rgba(8, 12, 30, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.625rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* ── Forecast table cells ────────────────────────────────────── */
+.fc-cell {
+  min-width: 52px;
+  text-align: center;
+  padding: 4px 2px;
+  font-size: 0.75rem;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }

@@ -6,11 +6,7 @@ type Props = {
 };
 
 function Text({ children }: Props) {
-  return (
-    <div className="text-md text-light font-normal font-sans text-center">
-      {children}
-    </div>
-  );
+  return <div className="section-title">{children}</div>;
 }
 
 export default Text;

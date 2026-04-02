@@ -49,12 +49,12 @@ const HeaderModal = observer(({ appContext }: Props) => {
     >
       <Dialog
         as="div"
-        className="relative z-10 bg-black text-light"
+        className="relative z-[100] text-light"
         onClose={() => appContext.headerCtrl.headerData.setShowModal(false)}
       >
-        <div className="fixed inset-0 bg-dark max-h-screen overflow-auto">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm max-h-screen overflow-auto">
           <div className="flex flex-row justify-center p-4 text-center">
-            <Dialog.Panel className="transform rounded-2xl p-6 text-left align-middle shadow-xl transition-all">
+            <Dialog.Panel className="glass transform rounded-2xl p-6 text-left align-middle shadow-xl transition-all max-w-2xl w-full">
               <Dialog.Title as="div" className="text-lg text-light">
                 Add new station
               </Dialog.Title>
@@ -73,7 +73,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                           type="text"
                           id="lat"
                           name="lat"
-                          className="bg-blue text-light p-1 rounded-md"
+                          className="glass-input w-full"
                           onChange={(e) => setLat(e.target.value)}
                         />
                       </div>
@@ -83,7 +83,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                           type="text"
                           id="lon"
                           name="lon"
-                          className="bg-blue text-light p-1 rounded-md"
+                          className="glass-input w-full"
                           onChange={(e) => setLon(e.target.value)}
                         />
                       </div>
@@ -95,7 +95,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                           type="text"
                           id="place"
                           name="place"
-                          className="bg-blue text-light p-1 rounded-md"
+                          className="glass-input w-full"
                           onChange={(e) => setPlace(e.target.value)}
                         />
                       </div>
@@ -104,7 +104,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                         <select
                           id="type"
                           name="type"
-                          className="bg-blue text-light p-1 rounded-md"
+                          className="glass-select w-full"
                           onChange={(e) => setType(e.target.value)}
                         >
                           <option value={StationType.GoGenMe3900}>GoGen Me 3900</option>
@@ -114,7 +114,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                     <div className="flex flex-row gap-4">
                       <button
                         type="button"
-                        className="bg-blue text-light flex items-center rounded-md p-1 hover:bg-blue2"
+                        className="btn-glass"
                         onClick={() =>
                           appContext.headerCtrl.headerData.setShowModal(false)
                         }
@@ -123,7 +123,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                       </button>
                       <button
                         type="button"
-                        className="bg-blue text-light flex items-center rounded-md p-1 hover:bg-blue2"
+                        className="btn-glass"
                         onClick={(e) => submit(e)}
                       >
                         Submit
@@ -158,7 +158,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                         </div>
                         <button
                           type="button"
-                          className="bg-blue text-light flex w-12 items-center rounded-md p-1 hover:bg-blue2"
+                          className="btn-glass"
                           onClick={() =>
                             appContext.headerCtrl.headerData.setShowModal(false)
                           }

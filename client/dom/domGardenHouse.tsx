@@ -12,8 +12,8 @@ type Props = {
 const DomGardenHouse = observer(({ appContext }: Props) => (
   <div className="flex flex-col gap-4">
     <Text>GARDEN HOUSE</Text>
-    <div className="flex flex-row gap-4">
-      <div className="flex flex-col basis-1/4">
+    <div className="flex flex-row flex-wrap gap-y-4">
+      <div className="flex flex-col basis-1/2 md:basis-1/4">
         <NumberDataWithTrend
           sensor={DOM_SENSORS_DESC.TEMPERATURE}
           value={appContext.cCtrl.domData.data.temp}
@@ -24,7 +24,7 @@ const DomGardenHouse = observer(({ appContext }: Props) => (
           }
         />
       </div>
-      <div className="flex flex-col basis-1/4">
+      <div className="flex flex-col basis-1/2 md:basis-1/4">
         <NumberDataWithTrend
           sensor={DOM_SENSORS_DESC.HUMIDITY}
           value={appContext.cCtrl.domData.data.humidity}
@@ -35,7 +35,7 @@ const DomGardenHouse = observer(({ appContext }: Props) => (
           }
         />
       </div>
-      <div className="flex flex-col basis-1/4">
+      <div className="flex flex-col basis-1/2 md:basis-1/4">
         <NumberDataWithTrend
           sensor={DOM_SENSORS_DESC.RAIN}
           value={Number(appContext.cCtrl.domData.data.rain)}
@@ -46,7 +46,7 @@ const DomGardenHouse = observer(({ appContext }: Props) => (
           }
         />
       </div>
-      <div className="flex flex-col basis-1/4">
+      <div className="flex flex-col basis-1/2 md:basis-1/4">
         <NumberDataWithTrend
           sensor={DOM_SENSORS_DESC.TARIF}
           value={appContext.cCtrl.domData.data.tarif}

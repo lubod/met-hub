@@ -95,8 +95,8 @@ app.use(router);
 
 // eslint-disable-next-line no-unused-vars
 app.use((err: AppError, req: Request, res: Response, next: NextFunction) => {
-  console.error("ERROR:", err.code, err.msg);
-  res.status(err.code || 500).json({ code: err.code, msg: err.msg });
+  console.error("ERROR:", err.code, err.msg ?? err.message, err.stack);
+  res.status(err.code || 500).json({ code: err.code, msg: err.msg ?? err.message });
 });
 
 const httpServer = http.createServer(app);

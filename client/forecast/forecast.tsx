@@ -8,10 +8,11 @@ import { AppContext } from "..";
 
 type Props = {
   appContext: AppContext;
+  className?: string;
 };
 
-const Forecast = observer(({ appContext }: Props) => (
-  <Container>
+const Forecast = observer(({ appContext, className }: Props) => (
+  <Container className={className}>
     <ForecastHeader appContext={appContext} />
     <Myhr />
     <ForecastCharts
@@ -24,7 +25,7 @@ const Forecast = observer(({ appContext }: Props) => (
     <div className="flex flex-row justify-center text-sm text-gray gap-1">
       <div>Data & icons source:</div>
       <a
-        className="text-blue hover:text-blue2 underline"
+        className="text-cyan/70 hover:text-cyan underline"
         href="https://www.met.no/en"
       >
         Norwegian Meteo Institute

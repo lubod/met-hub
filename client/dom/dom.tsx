@@ -9,16 +9,17 @@ import DomRoomsUpDown from "./domRoomsUpDown";
 
 type DomProps = {
   appContext: AppContext;
+  className?: string;
 };
 
-const Dom = observer(({ appContext }: DomProps) => (
+const Dom = observer(({ appContext, className }: DomProps) => (
   // console.info(
   //   "dom render",
   //   appContext.authCtrl.authData.isAuth,
   //   appContext.cCtrl.domData.oldData,
   // );
 
-  <Container>
+  <Container className={className}>
     <DomHeader appContext={appContext} />
     <Myhr />
     <DomGardenHouse appContext={appContext} />

@@ -10,7 +10,7 @@ type Props = {
 const ChartsMap = observer(({ appContext }: Props) => {
   console.info("render map", appContext.chartsCtrl.chartsData.station);
   return (
-    <div id="map" className="flex flex-col w-full h-52">
+    <div id="map" className="flex flex-col w-full h-52 rounded-xl overflow-hidden">
       <MapContainer
         center={[48.6776, 19.699]}
         zoom={6}

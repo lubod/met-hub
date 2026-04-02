@@ -13,9 +13,10 @@ import StationOutIn from "./stationOutIn";
 
 type Props = {
   appContext: AppContext;
+  className?: string;
 };
 
-const Station = observer(({ appContext }: Props) => (
+const Station = observer(({ appContext, className }: Props) => (
   /* console.info( // todo
     "station render",
     appContext.authCtrl.authData.isAuth,
@@ -23,7 +24,7 @@ const Station = observer(({ appContext }: Props) => (
     appContext.cCtrl.stationData.station
   ); */
 
-  <Container>
+  <Container className={className}>
     <StationHeader appContext={appContext} />
     <Myhr />
     <StationOutIn appContext={appContext} />

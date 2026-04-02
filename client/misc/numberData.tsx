@@ -9,12 +9,13 @@ type Props = {
 
 function NumberData({ label, value, unit, fix }: Props) {
   return (
-    <div className="flex flex-col text-center">
-      <div className="text-sm text-gray font-normal font-sans">
-        {label} {unit}
-      </div>
-      <div className="text-2xl text-light font-normal font-sans">
-        {value == null ? "-" : value.toFixed(fix)}
+    <div className="flex flex-col text-center gap-0.5">
+      <div className="metric-label">{label}</div>
+      <div className="metric-value">
+        {value == null ? "–" : value.toFixed(fix)}
+        {value != null && unit && (
+          <span className="text-sm font-normal ml-1 opacity-60">{unit}</span>
+        )}
       </div>
     </div>
   );

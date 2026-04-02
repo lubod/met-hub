@@ -29,12 +29,8 @@ const Trend = observer(({ data, range, couldBeNegative, color }: Props) => {
         // eslint-disable-next-line no-multi-assign
         max = min = sum = data[i];
       } else {
-        if (data[i] > max) {
-          max = data[i];
-        }
-        if (data[i] < min) {
-          min = data[i];
-        }
+        if (data[i] > max) max = data[i];
+        if (data[i] < min) min = data[i];
         sum += data[i];
       }
     }
@@ -45,36 +41,38 @@ const Trend = observer(({ data, range, couldBeNegative, color }: Props) => {
       domainMin = min;
       domainMax = max;
     }
-
     if (domainMin < 0 && couldBeNegative === false) {
       domainMin = 0;
     }
-
     for (let i = 0; i < data.length; i += 1) {
       chdata.push({ minute: i, value: data[i] });
     }
   }
 
-  // console.info("render trend");
+  const gradId = `tg-${color.replace("#", "")}`;
+
   return (
-    <div className="flex justify-center hover:brightness-50">
+    <div className="flex justify-center trend-wrap">
       <AreaChart
-        width={60}
-        height={25}
+        width={80}
+        height={32}
         data={chdata}
-        margin={{
-          top: 0,
-          right: 0,
-          left: 0,
-          bottom: 9,
-        }}
+        margin={{ top: 2, right: 0, left: 0, bottom: 0 }}
       >
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity={0.55} />
+            <stop offset="100%" stopColor={color} stopOpacity={0.0} />
+          </linearGradient>
+        </defs>
         <Area
           type="monotone"
           dataKey="value"
           stroke={color}
-          fill={color}
+          strokeWidth={1.5}
+          fill={`url(#${gradId})`}
           isAnimationActive={false}
+          dot={false}
         />
         <YAxis hide type="number" domain={[domainMin, domainMax]} />
       </AreaChart>
