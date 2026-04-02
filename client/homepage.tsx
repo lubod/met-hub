@@ -39,7 +39,7 @@ const HomePage = observer(({ appContext }: Props) => {
       <div className="flex flex-col gap-3 relative z-0">
         <div className="flex flex-col md:flex-row gap-3">
           {(showStation || showDom) && (
-            <div className="w-full md:w-96 shrink-0 flex flex-col">
+            <div className="w-full md:w-[480px] shrink-0 flex flex-col">
               {showStation && <Station appContext={appContext} className="h-full" />}
               {showDom && <Dom appContext={appContext} className="h-full" />}
             </div>
