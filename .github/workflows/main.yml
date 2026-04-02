@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "24.x"
-      - run: npm install
+      - run: npm install --legacy-peer-deps
       - run: npx tailwindcss -o esdist/fe/tailwind.css
       - run: NODE_OPTIONS="--max-old-space-size=4096" node esbuild.mjs
       - run: echo "docker build."

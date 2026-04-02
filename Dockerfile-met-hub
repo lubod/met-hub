@@ -1,7 +1,7 @@
 FROM node:20-alpine AS met-hub
 WORKDIR /app
 COPY ./package*.json /app/
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY esdist/be/main.js /app/
 COPY esdist/fe/* /app/html/
 COPY public/* /app/html/

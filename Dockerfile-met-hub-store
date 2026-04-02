@@ -1,6 +1,6 @@
 FROM node:20-alpine AS met-hub-store
 WORKDIR /app
 COPY ./package*.json /app/
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY esdist/be/store.js /app/
 CMD ["node", "/app/store.js"]

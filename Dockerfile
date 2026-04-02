@@ -1,7 +1,7 @@
 FROM node:20-alpine AS met-hub
 WORKDIR /app
 COPY ./package*.json .npmrc /app/
-RUN npm install --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps
 COPY esdist/be/main.js /app/
 COPY esdist/fe/* /app/html/
 COPY public/* /app/html/
@@ -17,7 +17,7 @@ CMD ["node", "/app/main.js"]
 FROM node:20-alpine AS met-hub-store
 WORKDIR /app
 COPY ./package*.json .npmrc /app/
-RUN npm install --omit=dev
+RUN npm install --omit=dev --legacy-peer-deps
 COPY esdist/be/store.js /app/
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup && \
     chown -R appuser:appgroup /app
