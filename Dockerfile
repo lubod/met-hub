@@ -1,4 +1,4 @@
-FROM node:20-alpine AS met-hub
+FROM node:24-alpine AS met-hub
 WORKDIR /app
 COPY ./package*.json .npmrc /app/
 RUN npm install --omit=dev --legacy-peer-deps
@@ -14,7 +14,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD wget -qO- http://localhost:8089/health || exit 1
 CMD ["node", "/app/main.js"]
 
-FROM node:20-alpine AS met-hub-store
+FROM node:24-alpine AS met-hub-store
 WORKDIR /app
 COPY ./package*.json .npmrc /app/
 RUN npm install --omit=dev --legacy-peer-deps

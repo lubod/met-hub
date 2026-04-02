@@ -23,7 +23,7 @@ esbuild.build({
   platform: "node",
   outdir: "esdist/test",
   external: ["pg-native"],
-  target: "node20",
+  target: "node24",
   minify: true,
   define,
 });
@@ -46,7 +46,7 @@ esbuild.build({
   platform: "node",
   outdir: "esdist/be",
   external: ["pg-native"],
-  target: "node20",
+  target: "node24",
   minify: true,
   define,
 });
