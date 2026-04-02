@@ -45,10 +45,7 @@ class StationGoGenMe3900 extends StationCommon {
     }
 
     //    console.log(data)
-    const timestamp = new Date(`${data.dateutc} UTC`);
-    if (isNaN(timestamp.getTime())) {
-      throw new Error(`Invalid dateutc: ${data.dateutc}`);
-    }
+    const timestamp = StationCommon.parseDate(data.dateutc);
     const decoded: IStationData = {
       timestamp,
       tempin: round((5 / 9) * (data.tempinf - 32), 1),

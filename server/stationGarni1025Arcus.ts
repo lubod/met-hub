@@ -41,10 +41,7 @@ export default class StationGarni1025Arcus extends StationCommon {
     const TO_HPA = 33.8639;
 
     //    console.log(data)
-    const timestamp = new Date(`${data.dateutc} UTC`);
-    if (isNaN(timestamp.getTime())) {
-      throw new Error(`Invalid dateutc: ${data.dateutc}`);
-    }
+    const timestamp = StationCommon.parseDate(data.dateutc);
     const decoded: IStationData = {
       timestamp,
       tempin: round((5 / 9) * (data.indoortempf - 32), 1),

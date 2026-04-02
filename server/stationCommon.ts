@@ -70,6 +70,17 @@ export default abstract class StationCommon implements IMeasurement {
     return this.cfg.KAFKA_KEY;
   }
 
+  static parseDate(dateutc: string): Date {
+    if (!dateutc || dateutc === "now") {
+      return new Date();
+    }
+    const timestamp = new Date(`${dateutc} UTC`);
+    if (isNaN(timestamp.getTime())) {
+      return new Date();
+    }
+    return timestamp;
+  }
+
   transformTrendData(data: any) {
     const tmp = {} as IStationTrendData;
     tmp.timestamp = [];
