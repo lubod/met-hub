@@ -5,7 +5,7 @@ import { IStationData } from "../common/stationModel";
 const PG_PORT = parseInt(process.env.PG_PORT, 10) || 5432;
 const PG_PASSWORD = process.env.PG_PASSWORD || "postgres";
 const PG_DB = process.env.PG_DB || "postgres";
-const PG_HOST = process.env.PG_HOST || "192.168.1.199";
+const PG_HOST = process.env.PG_HOST || "localhost";
 const PG_USER = process.env.PG_USER || "postgres";
 
 // eslint-disable-next-line import/prefer-default-export

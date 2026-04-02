@@ -159,7 +159,7 @@ export class GoGenMe3900Simulator extends CSimulator {
 
   async postData(data: any) {
     try {
-      await axios.post("http://localhost:8089/setData/gJr6xKyg", data, {
+      await axios.post(`http://localhost:8089/setData/${data.stationID}`, data, {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },

@@ -2,6 +2,7 @@
 /* eslint-disable import/no-import-module-exports */
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { ErrorBoundary } from "./errorBoundary";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import ReconnectingEventSource from "reconnecting-eventsource";
@@ -32,13 +33,13 @@ export class AppContext {
 
   forecastCtrl: ForecastCtrl;
 
-  listener = (e: any) => {
-    const [data, type] = e.data.split(":");
-    // console.info("EVENT ", data, type);
+  listener = (e: MessageEvent) => {
+    const parts = (e.data as string).split(":");
+    if (parts.length < 2) return;
+    const [data, type] = parts;
     if (data === this.cCtrl.getStationID()) {
-      console.info("SSE ME");
       if (type === "raw") {
-        this.cCtrl.fetchData(); // todo
+        this.cCtrl.fetchData();
       } else if (type === "minute") {
         this.cCtrl.fetchTrendData();
       }
@@ -60,8 +61,11 @@ export class AppContext {
     // const source = new EventSource(`/events`);
     const source = new ReconnectingEventSource("/events");
     source.addEventListener("message", this.listener);
+    source.addEventListener("open", () => {
+      console.info("SSE connected");
+    });
     source.addEventListener("error", (e) => {
-      console.error("Error: ", e);
+      console.warn("SSE error/reconnecting:", e);
     });
   }
 
@@ -104,14 +108,10 @@ export class AppContext {
     if (externalStation != null && externalStation.public) {
       this.setStation(externalStation);
       this.headerCtrl.headerData.setIsExternalID(true);
-    } else if (cfg != null) {
-      let lastStation: IStation = AllStationsCfgClient.getStationByID(
-        localStorage.getItem("lastStationID"),
-      );
-      if (lastStation == null) {
-        // eslint-disable-next-line prefer-destructuring
-        lastStation = cfg[0];
-      }
+    } else if (cfg != null && cfg.length > 0) {
+      const lastStation =
+        AllStationsCfgClient.getStationByID(localStorage.getItem("lastStationID"))
+        ?? cfg[0];
       this.setStation(lastStation);
     } else {
       this.setStation(null);
@@ -129,11 +129,13 @@ export class AppContext {
     const appContainer = document.getElementById("app");
     const root = createRoot(appContainer); // createRoot(container!) if you use TypeScript
     root.render(
-      <div className="App">
-        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-          <App appContext={this} />
-        </GoogleOAuthProvider>
-      </div>,
+      <ErrorBoundary>
+        <div className="App">
+          <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+            <App appContext={this} />
+          </GoogleOAuthProvider>
+        </div>
+      </ErrorBoundary>,
     );
   }
 }

@@ -8,7 +8,7 @@ class ChartsCtrl {
 
   authData: AuthData;
 
-  timer: any;
+  timer: ReturnType<typeof setInterval> | null = null;
 
   constructor(authData: AuthData) {
     this.authData = authData;
@@ -16,15 +16,17 @@ class ChartsCtrl {
   }
 
   setStation(station: IStation) {
+    if (this.timer != null) {
+      clearInterval(this.timer);
+    }
     this.chartsData.setStation(station);
     this.reload();
-  }
-
-  start() {
     this.timer = setInterval(() => {
       this.reload();
     }, 60000);
   }
+
+  start() {}
 
   async reload() {
     this.load(
@@ -41,6 +43,7 @@ class ChartsCtrl {
       return;
     }
     if (
+      !this.chartsData.station.public &&
       this.authData.id !== this.chartsData.station.owner &&
       this.authData.id !== this.authData.admin
     ) {
@@ -52,6 +55,7 @@ class ChartsCtrl {
       return;
     }
     try {
+      this.chartsData.setLoading(true);
       const o = range.sec * 1000;
       // eslint-disable-next-line no-promise-executor-return
       // return new Promise((resolve) => setTimeout(resolve, 2000));
@@ -71,14 +75,14 @@ class ChartsCtrl {
       });
 
       if (!response.ok) {
-        this.chartsData.setNewData(true, [], new CData());
+        this.chartsData.setNewData(false, [], new CData());
         const message = `An error has occured: ${response.status}`;
         throw new Error(message);
       }
 
       const newData = await response.json();
       if (newData == null) {
-        this.chartsData.setNewData(true, [], new CData());
+        this.chartsData.setNewData(false, [], new CData());
         return;
       }
       const min = newData.stats.min ? parseFloat(newData.stats.min) : null;
@@ -91,12 +95,12 @@ class ChartsCtrl {
         ? parseFloat(newData.stats.avg)
         : null;
 
-      const total: number = null;
+      const total: number | null = null;
       // const y = m.col;
       const y2 = m.col2;
-      const sum = total;
-      let yDomainMin = Math.floor(min - (max / 100) * 5);
-      const yDomainMax = Math.ceil(max + (max / 100) * 5);
+      const sum: number | null = total;
+      let yDomainMin = min !== null && max !== null ? Math.floor(min - (max / 100) * 5) : 0;
+      const yDomainMax = min !== null && max !== null ? Math.ceil(max + (max / 100) * 5) : 0;
       //      const last = newData.length > 0 ? newData[newData.length - 1][y] : null;
 
       if (y2 !== "") {

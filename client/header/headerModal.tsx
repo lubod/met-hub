@@ -4,6 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react";
 import React, { Fragment, useState } from "react";
 import { AppContext } from "..";
+import { StationType } from "../../common/stationType";
 import Myhr from "../misc/myhr";
 
 type Props = {
@@ -14,7 +15,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
   const [lat, setLat] = useState("");
   const [lon, setLon] = useState("");
   const [place, setPlace] = useState("");
-  const [type, setType] = useState("GoGen Me 3900");
+  const [type, setType] = useState(StationType.GoGenMe3900);
   const [error, setError] = useState("");
   const [step2, setStep2] = useState(false);
   const [id, setId] = useState("");
@@ -106,7 +107,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                           className="bg-blue text-light p-1 rounded-md"
                           onChange={(e) => setType(e.target.value)}
                         >
-                          <option value="GoGen Me 3900">GoGen Me 3900</option>
+                          <option value={StationType.GoGenMe3900}>GoGen Me 3900</option>
                         </select>
                       </div>
                     </div>

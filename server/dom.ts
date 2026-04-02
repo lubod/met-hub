@@ -41,8 +41,9 @@ export class Dom implements IMeasurement {
     return this.cfg.STATION_ID;
   }
 
-  aggregateRawData2Minute(minute: number, data: Array<IDomData>): any {
-    const deepCopy = cloneDeep(data[0]); // todo
+  aggregateRawData2Minute(minute: number, data: Array<IDomData>): IDomData | null {
+    if (data.length === 0) return null;
+    const deepCopy = cloneDeep(data[0]);
     const date = new Date(deepCopy.timestamp);
     date.setUTCSeconds(0);
     date.setUTCMilliseconds(0);
@@ -177,14 +178,4 @@ export class Dom implements IMeasurement {
     return { date, decoded, toStore };
   }
 
-  aggregateMinuteData(data: any) {
-    const map = new Map();
-    const deepCopy = cloneDeep(JSON.parse(data));
-    const date = new Date(deepCopy.timestamp);
-    date.setUTCSeconds(0);
-    deepCopy.timestamp = date.toISOString();
-    map.set(date.getTime(), deepCopy);
-    console.info("Aggregated dom minute", deepCopy.timestamp);
-    return map;
-  }
 }

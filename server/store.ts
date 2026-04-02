@@ -1,50 +1,48 @@
 import { createClient, commandOptions } from "redis";
-import { exit } from "process";
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { RedisCommandArgument } from "@redis/client/dist/lib/commands";
 import { AllStationsCfg, IStation } from "../common/allStationsCfg";
 import { store } from "./db";
+import redisClient from "./redisClient";
 
 const client = createClient({
-  url: "redis://localhost:6379",
+  url: process.env.REDIS_URL ?? "redis://localhost:6379",
 });
 
-const currentId = "0"; // Start at lowest possible stream ID
+client.on("error", (err) => console.error("Store Redis Client Error", err));
 
 async function main(stations: Map<string, IStation>) {
   await client.connect();
+
+  let currentId = "0"; // Start at lowest possible stream ID
+  let retryDelay = 1000; // Start at 1s, cap at 60s
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
       // eslint-disable-next-line no-await-in-loop
       const response = await client.xRead(
-        commandOptions({
-          isolated: true,
-        }),
-        [
-          {
-            key: "toStore",
-            id: currentId,
-          },
-        ],
-        {
-          COUNT: 100,
-          BLOCK: 60000,
-        },
+        commandOptions({ isolated: true }),
+        [{ key: "toStore", id: currentId }],
+        { COUNT: 100, BLOCK: 60000 },
       );
 
+      retryDelay = 1000; // reset on success
+
       if (response) {
-        const toDel: RedisCommandArgument[] = [];
+        const toDel: string[] = [];
         for (const res of response) {
-          console.info(res.name);
           for (const msg of res.messages) {
-            console.info(msg.id);
+            const station = stations.get(msg.message.id);
+            if (station == null) {
+              console.warn("store: unknown station ID", msg.message.id, "– skipping");
+              toDel.push(msg.id);
+              continue;
+            }
             const o = JSON.parse(msg.message.m);
             o.timestamp = new Date(o.timestamp);
-            console.info(msg.message.id);
-            store(stations.get(msg.message.id).measurement, o);
+            // eslint-disable-next-line no-await-in-loop
+            await store(station.measurement, o);
             toDel.push(msg.id);
+            currentId = msg.id;
           }
         }
 
@@ -52,15 +50,22 @@ async function main(stations: Map<string, IStation>) {
           // eslint-disable-next-line no-await-in-loop
           await client.xDel("toStore", toDel);
         }
-      } else {
-        console.log("No new stream entries.");
       }
     } catch (err) {
-      console.error(err);
-      exit();
+      console.error(`store loop error (retry in ${retryDelay}ms):`, err);
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      retryDelay = Math.min(retryDelay * 2, 60000); // exponential backoff, cap at 60s
     }
   }
 }
 
 const allStationsCfg = new AllStationsCfg();
-allStationsCfg.readCfg().then(() => main(allStationsCfg.getStations()));
+redisClient
+  .connect()
+  .then(() => allStationsCfg.readCfg())
+  .then(() => main(allStationsCfg.getStations()))
+  .catch((err) => {
+    console.error("store: failed to start", err);
+    process.exit(1);
+  });

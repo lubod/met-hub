@@ -41,8 +41,12 @@ export default class StationGarni1025Arcus extends StationCommon {
     const TO_HPA = 33.8639;
 
     //    console.log(data)
+    const timestamp = new Date(`${data.dateutc} UTC`);
+    if (isNaN(timestamp.getTime())) {
+      throw new Error(`Invalid dateutc: ${data.dateutc}`);
+    }
     const decoded: IStationData = {
-      timestamp: new Date(),
+      timestamp,
       tempin: round((5 / 9) * (data.indoortempf - 32), 1),
       pressureabs: round(data.baromin * TO_HPA, 1),
       pressurerel: null,
@@ -66,7 +70,7 @@ export default class StationGarni1025Arcus extends StationCommon {
       minuterain: null,
       dewpt: round((5 / 9) * (data.dewptf - 32), 1),
     };
-    const date = new Date(decoded.timestamp);
+    const date = timestamp;
     const toStore = decoded;
     // console.info(data, date, decoded);
     return { date, decoded, toStore };

@@ -1,36 +1,31 @@
-import express from "express";
-import { createClient } from "redis";
+import express, { Request, Response, NextFunction } from "express";
+import http from "http";
 import { AddressInfo } from "net";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import cors from "cors";
 import path from "path";
 import router from "./router";
-import Agregator from "./aggregator";
+import Aggregator from "./aggregator";
 import { AllStationsCfg } from "../common/allStationsCfg";
-
-// import Go from "./go";
+import redisClient from "./redisClient";
 
 const app = express();
-const http = require("http").Server(app);
 const helmet = require("helmet");
-
-const csp = require(`helmet-csp`);
+const csp = require("helmet-csp");
 
 const publicDirectoryPath = path.join(__dirname, "html");
 
-const redisClient = createClient({
-  url: "redis://localhost:6379",
+redisClient.connect().catch((err) => {
+  console.error("Fatal: failed to connect to Redis:", err);
+  process.exit(1);
 });
-redisClient.on("error", (err) => console.log("Redis Client Error", err));
-redisClient.connect();
 
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  max: 1000, // max 1000 requests per 10 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 export class AppError extends Error {
@@ -38,25 +33,23 @@ export class AppError extends Error {
 
   msg: string;
 
-  stack: string;
-
   constructor(code: number, msg: string, stack?: string) {
     super(msg);
     this.code = code;
     this.msg = msg;
-    this.stack = stack;
-
+    if (stack) {
+      this.stack = stack;
+    }
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
-// AllStationsCfg.writeCfg();
 export const allStationsCfg = new AllStationsCfg();
 allStationsCfg.readCfg().then(() => {
-  const agregator = new Agregator(allStationsCfg.getMeasurements());
-  agregator.start();
-  // const go = new Go();
-  // go.start();
+  const aggregator = new Aggregator(allStationsCfg.getMeasurements());
+  aggregator.start();
+}).catch((err) => {
+  console.error("Failed to read station config:", err);
 });
 
 app.use(helmet());
@@ -67,59 +60,47 @@ app.use(
       scriptSrc: [`'self'`, `*.google.com`, `*.chatademian.com`],
       frameSrc: [`'self'`, `*.google.com`, `*.chatademian.com`],
       connectSrc: [`'self'`, `*.google.com`],
-      imgSrc: [`'self'`, `*.openstreetmap.org`, `unpkg.com`, `data:`],
+      imgSrc: [`'self'`, `*.openstreetmap.org`, `unpkg.com`],
       frameAncestors: [`'self'`, `*.chatademian.com`],
     },
   }),
 );
-// app.use(compression());
-app.use(cors());
-app.use((req, res, next) => {
-  res.setHeader("Cross-origin-Opener-Policy", "same-origin-allow-popups");
+
+const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:8089";
+app.use(cors({ origin: corsOrigin, credentials: true }));
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
   next();
 });
+
 app.use(express.static(__dirname));
-app.use(
-  express.urlencoded({
-    extended: true,
-  }),
-);
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.static(publicDirectoryPath));
+
+// Health check is before the rate limiter so it doesn't count against limits
+app.get("/health", (req: Request, res: Response) => {
+  res.status(200).json({ status: "ok" });
+});
 
 app.use(limiter);
 
-app.use(cookieParser());
-
-app.use(express.json());
-
-app.use(express.static(publicDirectoryPath));
-
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "html/index.html"));
-});
-
-app.use((req: any, res: any, next: any) => {
-  console.log(
-    "ENDPOINT:",
-    new Date(),
-    req.path,
-    // req.cookies,
-    // req.body,
-    req.query,
-    req.params,
-  );
-  next();
 });
 
 app.use(router);
 
 // eslint-disable-next-line no-unused-vars
-app.use((err: AppError, req: any, res: any, next: any) => {
-  console.error("ERROR:", err);
+app.use((err: AppError, req: Request, res: Response, next: NextFunction) => {
+  console.error("ERROR:", err.code, err.msg);
   res.status(err.code || 500).json({ code: err.code, msg: err.msg });
 });
 
-const server = http.listen(8089, "0.0.0.0", () => {
+const httpServer = http.createServer(app);
+const server = httpServer.listen(8089, "0.0.0.0", () => {
   const addr = server.address() as AddressInfo;
-
   console.log("Listening at ", addr);
 });

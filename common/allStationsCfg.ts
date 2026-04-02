@@ -1,11 +1,11 @@
-/* eslint-disable guard-for-in */
 /* eslint-disable import/prefer-default-export */
-import { createClient } from "redis";
 import { Dom } from "../server/dom";
+import redisClient from "../server/redisClient";
 import { IMeasurement } from "../server/measurement";
 import StationGarni1025Arcus from "../server/stationGarni1025Arcus";
 import StationGoGenMe3900 from "../server/stationGoGenMe3900";
 import { StationCfg } from "./stationCfg";
+import { StationType } from "./stationType";
 import { create } from "../server/db";
 
 export const ALL_STATIONS_CFG = "ALL_STATIONS_CFG";
@@ -13,7 +13,7 @@ export const ALL_STATIONS_CFG = "ALL_STATIONS_CFG";
 export interface IStation {
   lat: number;
   lon: number;
-  type: string;
+  type: StationType;
   place: string;
   passkey: string;
   id: string;
@@ -33,22 +33,13 @@ export class AllStationsCfg {
 
   measurements: Array<IMeasurement> = [];
 
-  redisClient: any = null;
-
-  constructor() {
-    this.redisClient = createClient({
-      url: "redis://localhost:6379",
-    });
-    this.redisClient.connect();
-  }
-
-  getMeas(station: IStation) {
+  getMeas(station: IStation): IMeasurement {
     switch (station.type) {
-      case "Dom":
+      case StationType.Dom:
         return new Dom();
-      case "Garni 1025 Arcus":
+      case StationType.Garni1025Arcus:
         return new StationGarni1025Arcus(station.id);
-      case "GoGen Me 3900":
+      case StationType.GoGenMe3900:
         return new StationGoGenMe3900(station.id);
       default:
         throw new Error(`Unknown station type ${station.type}`);
@@ -74,21 +65,31 @@ export class AllStationsCfg {
 
   async readCfg() {
     console.log("READ CFG");
-    const reply = await this.redisClient.hGetAll(ALL_STATIONS_CFG);
-    for (const item in reply) {
-      console.info(reply[item]);
-      const station: IStation = JSON.parse(reply[item]);
-      station.measurement = this.getMeas(station);
+    const reply = await redisClient.hGetAll(ALL_STATIONS_CFG);
+    for (const [, raw] of Object.entries(reply)) {
+      let station: IStation;
+      try {
+        station = JSON.parse(raw);
+      } catch (e) {
+        console.error("readCfg: failed to parse station entry, skipping:", raw, e);
+        continue;
+      }
+      try {
+        station.measurement = this.getMeas(station);
+      } catch (e) {
+        console.error("readCfg: unknown station type, skipping:", station.id, station.type);
+        continue;
+      }
+      console.info(JSON.stringify(station));
       this.set(station);
     }
   }
-  // AllStationsCfg.map.set();
 
   async writeCfg() {
     console.log("WRITE CFG");
     for (const [key, value] of this.map.entries()) {
       // eslint-disable-next-line no-await-in-loop
-      await this.redisClient.hSet(ALL_STATIONS_CFG, key, JSON.stringify(value));
+      await redisClient.hSet(ALL_STATIONS_CFG, key, JSON.stringify(value));
     }
   }
 
@@ -100,16 +101,17 @@ export class AllStationsCfg {
     return this.measurements;
   }
 
-  getDefaultStationID() {
+  getDefaultStationID(): string | undefined {
     return [...this.map.keys()][0];
   }
 
-  getSecondDefaultStationID() {
+  getSecondDefaultStationID(): string | undefined {
     return [...this.map.keys()][1];
   }
 
-  getDefaultStation() {
-    return this.map.get(this.getDefaultStationID());
+  getDefaultStation(): IStation | undefined {
+    const id = this.getDefaultStationID();
+    return id != null ? this.map.get(id) : undefined;
   }
 
   passkey2ID(passkey: string) {
@@ -137,11 +139,11 @@ export class AllStationsCfg {
   }
 
   async addStation(station: IStation) {
-    await this.redisClient.hSet(
+    await redisClient.hSet(
       ALL_STATIONS_CFG,
       station.id,
       JSON.stringify(station),
-    ); // todo
+    );
     // eslint-disable-next-line no-param-reassign
     station.measurement = this.getMeas(station);
     this.set(station);

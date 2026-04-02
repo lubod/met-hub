@@ -39,9 +39,10 @@ export default class HeaderCtrl {
         },
       });
       return { id: res.data.id, err: "" };
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      return { id: "", err: error.response.data.msg };
+      const msg = error?.response?.data?.msg ?? error?.message ?? "Unknown error";
+      return { id: "", err: msg };
     }
   }
 }

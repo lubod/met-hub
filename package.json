@@ -4,7 +4,7 @@
   "description": "Simple single-page app for meteo data",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test": "REDIS_URL=redis://localhost:6380 node esdist/test/test.js",
     "build": "webpack --mode production",
     "builddev": "webpack --mode development",
     "start:dev": "webpack-dev-server",

@@ -1,10 +1,18 @@
 import * as esbuild from "esbuild";
 import { sassPlugin } from "esbuild-sass-plugin";
+import { execSync } from "child_process";
+
+execSync("npx tailwindcss -o public/tailwind.css --minify", { stdio: "inherit" });
+
+const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID
+  || "370836834849-c28glrv23rmribefn7r7h9m1rori3vfh.apps.googleusercontent.com";
+if (!process.env.REACT_APP_GOOGLE_CLIENT_ID) {
+  console.warn("REACT_APP_GOOGLE_CLIENT_ID not set, using default");
+}
 
 const define = {
   "process.env.ENV": '"prod"',
-  "process.env.REACT_APP_GOOGLE_CLIENT_ID":
-    '"370836834849-c28glrv23rmribefn7r7h9m1rori3vfh.apps.googleusercontent.com"',
+  "process.env.REACT_APP_GOOGLE_CLIENT_ID": JSON.stringify(googleClientId),
 };
 
 esbuild.build({

@@ -1,5 +1,8 @@
 version: "3.7"
 
+networks:
+  met-hub-net:
+
 services:
   met-hub:
     build:
@@ -7,26 +10,39 @@ services:
       target: met-hub
     image: met-hub
     container_name: met-hub
-#    depends_on:
+    depends_on:
+      - redis
 #      - postgres
     env_file:
       - met-hub.env
-    network_mode: host
+    environment:
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "8089:8089"
+    networks:
+      - met-hub-net
   met-hub-store:
     build:
       context: .
       target: met-hub-store
     image: met-hub-store
     container_name: met-hub-store
-#    depends_on:
+    depends_on:
+      - redis
 #      - postgres
     env_file:
       - met-hub.env
-    network_mode: host
-#  redis:
-#    image: redis
-#    container_name: redis
-#    network_mode: host
+    environment:
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - met-hub-net
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6380:6379"
+    networks:
+      - met-hub-net
 #  postgres:
 #    image: postgres
 #    container_name: postgres
@@ -35,6 +51,8 @@ services:
 #    environment:
 #      - POSTGRES_HOST_AUTH_METHOD=trust
 #    command: ["postgres", "-c", "log_statement=all"]
+#    networks:
+#      - met-hub-net
 
 
 #  nginx:
@@ -43,8 +61,10 @@ services:
 #      target: met-hub-nginx
 #    image: met-hub-nginx
 #    container_name: met-hub-nginx
-#    network_mode: host
-
+#    ports:
+#      - "80:80"
+#    networks:
+#      - met-hub-net
 
 
 #  zookeeper:
@@ -53,7 +73,8 @@ services:
 #      - "zookeeper_data:/bitnami"
 #    environment:
 #      - ALLOW_ANONYMOUS_LOGIN=yes
-#    network_mode: host
+#    networks:
+#      - met-hub-net
 #  kafka:
 #    image: docker.io/bitnami/kafka:3.3
 #    volumes:
@@ -62,7 +83,8 @@ services:
 #      - ALLOW_PLAINTEXT_LISTENER=yes
 #    depends_on:
 #      - zookeeper
-#    network_mode: host
+#    networks:
+#      - met-hub-net
 
 #volumes:
 #  zookeeper_data:

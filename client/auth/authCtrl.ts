@@ -5,7 +5,7 @@ import AuthData from "./authData";
 export default class AuthCtrl {
   authData: AuthData;
 
-  timer: any;
+  timer: ReturnType<typeof setInterval> | null = null;
 
   appContext: AppContext = null;
 
@@ -32,32 +32,36 @@ export default class AuthCtrl {
   }
 
   async fetchProfile() {
-    const res = await fetch("/api/getUserProfile", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await res.json();
-    console.info(json);
-    if (json != null) {
-      const { admin, user } = json;
-      this.setAuth(
-        user.given_name,
-        user.family_name,
-        user.expiresAt * 1000 + Date.now(),
-        user.id,
-        null,
-        user.createdAt,
-        admin,
-      );
-    } else {
+    try {
+      const res = await fetch("/api/getUserProfile", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const json = await res.json();
+      if (json?.user != null) {
+        const { admin, user } = json;
+        this.setAuth(
+          user.given_name,
+          user.family_name,
+          user.expiresAt,
+          user.id,
+          null,
+          user.createdAt,
+          admin,
+        );
+      } else {
+        this.authData.cancelAuth();
+        this.appContext.fetchCfg();
+      }
+    } catch (e) {
+      console.error("fetchProfile failed:", e);
       this.authData.cancelAuth();
       this.appContext.fetchCfg();
     }
   }
 
   setAuth(
-    // todo
     given_name: string,
     family_name: string,
     expiresAt: number,
@@ -77,8 +81,6 @@ export default class AuthCtrl {
     );
     this.appContext.fetchCfg();
   }
-
-  login() {}
 
   async logout() {
     this.authData.cancelAuth();

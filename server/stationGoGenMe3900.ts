@@ -45,8 +45,12 @@ class StationGoGenMe3900 extends StationCommon {
     }
 
     //    console.log(data)
+    const timestamp = new Date(`${data.dateutc} UTC`);
+    if (isNaN(timestamp.getTime())) {
+      throw new Error(`Invalid dateutc: ${data.dateutc}`);
+    }
     const decoded: IStationData = {
-      timestamp: new Date(`${data.dateutc} UTC`),
+      timestamp,
       tempin: round((5 / 9) * (data.tempinf - 32), 1),
       pressurerel: round(data.baromrelin * TO_HPA, 1),
       pressureabs: round(data.baromabsin * TO_HPA, 1),
@@ -70,7 +74,7 @@ class StationGoGenMe3900 extends StationCommon {
       minuterain: null,
       dewpt: null,
     };
-    const date = new Date(decoded.timestamp);
+    const date = timestamp;
     const toStore = decoded;
     return { date, decoded, toStore };
   }

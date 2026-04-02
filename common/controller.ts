@@ -2,14 +2,14 @@ import AuthData from "../client/auth/authData";
 import DomData from "../client/dom/domData";
 import StationData from "../client/station/stationData";
 import { IStation } from "./allStationsCfg";
-import { DomCfg, IDomData, IDomTrendData } from "./domModel";
+import { DomCfg, IDomTrendData } from "./domModel";
 import { StationCfg } from "./stationCfg";
 
 // eslint-disable-next-line import/prefer-default-export
 export class CController {
-  timer: any;
+  timer: ReturnType<typeof setInterval> | null = null;
 
-  timerTrend: any;
+  timerTrend: ReturnType<typeof setInterval> | null = null;
 
   authData: AuthData;
 
@@ -33,7 +33,7 @@ export class CController {
   }
 
   start() {
-    // console.log("start", new Date());
+    this.stop();
     this.fetchData();
     this.fetchTrendData();
     this.timer = setInterval(() => {
@@ -45,8 +45,14 @@ export class CController {
   }
 
   stop() {
-    clearInterval(this.timer);
-    clearInterval(this.timerTrend);
+    if (this.timer != null) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+    if (this.timerTrend != null) {
+      clearInterval(this.timerTrend);
+      this.timerTrend = null;
+    }
   }
 
   getStationID(): string {
@@ -63,32 +69,25 @@ export class CController {
     }
   }
 
-  private async fetchDomData() {
-    this.domData.data = { timestamp: null } as IDomData; // todo
-    let url = "/api/getLastData/dom";
-    if (this.test) {
-      url = "http://localhost:8089/api/getLastData/dom";
-    }
-    console.info(url);
+  private url(path: string): string {
+    return this.test ? `http://localhost:8089${path}` : path;
+  }
 
+  private async privateFetch(url: string): Promise<any | null> {
     try {
-      this.domData.setLoading(true);
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const message = `An error has occured: ${response.status}`;
-        throw new Error(message);
-      }
-
-      const newData = await response.json();
-      this.domData.processData(newData);
+      const response = await fetch(url, { headers: { "Content-Type": "application/json" } });
+      if (!response.ok) throw new Error(`An error has occured: ${response.status}`);
+      return await response.json();
     } catch (e) {
       console.error(e);
+      return null;
     }
+  }
+
+  private async fetchDomData() {
+    this.domData.setLoading(true);
+    const newData = await this.privateFetch(this.url("/api/getLastData/dom"));
+    if (newData != null) this.domData.processData(newData);
   }
 
   private async fetchDomTrendData() {
@@ -108,29 +107,8 @@ export class CController {
       petra_room_air: [],
       petra_room_floor: [],
     } as IDomTrendData;
-    let url = "/api/getTrendData/dom";
-    if (this.test) {
-      url = "http://localhost:8089/api/getTrendData/dom";
-    }
-    console.info(url);
-
-    try {
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const message = `An error has occured: ${response.status}`;
-        throw new Error(message);
-      }
-
-      const newData = await response.json();
-      this.domData.processTrendData(newData);
-    } catch (e) {
-      console.error(e);
-    }
+    const newData = await this.privateFetch(this.url("/api/getTrendData/dom"));
+    if (newData != null) this.domData.processTrendData(newData);
   }
 
   private async fetchSData() {
@@ -138,35 +116,12 @@ export class CController {
       console.info("no station -> no data");
       return;
     }
-
-    let url = `/api/getLastData/station/${this.stationCfg.STATION_ID}`;
-
-    if (this.test) {
-      // test needs this
-      url = `http://localhost:8089/api/getLastData/station/${this.stationCfg.STATION_ID}`;
-    }
-    console.info(url);
-
-    try {
-      this.stationData.setLoading(true);
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const message = `An error has occured: ${response.status}`;
-        throw new Error(message);
-      }
-
-      const newData = await response.json();
-      this.stationData.setData(newData);
-      this.stationData.setLoading(false);
-    } catch (e) {
-      this.stationData.setData(null);
-      console.error(e);
-    }
+    this.stationData.setLoading(true);
+    const newData = await this.privateFetch(
+      this.url(`/api/getLastData/station/${this.stationCfg.STATION_ID}`),
+    );
+    this.stationData.setData(newData);
+    if (newData != null) this.stationData.setLoading(false);
   }
 
   private async fetchSTrendData() {
@@ -174,59 +129,20 @@ export class CController {
       console.info("no station -> no trend data");
       return;
     }
-
-    let url = `/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
-
-    if (this.test) {
-      // test needs this
-      url = `http://localhost:8089/api/getTrendData/station/${this.stationCfg.STATION_ID}`;
-    }
-    console.info(url);
-
-    try {
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const message = `An error has occured: ${response.status}`;
-        throw new Error(message);
-      }
-
-      const newData = await response.json();
-      this.stationData.setTrendData(newData);
-      // console.info(newData);
-    } catch (e) {
-      this.stationData.setTrendData(null);
-      console.error(e);
-    }
+    const newData = await this.privateFetch(
+      this.url(`/api/getTrendData/station/${this.stationCfg.STATION_ID}`),
+    );
+    this.stationData.setTrendData(newData);
   }
 
   async fetchRainData() {
-    const url = `/api/loadRainData/station/${this.stationCfg.STATION_ID}`;
-
-    console.info(url);
-
-    try {
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const message = `An error has occured: ${response.status}`;
-        throw new Error(message);
-      }
-
-      const newData = await response.json();
-      // console.info(newData);
-      this.stationData.setRaindata(newData);
-    } catch (e) {
-      console.error(e);
+    if (this.stationCfg == null) {
+      return;
     }
+    const newData = await this.privateFetch(
+      this.url(`/api/loadRainData/station/${this.stationCfg.STATION_ID}`),
+    );
+    if (newData != null) this.stationData.setRaindata(newData);
   }
 
   async fetchData() {

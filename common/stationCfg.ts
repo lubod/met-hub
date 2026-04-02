@@ -1,27 +1,27 @@
 /* eslint-disable import/prefer-default-export */
 
 export class StationCfg {
-  STATION_ID: string = null;
+  STATION_ID: string;
 
-  TABLE: string = null;
+  TABLE: string;
 
-  SOCKET_CHANNEL: string = null;
+  SOCKET_CHANNEL: string;
 
-  SOCKET_TREND_CHANNEL: string = null;
+  SOCKET_TREND_CHANNEL: string;
 
-  REDIS_LAST_DATA_KEY: string = null;
+  REDIS_LAST_DATA_KEY: string;
 
-  REDIS_MINUTE_DATA_KEY: string = null;
+  REDIS_MINUTE_DATA_KEY: string;
 
-  REDIS_TS_KEY_PREFIX: string = null;
+  REDIS_TS_KEY_PREFIX: string;
 
-  KAFKA_STORE_TOPIC: string = null;
+  KAFKA_STORE_TOPIC: string;
 
-  KAFKA_DATA_TOPIC: string = null;
+  KAFKA_DATA_TOPIC: string;
 
-  REDIS_TREND_KEY: string = null;
+  REDIS_TREND_KEY: string;
 
-  KAFKA_KEY: string = null;
+  KAFKA_KEY: string;
 
   constructor(stationID: string) {
     this.STATION_ID = stationID;
