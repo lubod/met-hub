@@ -60,7 +60,7 @@ app.use(
       scriptSrc: [`'self'`, `*.google.com`, `*.chatademian.com`],
       frameSrc: [`'self'`, `*.google.com`, `*.chatademian.com`],
       connectSrc: [`'self'`, `*.google.com`],
-      imgSrc: [`'self'`, `*.openstreetmap.org`, `unpkg.com`],
+      imgSrc: [`'self'`, `*.openstreetmap.org`, `unpkg.com`, `data:`],
       frameAncestors: [`'self'`, `*.chatademian.com`],
     },
   }),

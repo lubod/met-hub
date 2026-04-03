@@ -130,7 +130,9 @@ export class AppContext {
     const root = createRoot(appContainer); // createRoot(container!) if you use TypeScript
     root.render(
       <ErrorBoundary>
-        <div className="App">
+        <div className="App relative">
+          <div className="grain-overlay" />
+          <div className="edge-glow" />
           <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
             <App appContext={this} />
           </GoogleOAuthProvider>
