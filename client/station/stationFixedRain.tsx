@@ -10,7 +10,7 @@ type Props = {
 
 const StationFixedRain = observer(({ appContext }: Props) => (
   <div className="flex flex-row flex-wrap gap-y-4">
-    <div className="flex flex-col gap-4 basis-1/2 md:basis-1/3">
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.EVENTRAIN.label}
         value={appContext.cCtrl.stationData.data.eventrain}
@@ -18,6 +18,26 @@ const StationFixedRain = observer(({ appContext }: Props) => (
         unit=""
         fix={STATION_MEASUREMENTS_DESC.EVENTRAIN.fix}
       />
+    </div>
+    <div className="basis-1/2 md:basis-1/3">
+      <NumberDataAlone
+        label={STATION_MEASUREMENTS_DESC.HOURLYRAIN.label}
+        value={appContext.cCtrl.stationData.data.hourlyrain}
+        old={appContext.cCtrl.stationData.oldData}
+        unit=""
+        fix={STATION_MEASUREMENTS_DESC.HOURLYRAIN.fix}
+      />
+    </div>
+    <div className="basis-1/2 md:basis-1/3">
+      <NumberDataAlone
+        label={STATION_MEASUREMENTS_DESC.DAILYRAIN.label}
+        value={appContext.cCtrl.stationData.data.dailyrain}
+        old={appContext.cCtrl.stationData.oldData}
+        unit=""
+        fix={STATION_MEASUREMENTS_DESC.DAILYRAIN.fix}
+      />
+    </div>
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.WEEKLYRAIN.label}
         value={appContext.cCtrl.stationData.data.weeklyrain}
@@ -26,14 +46,7 @@ const StationFixedRain = observer(({ appContext }: Props) => (
         fix={STATION_MEASUREMENTS_DESC.WEEKLYRAIN.fix}
       />
     </div>
-    <div className="flex flex-col gap-4 basis-1/2 md:basis-1/3">
-      <NumberDataAlone
-        label={STATION_MEASUREMENTS_DESC.HOURLYRAIN.label}
-        value={appContext.cCtrl.stationData.data.hourlyrain}
-        old={appContext.cCtrl.stationData.oldData}
-        unit=""
-        fix={STATION_MEASUREMENTS_DESC.HOURLYRAIN.fix}
-      />
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.MONTHLYRAIN.label}
         value={appContext.cCtrl.stationData.data.monthlyrain}
@@ -42,14 +55,7 @@ const StationFixedRain = observer(({ appContext }: Props) => (
         fix={STATION_MEASUREMENTS_DESC.MONTHLYRAIN.fix}
       />
     </div>
-    <div className="flex flex-col gap-4 basis-full md:basis-1/3">
-      <NumberDataAlone
-        label={STATION_MEASUREMENTS_DESC.DAILYRAIN.label}
-        value={appContext.cCtrl.stationData.data.dailyrain}
-        old={appContext.cCtrl.stationData.oldData}
-        unit=""
-        fix={STATION_MEASUREMENTS_DESC.DAILYRAIN.fix}
-      />
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.TOTALRAIN.label}
         value={appContext.cCtrl.stationData.data.totalrain}

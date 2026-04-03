@@ -11,7 +11,7 @@ type Props = {
 
 const StationOut = observer(({ appContext }: Props) => (
   <div className="flex flex-row flex-wrap gap-y-4">
-    <div className="flex flex-col gap-4 basis-1/2 md:basis-1/3">
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.TEMPERATURE}
         value={appContext.cCtrl.stationData.data.temp}
@@ -23,6 +23,8 @@ const StationOut = observer(({ appContext }: Props) => (
           )
         }
       />
+    </div>
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.HUMIDITY}
         value={appContext.cCtrl.stationData.data.humidity}
@@ -33,7 +35,7 @@ const StationOut = observer(({ appContext }: Props) => (
         }
       />
     </div>
-    <div className="flex flex-col gap-4 basis-1/2 md:basis-1/3">
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.SOLAR}
         value={appContext.cCtrl.stationData.data.solarradiation}
@@ -43,6 +45,8 @@ const StationOut = observer(({ appContext }: Props) => (
           appContext.setMeasurementAndLoad(STATION_MEASUREMENTS_DESC.SOLAR)
         }
       />
+    </div>
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.UV}
         value={appContext.cCtrl.stationData.data.uv}
@@ -53,7 +57,7 @@ const StationOut = observer(({ appContext }: Props) => (
         }
       />
     </div>
-    <div className="flex flex-col gap-4 basis-full md:basis-1/3">
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.PRESSUREABS}
         value={appContext.cCtrl.stationData.data.pressureabs}
@@ -65,6 +69,8 @@ const StationOut = observer(({ appContext }: Props) => (
           )
         }
       />
+    </div>
+    <div className="basis-1/2 md:basis-1/3">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.RAINRATE}
         value={appContext.cCtrl.stationData.data.rainrate}

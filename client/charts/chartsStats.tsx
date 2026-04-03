@@ -14,13 +14,7 @@ const ChartsStats = observer(({ appContext }: Props) => (
       <ChartsSensorsList chartsCtrl={appContext.chartsCtrl} />
     </div>
     <div className="glass rounded-xl p-3 flex flex-row flex-wrap gap-y-4">
-      <div className="flex flex-col gap-4 basis-1/2 md:basis-1/3">
-        <NumberData
-          label="First"
-          value={appContext.chartsCtrl.chartsData.cdata.first}
-          unit=""
-          fix={1}
-        />
+      <div className="basis-1/2 md:basis-1/3">
         <NumberData
           label="Min"
           value={appContext.chartsCtrl.chartsData.cdata.min}
@@ -28,13 +22,7 @@ const ChartsStats = observer(({ appContext }: Props) => (
           fix={1}
         />
       </div>
-      <div className="flex flex-col gap-4 basis-1/2 md:basis-1/3">
-        <NumberData
-          label="Page"
-          value={appContext.chartsCtrl.chartsData.page}
-          unit=""
-          fix={0}
-        />
+      <div className="basis-1/2 md:basis-1/3">
         <NumberData
           label="Avg"
           value={appContext.chartsCtrl.chartsData.cdata.avg}
@@ -42,18 +30,36 @@ const ChartsStats = observer(({ appContext }: Props) => (
           fix={1}
         />
       </div>
-      <div className="flex flex-col gap-4 basis-full md:basis-1/3">
+      <div className="basis-1/2 md:basis-1/3">
         <NumberData
           label="Max"
           value={appContext.chartsCtrl.chartsData.cdata.max}
           unit=""
           fix={1}
         />
+      </div>
+      <div className="basis-1/2 md:basis-1/3">
         <NumberData
           label="Last"
           value={appContext.chartsCtrl.chartsData.cdata.last}
           unit=""
           fix={1}
+        />
+      </div>
+      <div className="basis-1/2 md:basis-1/3">
+        <NumberData
+          label="First"
+          value={appContext.chartsCtrl.chartsData.cdata.first}
+          unit=""
+          fix={1}
+        />
+      </div>
+      <div className="basis-1/2 md:basis-1/3">
+        <NumberData
+          label="Page"
+          value={appContext.chartsCtrl.chartsData.page}
+          unit=""
+          fix={0}
         />
       </div>
     </div>

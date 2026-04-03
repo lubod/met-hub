@@ -15,34 +15,30 @@ const StationRain = observer(({ appContext }: Props) => (
   <div className="flex flex-col gap-4">
     <div className="flex flex-row justify-center gap-2">
       <Text>RAIN mm</Text>
-      {appContext.authCtrl.authData.isAuth &&
-        appContext.authCtrl.authData.id ===
-          appContext.cCtrl.stationData.station.owner && (
-          <div className="flex flex-row gap-2">
-            <div className="flex flex-col place-content-center">
-              <Switch
-                checked={appContext.cCtrl.stationData.floatingRainData}
-                onChange={(e) => {
-                  appContext.cCtrl.stationData.setFloatingRainData(e);
-                  if (appContext.cCtrl.stationData.floatingRainData) {
-                    appContext.cCtrl.fetchRainData();
-                  }
-                }}
-                className="bg-white/20 border border-white/20 relative inline-flex h-[16px] w-[32px] shrink-0 cursor-pointer rounded-full ease-in-out"
-              >
-                {!appContext.cCtrl.stationData.floatingRainData && (
-                  <span className="translate-x-0 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-cyan shadow-lg ring-0 transition duration-200 ease-in-out" />
-                )}
-                {appContext.cCtrl.stationData.floatingRainData && (
-                  <span className="translate-x-4 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-cyan shadow-lg ring-0 transition duration-200 ease-in-out" />
-                )}
-              </Switch>
-            </div>
-            <div className="metric-label">
-              Fix / Floating
-            </div>
+      {appContext.authCtrl.authData.isAuth && (
+        <div className="flex flex-row gap-2">
+          <div className="flex flex-col place-content-center">
+            <Switch
+              checked={appContext.cCtrl.stationData.floatingRainData}
+              onChange={(e) => {
+                appContext.cCtrl.stationData.setFloatingRainData(e);
+                if (appContext.cCtrl.stationData.floatingRainData) {
+                  appContext.cCtrl.fetchRainData();
+                }
+              }}
+              className="bg-white/20 border border-white/20 relative inline-flex h-[16px] w-[32px] shrink-0 cursor-pointer rounded-full ease-in-out"
+            >
+              {!appContext.cCtrl.stationData.floatingRainData && (
+                <span className="translate-x-0 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-cyan shadow-lg ring-0 transition duration-200 ease-in-out" />
+              )}
+              {appContext.cCtrl.stationData.floatingRainData && (
+                <span className="translate-x-4 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-cyan shadow-lg ring-0 transition duration-200 ease-in-out" />
+              )}
+            </Switch>
           </div>
-        )}
+          <div className="metric-label">Fix / Floating</div>
+        </div>
+      )}
     </div>
     {appContext.cCtrl.stationData.floatingRainData === false && (
       <StationFixedRain appContext={appContext} />
