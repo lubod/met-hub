@@ -1,9 +1,14 @@
-import express, { Request, Response, NextFunction, RequestHandler } from "express";
+import express, {
+  Request,
+  Response,
+  NextFunction,
+  RequestHandler,
+} from "express";
 import crypto from "crypto";
 import { StationType } from "../common/stationType";
 import { createToken, verifyToken } from "./utils";
 import redisClient from "./redisClient";
-import { allStationsCfg, AppError } from "./main";
+import { allStationsCfg, AppError } from "./state";
 import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import { loadData, loadRainData } from "./db";
@@ -21,9 +26,12 @@ interface IUser {
   id: string;
   given_name: string;
   family_name: string;
+  email: string;
   createdAt: number;
   expiresAt: number;
 }
+
+const DOM_ACCESS_EMAIL = "lubo.drobny@gmail.com";
 
 // Cache admin ID for 60 seconds to avoid a Redis fetch on every request
 let cachedAdminId: string | null = null;
@@ -39,13 +47,20 @@ async function getAdminId(): Promise<string | null> {
   return cachedAdminId;
 }
 
-async function checkAuth(req: Request, silent: boolean = false): Promise<IUser | null> {
+async function checkAuth(
+  req: Request,
+  silent: boolean = false,
+): Promise<IUser | null> {
   if (req.cookies.jwt) {
     const decoded = verifyToken(req.cookies.jwt);
     if (decoded != null && decoded.id != null) {
       const raw = await redisClient.hGet("USERS", decoded.id);
       if (raw != null) {
-        let payload: { given_name?: string; family_name?: string } | null = null;
+        let payload: {
+          given_name?: string;
+          family_name?: string;
+          email?: string;
+        } | null = null;
         try {
           payload = JSON.parse(raw);
         } catch {
@@ -56,6 +71,7 @@ async function checkAuth(req: Request, silent: boolean = false): Promise<IUser |
             id: decoded.id,
             given_name: payload.given_name ?? "",
             family_name: payload.family_name ?? "",
+            email: payload.email ?? "",
             createdAt: decoded.iat * 1000,
             expiresAt: decoded.exp * 1000,
           };
@@ -79,6 +95,9 @@ async function checkAccess(
     if (user.id === admin) {
       return;
     }
+    if (stationID === "dom" && user.email === DOM_ACCESS_EMAIL) {
+      return;
+    }
     const mys = allStationsCfg.getStationsByUser(user.id);
     if (mys != null && mys.has(stationID)) {
       return;
@@ -93,7 +112,11 @@ async function checkAccess(
   throw new AppError(403, "Access issue");
 }
 
-type AsyncRouteHandler = (req: Request, res: Response, next: NextFunction) => Promise<void>;
+type AsyncRouteHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => Promise<void>;
 
 function catchAsync(fnc: AsyncRouteHandler): RequestHandler {
   return (req, res, next) => {
@@ -152,7 +175,11 @@ router.get("/events", (req: Request, res: Response) => {
 
 // LAST DATA
 
-async function getLastData(measurement: IMeasurement, req: Request, res: Response) {
+async function getLastData(
+  measurement: IMeasurement,
+  req: Request,
+  res: Response,
+) {
   const user = await checkAuth(req, true);
   await checkAccess(user, measurement.getStationID(), false);
   const reply = await redisClient.get(measurement.getRedisLastDataKey());
@@ -180,7 +207,11 @@ router.get(
 
 // TREND DATA
 
-async function getTrendData(measurement: IMeasurement, req: Request, res: Response) {
+async function getTrendData(
+  measurement: IMeasurement,
+  req: Request,
+  res: Response,
+) {
   const user = await checkAuth(req, true);
   await checkAccess(user, measurement.getStationID(), false);
   const now = Date.now();
@@ -189,7 +220,9 @@ async function getTrendData(measurement: IMeasurement, req: Request, res: Respon
     now - 3600000,
     now,
   );
-  res.status(200).json(reply.length > 0 ? measurement.transformTrendData(reply) : null);
+  res
+    .status(200)
+    .json(reply.length > 0 ? measurement.transformTrendData(reply) : null);
 }
 
 router.get(
@@ -250,6 +283,7 @@ router.post(
         id: payload.sub,
         given_name: payload.given_name,
         family_name: payload.family_name,
+        email: payload.email ?? "",
         createdAt,
         expiresAt,
       } as IUser);
@@ -309,6 +343,17 @@ router.get(
         owner: station.owner,
       });
     }
+
+    if (user != null && user.email === DOM_ACCESS_EMAIL) {
+      result.push({
+        id: "dom",
+        type: StationType.Dom,
+        place: "Dom",
+        public: false,
+        owner: user.id,
+      });
+    }
+
     res.status(200).json(result);
   }),
 );
@@ -336,10 +381,19 @@ router.get(
       if (diffDays > 366) {
         throw new AppError(400, "Date range too large (max 366 days)");
       }
-      const { measurement, stationID } = req.query as { measurement: string; stationID: string };
+      const { measurement, stationID } = req.query as {
+        measurement: string;
+        stationID: string;
+      };
       const user = await checkAuth(req, true);
       await checkAccess(user, stationID, false);
-      const data = await loadData(stationID, start, end, measurement, allStationsCfg);
+      const data = await loadData(
+        stationID,
+        start,
+        end,
+        measurement,
+        allStationsCfg,
+      );
       res.status(200).json(data);
     } else {
       throw new AppError(400, "Invalid params");
@@ -366,7 +420,14 @@ router.get(
     if (req.query.lat != null && req.query.lon != null) {
       const lat = parseFloat(req.query.lat as string);
       const lon = parseFloat(req.query.lon as string);
-      if (!Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lon) ||
+        lat < -90 ||
+        lat > 90 ||
+        lon < -180 ||
+        lon > 180
+      ) {
         throw new AppError(400, "Invalid lat/lon");
       }
       const data = await getForecast(String(lat), String(lon));
@@ -380,10 +441,21 @@ router.get(
 router.get(
   "/api/getAstronomicalData",
   catchAsync(async (req, res) => {
-    if (req.query.lat != null && req.query.lon != null && req.query.date != null) {
+    if (
+      req.query.lat != null &&
+      req.query.lon != null &&
+      req.query.date != null
+    ) {
       const lat = parseFloat(req.query.lat as string);
       const lon = parseFloat(req.query.lon as string);
-      if (!Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lon) ||
+        lat < -90 ||
+        lat > 90 ||
+        lon < -180 ||
+        lon > 180
+      ) {
         throw new AppError(400, "Invalid lat/lon");
       }
       const date = new Date(req.query.date as string);
@@ -484,7 +556,14 @@ router.post(
 
       const latNum = parseFloat(lat);
       const lonNum = parseFloat(lon);
-      if (!Number.isFinite(latNum) || !Number.isFinite(lonNum) || latNum < -90 || latNum > 90 || lonNum < -180 || lonNum > 180) {
+      if (
+        !Number.isFinite(latNum) ||
+        !Number.isFinite(lonNum) ||
+        latNum < -90 ||
+        latNum > 90 ||
+        lonNum < -180 ||
+        lonNum > 180
+      ) {
         throw new AppError(400, "Invalid lat/lon values");
       }
 
