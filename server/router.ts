@@ -95,7 +95,10 @@ async function checkAccess(
     if (user.id === admin) {
       return;
     }
-    if (stationID === "dom" && user.email === DOM_ACCESS_EMAIL) {
+    if (
+      stationID === "dom" &&
+      user.email.toLowerCase() === DOM_ACCESS_EMAIL.toLowerCase()
+    ) {
       return;
     }
     const mys = allStationsCfg.getStationsByUser(user.id);
@@ -344,11 +347,14 @@ router.get(
       });
     }
 
-    if (user != null && user.email === DOM_ACCESS_EMAIL) {
+    if (user != null && user.email.toLowerCase() === DOM_ACCESS_EMAIL) {
       result.push({
         id: "dom",
+        lat: 0,
+        lon: 0,
         type: StationType.Dom,
         place: "Dom",
+        passkey: "",
         public: false,
         owner: user.id,
       });
