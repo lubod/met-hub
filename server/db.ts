@@ -175,6 +175,7 @@ export async function loadRainData(stationID: string) {
 function getQuery(id: string, entries: [string, any][]) {
   let qtext = `insert into station_${id} (`;
   let qtextv = "";
+  let qtextu = "";
   const qarr = [];
   let i = 1;
   for (const [sensor, value] of entries) {
@@ -186,13 +187,18 @@ function getQuery(id: string, entries: [string, any][]) {
       if (value != null) {
         qtext += `${sensor},`;
         qtextv += `$${i},`;
+        if (sensor !== "timestamp") {
+          qtextu += `${sensor} = EXCLUDED.${sensor},`;
+        }
         i += 1;
         qarr.push(value);
       }
     }
   }
   qtext = qtext.slice(0, -1);
-  qtext += `) values (${qtextv.slice(0, -1)})`;
+  qtextv = qtextv.slice(0, -1);
+  qtextu = qtextu.slice(0, -1);
+  qtext += `) values (${qtextv}) on conflict (timestamp) do update set ${qtextu}`;
   return { qtext, qarr };
 }
 
