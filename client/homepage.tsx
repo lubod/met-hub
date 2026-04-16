@@ -30,8 +30,7 @@ const HomePage = observer(({ appContext }: Props) => {
   const showCharts: boolean =
     appContext.chartsCtrl.chartsData.station != null &&
     appContext.authCtrl.authData.isAuth === true &&
-    appContext.headerCtrl.headerData.isExternalID === false &&
-    appContext.headerCtrl.headerData.station?.id !== "dom";
+    appContext.headerCtrl.headerData.isExternalID === false;
 
   return (
     <div className="max-w-7xl mx-auto px-3 py-3 flex flex-col gap-3">

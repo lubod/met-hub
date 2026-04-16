@@ -36,8 +36,7 @@ const Charts = observer(
           />
         )}
       {appContext.chartsCtrl.chartsData.sensor != null &&
-        appContext.chartsCtrl.chartsData.sensor.chartType ===
-          "winddir" && (
+        appContext.chartsCtrl.chartsData.sensor.chartType === "winddir" && (
           <WindDirChart
             chdata={appContext.chartsCtrl.chartsData.hdata}
             xkey="timestamp"
@@ -59,9 +58,10 @@ const Charts = observer(
           />
         )}
       <Myhr />
-      {appContext.chartsCtrl.chartsData.sensor != null && (
-        <ChartsMap appContext={appContext} />
-      )}
+      {appContext.chartsCtrl.chartsData.sensor != null &&
+        appContext.headerCtrl.headerData.station?.id !== "dom" && (
+          <ChartsMap appContext={appContext} />
+        )}
     </Container>
   ),
 );
