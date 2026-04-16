@@ -1,5 +1,7 @@
 import { createClient, commandOptions } from "redis";
 import { AllStationsCfg, IStation } from "../common/allStationsCfg";
+import { StationType } from "../common/stationType";
+import { Dom } from "./dom";
 import { store } from "./db";
 import redisClient from "./redisClient";
 
@@ -33,7 +35,11 @@ async function main(stations: Map<string, IStation>) {
           for (const msg of res.messages) {
             const station = stations.get(msg.message.id);
             if (station == null) {
-              console.warn("store: unknown station ID", msg.message.id, "– skipping");
+              console.warn(
+                "store: unknown station ID",
+                msg.message.id,
+                "– skipping",
+              );
               toDel.push(msg.id);
               continue;
             }
@@ -61,10 +67,25 @@ async function main(stations: Map<string, IStation>) {
 }
 
 const allStationsCfg = new AllStationsCfg();
+const dom = new Dom();
 redisClient
   .connect()
   .then(() => allStationsCfg.readCfg())
-  .then(() => main(allStationsCfg.getStations()))
+  .then(() => {
+    const stations = allStationsCfg.getStations();
+    stations.set(dom.getStationID(), {
+      id: dom.getStationID(),
+      lat: 0,
+      lon: 0,
+      type: StationType.Dom,
+      place: "Dom",
+      passkey: "",
+      measurement: dom,
+      public: false,
+      owner: "",
+    });
+    return main(stations);
+  })
   .catch((err) => {
     console.error("store: failed to start", err);
     process.exit(1);

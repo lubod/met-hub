@@ -537,7 +537,22 @@ router.post(
 router.post(
   "/setDomData",
   catchAsync(async (req, res) => {
-    await setData(req.body.PASSKEY, null, req.body);
+    const data = req.body;
+    const { date, decoded } = dom.decodeData(data, "Dom");
+    const now = Date.now();
+    const diff = now - date.getTime();
+    if (diff >= 3600000) {
+      throw new AppError(400, `Old data ${date}`);
+    }
+    await redisClient
+      .multi()
+      .set(dom.getRedisLastDataKey(), JSON.stringify(decoded))
+      .zAdd(dom.getRedisRawDataKey(), {
+        score: date.getTime(),
+        value: JSON.stringify(decoded),
+      })
+      .exec();
+    writeEvent(dom.getStationID(), "raw");
     res.sendStatus(200);
   }),
 );

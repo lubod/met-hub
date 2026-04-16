@@ -1,8 +1,22 @@
 import { AllStationsCfg } from "../common/allStationsCfg";
 import { IDomDataRaw } from "../common/domModel";
 import { IStationData } from "../common/stationModel";
+import { Dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import pool from "./pgPool";
+
+const dom = new Dom();
+
+function getMeasurement(
+  stationID: string,
+  allStationsCfg: AllStationsCfg,
+): IMeasurement | null {
+  if (stationID === "dom") {
+    return dom;
+  }
+  const station = allStationsCfg.getStationByID(stationID);
+  return station?.measurement ?? null;
+}
 
 // Validate that the requested table and columns are known for the given station
 function checkInput(
@@ -11,13 +25,11 @@ function checkInput(
   extraColumn: string,
   allStationsCfg: AllStationsCfg,
 ): boolean {
-  const station = allStationsCfg.getStationByID(stationID);
-  if (station == null) return false;
-  const tables = station.measurement.getTables();
-  const sensors = station.measurement.getSensors();
+  const meas = getMeasurement(stationID, allStationsCfg);
+  if (meas == null) return false;
+  const sensors = meas.getSensors();
   const columns = sensors.map((s) => s.col);
-  const table = `station_${stationID}`;
-  if (!tables.includes(table) || !columns.includes(column)) return false;
+  if (!columns.includes(column)) return false;
   if (extraColumn !== "" && !columns.includes(extraColumn)) return false;
   return true;
 }
@@ -143,14 +155,14 @@ export async function loadRainData(stationID: string) {
 
     const row = r.rows[0];
     return [
-      { interval: "1hour",  sum: row["1hour"] },
-      { interval: "3hour",  sum: row["3hour"] },
-      { interval: "6hour",  sum: row["6hour"] },
+      { interval: "1hour", sum: row["1hour"] },
+      { interval: "3hour", sum: row["3hour"] },
+      { interval: "6hour", sum: row["6hour"] },
       { interval: "12hour", sum: row["12hour"] },
-      { interval: "1day",   sum: row["1day"] },
-      { interval: "3day",   sum: row["3day"] },
-      { interval: "1week",  sum: row["1week"] },
-      { interval: "4week",  sum: row["4week"] },
+      { interval: "1day", sum: row["1day"] },
+      { interval: "3day", sum: row["3day"] },
+      { interval: "1week", sum: row["1week"] },
+      { interval: "4week", sum: row["4week"] },
     ];
   } catch (e) {
     console.error(e);
@@ -235,7 +247,9 @@ export async function create(id: string) {
       dewpt numeric(4,1)
     )`);
     await dbclient.query(`ALTER TABLE public.station_${id} OWNER TO postgres`);
-    await dbclient.query(`ALTER TABLE ONLY public.station_${id} ADD CONSTRAINT station_${id}_pkey PRIMARY KEY ("timestamp")`);
+    await dbclient.query(
+      `ALTER TABLE ONLY public.station_${id} ADD CONSTRAINT station_${id}_pkey PRIMARY KEY ("timestamp")`,
+    );
     await dbclient.query("COMMIT");
   } catch (e) {
     await dbclient.query("ROLLBACK");
