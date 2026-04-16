@@ -113,7 +113,9 @@ CREATE TABLE public.station_dctnotwv (
     hourlyrain numeric(5,1),
     dailyrain numeric(5,1),
     weeklyrain numeric(5,1),
-    monthlyrain numeric(5,1)
+    monthlyrain numeric(5,1),
+    feelslike numeric(4,1),
+    dewpt numeric(4,1)
 );
 
 
@@ -141,7 +143,9 @@ CREATE TABLE public.station_gjr6xkyg (
     hourlyrain numeric(5,1),
     dailyrain numeric(5,1),
     weeklyrain numeric(5,1),
-    monthlyrain numeric(5,1)
+    monthlyrain numeric(5,1),
+    feelslike numeric(4,1),
+    dewpt numeric(4,1)
 );
 
 

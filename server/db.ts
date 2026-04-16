@@ -169,7 +169,6 @@ function getQuery(id: string, entries: [string, any][]) {
     if (
       sensor !== "place" &&
       sensor !== "maxdailygust" &&
-      sensor !== "dewpt" &&
       sensor !== "totalrain"
     ) {
       if (value != null) {
@@ -231,7 +230,9 @@ export async function create(id: string) {
       hourlyrain numeric(5,1),
       dailyrain numeric(5,1),
       weeklyrain numeric(5,1),
-      monthlyrain numeric(5,1)
+      monthlyrain numeric(5,1),
+      feelslike numeric(4,1),
+      dewpt numeric(4,1)
     )`);
     await dbclient.query(`ALTER TABLE public.station_${id} OWNER TO postgres`);
     await dbclient.query(`ALTER TABLE ONLY public.station_${id} ADD CONSTRAINT station_${id}_pkey PRIMARY KEY ("timestamp")`);

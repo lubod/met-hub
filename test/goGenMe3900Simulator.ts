@@ -64,6 +64,7 @@ export class GoGenMe3900Simulator extends CSimulator {
       winddir: decoded.winddir.toFixed(0),
       windgust: decoded.windgust.toFixed(1),
       windspeed: decoded.windspeed.toFixed(1),
+      feelslike: decoded.feelslike.toFixed(1),
     };
   }
 
@@ -92,6 +93,7 @@ export class GoGenMe3900Simulator extends CSimulator {
       totalrain: data.totalrain,
       minuterain: data.minuterain,
       dewpt: data.dewpt,
+      feelslike: data.feelslike,
     };
     return csd;
   }

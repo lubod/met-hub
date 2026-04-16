@@ -2,7 +2,7 @@ import {
   IStationData,
   IStationGarni1025ArcusDataRaw,
 } from "../common/stationModel";
-import { round } from "../common/units";
+import { round, calculateFeelsLike } from "../common/units";
 import StationCommon from "./stationCommon";
 
 export default class StationGarni1025Arcus extends StationCommon {
@@ -31,6 +31,7 @@ export default class StationGarni1025Arcus extends StationCommon {
       totalrain: null,
       minuterain: null,
       dewpt: 0,
+      feelslike: 0,
     };
     return init;
   }
@@ -42,13 +43,17 @@ export default class StationGarni1025Arcus extends StationCommon {
 
     //    console.log(data)
     const timestamp = StationCommon.parseDate(data.dateutc);
+    const temp = round((5 / 9) * (data.tempf - 32), 1);
+    const humidity = round(data.humidity * 1.0, 0);
+    const windspeed = round(data.windspeedmph * TO_KM, 1);
+
     const decoded: IStationData = {
       timestamp,
       tempin: round((5 / 9) * (data.indoortempf - 32), 1),
       pressureabs: round(data.baromin * TO_HPA, 1),
       pressurerel: null,
-      temp: round((5 / 9) * (data.tempf - 32), 1),
-      windspeed: round(data.windspeedmph * TO_KM, 1),
+      temp,
+      windspeed,
       windgust: round(data.windgustmph * TO_KM, 1),
       maxdailygust: null,
       rainrate: round(data.rainin * TO_MM, 1),
@@ -60,12 +65,13 @@ export default class StationGarni1025Arcus extends StationCommon {
       totalrain: null,
       solarradiation: round(data.solarradiation * 1.0, 0),
       uv: round(data.UV * 1.0, 0),
-      humidity: round(data.humidity * 1.0, 0),
+      humidity,
       humidityin: round(data.indoorhumidity * 1.0, 0),
       winddir: round(data.winddir * 1.0, 0),
       place,
       minuterain: null,
       dewpt: round((5 / 9) * (data.dewptf - 32), 1),
+      feelslike: calculateFeelsLike(temp, humidity, windspeed),
     };
     const date = timestamp;
     const toStore = decoded;

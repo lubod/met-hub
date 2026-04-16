@@ -96,6 +96,8 @@ export default abstract class StationCommon implements IMeasurement {
     tmp.solarradiation = [];
     tmp.uv = [];
     tmp.rainrate = [];
+    tmp.feelslike = [];
+    tmp.dewpt = [];
     let prev = 0;
     data.forEach((item: any) => {
       const value: IStationData = JSON.parse(item);
@@ -115,20 +117,26 @@ export default abstract class StationCommon implements IMeasurement {
         tmp.solarradiation.push(value.solarradiation);
         tmp.uv.push(value.uv);
         tmp.rainrate.push(value.rainrate);
+        tmp.feelslike.push(value.feelslike);
+        tmp.dewpt.push(value.dewpt);
         prev = time;
       }
     });
     return tmp;
-  }
+    }
 
-  aggregateRawData2Minute(minute: number, data: Array<IStationData>) {
-    const avgWind = (directions: number[]) => {
+    aggregateRawData2Minute(minute: number, data: Array<IStationData>) {
+    const avgWind = (directions: number[], speeds: number[]) => {
       let sinSum = 0;
       let cosSum = 0;
-      directions.forEach((value) => {
-        sinSum += Math.sin(deg2rad(value));
-        cosSum += Math.cos(deg2rad(value));
+      let weightSum = 0;
+      directions.forEach((value, index) => {
+        const speed = speeds[index] || 1;
+        sinSum += Math.sin(deg2rad(value)) * speed;
+        cosSum += Math.cos(deg2rad(value)) * speed;
+        weightSum += speed;
       });
+      if (weightSum === 0) return 0;
       return round((rad2deg(Math.atan2(sinSum, cosSum)) + 360) % 360, 0);
     };
 
@@ -145,6 +153,8 @@ export default abstract class StationCommon implements IMeasurement {
         if (total.pressureabs != null) total.pressureabs += item.pressureabs;
         if (total.windgust != null) total.windgust += item.windgust;
         if (total.windspeed != null) total.windspeed += item.windspeed;
+        if (total.feelslike != null) total.feelslike += item.feelslike;
+        if (total.dewpt != null) total.dewpt += item.dewpt;
         if (total.solarradiation != null)
           total.solarradiation += item.solarradiation;
         if (total.uv != null) total.uv += item.uv;
@@ -165,6 +175,9 @@ export default abstract class StationCommon implements IMeasurement {
       const avg = total;
       if (total.tempin != null) avg.tempin = round(total.tempin / count, 1);
       if (total.temp != null) avg.temp = round(total.temp / count, 1);
+      if (total.feelslike != null)
+        avg.feelslike = round(total.feelslike / count, 1);
+      if (total.dewpt != null) avg.dewpt = round(total.dewpt / count, 1);
       if (total.pressurerel != null)
         avg.pressurerel = round(total.pressurerel / count, 1);
       if (total.pressureabs != null)
@@ -190,10 +203,12 @@ export default abstract class StationCommon implements IMeasurement {
     const avg: IStationData = average(s, data.length);
     avg.timestamp = new Date(minute);
     const windDir: number[] = [];
+    const windSpeed: number[] = [];
     data.forEach((element: IStationData) => {
       windDir.push(element.winddir);
+      windSpeed.push(element.windspeed);
     });
-    avg.winddir = avgWind(windDir);
+    avg.winddir = avgWind(windDir, windSpeed);
     console.info("Aggregated station minute", new Date(minute), avg.place);
     return avg;
   }

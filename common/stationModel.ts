@@ -27,6 +27,7 @@ export interface IStationData {
   totalrain: number;
   minuterain: number;
   dewpt: number;
+  feelslike: number;
 }
 
 export interface IStationGarni1025ArcusDataRaw {
@@ -90,15 +91,47 @@ export interface IStationTrendData {
   windgust: Array<number>;
   windspeed: Array<number>;
   winddir: Array<number>;
-  solarradiation: Array<number>;
+    solarradiation: Array<number>;
   uv: Array<number>;
   rainrate: Array<number>;
   minuterain: Array<number>;
+  feelslike: Array<number>;
+  dewpt: Array<number>;
 }
 
 const station = {} as IStationData;
 
 export class STATION_MEASUREMENTS_DESC {
+  static FEELSLIKE: ISensor = {
+    col: propName(station).feelslike,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: true,
+    table: "station",
+    label: "Feels like",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(station).feelslike,
+    agg: "avg",
+  };
+
+  static DEWPOINT: ISensor = {
+    col: propName(station).dewpt,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: true,
+    table: "station",
+    label: "Dew Point",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(station).dewpt,
+    agg: "avg",
+  };
+
   static TEMPERATURE: ISensor = {
     col: propName(station).temp,
     unit: "°C",
@@ -386,6 +419,8 @@ export class STATION_MEASUREMENTS_DESC {
 }
 
 export const STATION_SENSORS: ISensor[] = [
+  STATION_MEASUREMENTS_DESC.FEELSLIKE,
+  STATION_MEASUREMENTS_DESC.DEWPOINT,
   STATION_MEASUREMENTS_DESC.WINDDIR,
   STATION_MEASUREMENTS_DESC.WINDSPEED,
   STATION_MEASUREMENTS_DESC.WINDGUST,
