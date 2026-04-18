@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   ComposedChart,
   Line,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -63,6 +64,37 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
             bottom: 0,
           }}
         >
+          {/* Reference lines at -20, -10, 0, 10, 20 degrees */}
+          <ReferenceLine
+            y={0}
+            stroke="#888"
+            strokeDasharray="4 2"
+            label={{ position: "left", offset: -5, children: "0°" }}
+          />
+          <ReferenceLine
+            y={10}
+            stroke="#888"
+            strokeDasharray="4 2"
+            label={{ position: "left", offset: -5, children: "10°" }}
+          />
+          <ReferenceLine
+            y={20}
+            stroke="#888"
+            strokeDasharray="4 2"
+            label={{ position: "left", offset: -5, children: "20°" }}
+          />
+          <ReferenceLine
+            y={-10}
+            stroke="#888"
+            strokeDasharray="4 2"
+            label={{ position: "left", offset: -5, children: "-10°" }}
+          />
+          <ReferenceLine
+            y={-20}
+            stroke="#888"
+            strokeDasharray="4 2"
+            label={{ position: "left", offset: -5, children: "-20°" }}
+          />
           <Area
             type="monotoneX"
             dataKey="val"
