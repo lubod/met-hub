@@ -11,10 +11,10 @@ function NumberData({ label, value, unit, fix }: Props) {
   return (
     <div className="flex flex-col text-center gap-0.5">
       <div className="metric-label">{label}</div>
-      <div className="metric-value relative inline-block mx-auto">
-        {value == null ? "–" : value.toFixed(fix)}
+      <div className="metric-value flex flex-row items-baseline justify-center">
+        <span>{value == null ? "–" : value.toFixed(fix)}</span>
         {value != null && unit && (
-          <span className="absolute left-full top-1/2 -translate-y-1/2 text-sm font-normal ml-1 opacity-60 whitespace-nowrap">
+          <span className="text-sm font-normal ml-1 opacity-60 whitespace-nowrap">
             {unit}
           </span>
         )}

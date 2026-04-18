@@ -40,7 +40,7 @@ const HomePage = observer(({ appContext }: Props) => {
       <div className="flex flex-col gap-5 relative z-0">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {(showStation || showDom) && (
-            <div className="lg:col-span-4 xl:col-span-3 flex flex-col sticky top-4 self-start">
+            <div className="w-full lg:col-span-4 xl:col-span-3 flex flex-col lg:sticky lg:top-4 lg:self-start">
               {showStation && (
                 <Station appContext={appContext} className="h-full" />
               )}
