@@ -1,8 +1,10 @@
 import { observer } from "mobx-react";
+import React from "react";
 import {
   Area,
   ComposedChart,
   Line,
+  ResponsiveContainer,
   // Tooltip,
   XAxis,
   YAxis,
