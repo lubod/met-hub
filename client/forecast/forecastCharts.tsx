@@ -202,7 +202,6 @@ const ForecastCharts = observer(
     let firstTimestamp = null;
     let cols;
     const { hours } = forecastCtrl.forecastData.step;
-    const daysArray = [...appContext.forecastCtrl.forecastData.days.values()];
     switch (hours) {
       case 1:
         cols = forecast_1h.length;
@@ -211,7 +210,7 @@ const ForecastCharts = observer(
         cols = forecast_6h.length;
         break;
       default:
-        cols = daysArray.length;
+        cols = days.length;
     }
 
     if (forecast_6h.length > 0 && hours === 6) {
@@ -228,11 +227,11 @@ const ForecastCharts = observer(
       );
     }
 
-    if (daysArray.length > 0 && hours === 24) {
-      firstTimestamp = new Date(daysArray[0].timestamp);
+    if (days.length > 0 && hours === 24) {
+      firstTimestamp = new Date(days[0].timestamp);
       firstTimestamp.setHours(0, 0, 0, 0);
       lastTimestamp = new Date(
-        firstTimestamp.getTime() + daysArray.length * 24 * 3600000,
+        firstTimestamp.getTime() + days.length * 24 * 3600000,
       );
     }
 
@@ -249,7 +248,7 @@ const ForecastCharts = observer(
         </div>
         <div className="flex flex-col overflow-x-auto scrollbar-hide">
           {forecastCtrl.forecastData.step.hours === 24 && (
-            <MyRows1 data={daysArray} />
+            <MyRows1 data={days} />
           )}
           {forecastCtrl.forecastData.step.hours === 6 && (
             <MyRows1 data={forecast_6h} />
@@ -260,7 +259,7 @@ const ForecastCharts = observer(
           {firstTimestamp != null && lastTimestamp != null && (
             <div className="">
               <ForecastChartTemp
-                data={daysArray}
+                data={days}
                 lastTimestamp={lastTimestamp}
                 firstTimestamp={firstTimestamp}
                 hours={forecastCtrl.forecastData.step.hours}
@@ -271,7 +270,7 @@ const ForecastCharts = observer(
           )}
           <Myhr />
           {forecastCtrl.forecastData.step.hours === 24 && (
-            <MyRows2 data={daysArray} />
+            <MyRows2 data={days} />
           )}
           {forecastCtrl.forecastData.step.hours === 6 && (
             <MyRows2 data={forecast_6h} />
@@ -282,7 +281,7 @@ const ForecastCharts = observer(
           {firstTimestamp != null && lastTimestamp != null && (
             <div className="mb-3">
               <ForecastChart
-                data={daysArray}
+                data={days}
                 lastTimestamp={lastTimestamp}
                 firstTimestamp={firstTimestamp}
                 hours={forecastCtrl.forecastData.step.hours}
