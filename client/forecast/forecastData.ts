@@ -514,7 +514,7 @@ export default class ForecastData implements IForecastData {
         cloud_area_fractions.reduce((p, c) => p + c, 0) /
         cloud_area_fractions.length;
       day.wind_dir_avg = avgWind(wind_dirs);
-      dayIndex = +1;
+      dayIndex += 1;
       cloud_area_fractions = [];
       wind_dirs = [];
     }
