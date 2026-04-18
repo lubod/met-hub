@@ -139,7 +139,7 @@ const ForecastChart = observer(
               dataKey="timestamp"
               hide
               axisLine={false}
-              domain={["auto", "auto"]}
+              domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
               scale="time"
               type="number"
             />

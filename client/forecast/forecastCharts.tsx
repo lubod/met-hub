@@ -39,7 +39,7 @@ function Cell({ value, color, maxLimit1, maxLimit2, maxLimit3 }: CellProps) {
 
   return (
     <div
-      className="text-center text-light border-s basis-full text-sm pb-3 min-w-11"
+      className="text-center text-light border-s text-sm pb-3 w-11 flex-none"
       style={{
         borderLeftColor: hex,
         backgroundColor: bgOpacity > 0 ? `${hex}${Math.round(bgOpacity * 255).toString(16).padStart(2, "0")}` : undefined,
@@ -86,7 +86,7 @@ function MyRows1({ data }: RowsProps) {
       <div className="flex flex-row">
         {data.map((item: IGetForecastDataToDisplay) => (
           <div
-            className="text-center border-s border-gray2 flex justify-center basis-full min-w-11"
+            className="text-center border-s border-gray2 flex justify-center w-11 flex-none"
             key={item.getDay() + item.getDay2()}
           >
             {item.getSymbolCode() != null && (
@@ -171,7 +171,7 @@ function MyRows2({ data }: RowsProps) {
       <div className="flex flex-row">
         {data.map((item: IGetForecastDataToDisplay) => (
           <div
-            className="text-center border-s border-purple flex justify-center basis-full min-w-11"
+            className="text-center border-s border-purple flex justify-center w-11 flex-none"
             key={item.getDay() + item.getDay2()}
           >
             <svg width="25px" height="25px">
@@ -201,7 +201,8 @@ const ForecastCharts = observer(
     let lastTimestamp = null;
     let firstTimestamp = null;
     let cols;
-    switch (forecastCtrl.forecastData.step.hours) {
+    const { hours } = forecastCtrl.forecastData.step;
+    switch (hours) {
       case 1:
         cols = forecast_1h.length;
         break;
@@ -212,19 +213,26 @@ const ForecastCharts = observer(
         cols = days.length;
     }
 
-    if (forecast_6h.length > 0 && forecastCtrl.forecastData.step.hours === 6) {
-      lastTimestamp = new Date(forecast_6h[forecast_6h.length - 1].timestamp);
+    if (forecast_6h.length > 0 && hours === 6) {
       firstTimestamp = forecast_6h[0].timestamp;
+      lastTimestamp = new Date(
+        forecast_6h[forecast_6h.length - 1].timestamp.getTime() + 6 * 3600000,
+      );
     }
 
-    if (forecast_1h.length > 0 && forecastCtrl.forecastData.step.hours === 1) {
-      lastTimestamp = new Date(forecast_1h[forecast_1h.length - 1].timestamp);
+    if (forecast_1h.length > 0 && hours === 1) {
       firstTimestamp = forecast_1h[0].timestamp;
+      lastTimestamp = new Date(
+        forecast_1h[forecast_1h.length - 1].timestamp.getTime() + 1 * 3600000,
+      );
     }
 
-    if (days.length > 0 && forecastCtrl.forecastData.step.hours === 24) {
-      lastTimestamp = new Date(days[days.length - 1].timestamp);
-      firstTimestamp = days[0].timestamp;
+    if (days.length > 0 && hours === 24) {
+      firstTimestamp = new Date(days[0].timestamp);
+      firstTimestamp.setHours(0, 0, 0, 0);
+      lastTimestamp = new Date(
+        firstTimestamp.getTime() + days.length * 24 * 3600000,
+      );
     }
 
     console.info(

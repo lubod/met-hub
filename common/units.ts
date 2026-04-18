@@ -67,8 +67,7 @@ export const calculateFeelsLike = (
     // Steadman's approximation / Rothfusz regression
     const T = temp * 1.8 + 32; // Convert to Fahrenheit
     const R = humidity;
-    let hi =
-      0.5 * (T + 61.0 + (T - 68.0) * 1.2 + R * 0.094);
+    let hi = 0.5 * (T + 61.0 + (T - 68.0) * 1.2 + R * 0.094);
 
     if (hi >= 80) {
       hi =
@@ -91,5 +90,13 @@ export const calculateFeelsLike = (
     return round((hi - 32) / 1.8, 1);
   }
 
-  return temp;
+  // Apparent Temperature (for the range in between)
+  // Formula: AT = T + 0.33 * e - 0.70 * ws - 4.00
+  // e = (humidity / 100) * 6.105 * exp(17.27 * T / (237.7 + T))
+  const e = (humidity / 100) * 6.105 * Math.exp((17.27 * temp) / (237.7 + temp));
+  const ws = windSpeed / 3.6; // Convert km/h to m/s
+  const at = temp + 0.33 * e - 0.7 * ws - 4.0;
+  
+  // Only return AT if it's significantly different, or if we want a smoother transition
+  return round(at, 1);
 };
