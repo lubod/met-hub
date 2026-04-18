@@ -11,7 +11,7 @@ type Props = {
 
 const StationOut = observer(({ appContext }: Props) => (
   <div className="flex flex-row flex-wrap gap-y-4">
-    <div className="basis-1/2 md:basis-1/3">
+    <div className="basis-1/2">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.FEELSLIKE}
         value={appContext.cCtrl.stationData.data.feelslike}
@@ -22,7 +22,7 @@ const StationOut = observer(({ appContext }: Props) => (
         }
       />
     </div>
-    <div className="basis-1/2 md:basis-1/3">
+    <div className="basis-1/2">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.TEMPERATURE}
         value={appContext.cCtrl.stationData.data.temp}
@@ -35,7 +35,7 @@ const StationOut = observer(({ appContext }: Props) => (
         }
       />
     </div>
-    <div className="basis-1/2 md:basis-1/3">
+    <div className="basis-1/2">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.DEWPOINT}
         value={appContext.cCtrl.stationData.data.dewpt}
@@ -46,7 +46,7 @@ const StationOut = observer(({ appContext }: Props) => (
         }
       />
     </div>
-    <div className="basis-1/2 md:basis-1/3">
+    <div className="basis-1/2">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.HUMIDITY}
         value={appContext.cCtrl.stationData.data.humidity}
@@ -57,7 +57,7 @@ const StationOut = observer(({ appContext }: Props) => (
         }
       />
     </div>
-    <div className="basis-1/2 md:basis-1/3">
+    <div className="basis-1/2">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.SOLAR}
         value={appContext.cCtrl.stationData.data.solarradiation}
@@ -68,7 +68,7 @@ const StationOut = observer(({ appContext }: Props) => (
         }
       />
     </div>
-    <div className="basis-1/2 md:basis-1/3">
+    <div className="basis-1/2">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.UV}
         value={appContext.cCtrl.stationData.data.uv}
@@ -79,7 +79,7 @@ const StationOut = observer(({ appContext }: Props) => (
         }
       />
     </div>
-    <div className="basis-1/2 md:basis-1/3">
+    <div className="basis-1/2">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.PRESSUREABS}
         value={appContext.cCtrl.stationData.data.pressureabs}
@@ -92,7 +92,7 @@ const StationOut = observer(({ appContext }: Props) => (
         }
       />
     </div>
-    <div className="basis-1/2 md:basis-1/3">
+    <div className="basis-1/2">
       <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.RAINRATE}
         value={appContext.cCtrl.stationData.data.rainrate}

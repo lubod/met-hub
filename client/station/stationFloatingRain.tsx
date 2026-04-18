@@ -8,8 +8,8 @@ type Props = {
 };
 
 const StationFloatingRain = observer(({ appContext }: Props) => (
-  <div className="flex flex-row">
-    <div className="flex flex-col gap-4 basis-1/4">
+  <div className="flex flex-row flex-wrap gap-y-4">
+    <div className="basis-1/2">
       <NumberDataAlone
         label="1 hour" // todo
         value={
@@ -21,6 +21,47 @@ const StationFloatingRain = observer(({ appContext }: Props) => (
         fix={1}
         old={false}
       />
+    </div>
+    <div className="basis-1/2">
+      <NumberDataAlone
+        label="3 hour" // todo
+        value={
+          appContext.cCtrl.stationData.raindata == null
+            ? null
+            : parseFloat(appContext.cCtrl.stationData.raindata[1].sum)
+        }
+        unit=""
+        fix={1}
+        old={false}
+      />
+    </div>
+    <div className="basis-1/2">
+      <NumberDataAlone
+        label="6 hour" // todo
+        value={
+          appContext.cCtrl.stationData.raindata == null
+            ? null
+            : parseFloat(appContext.cCtrl.stationData.raindata[2].sum)
+        }
+        unit=""
+        fix={1}
+        old={false}
+      />
+    </div>
+    <div className="basis-1/2">
+      <NumberDataAlone
+        label="12 hour" // todo
+        value={
+          appContext.cCtrl.stationData.raindata == null
+            ? null
+            : parseFloat(appContext.cCtrl.stationData.raindata[3].sum)
+        }
+        unit=""
+        fix={1}
+        old={false}
+      />
+    </div>
+    <div className="basis-1/2">
       <NumberDataAlone
         label="1 day" // todo
         value={
@@ -33,18 +74,7 @@ const StationFloatingRain = observer(({ appContext }: Props) => (
         old={false}
       />
     </div>
-    <div className="flex flex-col gap-4 basis-1/4">
-      <NumberDataAlone
-        label="3 hour" // todo
-        value={
-          appContext.cCtrl.stationData.raindata == null
-            ? null
-            : parseFloat(appContext.cCtrl.stationData.raindata[1].sum)
-        }
-        unit=""
-        fix={1}
-        old={false}
-      />
+    <div className="basis-1/2">
       <NumberDataAlone
         label="3 days" // todo
         value={
@@ -57,18 +87,7 @@ const StationFloatingRain = observer(({ appContext }: Props) => (
         old={false}
       />
     </div>
-    <div className="flex flex-col gap-4 basis-1/4">
-      <NumberDataAlone
-        label="6 hour" // todo
-        value={
-          appContext.cCtrl.stationData.raindata == null
-            ? null
-            : parseFloat(appContext.cCtrl.stationData.raindata[2].sum)
-        }
-        unit=""
-        fix={1}
-        old={false}
-      />
+    <div className="basis-1/2">
       <NumberDataAlone
         label="1 week" // todo
         value={
@@ -81,18 +100,7 @@ const StationFloatingRain = observer(({ appContext }: Props) => (
         old={false}
       />
     </div>
-    <div className="flex flex-col gap-4 basis-1/4">
-      <NumberDataAlone
-        label="12 hour" // todo
-        value={
-          appContext.cCtrl.stationData.raindata == null
-            ? null
-            : parseFloat(appContext.cCtrl.stationData.raindata[3].sum)
-        }
-        unit=""
-        fix={1}
-        old={false}
-      />
+    <div className="basis-1/2">
       <NumberDataAlone
         label="4 weeks" // todo
         value={
