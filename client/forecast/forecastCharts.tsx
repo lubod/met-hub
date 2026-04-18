@@ -59,7 +59,7 @@ function Cell({
 
   return (
     <div
-      className="text-center text-light border-s text-sm pb-3 w-11 flex-none"
+      className="text-center text-light border-s text-sm pb-3 basis-full min-w-11"
       style={{
         borderLeftColor: hex,
         backgroundColor:
@@ -83,8 +83,8 @@ function MyRows1({ data }: RowsProps) {
   const size = "34px";
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row">
+    <div className="flex flex-col w-full">
+      <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => (
           <Cell
             key={item.getDay() + item.getDay2()}
@@ -93,7 +93,7 @@ function MyRows1({ data }: RowsProps) {
           />
         ))}
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => (
           <Cell
             key={item.getDay() + item.getDay2()}
@@ -102,10 +102,10 @@ function MyRows1({ data }: RowsProps) {
           />
         ))}
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => (
           <div
-            className="text-center border-s border-gray2 flex justify-center w-11 flex-none"
+            className="text-center border-s border-gray2 flex justify-center basis-full min-w-11"
             key={item.getDay() + item.getDay2()}
           >
             {item.getSymbolCode() != null && (
@@ -120,7 +120,7 @@ function MyRows1({ data }: RowsProps) {
           </div>
         ))}
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => (
           <Cell
             key={item.getDay() + item.getDay2()}
@@ -135,7 +135,7 @@ function MyRows1({ data }: RowsProps) {
           />
         ))}
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => (
           <Cell
             key={item.getDay() + item.getDay2()}
@@ -156,8 +156,8 @@ function MyRows1({ data }: RowsProps) {
 
 function MyRows2({ data }: RowsProps) {
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row">
+    <div className="flex flex-col w-full">
+      <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => (
           <Cell
             value={item.getPrecipitationAmount()}
@@ -169,7 +169,7 @@ function MyRows2({ data }: RowsProps) {
           />
         ))}
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => (
           <Cell
             key={item.getDay() + item.getDay2()}
@@ -181,7 +181,7 @@ function MyRows2({ data }: RowsProps) {
           />
         ))}
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => (
           <Cell
             key={item.getDay() + item.getDay2()}
@@ -193,7 +193,7 @@ function MyRows2({ data }: RowsProps) {
           />
         ))}
       </div>
-      <div className="flex flex-row">
+      <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => {
           const windSpeed = parseFloat(item.getWindSpeed());
           const hex = FORECAST_COLORS.purple;
@@ -204,7 +204,7 @@ function MyRows2({ data }: RowsProps) {
 
           return (
             <div
-              className="text-center border-s border-purple flex justify-center w-11 flex-none py-1"
+              className="text-center border-s border-purple flex justify-center basis-full min-w-11 py-1"
               key={item.getDay() + item.getDay2()}
               style={{
                 backgroundColor:

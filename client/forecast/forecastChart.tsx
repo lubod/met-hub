@@ -1,7 +1,5 @@
-import { observer } from "mobx-react";
-// import moment from "moment";
-import React from "react";
 import {
+  Area,
   ComposedChart,
   Line,
   // Tooltip,
@@ -97,68 +95,86 @@ const ForecastChart = observer(
           <span className="">Wind speed</span>
           <span className="text-purple border-purple">&#8226;</span>{" "}
         </div>
-        <div className="">
-          <ComposedChart
-            height={70}
-            width={width}
-            data={chdata}
-            margin={{
-              top: 0,
-              right: 0,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <Line
-              type="monotoneX"
-              dataKey="clouds"
-              stroke={MY_COLORS.light}
-              dot={false}
-              strokeWidth={2}
-              isAnimationActive={false}
-              yAxisId="clouds"
-            />
-            <Line
-              type="monotoneX"
-              dataKey="wind_speed"
-              stroke={MY_COLORS.purple}
-              dot={false}
-              strokeWidth={2}
-              isAnimationActive={false}
-              yAxisId="wind_speed"
-            />
-            <Line
-              type="step"
-              dataKey="rain"
-              stroke={MY_COLORS.blue}
-              dot={false}
-              strokeWidth={2}
-              isAnimationActive={false}
-              yAxisId="rain"
-            />
-            <XAxis
-              dataKey="timestamp"
-              hide
-              axisLine={false}
-              domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
-              scale="time"
-              type="number"
-            />
-            <YAxis yAxisId="rain" hide type="number" domain={[0, 5]} />
-            <YAxis yAxisId="wind_speed" hide type="number" domain={[0, 50]} />
-            <YAxis yAxisId="clouds" hide type="number" domain={[0, 100]} />
-            {/* 
+        <div className="w-full" style={{ minWidth: width }}>
+          <ResponsiveContainer width="100%" height={70}>
+            <ComposedChart
+              data={chdata}
+              margin={{
+                top: 0,
+                right: 0,
+                left: 0,
+                bottom: 0,
+              }}
+            >
+              <defs>
+                <linearGradient id="colorRain" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="5%"
+                    stopColor={MY_COLORS.blue}
+                    stopOpacity={0.8}
+                  />
+                  <stop offset="95%" stopColor={MY_COLORS.blue} stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorClouds" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="5%"
+                    stopColor={MY_COLORS.light}
+                    stopOpacity={0.3}
+                  />
+                  <stop offset="95%" stopColor={MY_COLORS.light} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <Area
+                type="monotoneX"
+                dataKey="clouds"
+                stroke={MY_COLORS.light}
+                fillOpacity={1}
+                fill="url(#colorClouds)"
+                isAnimationActive={false}
+                yAxisId="clouds"
+              />
+              <Area
+                type="step"
+                dataKey="rain"
+                stroke={MY_COLORS.blue}
+                fillOpacity={1}
+                fill="url(#colorRain)"
+                isAnimationActive={false}
+                yAxisId="rain"
+              />
+              <Line
+                type="monotoneX"
+                dataKey="wind_speed"
+                stroke={MY_COLORS.purple}
+                dot={false}
+                strokeWidth={2}
+                isAnimationActive={false}
+                yAxisId="wind_speed"
+              />
+              <XAxis
+                dataKey="timestamp"
+                hide
+                axisLine={false}
+                domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
+                scale="time"
+                type="number"
+              />
+              <YAxis yAxisId="rain" hide type="number" domain={[0, 5]} />
+              <YAxis yAxisId="wind_speed" hide type="number" domain={[0, 50]} />
+              <YAxis yAxisId="clouds" hide type="number" domain={[0, 100]} />
+              {/* 
               <Tooltip
                 labelStyle={{ color: "black" }}
                 itemStyle={{ color: "black" }}
                 // eslint-disable-next-line react/jsx-no-bind
                 labelFormatter={formatLabel}
             /> */}
-          </ComposedChart>
+            </ComposedChart>
+          </ResponsiveContainer>
         </div>
       </div>
     );
-  },
-);
+    },
+    );
 
 export default ForecastChart;

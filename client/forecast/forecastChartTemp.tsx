@@ -5,6 +5,7 @@ import {
   Area,
   ComposedChart,
   ReferenceLine,
+  ResponsiveContainer,
   //   Tooltip,
   XAxis,
   YAxis,
@@ -121,81 +122,81 @@ const ForecastChartTemp = observer(
           Temperature
           <span className="text-orange border-orange">&#8226;</span>
         </div>
-        <div className="">
-          <ComposedChart
-            height={70}
-            width={width}
-            data={chdata}
-            margin={{
-              top: 0,
-              right: 0,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            {refLines.map((v) => (
-              <ReferenceLine
-                key={v}
-                y={v}
+        <div className="w-full" style={{ minWidth: width }}>
+          <ResponsiveContainer width="100%" height={70}>
+            <ComposedChart
+              data={chdata}
+              margin={{
+                top: 0,
+                right: 0,
+                left: 0,
+                bottom: 0,
+              }}
+            >
+              {refLines.map((v) => (
+                <ReferenceLine
+                  key={v}
+                  y={v}
+                  yAxisId="temperature"
+                  stroke={getStroke(v)}
+                  strokeOpacity={v === 0 ? 0.8 : 0.4}
+                  strokeDasharray="4 2"
+                  label={{
+                    position: "left",
+                    offset: -5,
+                    children: `${v}°`,
+                    fill: getStroke(v),
+                    fillOpacity: v === 0 ? 0.9 : 0.5,
+                    fontSize: 10,
+                  }}
+                />
+              ))}
+              <Area
+                type="monotoneX"
+                dataKey="temperature"
+                stroke={MY_COLORS.orange}
+                fillOpacity={1}
+                fill="url(#colorUv)"
+                isAnimationActive={false}
                 yAxisId="temperature"
-                stroke={getStroke(v)}
-                strokeOpacity={v === 0 ? 0.8 : 0.4}
-                strokeDasharray="4 2"
-                label={{
-                  position: "left",
-                  offset: -5,
-                  children: `${v}°`,
-                  fill: getStroke(v),
-                  fillOpacity: v === 0 ? 0.9 : 0.5,
-                  fontSize: 10,
-                }}
               />
-            ))}
-            <Area
-              type="monotoneX"
-              dataKey="temperature"
-              stroke={MY_COLORS.orange}
-              fillOpacity={1}
-              fill="url(#colorUv)"
-              isAnimationActive={false}
-              yAxisId="temperature"
-            />
-            <defs>
-              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor={MY_COLORS.orange}
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor={MY_COLORS.orange}
-                  stopOpacity={0}
-                />
-              </linearGradient>
-            </defs>
-            <XAxis
-              dataKey="timestamp"
-              hide
-              axisLine={false}
-              domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
-              scale="time"
-              type="number"
-              // tick={{ stroke: "red", strokeWidth: 2 }}
-            />
-            <YAxis
-              yAxisId="temperature"
-              hide
-              type="number"
-              domain={[domainTempMin, domainTempMax]}
-            />
-            {/* } <Tooltip
+              <defs>
+                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="5%"
+                    stopColor={MY_COLORS.orange}
+                    stopOpacity={0.8}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={MY_COLORS.orange}
+                    stopOpacity={0}
+                  />
+                </linearGradient>
+              </defs>
+              <XAxis
+                dataKey="timestamp"
+                hide
+                axisLine={false}
+                domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
+                scale="time"
+                type="number"
+                // tick={{ stroke: "red", strokeWidth: 2 }}
+              />
+              <YAxis
+                yAxisId="temperature"
+                hide
+                type="number"
+                domain={[domainTempMin, domainTempMax]}
+              />
+              {/* } <Tooltip
                 labelStyle={{ color: "black" }}
                 itemStyle={{ color: "black" }}
                 // eslint-disable-next-line react/jsx-no-bind
                 labelFormatter={formatLabel}
             /> */}
-          </ComposedChart>
+            </ComposedChart>
+          </ResponsiveContainer>
         </div>
       </div>
     );
