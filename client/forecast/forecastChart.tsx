@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import {
   Area,
   ComposedChart,
