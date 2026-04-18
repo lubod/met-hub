@@ -49,13 +49,26 @@ function Cell({
   const hex = FORECAST_COLORS[finalColor] ?? "#ffffff";
 
   let bgOpacity = 0;
-  if (maxLimit1 != null && val > maxLimit1) bgOpacity = 0.1;
-  if (maxLimit2 != null && val > maxLimit2) bgOpacity = 0.25;
-  if (maxLimit3 != null && val > maxLimit3) bgOpacity = 0.5;
 
-  if (minLimit1 != null && val < minLimit1) bgOpacity = 0.1;
-  if (minLimit2 != null && val < minLimit2) bgOpacity = 0.25;
-  if (minLimit3 != null && val < minLimit3) bgOpacity = 0.5;
+  if (color === "orange") {
+    // Continuous gradient for temperatures
+    if (val > 0) {
+      // Map 0 -> 35 degrees to 0 -> 80% opacity
+      bgOpacity = Math.min((val / 35) * 0.8, 0.8);
+    } else if (val < 0) {
+      // Map 0 -> -20 degrees to 0 -> 80% opacity
+      bgOpacity = Math.min((Math.abs(val) / 20) * 0.8, 0.8);
+    }
+  } else {
+    // Stepped logic for other metrics (rain, clouds, wind)
+    if (maxLimit1 != null && val > maxLimit1) bgOpacity = 0.1;
+    if (maxLimit2 != null && val > maxLimit2) bgOpacity = 0.25;
+    if (maxLimit3 != null && val > maxLimit3) bgOpacity = 0.5;
+
+    if (minLimit1 != null && val < minLimit1) bgOpacity = 0.1;
+    if (minLimit2 != null && val < minLimit2) bgOpacity = 0.25;
+    if (minLimit3 != null && val < minLimit3) bgOpacity = 0.5;
+  }
 
   return (
     <div
