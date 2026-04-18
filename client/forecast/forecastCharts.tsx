@@ -256,16 +256,18 @@ const ForecastCharts = observer(
           {forecastCtrl.forecastData.step.hours === 1 && (
             <MyRows1 data={forecast_1h} />
           )}
-          <div className="">
-            <ForecastChartTemp
-              data={days}
-              lastTimestamp={lastTimestamp}
-              firstTimestamp={firstTimestamp}
-              hours={forecastCtrl.forecastData.step.hours}
-              offset6h={forecastCtrl.forecastData.offset6h}
-              width={cols * 44}
-            />
-          </div>
+          {firstTimestamp != null && lastTimestamp != null && (
+            <div className="">
+              <ForecastChartTemp
+                data={days}
+                lastTimestamp={lastTimestamp}
+                firstTimestamp={firstTimestamp}
+                hours={forecastCtrl.forecastData.step.hours}
+                offset6h={forecastCtrl.forecastData.offset6h}
+                width={cols * 44}
+              />
+            </div>
+          )}
           <Myhr />
           {forecastCtrl.forecastData.step.hours === 24 && (
             <MyRows2 data={days} />
@@ -276,16 +278,18 @@ const ForecastCharts = observer(
           {forecastCtrl.forecastData.step.hours === 1 && (
             <MyRows2 data={forecast_1h} />
           )}
-          <div className="mb-3">
-            <ForecastChart
-              data={days}
-              lastTimestamp={lastTimestamp}
-              firstTimestamp={firstTimestamp}
-              hours={forecastCtrl.forecastData.step.hours}
-              offset6h={forecastCtrl.forecastData.offset6h}
-              width={cols * 44}
-            />
-          </div>
+          {firstTimestamp != null && lastTimestamp != null && (
+            <div className="mb-3">
+              <ForecastChart
+                data={days}
+                lastTimestamp={lastTimestamp}
+                firstTimestamp={firstTimestamp}
+                hours={forecastCtrl.forecastData.step.hours}
+                offset6h={forecastCtrl.forecastData.offset6h}
+                width={cols * 44}
+              />
+            </div>
+          )}
         </div>
       </>
     );

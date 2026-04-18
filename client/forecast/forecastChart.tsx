@@ -22,6 +22,7 @@ type Props = {
 
 const ForecastChart = observer(
   ({ data, lastTimestamp, firstTimestamp, hours, offset6h, width }: Props) => {
+    if (firstTimestamp == null || lastTimestamp == null) return null;
     const chdata = [];
 
     /*
