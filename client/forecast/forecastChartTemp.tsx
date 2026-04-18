@@ -4,6 +4,7 @@ import React from "react";
 import {
   Area,
   ComposedChart,
+  ReferenceLine,
   //   Tooltip,
   XAxis,
   YAxis,
@@ -99,6 +100,19 @@ const ForecastChartTemp = observer(
       }
     }
 
+    const refLines = [];
+    for (let i = -60; i <= 100; i += 10) {
+      if (i > domainTempMin && i < domainTempMax) {
+        refLines.push(i);
+      }
+    }
+
+    function getStroke(v: number) {
+      if (v === 0) return "#fff";
+      if (v > 0) return "#fd7e14";
+      return "#0d6efd";
+    }
+
     console.info("render forecast chart temp");
     return (
       <div className="flex flex-col">
@@ -118,6 +132,24 @@ const ForecastChartTemp = observer(
               bottom: 0,
             }}
           >
+            {refLines.map((v) => (
+              <ReferenceLine
+                key={v}
+                y={v}
+                yAxisId="temperature"
+                stroke={getStroke(v)}
+                strokeOpacity={v === 0 ? 0.8 : 0.4}
+                strokeDasharray="4 2"
+                label={{
+                  position: "left",
+                  offset: -5,
+                  children: `${v}°`,
+                  fill: getStroke(v),
+                  fillOpacity: v === 0 ? 0.9 : 0.5,
+                  fontSize: 10,
+                }}
+              />
+            ))}
             <Area
               type="monotoneX"
               dataKey="temperature"

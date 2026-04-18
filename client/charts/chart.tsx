@@ -27,11 +27,27 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
   const y2key = appContext.chartsCtrl.chartsData.sensor.col2;
   const { yDomainMin, yDomainMax, range, xDomainMin, xDomainMax } =
     appContext.chartsCtrl.chartsData.cdata;
-  const { color } = appContext.chartsCtrl.chartsData.sensor;
+  const { color, unit } = appContext.chartsCtrl.chartsData.sensor;
 
-  const refLines = [-20, -10, 0, 10, 20].filter(
-    (v) => v > yDomainMin && v < yDomainMax,
-  );
+  const refLines = [];
+  const step = unit === "hP" ? 50 : 10;
+  const startLine = unit === "hP" ? 800 : -60;
+  const endLine = unit === "hP" ? 1200 : 100;
+
+  for (let i = startLine; i <= endLine; i += step) {
+    if (i > yDomainMin && i < yDomainMax) {
+      refLines.push(i);
+    }
+  }
+
+  function getStroke(v: number) {
+    if (v === 0) return "#fff";
+    if (unit === "°C") {
+      if (v > 0) return "#fd7e14";
+      return "#0d6efd";
+    }
+    return "#fff";
+  }
 
   function formatXAxis(tickItem: string) {
     return moment(parseInt(tickItem, 10)).format(range.format);
@@ -57,9 +73,17 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
             <ReferenceLine
               key={v}
               y={v}
-              stroke="#888"
+              stroke={getStroke(v)}
+              strokeOpacity={v === 0 ? 0.8 : 0.4}
               strokeDasharray="4 2"
-              label={{ position: "left", offset: -5, children: `${v}°` }}
+              label={{
+                position: "left",
+                offset: -5,
+                children: `${v}${unit}`,
+                fill: getStroke(v),
+                fillOpacity: v === 0 ? 0.9 : 0.5,
+                fontSize: 12,
+              }}
             />
           ))}
           <Area
