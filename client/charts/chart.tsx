@@ -24,11 +24,14 @@ type ChartData = {
 };
 
 function Chart({ chdata, xkey, appContext }: ChartData) {
-  // const ykey = appContext.chartsCtrl.chartsData.measurement.col;
   const y2key = appContext.chartsCtrl.chartsData.sensor.col2;
   const { yDomainMin, yDomainMax, range, xDomainMin, xDomainMax } =
     appContext.chartsCtrl.chartsData.cdata;
   const { color } = appContext.chartsCtrl.chartsData.sensor;
+
+  const refLines = [-20, -10, 0, 10, 20].filter(
+    (v) => v > yDomainMin && v < yDomainMax,
+  );
 
   function formatXAxis(tickItem: string) {
     return moment(parseInt(tickItem, 10)).format(range.format);
@@ -37,21 +40,7 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
   function formatLabel(label: string) {
     return moment(parseInt(label, 10)).format("DD.MM.YYYY HH:mm:ss");
   }
-  /*
-  console.info(
-    "render chart",
-    chdata,
-    xkey,
-    ykey,
-    y2key,
-    yDomainMin,
-    yDomainMax,
-    color,
-    range,
-    xDomainMin,
-    xDomainMax,
-  );
-  */
+
   return (
     <div className="text-left">
       <ResponsiveContainer width="100%" aspect={7.0 / 4.0}>
@@ -64,37 +53,15 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
             bottom: 0,
           }}
         >
-          {/* Reference lines at -20, -10, 0, 10, 20 degrees */}
-          <ReferenceLine
-            y={0}
-            stroke="#888"
-            strokeDasharray="4 2"
-            label={{ position: "left", offset: -5, children: "0°" }}
-          />
-          <ReferenceLine
-            y={10}
-            stroke="#888"
-            strokeDasharray="4 2"
-            label={{ position: "left", offset: -5, children: "10°" }}
-          />
-          <ReferenceLine
-            y={20}
-            stroke="#888"
-            strokeDasharray="4 2"
-            label={{ position: "left", offset: -5, children: "20°" }}
-          />
-          <ReferenceLine
-            y={-10}
-            stroke="#888"
-            strokeDasharray="4 2"
-            label={{ position: "left", offset: -5, children: "-10°" }}
-          />
-          <ReferenceLine
-            y={-20}
-            stroke="#888"
-            strokeDasharray="4 2"
-            label={{ position: "left", offset: -5, children: "-20°" }}
-          />
+          {refLines.map((v) => (
+            <ReferenceLine
+              key={v}
+              y={v}
+              stroke="#888"
+              strokeDasharray="4 2"
+              label={{ position: "left", offset: -5, children: `${v}°` }}
+            />
+          ))}
           <Area
             type="monotoneX"
             dataKey="val"
