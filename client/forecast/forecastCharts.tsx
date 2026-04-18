@@ -311,7 +311,7 @@ const ForecastCharts = observer(
         <div className="mb-4 flex flex-row justify-center">
           <ForecastStepsList forecastCtrl={forecastCtrl} />
         </div>
-        <div className="flex flex-col overflow-x-auto scrollbar-hide">
+        <div className="flex flex-col overflow-x-auto">
           <MyRows1 data={dataToDisplay} />
           {firstTimestamp != null && lastTimestamp != null && (
             <div className="">

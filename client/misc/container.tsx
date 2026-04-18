@@ -8,7 +8,7 @@ type Props = {
 
 export function Container({ children, className = "" }: Props) {
   return (
-    <div className={`glass rounded-xl p-4 w-full ${className}`}>
+    <div className={`glass rounded-xl md:p-6 p-4 w-full ${className}`}>
       {children}
     </div>
   );
