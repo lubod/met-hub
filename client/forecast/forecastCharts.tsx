@@ -25,24 +25,49 @@ const FORECAST_COLORS: Record<string, string> = {
 type CellProps = {
   value: string;
   color: string;
-  maxLimit1: number;
-  maxLimit2: number;
-  maxLimit3: number;
+  maxLimit1?: number;
+  maxLimit2?: number;
+  maxLimit3?: number;
+  minLimit1?: number;
+  minLimit2?: number;
+  minLimit3?: number;
 };
 
-function Cell({ value, color, maxLimit1, maxLimit2, maxLimit3 }: CellProps) {
-  const hex = FORECAST_COLORS[color] ?? "#ffffff";
+function Cell({
+  value,
+  color,
+  maxLimit1,
+  maxLimit2,
+  maxLimit3,
+  minLimit1,
+  minLimit2,
+  minLimit3,
+}: CellProps) {
+  const val = parseFloat(value);
+  let finalColor = color;
+  if (color === "orange" && val < 0) finalColor = "blue";
+  const hex = FORECAST_COLORS[finalColor] ?? "#ffffff";
+
   let bgOpacity = 0;
-  if (maxLimit1 != null && parseFloat(value) > maxLimit1) bgOpacity = 0.10;
-  if (maxLimit2 != null && parseFloat(value) > maxLimit2) bgOpacity = 0.25;
-  if (maxLimit3 != null && parseFloat(value) > maxLimit3) bgOpacity = 0.50;
+  if (maxLimit1 != null && val > maxLimit1) bgOpacity = 0.1;
+  if (maxLimit2 != null && val > maxLimit2) bgOpacity = 0.25;
+  if (maxLimit3 != null && val > maxLimit3) bgOpacity = 0.5;
+
+  if (minLimit1 != null && val < minLimit1) bgOpacity = 0.1;
+  if (minLimit2 != null && val < minLimit2) bgOpacity = 0.25;
+  if (minLimit3 != null && val < minLimit3) bgOpacity = 0.5;
 
   return (
     <div
       className="text-center text-light border-s text-sm pb-3 w-11 flex-none"
       style={{
         borderLeftColor: hex,
-        backgroundColor: bgOpacity > 0 ? `${hex}${Math.round(bgOpacity * 255).toString(16).padStart(2, "0")}` : undefined,
+        backgroundColor:
+          bgOpacity > 0
+            ? `${hex}${Math.round(bgOpacity * 255)
+                .toString(16)
+                .padStart(2, "0")}`
+            : undefined,
       }}
     >
       {value}
@@ -65,9 +90,6 @@ function MyRows1({ data }: RowsProps) {
             key={item.getDay() + item.getDay2()}
             value={item.getDay()}
             color="gray2"
-            maxLimit1={null}
-            maxLimit2={null}
-            maxLimit3={null}
           />
         ))}
       </div>
@@ -77,9 +99,6 @@ function MyRows1({ data }: RowsProps) {
             key={item.getDay() + item.getDay2()}
             value={item.getDay2()}
             color="gray2"
-            maxLimit1={null}
-            maxLimit2={null}
-            maxLimit3={null}
           />
         ))}
       </div>
@@ -110,6 +129,9 @@ function MyRows1({ data }: RowsProps) {
             maxLimit1={24}
             maxLimit2={29}
             maxLimit3={34}
+            minLimit1={0}
+            minLimit2={-10}
+            minLimit3={-20}
           />
         ))}
       </div>
@@ -122,6 +144,9 @@ function MyRows1({ data }: RowsProps) {
             maxLimit1={18}
             maxLimit2={21}
             maxLimit3={24}
+            minLimit1={0}
+            minLimit2={-10}
+            minLimit3={-20}
           />
         ))}
       </div>
@@ -169,21 +194,38 @@ function MyRows2({ data }: RowsProps) {
         ))}
       </div>
       <div className="flex flex-row">
-        {data.map((item: IGetForecastDataToDisplay) => (
-          <div
-            className="text-center border-s border-purple flex justify-center w-11 flex-none"
-            key={item.getDay() + item.getDay2()}
-          >
-            <svg width="25px" height="25px">
-              <polygon
-                points="8 3, 12 21, 16 3"
-                fill="white"
-                stroke="white"
-                transform={`rotate(${item.getWindDir()} 12 12)`}
-              />
-            </svg>
-          </div>
-        ))}
+        {data.map((item: IGetForecastDataToDisplay) => {
+          const windSpeed = parseFloat(item.getWindSpeed());
+          const hex = FORECAST_COLORS.purple;
+          let bgOpacity = 0;
+          if (windSpeed > 19) bgOpacity = 0.1;
+          if (windSpeed > 29) bgOpacity = 0.25;
+          if (windSpeed > 39) bgOpacity = 0.5;
+
+          return (
+            <div
+              className="text-center border-s border-purple flex justify-center w-11 flex-none py-1"
+              key={item.getDay() + item.getDay2()}
+              style={{
+                backgroundColor:
+                  bgOpacity > 0
+                    ? `${hex}${Math.round(bgOpacity * 255)
+                        .toString(16)
+                        .padStart(2, "0")}`
+                    : undefined,
+              }}
+            >
+              <svg width="25px" height="25px">
+                <polygon
+                  points="8 3, 12 21, 16 3"
+                  fill="white"
+                  stroke="white"
+                  transform={`rotate(${item.getWindDir()} 12 12)`}
+                />
+              </svg>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
