@@ -19,10 +19,11 @@ type Props = {
   hours: number;
   offset6h: number;
   width: number;
+  type: "rain_cloud" | "wind";
 };
 
 const ForecastChart = observer(
-  ({ data, lastTimestamp, firstTimestamp, hours, offset6h, width }: Props) => {
+  ({ data, lastTimestamp, firstTimestamp, hours, offset6h, width, type }: Props) => {
     if (firstTimestamp == null || lastTimestamp == null) return null;
     const chdata = [];
 
@@ -91,12 +92,19 @@ const ForecastChart = observer(
     return (
       <div className="flex flex-col">
         <div className="text-sm text-center text-gray border-gray py-4">
-          Rain
-          <span className="text-blue border-blue">&#8226;</span>{" "}
-          <span className="">Clouds</span>
-          <span className="text-light border-light">&#8226;</span>
-          <span className="">Wind speed</span>
-          <span className="text-purple border-purple">&#8226;</span>{" "}
+          {type === "rain_cloud" ? (
+            <>
+              Rain
+              <span className="text-blue border-blue">&#8226;</span>{" "}
+              <span className="">Clouds</span>
+              <span className="text-light border-light">&#8226;</span>
+            </>
+          ) : (
+            <>
+              <span className="">Wind speed</span>
+              <span className="text-purple border-purple">&#8226;</span>{" "}
+            </>
+          )}
         </div>
         <div className="w-full" style={{ minWidth: width }}>
           <ResponsiveContainer width="100%" height={70}>
@@ -127,33 +135,39 @@ const ForecastChart = observer(
                   <stop offset="95%" stopColor={MY_COLORS.light} stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <Area
-                type="monotoneX"
-                dataKey="clouds"
-                stroke={MY_COLORS.light}
-                fillOpacity={1}
-                fill="url(#colorClouds)"
-                isAnimationActive={false}
-                yAxisId="clouds"
-              />
-              <Area
-                type="step"
-                dataKey="rain"
-                stroke={MY_COLORS.blue}
-                fillOpacity={1}
-                fill="url(#colorRain)"
-                isAnimationActive={false}
-                yAxisId="rain"
-              />
-              <Line
-                type="monotoneX"
-                dataKey="wind_speed"
-                stroke={MY_COLORS.purple}
-                dot={false}
-                strokeWidth={2}
-                isAnimationActive={false}
-                yAxisId="wind_speed"
-              />
+              {type === "rain_cloud" && (
+                <Area
+                  type="monotoneX"
+                  dataKey="clouds"
+                  stroke={MY_COLORS.light}
+                  fillOpacity={1}
+                  fill="url(#colorClouds)"
+                  isAnimationActive={false}
+                  yAxisId="clouds"
+                />
+              )}
+              {type === "rain_cloud" && (
+                <Area
+                  type="step"
+                  dataKey="rain"
+                  stroke={MY_COLORS.blue}
+                  fillOpacity={1}
+                  fill="url(#colorRain)"
+                  isAnimationActive={false}
+                  yAxisId="rain"
+                />
+              )}
+              {type === "wind" && (
+                <Line
+                  type="monotoneX"
+                  dataKey="wind_speed"
+                  stroke={MY_COLORS.purple}
+                  dot={false}
+                  strokeWidth={2}
+                  isAnimationActive={false}
+                  yAxisId="wind_speed"
+                />
+              )}
               <XAxis
                 dataKey="timestamp"
                 hide
@@ -162,9 +176,15 @@ const ForecastChart = observer(
                 scale="time"
                 type="number"
               />
-              <YAxis yAxisId="rain" hide type="number" domain={[0, 5]} />
-              <YAxis yAxisId="wind_speed" hide type="number" domain={[0, 50]} />
-              <YAxis yAxisId="clouds" hide type="number" domain={[0, 100]} />
+              {type === "rain_cloud" && (
+                <>
+                  <YAxis yAxisId="rain" hide type="number" domain={[0, 5]} />
+                  <YAxis yAxisId="clouds" hide type="number" domain={[0, 100]} />
+                </>
+              )}
+              {type === "wind" && (
+                <YAxis yAxisId="wind_speed" hide type="number" domain={[0, 50]} />
+              )}
               {/* 
               <Tooltip
                 labelStyle={{ color: "black" }}
@@ -177,7 +197,7 @@ const ForecastChart = observer(
         </div>
       </div>
     );
-    },
-    );
+  },
+);
 
 export default ForecastChart;

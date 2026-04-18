@@ -167,7 +167,7 @@ function MyRows1({ data }: RowsProps) {
   );
 }
 
-function MyRows2({ data }: RowsProps) {
+function MyRowsRainCloud({ data }: RowsProps) {
   return (
     <div className="flex flex-col w-full">
       <div className="flex flex-row w-full">
@@ -194,6 +194,13 @@ function MyRows2({ data }: RowsProps) {
           />
         ))}
       </div>
+    </div>
+  );
+}
+
+function MyRowsWind({ data }: RowsProps) {
+  return (
+    <div className="flex flex-col w-full">
       <div className="flex flex-row w-full">
         {data.map((item: IGetForecastDataToDisplay) => (
           <Cell
@@ -296,21 +303,16 @@ const ForecastCharts = observer(
       forecastCtrl.forecastData.offset1h,
     );
 
+    const dataToDisplay =
+      hours === 24 ? days : hours === 6 ? forecast_6h : forecast_1h;
+
     return (
       <>
         <div className="mb-4 flex flex-row justify-center">
           <ForecastStepsList forecastCtrl={forecastCtrl} />
         </div>
         <div className="flex flex-col overflow-x-auto scrollbar-hide">
-          {forecastCtrl.forecastData.step.hours === 24 && (
-            <MyRows1 data={days} />
-          )}
-          {forecastCtrl.forecastData.step.hours === 6 && (
-            <MyRows1 data={forecast_6h} />
-          )}
-          {forecastCtrl.forecastData.step.hours === 1 && (
-            <MyRows1 data={forecast_1h} />
-          )}
+          <MyRows1 data={dataToDisplay} />
           {firstTimestamp != null && lastTimestamp != null && (
             <div className="">
               <ForecastChartTemp
@@ -324,15 +326,22 @@ const ForecastCharts = observer(
             </div>
           )}
           <Myhr />
-          {forecastCtrl.forecastData.step.hours === 24 && (
-            <MyRows2 data={days} />
+          <MyRowsRainCloud data={dataToDisplay} />
+          {firstTimestamp != null && lastTimestamp != null && (
+            <div className="">
+              <ForecastChart
+                data={days}
+                lastTimestamp={lastTimestamp}
+                firstTimestamp={firstTimestamp}
+                hours={forecastCtrl.forecastData.step.hours}
+                offset6h={forecastCtrl.forecastData.offset6h}
+                width={cols * 44}
+                type="rain_cloud"
+              />
+            </div>
           )}
-          {forecastCtrl.forecastData.step.hours === 6 && (
-            <MyRows2 data={forecast_6h} />
-          )}
-          {forecastCtrl.forecastData.step.hours === 1 && (
-            <MyRows2 data={forecast_1h} />
-          )}
+          <Myhr />
+          <MyRowsWind data={dataToDisplay} />
           {firstTimestamp != null && lastTimestamp != null && (
             <div className="mb-3">
               <ForecastChart
@@ -342,6 +351,7 @@ const ForecastCharts = observer(
                 hours={forecastCtrl.forecastData.step.hours}
                 offset6h={forecastCtrl.forecastData.offset6h}
                 width={cols * 44}
+                type="wind"
               />
             </div>
           )}
