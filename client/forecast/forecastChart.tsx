@@ -1,5 +1,5 @@
+import * as React from "react";
 import { observer } from "mobx-react";
-import React from "react";
 import {
   Area,
   ComposedChart,
