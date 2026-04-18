@@ -7,6 +7,7 @@ import router from "./router";
 import { AppError } from "./state";
 
 const app = express();
+app.set("trust proxy", 1);
 const helmet = require("helmet");
 const csp = require("helmet-csp");
 
