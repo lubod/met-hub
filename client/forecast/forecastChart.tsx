@@ -4,6 +4,7 @@ import {
   Area,
   ComposedChart,
   Line,
+  ReferenceLine,
   ResponsiveContainer,
   // Tooltip,
   XAxis,
@@ -32,6 +33,8 @@ const ForecastChart = observer(
       return moment(label).format("MMM DD HH:mm");
     }
     */
+
+    let domainWindMax = 20;
 
     if (hours === 24 && data.length > 0 && data[0].rows.length > 0) {
       for (let h = 0; h < data[0].rows[0].timestamp.getHours(); h += 1) {
@@ -79,12 +82,21 @@ const ForecastChart = observer(
           // eslint-disable-next-line no-continue
           continue;
         }
+        const ws = parseFloat((forecastRow.wind_speed * 3.6).toFixed(1));
+        if (ws > domainWindMax) domainWindMax = ws;
         chdata.push({
           timestamp: forecastRow.timestamp.getTime(),
           rain: forecastRow.precipitation_amount_row,
-          wind_speed: (forecastRow.wind_speed * 3.6).toFixed(1),
+          wind_speed: ws,
           clouds: forecastRow.cloud_area_fraction,
         });
+      }
+    }
+
+    const refLines = [];
+    if (type === "wind") {
+      for (let i = 10; i <= domainWindMax; i += 10) {
+        refLines.push(i);
       }
     }
 
@@ -168,6 +180,24 @@ const ForecastChart = observer(
                   yAxisId="wind_speed"
                 />
               )}
+              {type === "wind" && refLines.map((v) => (
+                <ReferenceLine
+                  key={v}
+                  y={v}
+                  yAxisId="wind_speed"
+                  stroke="#fff"
+                  strokeOpacity={0.2}
+                  strokeDasharray="4 2"
+                  label={{
+                    position: "left",
+                    offset: -5,
+                    children: `${v}`,
+                    fill: "#fff",
+                    fillOpacity: 0.3,
+                    fontSize: 10,
+                  }}
+                />
+              ))}
               <XAxis
                 dataKey="timestamp"
                 hide
@@ -183,7 +213,7 @@ const ForecastChart = observer(
                 </>
               )}
               {type === "wind" && (
-                <YAxis yAxisId="wind_speed" hide type="number" domain={[0, 50]} />
+                <YAxis yAxisId="wind_speed" hide type="number" domain={[0, domainWindMax]} />
               )}
               {/* 
               <Tooltip
