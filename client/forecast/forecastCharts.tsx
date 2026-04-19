@@ -325,7 +325,9 @@ const ForecastCharts = observer(
               />
             </div>
           )}
-          <Myhr />
+          <div className="my-4">
+            <Myhr />
+          </div>
           <MyRowsRainCloud data={dataToDisplay} />
           {firstTimestamp != null && lastTimestamp != null && (
             <div className="">
@@ -340,7 +342,9 @@ const ForecastCharts = observer(
               />
             </div>
           )}
-          <Myhr />
+          <div className="my-4">
+            <Myhr />
+          </div>
           <MyRowsWind data={dataToDisplay} />
           {firstTimestamp != null && lastTimestamp != null && (
             <div className="mb-3">

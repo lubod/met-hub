@@ -123,7 +123,7 @@ const ForecastChartTemp = observer(
           <span className="text-orange border-orange">&#8226;</span>
         </div>
         <div className="w-full" style={{ minWidth: width }}>
-          <ResponsiveContainer width="100%" height={85}>
+          <ResponsiveContainer width="100%" height={106}>
             <ComposedChart
               data={chdata}
               margin={{
