@@ -10,13 +10,21 @@ type Props = {
 function MapResizer({ lat, lon }: { lat: number; lon: number }) {
   const map = useMap();
   useEffect(() => {
-    map.invalidateSize();
-    map.setView([lat, lon], map.getZoom());
-    const timer = setTimeout(() => {
+    const triggerCentering = () => {
       map.invalidateSize();
       map.setView([lat, lon], map.getZoom());
-    }, 200);
-    return () => clearTimeout(timer);
+    };
+
+    triggerCentering();
+
+    const timer = setTimeout(triggerCentering, 500);
+
+    window.addEventListener("resize", triggerCentering);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", triggerCentering);
+    };
   }, [map, lat, lon]);
   return null;
 }

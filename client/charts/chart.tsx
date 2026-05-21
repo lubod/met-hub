@@ -1,7 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/style-prop-object */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import moment from "moment";
 import React from "react";
 import {
@@ -28,26 +24,7 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
   const { yDomainMin, yDomainMax, range, xDomainMin, xDomainMax } =
     appContext.chartsCtrl.chartsData.cdata;
   const { color, unit } = appContext.chartsCtrl.chartsData.sensor;
-
-  const refLines = [];
-  const step = unit === "hP" ? 50 : 10;
-  const startLine = unit === "hP" ? 800 : -60;
-  const endLine = unit === "hP" ? 1200 : 100;
-
-  for (let i = startLine; i <= endLine; i += step) {
-    if (i > yDomainMin && i < yDomainMax) {
-      refLines.push(i);
-    }
-  }
-
-  function getStroke(v: number) {
-    if (v === 0) return "#fff";
-    if (unit === "°C") {
-      if (v > 0) return "#fd7e14";
-      return "#0d6efd";
-    }
-    return "#fff";
-  }
+  const sensor = appContext.chartsCtrl.chartsData.sensor;
 
   function formatXAxis(tickItem: string) {
     return moment(parseInt(tickItem, 10)).format(range.format);
@@ -58,34 +35,83 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
   }
 
   return (
-    <div className="text-left">
+    <div className="text-left w-full flex flex-col gap-2">
+      {/* Sleek Custom Legend */}
+      <div className="flex flex-row flex-wrap gap-4 mb-2 text-xs justify-end pr-4">
+        <div className="flex items-center gap-2">
+          <span className="w-3 h-3 rounded-sm opacity-80" style={{ backgroundColor: color }} />
+          <span className="text-[rgba(248,249,250,0.65)] font-medium">{sensor.label} Range</span>
+        </div>
+        {y2key && (
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-0.5" style={{ backgroundColor: "#F93154" }} />
+            <span className="text-[rgba(248,249,250,0.65)] font-medium">Indoor {sensor.label}</span>
+          </div>
+        )}
+      </div>
+
       <ResponsiveContainer width="100%" aspect={7.0 / 4.0}>
         <ComposedChart
           data={chdata}
           margin={{
-            top: 0,
-            right: 0,
-            left: 0,
+            top: 10,
+            right: 10,
+            left: -15,
             bottom: 0,
           }}
         >
-          {refLines.map((v) => (
+          <CartesianGrid stroke="rgba(255, 255, 255, 0.05)" horizontal={true} vertical={false} strokeDasharray="3 3" />
+          {unit === "°C" && yDomainMin < 0 && yDomainMax > 0 && (
             <ReferenceLine
-              key={v}
-              y={v}
-              stroke={getStroke(v)}
-              strokeOpacity={v === 0 ? 0.8 : 0.4}
-              strokeDasharray="4 2"
+              y={0}
+              stroke="#0d6efd"
+              strokeOpacity={0.8}
+              strokeWidth={1.5}
               label={{
                 position: "left",
                 offset: -5,
-                children: `${v}${unit}`,
-                fill: getStroke(v),
-                fillOpacity: v === 0 ? 0.9 : 0.5,
-                fontSize: 12,
+                children: "0°C",
+                fill: "#0d6efd",
+                fillOpacity: 0.9,
+                fontSize: 10,
               }}
             />
-          ))}
+          )}
+          <XAxis
+            dataKey={xkey}
+            tick={{ fill: "rgba(248, 249, 250, 0.45)", fontSize: 10 }}
+            tickFormatter={formatXAxis}
+            axisLine={false}
+            tickLine={false}
+            domain={[xDomainMin, xDomainMax]}
+            scale="time"
+            type="number"
+          />
+          <YAxis
+            type="number"
+            domain={[yDomainMin, yDomainMax]}
+            tick={{ fill: "rgba(248, 249, 250, 0.45)", fontSize: 10 }}
+            axisLine={false}
+            tickLine={false}
+            tickFormatter={(v) => `${v}${unit}`}
+            width={45}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "rgba(10, 10, 26, 0.85)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              borderRadius: "0.5rem",
+              fontSize: "0.75rem",
+              color: "#f8f9fa",
+              padding: "6px 10px",
+              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.4)",
+            }}
+            itemStyle={{ color: "#f8f9fa" }}
+            labelStyle={{ color: "rgba(248, 249, 250, 0.6)", fontWeight: 600, marginBottom: "4px" }}
+            labelFormatter={formatLabel}
+          />
           <Area
             type="monotoneX"
             dataKey="val"
@@ -112,27 +138,6 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
               <stop offset="95%" stopColor="#81D4FA" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="#ccc" vertical={false} horizontal={false} />
-          <XAxis
-            dataKey={xkey}
-            tick={{ fill: "white" }}
-            tickFormatter={formatXAxis}
-            axisLine={false}
-            domain={[xDomainMin, xDomainMax]}
-            scale="time"
-            type="number"
-          />
-          <YAxis
-            hide
-            type="number"
-            domain={[yDomainMin, yDomainMax]}
-            tick={{ fill: "white" }}
-          />
-          <Tooltip
-            labelStyle={{ color: "black" }}
-            itemStyle={{ color: "black" }}
-            labelFormatter={formatLabel}
-          />
         </ComposedChart>
       </ResponsiveContainer>
     </div>
@@ -140,3 +145,4 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
 }
 
 export default Chart;
+

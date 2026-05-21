@@ -1,7 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable react/style-prop-object */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import moment from "moment";
 import React from "react";
 import {
@@ -32,46 +28,74 @@ function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
     return moment(parseInt(label, 10)).format("DD.MM.YYYY HH:mm:ss");
   }
 
-  // console.info("render wind dir chart", chdata, xkey, ykey, y2key, domainMin, domainMax);
   return (
-    <div className="text-left">
+    <div className="text-left w-full flex flex-col gap-2">
       {ykey === "winddir" && (
-        <ResponsiveContainer width="100%" aspect={7.0 / 4.0}>
-          <ScatterChart
-            data={chdata}
-            margin={{
-              top: 0,
-              right: 0,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid stroke="#ccc" vertical={false} horizontal={false} />
-            <XAxis
-              dataKey={xkey}
-              tick={{ fill: "white" }}
-              tickFormatter={formatXAxis}
-              axisLine={false}
-              domain={["auto", "auto"]}
-              scale="time"
-            />
-            <YAxis
-              hide
-              type="number"
-              domain={[0, 360]}
-              tick={{ fill: "white" }}
-            />
-            <Tooltip
-              labelStyle={{ color: "black" }}
-              itemStyle={{ color: "black" }}
-              labelFormatter={formatLabel}
-            />
-            <Scatter dataKey={ykey} fill={color} isAnimationActive={false} />
-          </ScatterChart>
-        </ResponsiveContainer>
+        <>
+          {/* Sleek Custom Legend */}
+          <div className="flex flex-row flex-wrap gap-4 mb-2 text-xs justify-end pr-4">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+              <span className="text-[rgba(248,249,250,0.65)] font-medium">Wind Direction</span>
+            </div>
+          </div>
+
+          <ResponsiveContainer width="100%" aspect={7.0 / 4.0}>
+            <ScatterChart
+              data={chdata}
+              margin={{
+                top: 10,
+                right: 10,
+                left: -15,
+                bottom: 0,
+              }}
+            >
+              <CartesianGrid stroke="rgba(255, 255, 255, 0.05)" horizontal={true} vertical={false} strokeDasharray="3 3" />
+              <XAxis
+                dataKey={xkey}
+                tick={{ fill: "rgba(248, 249, 250, 0.45)", fontSize: 10 }}
+                tickFormatter={formatXAxis}
+                axisLine={false}
+                tickLine={false}
+                domain={["auto", "auto"]}
+                scale="time"
+              />
+              <YAxis
+                type="number"
+                domain={[0, 360]}
+                ticks={[0, 90, 180, 270, 360]}
+                tick={{ fill: "rgba(248, 249, 250, 0.45)", fontSize: 10 }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(v) =>
+                  v === 0 || v === 360 ? "N" : v === 90 ? "E" : v === 180 ? "S" : v === 270 ? "W" : `${v}°`
+                }
+                width={35}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "rgba(10, 10, 26, 0.85)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "0.5rem",
+                  fontSize: "0.75rem",
+                  color: "#f8f9fa",
+                  padding: "6px 10px",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.4)",
+                }}
+                itemStyle={{ color: "#f8f9fa" }}
+                labelStyle={{ color: "rgba(248, 249, 250, 0.6)", fontWeight: 600, marginBottom: "4px" }}
+                labelFormatter={formatLabel}
+              />
+              <Scatter dataKey={ykey} fill={color} isAnimationActive={false} />
+            </ScatterChart>
+          </ResponsiveContainer>
+        </>
       )}
     </div>
   );
 }
 
 export default WindDirChart;
+
