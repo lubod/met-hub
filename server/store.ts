@@ -43,10 +43,17 @@ async function main(stations: Map<string, IStation>) {
               toDel.push(msg.id);
               continue;
             }
-            const o = JSON.parse(msg.message.m);
-            o.timestamp = new Date(o.timestamp);
-            // eslint-disable-next-line no-await-in-loop
-            await store(station.measurement, o);
+            try {
+              const o = JSON.parse(msg.message.m);
+              o.timestamp = new Date(o.timestamp);
+              // eslint-disable-next-line no-await-in-loop
+              await store(station.measurement, o);
+            } catch (err) {
+              console.error(
+                `store: failed to process message ${msg.id} for station ${msg.message.id}:`,
+                err,
+              );
+            }
             toDel.push(msg.id);
             currentId = msg.id;
           }

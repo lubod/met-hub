@@ -40,7 +40,7 @@ export async function getForecast(lat: string, lon: string) {
 }
 
 export async function getAstronomicalData(lat: string, lon: string, date: Date) {
-  const cacheKey = `ASTRONOMICAL_DATA_CACHE_${lat}_${lon}_${moment(date).format("YYYY-DD-MM")}`;
+  const cacheKey = `ASTRONOMICAL_DATA_CACHE_${lat}_${lon}_${moment(date).format("YYYY-MM-DD")}`;
   const reply = await redisClient.get(cacheKey);
   if (reply != null) {
     try {
