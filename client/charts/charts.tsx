@@ -22,47 +22,70 @@ const Charts = observer(
     // console.info("render charts", chartsData);
     // const map = useMap();
     // map.invalidateSize();
-    <Container>
-      <ChartsHeader appContext={appContext} />
-      <Myhr />
-      <ChartsStats appContext={appContext} />
-      <Myhr />
-      {appContext.chartsCtrl.chartsData.sensor != null &&
-        appContext.chartsCtrl.chartsData.sensor.chartType === "" && (
-          <Chart
-            chdata={appContext.chartsCtrl.chartsData.hdata}
-            xkey="timestamp"
-            appContext={appContext}
-          />
-        )}
-      {appContext.chartsCtrl.chartsData.sensor != null &&
-        appContext.chartsCtrl.chartsData.sensor.chartType === "winddir" && (
-          <WindDirChart
-            chdata={appContext.chartsCtrl.chartsData.hdata}
-            xkey="timestamp"
-            ykey={appContext.chartsCtrl.chartsData.sensor.col}
-            color={appContext.chartsCtrl.chartsData.sensor.color}
-            range={appContext.chartsCtrl.chartsData.cdata.range}
-          />
-        )}
-      {appContext.chartsCtrl.chartsData.sensor != null &&
-        appContext.chartsCtrl.chartsData.sensor.chartType === "rain" && (
-          <RainChart
-            chdata={appContext.chartsCtrl.chartsData.hdata}
-            xkey="timestamp"
-            ykey={appContext.chartsCtrl.chartsData.sensor.col}
-            yDomainMin={appContext.chartsCtrl.chartsData.cdata.yDomainMin}
-            yDomainMax={appContext.chartsCtrl.chartsData.cdata.yDomainMax}
-            color={appContext.chartsCtrl.chartsData.sensor.color}
-            range={appContext.chartsCtrl.chartsData.cdata.range}
-          />
-        )}
-      <Myhr />
+    <div
+      className={
+        appContext.headerCtrl.headerData.station?.id !== "dom" &&
+        appContext.chartsCtrl.chartsData.sensor != null
+          ? "grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch"
+          : ""
+      }
+    >
+      {/* Column 1: Map (Left) */}
       {appContext.chartsCtrl.chartsData.sensor != null &&
         appContext.headerCtrl.headerData.station?.id !== "dom" && (
-          <ChartsMap appContext={appContext} />
+          <Container className="lg:col-span-5 xl:col-span-4 h-full flex flex-col justify-stretch">
+            <ChartsMap appContext={appContext} />
+          </Container>
         )}
-    </Container>
+
+      {/* Column 2: Selectors, Stats, and Charts (Right) */}
+      <Container
+        className={
+          appContext.headerCtrl.headerData.station?.id !== "dom" &&
+          appContext.chartsCtrl.chartsData.sensor != null
+            ? "lg:col-span-7 xl:col-span-8"
+            : ""
+        }
+      >
+        <div className="flex flex-col gap-4 w-full h-full">
+          <ChartsHeader appContext={appContext} />
+          <Myhr />
+          <ChartsStats appContext={appContext} />
+          {appContext.chartsCtrl.chartsData.sensor != null && (
+            <>
+              <Myhr />
+              {appContext.chartsCtrl.chartsData.sensor.chartType === "" && (
+                <Chart
+                  chdata={appContext.chartsCtrl.chartsData.hdata}
+                  xkey="timestamp"
+                  appContext={appContext}
+                />
+              )}
+              {appContext.chartsCtrl.chartsData.sensor.chartType === "winddir" && (
+                <WindDirChart
+                  chdata={appContext.chartsCtrl.chartsData.hdata}
+                  xkey="timestamp"
+                  ykey={appContext.chartsCtrl.chartsData.sensor.col}
+                  color={appContext.chartsCtrl.chartsData.sensor.color}
+                  range={appContext.chartsCtrl.chartsData.cdata.range}
+                />
+              )}
+              {appContext.chartsCtrl.chartsData.sensor.chartType === "rain" && (
+                <RainChart
+                  chdata={appContext.chartsCtrl.chartsData.hdata}
+                  xkey="timestamp"
+                  ykey={appContext.chartsCtrl.chartsData.sensor.col}
+                  yDomainMin={appContext.chartsCtrl.chartsData.cdata.yDomainMin}
+                  yDomainMax={appContext.chartsCtrl.chartsData.cdata.yDomainMax}
+                  color={appContext.chartsCtrl.chartsData.sensor.color}
+                  range={appContext.chartsCtrl.chartsData.cdata.range}
+                />
+              )}
+            </>
+          )}
+        </div>
+      </Container>
+    </div>
   ),
 );
 
