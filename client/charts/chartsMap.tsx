@@ -7,24 +7,28 @@ type Props = {
   appContext: AppContext;
 };
 
-function MapResizer() {
+function MapResizer({ lat, lon }: { lat: number; lon: number }) {
   const map = useMap();
   useEffect(() => {
     map.invalidateSize();
+    map.setView([lat, lon], map.getZoom());
     const timer = setTimeout(() => {
       map.invalidateSize();
+      map.setView([lat, lon], map.getZoom());
     }, 200);
     return () => clearTimeout(timer);
-  }, [map]);
+  }, [map, lat, lon]);
   return null;
 }
 
 const ChartsMap = observer(({ appContext }: Props) => {
   console.info("render map", appContext.chartsCtrl.chartsData.station);
+  const { lat, lon } = appContext.chartsCtrl.chartsData.station;
+
   return (
     <div id="map" className="flex flex-col w-full h-52 lg:h-full lg:min-h-[30rem] rounded-xl overflow-hidden">
       <MapContainer
-        center={[48.6776, 19.699]}
+        center={[lat, lon]}
         zoom={6}
         scrollWheelZoom
         className="w-full h-52 lg:h-full lg:min-h-[30rem]"
@@ -33,20 +37,16 @@ const ChartsMap = observer(({ appContext }: Props) => {
             "brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7) opacity(0.9)",
         }}
       >
-        <MapResizer />
+        <MapResizer lat={lat} lon={lon} />
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Marker
-          position={[
-            appContext.chartsCtrl.chartsData.station.lat,
-            appContext.chartsCtrl.chartsData.station.lon,
-          ]}
+          position={[lat, lon]}
         >
           <Popup>
-            {appContext.chartsCtrl.chartsData.station.lat},{" "}
-            {appContext.chartsCtrl.chartsData.station.lon}
+            {lat}, {lon}
           </Popup>
         </Marker>
       </MapContainer>

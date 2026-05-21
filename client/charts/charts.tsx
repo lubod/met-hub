@@ -6,6 +6,7 @@ import RainChart from "./rainChart";
 import Myhr from "../misc/myhr";
 import { Container } from "../misc/container";
 import { AppContext } from "..";
+import Text from "../misc/text";
 import ChartsHeader from "./chartsHeader";
 import ChartsStats from "./chartsStats";
 import ChartsMap from "./chartsMap";
@@ -34,7 +35,13 @@ const Charts = observer(
       {appContext.chartsCtrl.chartsData.sensor != null &&
         appContext.headerCtrl.headerData.station?.id !== "dom" && (
           <Container className="lg:col-span-5 xl:col-span-4 h-full flex flex-col justify-stretch">
-            <ChartsMap appContext={appContext} />
+            <div className="flex flex-col gap-4 w-full h-full">
+              <div className="flex flex-row justify-between">
+                <Text>Location</Text>
+              </div>
+              <Myhr />
+              <ChartsMap appContext={appContext} />
+            </div>
           </Container>
         )}
 
