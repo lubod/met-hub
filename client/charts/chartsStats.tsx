@@ -40,16 +40,16 @@ const ChartsStats = observer(({ appContext }: Props) => (
       </div>
       <div className="basis-1/2 md:basis-1/3">
         <NumberData
-          label="Last"
-          value={appContext.chartsCtrl.chartsData.cdata.last}
+          label="First"
+          value={appContext.chartsCtrl.chartsData.cdata.first}
           unit=""
           fix={1}
         />
       </div>
       <div className="basis-1/2 md:basis-1/3">
         <NumberData
-          label="First"
-          value={appContext.chartsCtrl.chartsData.cdata.first}
+          label="Last"
+          value={appContext.chartsCtrl.chartsData.cdata.last}
           unit=""
           fix={1}
         />

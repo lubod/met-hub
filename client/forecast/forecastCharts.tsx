@@ -59,8 +59,11 @@ function Cell({
       // Map 0 -> -20 degrees to 0 -> 80% opacity
       bgOpacity = Math.min((Math.abs(val) / 20) * 0.8, 0.8);
     }
+  } else if (color === "purple") {
+    // Continuous gradient for wind speed (0 to 60 km/h mapped to 0 to 70% opacity)
+    bgOpacity = Math.min((val / 60) * 0.7, 0.7);
   } else {
-    // Stepped logic for other metrics (rain, clouds, wind)
+    // Stepped logic for other metrics (rain, clouds)
     if (maxLimit1 != null && val > maxLimit1) bgOpacity = 0.1;
     if (maxLimit2 != null && val > maxLimit2) bgOpacity = 0.25;
     if (maxLimit3 != null && val > maxLimit3) bgOpacity = 0.5;
@@ -72,7 +75,7 @@ function Cell({
 
   return (
     <div
-      className="text-center text-light border-s text-sm pb-3 basis-full min-w-11"
+      className="text-center text-light border-s text-sm py-1.5 basis-full min-w-11"
       style={{
         borderLeftColor: hex,
         backgroundColor:
@@ -217,10 +220,7 @@ function MyRowsWind({ data }: RowsProps) {
         {data.map((item: IGetForecastDataToDisplay) => {
           const windSpeed = parseFloat(item.getWindSpeed());
           const hex = FORECAST_COLORS.purple;
-          let bgOpacity = 0;
-          if (windSpeed > 19) bgOpacity = 0.1;
-          if (windSpeed > 29) bgOpacity = 0.25;
-          if (windSpeed > 39) bgOpacity = 0.5;
+          const bgOpacity = Math.min((windSpeed / 60) * 0.7, 0.7);
 
           return (
             <div

@@ -13,17 +13,6 @@ const StationOut = observer(({ appContext }: Props) => (
   <div className="flex flex-row flex-wrap gap-y-4">
     <div className="basis-1/2">
       <NumberDataWithTrend
-        sensor={STATION_MEASUREMENTS_DESC.FEELSLIKE}
-        value={appContext.cCtrl.stationData.data.feelslike}
-        old={appContext.cCtrl.stationData.oldData}
-        trend={appContext.cCtrl.stationData.trendData.feelslike}
-        onClick={() =>
-          appContext.setMeasurementAndLoad(STATION_MEASUREMENTS_DESC.FEELSLIKE)
-        }
-      />
-    </div>
-    <div className="basis-1/2">
-      <NumberDataWithTrend
         sensor={STATION_MEASUREMENTS_DESC.TEMPERATURE}
         value={appContext.cCtrl.stationData.data.temp}
         old={appContext.cCtrl.stationData.oldData}
@@ -32,6 +21,17 @@ const StationOut = observer(({ appContext }: Props) => (
           appContext.setMeasurementAndLoad(
             STATION_MEASUREMENTS_DESC.TEMPERATURE,
           )
+        }
+      />
+    </div>
+    <div className="basis-1/2">
+      <NumberDataWithTrend
+        sensor={STATION_MEASUREMENTS_DESC.FEELSLIKE}
+        value={appContext.cCtrl.stationData.data.feelslike}
+        old={appContext.cCtrl.stationData.oldData}
+        trend={appContext.cCtrl.stationData.trendData.feelslike}
+        onClick={() =>
+          appContext.setMeasurementAndLoad(STATION_MEASUREMENTS_DESC.FEELSLIKE)
         }
       />
     </div>
