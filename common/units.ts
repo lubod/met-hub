@@ -90,5 +90,14 @@ export const calculateFeelsLike = (
     return round((hi - 32) / 1.8, 1);
   }
 
+  // Steadman's Apparent Temperature for moderate climates / when thresholds are not met
+  if (humidity != null) {
+    const wSpeed = windSpeed ?? 0;
+    const v = wSpeed / 3.6; // Convert km/h to m/s
+    const e = (humidity / 100) * 6.105 * Math.exp((17.27 * temp) / (237.7 + temp));
+    const at = temp + 0.33 * e - 0.7 * v - 4.0;
+    return round(at, 1);
+  }
+
   return temp;
 };

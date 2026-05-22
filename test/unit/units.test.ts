@@ -119,9 +119,9 @@ describe("calculateFeelsLike", () => {
     expect(calculateFeelsLike(null, 50, 10)).toBeNull();
   });
 
-  it("returns temp unchanged in neutral zone (10–26.7°C, low wind)", () => {
-    expect(calculateFeelsLike(20, 50, 4)).toBe(20);
-    expect(calculateFeelsLike(15, 70, 2)).toBe(15);
+  it("applies Steadman apparent temperature in moderate zone", () => {
+    expect(calculateFeelsLike(20, 50, 4)).toBe(19.1);
+    expect(calculateFeelsLike(15, 70, 2)).toBe(14.5);
   });
 
   it("applies wind chill below 10°C with wind > 4.8 km/h (result < actual temp)", () => {
@@ -129,8 +129,8 @@ describe("calculateFeelsLike", () => {
     expect(result).toBeLessThan(5);
   });
 
-  it("does not apply wind chill when wind speed <= 4.8 km/h", () => {
-    expect(calculateFeelsLike(5, 50, 4)).toBe(5);
+  it("does not apply wind chill when wind speed <= 4.8 km/h, falls back to Steadman AT", () => {
+    expect(calculateFeelsLike(5, 50, 4)).toBe(1.7);
   });
 
   it("applies heat index above 26.7°C with humidity >= 40% (result > actual temp)", () => {
@@ -138,8 +138,8 @@ describe("calculateFeelsLike", () => {
     expect(result).toBeGreaterThan(35);
   });
 
-  it("does not apply heat index when humidity < 40%", () => {
-    expect(calculateFeelsLike(30, 30, 5)).toBe(30);
+  it("does not apply heat index when humidity < 40%, falls back to Steadman AT", () => {
+    expect(calculateFeelsLike(30, 30, 5)).toBe(29.2);
   });
 
   it("wind chill result gets colder with stronger wind", () => {

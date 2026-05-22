@@ -120,10 +120,10 @@ describe("StationGoGenMe3900.decodeData — derived fields", () => {
     expect(decoded.dewpt).toBeCloseTo(8.5, 0);
   });
 
-  it("feelslike equals temp in neutral zone (no wind chill, no heat index)", () => {
-    // 15°C is in neutral zone; windspeed = 10 km/h but temp > 10 so no wind chill
+  it("feelslike is calculated dynamically using Steadman AT (no wind chill, no heat index)", () => {
+    // 15°C is in moderate zone; computed feelslike via Steadman AT
     const { decoded } = station.decodeData(baseRaw, "Test");
-    expect(decoded.feelslike).toBe(decoded.temp);
+    expect(decoded.feelslike).toBe(12.7);
   });
 
   it("feelslike is lower than temp in cold + windy conditions", () => {

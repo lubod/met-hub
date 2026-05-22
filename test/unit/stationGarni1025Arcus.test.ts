@@ -122,10 +122,9 @@ describe("StationGarni1025Arcus.decodeData — derived fields", () => {
     expect(typeof decoded.feelslike).toBe("number");
   });
 
-  it("feelslike equals temp in neutral zone (20°C, moderate wind)", () => {
-    // 20°C is in neutral zone for feelslike
+  it("feelslike is calculated dynamically using Steadman AT (20°C, moderate wind)", () => {
     const { decoded } = station.decodeData(baseRaw, "Test");
-    expect(decoded.feelslike).toBe(decoded.temp);
+    expect(decoded.feelslike).toBe(18.3);
   });
 });
 
