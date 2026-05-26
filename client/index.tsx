@@ -148,12 +148,12 @@ export class AppContext {
                   <stop offset="100%" stopColor="#0a0d22" stopOpacity="0" />
                 </linearGradient>
               </defs>
-              {/* Back mountains - raised high */}
-              <path d="M0,150 Q180,30 360,90 T720,40 T1080,120 T1440,70 L1440,320 L0,320 Z" fill="url(#mount1)" stroke="#8b5cf6" strokeWidth="1.5" strokeOpacity="0.8" />
-              {/* Mid mountains - raised medium */}
-              <path d="M0,190 Q240,70 480,130 T960,80 T1440,150 L1440,320 L0,320 Z" fill="url(#mount2)" stroke="#3b82f6" strokeWidth="2" strokeOpacity="0.85" />
-              {/* Front mountains - raised low */}
-              <path d="M0,230 Q360,110 720,170 T1440,160 L1440,320 L0,320 Z" fill="url(#mount3)" stroke="#06b6d4" strokeWidth="2.5" strokeOpacity="0.9" />
+              {/* Back mountains - raised high, stroke only */}
+              <path d="M0,150 Q180,30 360,90 T720,40 T1080,120 T1440,70 L1440,320 L0,320 Z" fill="none" stroke="#8b5cf6" strokeWidth="1.5" strokeOpacity="0.8" />
+              {/* Mid mountains - raised medium, stroke only */}
+              <path d="M0,190 Q240,70 480,130 T960,80 T1440,150 L1440,320 L0,320 Z" fill="none" stroke="#3b82f6" strokeWidth="2" strokeOpacity="0.85" />
+              {/* Front mountains - raised low, stroke only */}
+              <path d="M0,230 Q360,110 720,170 T1440,160 L1440,320 L0,320 Z" fill="none" stroke="#06b6d4" strokeWidth="2.5" strokeOpacity="0.9" />
             </svg>
           </div>
           <div className="bg-grid" />
