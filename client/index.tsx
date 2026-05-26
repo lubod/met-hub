@@ -130,7 +130,34 @@ export class AppContext {
     const root = createRoot(appContainer); // createRoot(container!) if you use TypeScript
     root.render(
       <ErrorBoundary>
-        <div className="App relative">
+        <div className="App">
+          <div className="bg-aurora" />
+          <div className="bg-terrain">
+            <svg width="100%" height="100%" viewBox="0 0 1440 320" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="mount1" x1="50%" y1="0%" x2="50%" y2="100%">
+                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#0a0d22" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="mount2" x1="50%" y1="0%" x2="50%" y2="100%">
+                  <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.75" />
+                  <stop offset="100%" stopColor="#0a0d22" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="mount3" x1="50%" y1="0%" x2="50%" y2="100%">
+                  <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#0a0d22" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              {/* Back mountains - raised high */}
+              <path d="M0,150 Q180,30 360,90 T720,40 T1080,120 T1440,70 L1440,320 L0,320 Z" fill="url(#mount1)" stroke="#8b5cf6" strokeWidth="1.5" strokeOpacity="0.8" />
+              {/* Mid mountains - raised medium */}
+              <path d="M0,190 Q240,70 480,130 T960,80 T1440,150 L1440,320 L0,320 Z" fill="url(#mount2)" stroke="#3b82f6" strokeWidth="2" strokeOpacity="0.85" />
+              {/* Front mountains - raised low */}
+              <path d="M0,230 Q360,110 720,170 T1440,160 L1440,320 L0,320 Z" fill="url(#mount3)" stroke="#06b6d4" strokeWidth="2.5" strokeOpacity="0.9" />
+            </svg>
+          </div>
+          <div className="bg-grid" />
+          <div className="bg-grid-overlay" />
           <div className="grain-overlay" />
           <div className="edge-glow" />
           <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
