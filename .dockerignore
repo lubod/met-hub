@@ -3,14 +3,12 @@
 .env*
 met-hub.env
 
-# Ignore node modules and local builds
+# Ignore node modules and coverage
 node_modules
 npm-debug.log
-dist
-esdist
 coverage
 
-# Ignore system files
+# Ignore system files and git
 .DS_Store
 .git
 .gitignore
