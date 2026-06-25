@@ -1,7 +1,7 @@
 import { createClient, commandOptions } from "redis";
 import { AllStationsCfg, IStation } from "../common/allStationsCfg";
 import { StationType } from "../common/stationType";
-import { Dom } from "./dom";
+import { dom } from "./dom";
 import { store } from "./db";
 import redisClient from "./redisClient";
 
@@ -74,7 +74,6 @@ async function main(stations: Map<string, IStation>) {
 }
 
 const allStationsCfg = new AllStationsCfg();
-const dom = new Dom();
 redisClient
   .connect()
   .then(() => allStationsCfg.readCfg())

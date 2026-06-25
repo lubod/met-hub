@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { Dom } from "../server/dom";
+import { dom } from "../server/dom";
 import redisClient from "../server/redisClient";
 import { IMeasurement } from "../server/measurement";
 import StationGarni1025Arcus from "../server/stationGarni1025Arcus";
@@ -36,7 +36,7 @@ export class AllStationsCfg {
   getMeas(station: IStation): IMeasurement {
     switch (station.type) {
       case StationType.Dom:
-        return new Dom();
+        return dom;
       case StationType.Garni1025Arcus:
         return new StationGarni1025Arcus(station.id);
       case StationType.GoGenMe3900:

@@ -3,10 +3,8 @@ import { AddressInfo } from "net";
 import app from "./app";
 import Aggregator from "./aggregator";
 import { allStationsCfg } from "./state";
-import { Dom } from "./dom";
+import { dom } from "./dom";
 import redisClient from "./redisClient";
-
-const dom = new Dom();
 
 redisClient.connect().catch((err) => {
   console.error("Fatal: failed to connect to Redis:", err);

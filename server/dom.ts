@@ -179,3 +179,5 @@ export class Dom implements IMeasurement {
   }
 
 }
+
+export const dom = new Dom();

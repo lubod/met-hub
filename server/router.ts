@@ -10,7 +10,7 @@ import { StationType } from "../common/stationType";
 import { createToken, verifyToken } from "./utils";
 import redisClient from "./redisClient";
 import { allStationsCfg, AppError } from "./state";
-import { Dom } from "./dom";
+import { dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import { loadData, loadRainData } from "./db";
 import { getForecast, getAstronomicalData } from "./forecast";
@@ -18,7 +18,6 @@ import { IStation } from "../common/allStationsCfg";
 
 const clientOAuth = new OAuth2Client(process.env.CLIENT_ID);
 
-const dom = new Dom();
 const DOM_PASSKEY = process.env.DOM_PASSKEY || (process.env.ENV !== "prod" ? "dev-dom-passkey" : undefined);
 if (!DOM_PASSKEY) {
   throw new Error("DOM_PASSKEY environment variable is not set");

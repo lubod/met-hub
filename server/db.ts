@@ -1,11 +1,9 @@
 import { AllStationsCfg } from "../common/allStationsCfg";
 import { IDomDataRaw } from "../common/domModel";
 import { IStationData } from "../common/stationModel";
-import { Dom } from "./dom";
+import { dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import pool from "./pgPool";
-
-const dom = new Dom();
 
 function getMeasurement(
   stationID: string,
