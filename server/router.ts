@@ -287,6 +287,7 @@ router.post(
         expires: new Date(expiresAt),
         secure: process.env.ENV !== "dev",
         httpOnly: true,
+        sameSite: "lax",
       })
       .status(200)
       .json({
