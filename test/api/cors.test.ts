@@ -123,4 +123,19 @@ describe("App Security Configuration", () => {
 
     process.env.ENV = originalEnv;
   });
+
+  it("rejects JSON payloads larger than 32kb with 413 Payload Too Large", async () => {
+    vi.resetModules();
+    const appMod = await import("../../server/app");
+    const app = appMod.default;
+
+    // Generate a payload slightly larger than 32kb
+    const largeStr = "a".repeat(33 * 1024);
+    const res = await request(app)
+      .post("/setData")
+      .set("Content-Type", "application/json")
+      .send(JSON.stringify({ data: largeStr }));
+
+    expect(res.status).toBe(413);
+  });
 });

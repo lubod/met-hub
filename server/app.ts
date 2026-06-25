@@ -55,9 +55,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use(express.static(__dirname));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: "32kb" }));
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: "32kb" }));
 app.use(express.static(publicDirectoryPath));
 
 // Health check is before the rate limiter so it doesn't count against limits
@@ -78,9 +78,10 @@ app.get("/", (req: Request, res: Response) => {
 app.use(router);
 
 // eslint-disable-next-line no-unused-vars
-app.use((err: AppError, req: Request, res: Response, next: NextFunction) => {
-  console.error("ERROR:", err.code, err.msg ?? err.message, err.stack);
-  res.status(err.code || 500).json({ code: err.code, msg: err.msg ?? err.message });
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  const code = err.code || err.status || err.statusCode || 500;
+  console.error("ERROR:", code, err.msg ?? err.message, err.stack);
+  res.status(code).json({ code, msg: err.msg ?? err.message });
 });
 
 export default app;
