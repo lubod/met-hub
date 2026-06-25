@@ -242,3 +242,46 @@ describe("GET /weatherstation/updateweatherstation.php (legacy protocol)", () =>
     expect(res.status).toBe(400);
   });
 });
+
+describe("POST /setDomData", () => {
+  beforeEach(() => {
+    redisMock.multi.mockReturnValue(freshMulti());
+  });
+
+  const validDomPayload = {
+    timestamp: new Date().toISOString(),
+    vonku: { temp: 20, humidity: 50, rain: false },
+    tarif: { tarif: 1 },
+    obyvacka_vzduch: { temp: 21, reqall: 21 },
+    obyvacka_podlaha: { temp: 22, kuri: false, leto: false, low: false },
+    pracovna_vzduch: { temp: 21, reqall: 21 },
+    pracovna_podlaha: { temp: 22, kuri: false, leto: false, low: false },
+    spalna_vzduch: { temp: 21, reqall: 21 },
+    spalna_podlaha: { temp: 22, kuri: false, leto: false, low: false },
+    chalani_vzduch: { temp: 21, reqall: 21 },
+    chalani_podlaha: { temp: 22, kuri: false, leto: false, low: false },
+    petra_vzduch: { temp: 21, reqall: 21 },
+    petra_podlaha: { temp: 22, kuri: false, leto: false, low: false }
+  };
+
+  it("returns 200 when DOM_PASSKEY matches", async () => {
+    const res = await request(app)
+      .post("/setDomData?PASSKEY=test-dom-passkey")
+      .send(validDomPayload);
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 401 when DOM_PASSKEY is invalid", async () => {
+    const res = await request(app)
+      .post("/setDomData?PASSKEY=wrong-passkey")
+      .send(validDomPayload);
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 401 when DOM_PASSKEY is missing", async () => {
+    const res = await request(app)
+      .post("/setDomData")
+      .send(validDomPayload);
+    expect(res.status).toBe(401);
+  });
+});

@@ -351,7 +351,8 @@ export class DomSimulator extends CSimulator {
 
   async postData(data: any) {
     try {
-      await axios.post("http://localhost:8089/setDomData", data, {
+      const passkey = process.env.DOM_PASSKEY || "dev-dom-passkey";
+      await axios.post(`http://localhost:8089/setDomData?PASSKEY=${passkey}`, data, {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },

@@ -20,6 +20,10 @@ const { OAuth2Client } = require("google-auth-library");
 const clientOAuth = new OAuth2Client(process.env.CLIENT_ID);
 
 const dom = new Dom();
+const DOM_PASSKEY = process.env.DOM_PASSKEY || (process.env.ENV !== "prod" ? "dev-dom-passkey" : undefined);
+if (!DOM_PASSKEY) {
+  throw new Error("DOM_PASSKEY environment variable is not set");
+}
 const router = express.Router();
 
 interface IUser {
@@ -537,6 +541,10 @@ router.post(
 router.post(
   "/setDomData",
   catchAsync(async (req, res) => {
+    const passkey = req.query.PASSKEY || req.body.PASSKEY || req.headers["x-passkey"];
+    if (passkey !== DOM_PASSKEY) {
+      throw new AppError(401, "Unauthorized: Invalid DOM_PASSKEY");
+    }
     const data = req.body;
     const { date, decoded } = dom.decodeData(data, "Dom");
     const now = Date.now();
