@@ -34,8 +34,12 @@ app.use(
   }),
 );
 
-const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:8089";
-app.use(cors({ origin: corsOrigin, credentials: true }));
+const corsOrigin = process.env.CORS_ORIGIN;
+if (!corsOrigin && process.env.ENV !== "dev") {
+  throw new Error("CORS_ORIGIN environment variable is not set");
+}
+const finalCorsOrigin = corsOrigin || "http://localhost:8089";
+app.use(cors({ origin: finalCorsOrigin, credentials: true }));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
