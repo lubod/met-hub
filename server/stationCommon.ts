@@ -8,6 +8,36 @@ import {
 import { deg2rad, rad2deg, round } from "../common/units";
 import { IMeasurement } from "./measurement";
 
+const AVERAGED_FIELDS: Array<{ key: keyof IStationData; precision: number }> = [
+  { key: "tempin", precision: 1 },
+  { key: "temp", precision: 1 },
+  { key: "feelslike", precision: 1 },
+  { key: "dewpt", precision: 1 },
+  { key: "pressurerel", precision: 1 },
+  { key: "pressureabs", precision: 1 },
+  { key: "windgust", precision: 1 },
+  { key: "windspeed", precision: 1 },
+  { key: "rainrate", precision: 1 },
+  { key: "solarradiation", precision: 0 },
+  { key: "uv", precision: 0 },
+  { key: "humidityin", precision: 0 },
+  { key: "humidity", precision: 0 },
+];
+
+function avgWind(directions: number[], speeds: number[]) {
+  let sinSum = 0;
+  let cosSum = 0;
+  let weightSum = 0;
+  directions.forEach((value, index) => {
+    const speed = speeds[index] || 1;
+    sinSum += Math.sin(deg2rad(value)) * speed;
+    cosSum += Math.cos(deg2rad(value)) * speed;
+    weightSum += speed;
+  });
+  if (weightSum === 0) return 0;
+  return round((rad2deg(Math.atan2(sinSum, cosSum)) + 360) % 360, 0);
+}
+
 export default abstract class StationCommon implements IMeasurement {
   cfg: StationCfg = null;
 
@@ -123,93 +153,51 @@ export default abstract class StationCommon implements IMeasurement {
       }
     });
     return tmp;
+  }
+
+  aggregateRawData2Minute(minute: number, data: Array<IStationData>): IStationData | null {
+    if (data.length === 0) return null;
+
+    const lastItem = data[data.length - 1];
+    const result: IStationData = this.initWithZeros();
+
+    result.timestamp = new Date(minute);
+    result.place = lastItem.place;
+    result.maxdailygust = lastItem.maxdailygust;
+    result.eventrain = lastItem.eventrain;
+    result.hourlyrain = lastItem.hourlyrain;
+    result.dailyrain = lastItem.dailyrain;
+    result.weeklyrain = lastItem.weeklyrain;
+    result.monthlyrain = lastItem.monthlyrain;
+    result.totalrain = lastItem.totalrain;
+
+    for (const field of AVERAGED_FIELDS) {
+      let sum = 0;
+      let count = 0;
+      for (const item of data) {
+        const val = item[field.key];
+        if (val != null && !isNaN(val as number)) {
+          sum += val as number;
+          count++;
+        }
+      }
+      if (count > 0) {
+        result[field.key] = round(sum / count, field.precision);
+      } else {
+        result[field.key] = null as any;
+      }
     }
 
-    aggregateRawData2Minute(minute: number, data: Array<IStationData>) {
-    const avgWind = (directions: number[], speeds: number[]) => {
-      let sinSum = 0;
-      let cosSum = 0;
-      let weightSum = 0;
-      directions.forEach((value, index) => {
-        const speed = speeds[index] || 1;
-        sinSum += Math.sin(deg2rad(value)) * speed;
-        cosSum += Math.cos(deg2rad(value)) * speed;
-        weightSum += speed;
-      });
-      if (weightSum === 0) return 0;
-      return round((rad2deg(Math.atan2(sinSum, cosSum)) + 360) % 360, 0);
-    };
-
-    const sum = (value: IStationData[]) => {
-      const total: IStationData = this.initWithZeros();
-
-      for (const item of value) {
-        if (total.timestamp != null) total.timestamp = item.timestamp;
-        if (total.tempin != null) total.tempin += item.tempin;
-        if (total.humidityin != null) total.humidityin += item.humidityin;
-        if (total.temp != null) total.temp += item.temp;
-        if (total.humidity != null) total.humidity += item.humidity;
-        if (total.pressurerel != null) total.pressurerel += item.pressurerel;
-        if (total.pressureabs != null) total.pressureabs += item.pressureabs;
-        if (total.windgust != null) total.windgust += item.windgust;
-        if (total.windspeed != null) total.windspeed += item.windspeed;
-        if (total.feelslike != null) total.feelslike += item.feelslike;
-        if (total.dewpt != null) total.dewpt += item.dewpt;
-        if (total.solarradiation != null)
-          total.solarradiation += item.solarradiation;
-        if (total.uv != null) total.uv += item.uv;
-        if (total.rainrate != null) total.rainrate += item.rainrate;
-        if (total.maxdailygust != null) total.maxdailygust = item.maxdailygust;
-        if (total.eventrain != null) total.eventrain = item.eventrain;
-        if (total.hourlyrain != null) total.hourlyrain = item.hourlyrain;
-        if (total.dailyrain != null) total.dailyrain = item.dailyrain;
-        if (total.weeklyrain != null) total.weeklyrain = item.weeklyrain;
-        if (total.monthlyrain != null) total.monthlyrain = item.monthlyrain;
-        if (total.totalrain != null) total.totalrain = item.totalrain;
-        if (total.place != null) total.place = item.place;
-      }
-      return total;
-    };
-
-    const average = (total: IStationData, count: number) => {
-      const avg = total;
-      if (total.tempin != null) avg.tempin = round(total.tempin / count, 1);
-      if (total.temp != null) avg.temp = round(total.temp / count, 1);
-      if (total.feelslike != null)
-        avg.feelslike = round(total.feelslike / count, 1);
-      if (total.dewpt != null) avg.dewpt = round(total.dewpt / count, 1);
-      if (total.pressurerel != null)
-        avg.pressurerel = round(total.pressurerel / count, 1);
-      if (total.pressureabs != null)
-        avg.pressureabs = round(total.pressureabs / count, 1);
-      if (total.windgust != null)
-        avg.windgust = round(total.windgust / count, 1);
-      if (total.windspeed != null)
-        avg.windspeed = round(total.windspeed / count, 1);
-      if (total.rainrate != null)
-        avg.rainrate = round(total.rainrate / count, 1);
-      if (total.solarradiation != null)
-        avg.solarradiation = round(total.solarradiation / count, 0);
-      if (total.uv != null) avg.uv = round(total.uv / count, 0);
-      if (total.humidityin != null)
-        avg.humidityin = round(total.humidityin / count, 0);
-      if (total.humidity != null)
-        avg.humidity = round(total.humidity / count, 0);
-      if (total.winddir != null) avg.winddir = round(total.winddir / count, 0);
-      return avg;
-    };
-
-    const s = sum(data);
-    const avg: IStationData = average(s, data.length);
-    avg.timestamp = new Date(minute);
     const windDir: number[] = [];
     const windSpeed: number[] = [];
     data.forEach((element: IStationData) => {
-      windDir.push(element.winddir);
-      windSpeed.push(element.windspeed);
+      if (element.winddir != null && !isNaN(element.winddir) && element.windspeed != null && !isNaN(element.windspeed)) {
+        windDir.push(element.winddir);
+        windSpeed.push(element.windspeed);
+      }
     });
-    avg.winddir = avgWind(windDir, windSpeed);
-    console.info("Aggregated station minute", new Date(minute), avg.place);
-    return avg;
+    result.winddir = avgWind(windDir, windSpeed);
+    console.info("Aggregated station minute", result.timestamp, result.place);
+    return result;
   }
 }

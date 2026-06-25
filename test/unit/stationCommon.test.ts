@@ -153,6 +153,17 @@ describe("StationCommon.aggregateRawData2Minute", () => {
     expect(result.pressurerel).toBeCloseTo(1015.0, 1);
     expect(result.pressureabs).toBeCloseTo(1013.0, 1);
   });
+
+  it("skips null and undefined fields when calculating averages", () => {
+    const readings = [
+      makeReading({ temp: 20.0, humidity: null as any }),
+      makeReading({ temp: null as any, humidity: 80 }),
+      makeReading({ temp: 30.0, humidity: 90 }),
+    ];
+    const result = station.aggregateRawData2Minute(minute, readings);
+    expect(result.temp).toBeCloseTo(25.0, 1);
+    expect(result.humidity).toBeCloseTo(85, 0);
+  });
 });
 
 // ──────────────────────────────────────────────────────────────
