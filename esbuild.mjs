@@ -1,13 +1,22 @@
 import * as esbuild from "esbuild";
 import { sassPlugin } from "esbuild-sass-plugin";
 import { execSync } from "child_process";
+import fs from "fs";
 
 execSync("npx tailwindcss -i client/styles.css -o public/tailwind.css --minify", { stdio: "inherit" });
 
-const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID
-  || "370836834849-c28glrv23rmribefn7r7h9m1rori3vfh.apps.googleusercontent.com";
-if (!process.env.REACT_APP_GOOGLE_CLIENT_ID) {
-  console.warn("REACT_APP_GOOGLE_CLIENT_ID not set, using default");
+let googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
+if (!googleClientId && fs.existsSync("met-hub.env")) {
+  const envContent = fs.readFileSync("met-hub.env", "utf8");
+  const match = envContent.match(/^REACT_APP_GOOGLE_CLIENT_ID=(.+)$/m);
+  if (match) {
+    googleClientId = match[1].trim().replace(/^['"]|['"]$/g, "");
+  }
+}
+
+if (!googleClientId) {
+  throw new Error("REACT_APP_GOOGLE_CLIENT_ID environment variable is not set. Please set it or add it to met-hub.env.");
 }
 
 const define = {
