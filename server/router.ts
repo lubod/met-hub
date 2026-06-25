@@ -341,18 +341,24 @@ router.get(
       }
     }
 
+    const admin = user != null ? await getAdminId() : null;
     for (const sid of rs) {
       const station = allStationsCfg.getStationByID(sid);
       if (station == null) continue;
-      result.push({
+      const isOwner = user != null && user.id === station.owner;
+      const isAdmin = user != null && user.id === admin;
+      const item: Partial<IStation> = {
         id: station.id,
         lat: station.lat,
         lon: station.lon,
         place: station.place,
         type: station.type,
         public: station.public,
-        owner: station.owner,
-      });
+      };
+      if (isOwner || isAdmin) {
+        item.owner = station.owner;
+      }
+      result.push(item);
     }
 
     if (user != null && user.email.toLowerCase() === DOM_ACCESS_EMAIL) {
