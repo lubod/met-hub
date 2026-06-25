@@ -67,8 +67,11 @@ async function checkAuth(
         } | null = null;
         try {
           payload = JSON.parse(raw);
-        } catch {
-          // corrupt Redis entry – treat as not authenticated
+        } catch (err) {
+          if (err instanceof SyntaxError) {
+            throw new AppError(500, "Corrupted session data in USERS store");
+          }
+          throw err;
         }
         if (payload != null) {
           return {
