@@ -1,0 +1,16 @@
+# Ignore all environment secret files
+*.env
+.env*
+met-hub.env
+
+# Ignore node modules and local builds
+node_modules
+npm-debug.log
+dist
+esdist
+coverage
+
+# Ignore system files
+.DS_Store
+.git
+.gitignore
