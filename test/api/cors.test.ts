@@ -96,15 +96,17 @@ describe("App Security Configuration", () => {
 
   it("enforces strict rate limits on ingest routes, but keeps read routes accessible", async () => {
     const originalEnv = process.env.ENV;
+    const originalLimit = process.env.INGEST_RATE_LIMIT;
     process.env.ENV = "dev";
+    process.env.INGEST_RATE_LIMIT = "5";
 
     vi.resetModules();
     const appMod = await import("../../server/app");
     const app = appMod.default;
 
-    // Send 100 requests to /setData (all should return something other than 429)
+    // Send requests up to the limit (all should return something other than 429)
     const promises = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 5; i++) {
       promises.push(request(app).post("/setData").send({}));
     }
     const results = await Promise.all(promises);
@@ -112,7 +114,7 @@ describe("App Security Configuration", () => {
       expect(r.status).not.toBe(429);
     }
 
-    // The 101st request to /setData should be blocked with 429
+    // The next request to /setData should be blocked with 429
     const blockedRes = await request(app).post("/setData").send({});
     expect(blockedRes.status).toBe(429);
     expect(blockedRes.body).toEqual({ code: 429, msg: "Too many ingestion requests from this IP" });
@@ -122,6 +124,7 @@ describe("App Security Configuration", () => {
     expect(readRes.status).not.toBe(429);
 
     process.env.ENV = originalEnv;
+    process.env.INGEST_RATE_LIMIT = originalLimit;
   });
 
   it("rejects JSON payloads larger than 32kb with 413 Payload Too Large", async () => {
