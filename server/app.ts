@@ -20,6 +20,14 @@ const limiter = rateLimit({
   legacyHeaders: false,
 });
 
+const ingestLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 100, // Stricter limit for telemetry ingestion
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { code: 429, msg: "Too many ingestion requests from this IP" },
+});
+
 app.use(helmet());
 app.use(
   csp({
@@ -56,6 +64,10 @@ app.use(express.static(publicDirectoryPath));
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ status: "ok" });
 });
+
+app.use("/setData", ingestLimiter);
+app.use("/setDomData", ingestLimiter);
+app.use("/weatherstation/updateweatherstation.php", ingestLimiter);
 
 app.use(limiter);
 

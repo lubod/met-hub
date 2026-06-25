@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import request from "supertest";
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
@@ -53,7 +54,7 @@ vi.mock("../../server/forecast", () => ({
   getAstronomicalData: vi.fn().mockResolvedValue({}),
 }));
 
-describe("CORS Configuration", () => {
+describe("App Security Configuration", () => {
   it("throws an error on import if CORS_ORIGIN is missing and ENV is not dev", async () => {
     // Save original env
     const originalEnv = process.env.ENV;
@@ -91,5 +92,35 @@ describe("CORS Configuration", () => {
 
     process.env.ENV = originalEnv;
     process.env.CORS_ORIGIN = originalCorsOrigin;
+  });
+
+  it("enforces strict rate limits on ingest routes, but keeps read routes accessible", async () => {
+    const originalEnv = process.env.ENV;
+    process.env.ENV = "dev";
+
+    vi.resetModules();
+    const appMod = await import("../../server/app");
+    const app = appMod.default;
+
+    // Send 100 requests to /setData (all should return something other than 429)
+    const promises = [];
+    for (let i = 0; i < 100; i++) {
+      promises.push(request(app).post("/setData").send({}));
+    }
+    const results = await Promise.all(promises);
+    for (const r of results) {
+      expect(r.status).not.toBe(429);
+    }
+
+    // The 101st request to /setData should be blocked with 429
+    const blockedRes = await request(app).post("/setData").send({});
+    expect(blockedRes.status).toBe(429);
+    expect(blockedRes.body).toEqual({ code: 429, msg: "Too many ingestion requests from this IP" });
+
+    // But read routes (e.g. /api/getUserProfile) should still be accessible and not return 429
+    const readRes = await request(app).get("/api/getUserProfile");
+    expect(readRes.status).not.toBe(429);
+
+    process.env.ENV = originalEnv;
   });
 });
