@@ -3,13 +3,12 @@ import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
 import path from "path";
+import helmet from "helmet";
 import router from "./router";
 import { AppError } from "./state";
 
 const app = express();
 app.set("trust proxy", 1);
-const helmet = require("helmet");
-const csp = require("helmet-csp");
 
 const publicDirectoryPath = path.join(__dirname, "html");
 
@@ -33,7 +32,7 @@ const ingestLimiter = rateLimit({
 
 app.use(helmet());
 app.use(
-  csp({
+  helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: [`'self'`],
       scriptSrc: [`'self'`, `*.google.com`, `*.chatademian.com`],

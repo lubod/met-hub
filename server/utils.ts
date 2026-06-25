@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.MY_JWT_SECRET;
 if (!JWT_SECRET) {

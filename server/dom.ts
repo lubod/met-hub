@@ -8,7 +8,7 @@ import {
 } from "../common/domModel";
 import { IMeasurement } from "./measurement";
 
-const cloneDeep = require("lodash.clonedeep");
+import cloneDeep from "lodash.clonedeep";
 
 // eslint-disable-next-line no-shadow
 export enum TABLES {

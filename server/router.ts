@@ -5,6 +5,7 @@ import express, {
   RequestHandler,
 } from "express";
 import crypto from "crypto";
+import { OAuth2Client } from "google-auth-library";
 import { StationType } from "../common/stationType";
 import { createToken, verifyToken } from "./utils";
 import redisClient from "./redisClient";
@@ -14,8 +15,6 @@ import { IMeasurement } from "./measurement";
 import { loadData, loadRainData } from "./db";
 import { getForecast, getAstronomicalData } from "./forecast";
 import { IStation } from "../common/allStationsCfg";
-
-const { OAuth2Client } = require("google-auth-library");
 
 const clientOAuth = new OAuth2Client(process.env.CLIENT_ID);
 
