@@ -44,6 +44,9 @@ export async function loadData(
   if (!/^[a-z0-9][a-z0-9_-]*$/i.test(stationID) || stationID.length > 64) {
     throw new Error(`Invalid stationID: ${stationID}`);
   }
+  if (!/^[a-z0-9_]+$/i.test(measurement) || measurement.length > 64) {
+    throw new Error(`Invalid measurement: ${measurement}`);
+  }
   const diffMinutes = (end.getTime() - start.getTime()) / 1000 / 60;
   const interval = Math.ceil(diffMinutes / 500.0);
   const timestampStart = `${start.toISOString().slice(0, 19).replace("T", " ")}+00`;
@@ -58,6 +61,13 @@ export async function loadData(
     const column = dbd[0];
     const extraColumn = dbd.length >= 2 ? dbd[1] : "";
 
+    if (!/^[a-z0-9_]+$/i.test(column) || column.length > 64) {
+      throw new Error(`Invalid column: ${column}`);
+    }
+    if (extraColumn !== "" && (!/^[a-z0-9_]+$/i.test(extraColumn) || extraColumn.length > 64)) {
+      throw new Error(`Invalid extraColumn: ${extraColumn}`);
+    }
+
     if (!checkInput(stationID, column, extraColumn, allStationsCfg)) {
       console.error("Wrong input", stationID, column, extraColumn);
       return null;
@@ -65,20 +75,18 @@ export async function loadData(
 
     const table = `station_${stationID}`;
 
-    // Table and column names are validated by checkInput against the allowlist.
-    // Timestamps and interval come from controlled values and are safe.
     const [resData, resStats] = await Promise.all([
       client.query(
         `WITH intervals AS (
           SELECT gs AS start, gs + $1::text::interval AS end, ROW_NUMBER() OVER () AS grp
           FROM generate_series ($2::timestamptz, $3::timestamptz, $1::text::interval) gs
         ), create_grp AS (
-          SELECT i.grp, i.start, i.end, s.${column}, s.timestamp
-          FROM ${table} s
+          SELECT i.grp, i.start, i.end, s."${column}", s.timestamp
+          FROM "${table}" s
           RIGHT JOIN intervals i
             ON s.timestamp >= i.start AND s.timestamp < i.end
         )
-        SELECT grp, EXTRACT(EPOCH FROM start) * 1000 AS timestamp, min(${column}), max(${column})
+        SELECT grp, EXTRACT(EPOCH FROM start) * 1000 AS timestamp, min("${column}"), max("${column}")
         FROM create_grp
         GROUP BY grp, start
         ORDER BY grp`,
@@ -86,12 +94,12 @@ export async function loadData(
       ),
       client.query(
         `SELECT
-           min(${column}) AS min,
-           max(${column}) AS max,
-           avg(${column}) AS avg,
-           (SELECT ${column} FROM ${table} WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp ASC  LIMIT 1) AS first,
-           (SELECT ${column} FROM ${table} WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp DESC LIMIT 1) AS last
-         FROM ${table}
+           min("${column}") AS min,
+           max("${column}") AS max,
+           avg("${column}") AS avg,
+           (SELECT "${column}" FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp ASC  LIMIT 1) AS first,
+           (SELECT "${column}" FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp DESC LIMIT 1) AS last
+         FROM "${table}"
          WHERE timestamp >= $1 AND timestamp < $2`,
         [timestampStart, timestampEnd],
       ),
@@ -129,13 +137,13 @@ export async function loadRainData(stationID: string) {
         SELECT
           DATE_TRUNC('hour', timestamp) AS hour,
           max(hourlyrain) / NULLIF(sum(rainrate), 0) AS coef
-        FROM ${table}
+        FROM "${table}"
         WHERE timestamp > current_timestamp - '4 weeks'::interval
         GROUP BY DATE_TRUNC('hour', timestamp)
       ),
       minuterain AS (
         SELECT s.timestamp, s.rainrate * h.coef AS rain
-        FROM ${table} s
+        FROM "${table}" s
         JOIN hour_coef h ON DATE_TRUNC('hour', s.timestamp) = h.hour
         WHERE s.rainrate > 0
       )
@@ -173,7 +181,10 @@ export async function loadRainData(stationID: string) {
 }
 
 function getQuery(id: string, entries: [string, any][]) {
-  let qtext = `insert into station_${id} (`;
+  if (!/^[a-z0-9][a-z0-9_-]*$/i.test(id) || id.length > 64) {
+    throw new Error(`Invalid station ID: ${id}`);
+  }
+  let qtext = `insert into "station_${id}" (`;
   let qtextv = "";
   let qtextu = "";
   const qarr = [];
@@ -185,10 +196,13 @@ function getQuery(id: string, entries: [string, any][]) {
       sensor !== "totalrain"
     ) {
       if (value != null) {
-        qtext += `${sensor},`;
+        if (!/^[a-z0-9_]+$/i.test(sensor) || sensor.length > 64) {
+          throw new Error(`Invalid sensor column name: ${sensor}`);
+        }
+        qtext += `"${sensor}",`;
         qtextv += `$${i},`;
         if (sensor !== "timestamp") {
-          qtextu += `${sensor} = EXCLUDED.${sensor},`;
+          qtextu += `"${sensor}" = EXCLUDED."${sensor}",`;
         }
         i += 1;
         qarr.push(value);
@@ -227,10 +241,13 @@ export async function store(
 }
 
 export async function create(id: string) {
+  if (!/^[a-z0-9][a-z0-9_-]*$/i.test(id) || id.length > 64) {
+    throw new Error(`Invalid station ID: ${id}`);
+  }
   const dbclient = await pool.connect();
   try {
     await dbclient.query("BEGIN");
-    await dbclient.query(`CREATE TABLE public.station_${id} (
+    await dbclient.query(`CREATE TABLE public."station_${id}" (
       "timestamp" timestamp with time zone NOT NULL,
       tempin numeric(4,1),
       humidityin numeric(3,0),
@@ -252,9 +269,9 @@ export async function create(id: string) {
       feelslike numeric(4,1),
       dewpt numeric(4,1)
     )`);
-    await dbclient.query(`ALTER TABLE public.station_${id} OWNER TO postgres`);
+    await dbclient.query(`ALTER TABLE public."station_${id}" OWNER TO postgres`);
     await dbclient.query(
-      `ALTER TABLE ONLY public.station_${id} ADD CONSTRAINT station_${id}_pkey PRIMARY KEY ("timestamp")`,
+      `ALTER TABLE ONLY public."station_${id}" ADD CONSTRAINT "station_${id}_pkey" PRIMARY KEY ("timestamp")`,
     );
     await dbclient.query("COMMIT");
   } catch (e) {
