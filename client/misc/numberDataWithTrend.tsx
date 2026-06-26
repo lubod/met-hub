@@ -15,12 +15,12 @@ type Props = {
 };
 
 const accentClass: Record<string, string> = {
-  "#fd7e14": "metric-card-temp",
-  "#22d3ee": "metric-card-humid",
-  "#6f42c1": "metric-card-press",
-  "#ffc107": "metric-card-solar",
-  "#0d6efd": "metric-card-rain",
-  "#14b8a6": "metric-card-wind",
+  "#e07856": "metric-card-temp",
+  "#7fb8a8": "metric-card-humid",
+  "#8b9dc3": "metric-card-press",
+  "#d4a843": "metric-card-solar",
+  "#6ba3a8": "metric-card-rain",
+  "#8dbe9d": "metric-card-wind",
 };
 
 const NumberDataWithTrend = observer(

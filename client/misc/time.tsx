@@ -13,7 +13,7 @@ const Time = observer(({ label, time, format, old }: Props) => (
   <div className="flex flex-col text-center md:min-w-28">
     <div className="metric-label">{label}</div>
     <div
-      className={`text-2xl font-light tracking-tight ${old ? "text-red" : "text-white/90"}`}
+      className={`text-2xl font-light tracking-tight ${old ? "text-[#b89150]" : "text-white/90"}`}
     >
       {time == null ? "-" : moment(time).format(format)}
     </div>

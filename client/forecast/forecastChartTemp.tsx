@@ -110,9 +110,9 @@ const ForecastChartTemp = observer(
     }
 
     function getStroke(v: number) {
-      if (v === 0) return "#fff";
-      if (v > 0) return "#fd7e14";
-      return "#0d6efd";
+      if (v === 0) return "#e8e6e3";
+      if (v > 0) return "#e07856";
+      return "#6ba3a8";
     }
 
     console.info("render forecast chart temp");

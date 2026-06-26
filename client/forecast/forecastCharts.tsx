@@ -15,11 +15,11 @@ import Myhr from "../misc/myhr";
 import ForecastStepsList from "./forecastStepList";
 
 const FORECAST_COLORS: Record<string, string> = {
-  gray2: "#6c757d",
-  orange: "#fd7e14",
-  blue: "#0d6efd",
-  light: "#f8f9fa",
-  purple: "#6f42c1",
+  gray2: "#8b9dc3",
+  orange: "#e07856",
+  blue: "#6ba3a8",
+  light: "#e8e6e3",
+  purple: "#8b9dc3",
 };
 
 type CellProps = {

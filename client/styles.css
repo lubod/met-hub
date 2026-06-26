@@ -2,52 +2,44 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* ── Modern Deep-Tech Background ────────────────────────────── */
+/* ── Natural Sky-Inspired Background ─────────────────────────── */
 html, body {
-  background-color: #0a0d22;
+  background-color: #1a1f2e;
   margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  color: #f8f9fa;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #e8e6e3;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* ── Background layers rendered as real DOM divs ─────────────── */
-/* Aurora / colour orbs layer */
+/* ── Background layers ───────────────────────────────────────── */
+/* Soft twilight gradient — like a dusk sky */
 .bg-aurora {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 15% 15%, rgba(111, 66, 193, 0.22) 0%, transparent 35%),
-    radial-gradient(circle at 85% 85%, rgba(13, 110, 253, 0.22) 0%, transparent 35%),
-    radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 80% 10%, rgba(253, 126, 20, 0.18) 0%, transparent 30%);
-  filter: blur(60px);
-  animation: meshShift 30s ease-in-out infinite alternate;
+    radial-gradient(ellipse at 20% 0%, rgba(96, 125, 139, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(130, 152, 145, 0.12) 0%, transparent 50%);
+  filter: blur(40px);
+  animation: meshShift 40s ease-in-out infinite alternate;
 }
 
-/* Dot micro-grid — behind content */
-.bg-grid {
+/* Soft hill silhouette at the bottom */
+.bg-terrain {
   position: fixed;
-  inset: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30vh;
   z-index: 1;
   pointer-events: none;
-  background-image:
-    radial-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1px);
-  background-size: 30px 30px;
-}
-
-/* Foreground dot overlay — sits ON TOP of all cards/content */
-.bg-grid-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  background-image:
-    radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 30px 30px;
+  background: linear-gradient(
+    to top,
+    rgba(60, 75, 90, 0.15) 0%,
+    transparent 100%
+  );
 }
 
 /* All page content sits above the background layers */
@@ -56,91 +48,34 @@ html, body {
   z-index: 2;
 }
 
-/* Stylized neon landscape terrain at the bottom */
-.bg-terrain {
-  position: fixed;
-  bottom: -2%;
-  left: -2%;
-  right: -2%;
-  height: 82vh;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.12;
-  transform-origin: bottom center;
-  animation: 
-    terrainFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards,
-    terrainDrift 15s ease-in-out infinite alternate 1.5s;
-}
-
-@keyframes terrainFadeIn {
-  from {
-    opacity: 0;
-    transform: scaleY(0.95) translateY(20px);
-  }
-  to {
-    opacity: 0.12;
-    transform: scaleY(1) translateY(0);
-  }
-}
-
-@keyframes terrainDrift {
-  0% {
-    transform: scale(1) translate(0, 0);
-  }
-  50% {
-    transform: scale(1.08) translate(3.5%, -3%);
-  }
-  100% {
-    transform: scale(0.94) translate(-3.5%, 1.5%);
-  }
-}
-
-/* Grain Texture Overlay */
-.grain-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.08;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
-/* Edge Vignette / Glow */
-.edge-glow {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(13, 110, 253, 0.05);
-}
-
 @keyframes meshShift {
   0% { transform: scale(1) translate(0, 0); }
-  100% { transform: scale(1.1) translate(2%, 2%); }
+  100% { transform: scale(1.06) translate(1.5%, 1.5%); }
 }
 
 /* ── Glassmorphism cards ─────────────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 .glass-header {
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(26, 31, 46, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Metric cards (clickable sensor tiles) ───────────────────── */
 .metric-card {
-  border-radius: 0.625rem;
-  padding: 0.5rem 0.625rem;
-  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  transition: background 0.2s ease, transform 0.15s ease;
   cursor: pointer;
 }
 
@@ -149,39 +84,39 @@ html, body {
   transform: translateY(-1px);
 }
 
-/* per-sensor accent glow on hover */
-.metric-card-temp:hover  { box-shadow: 0 0 18px rgba(253, 126, 20, 0.25); }
-.metric-card-humid:hover { box-shadow: 0 0 18px rgba(34, 211, 238, 0.25); }
-.metric-card-press:hover { box-shadow: 0 0 18px rgba(111, 66, 193, 0.25); }
-.metric-card-solar:hover { box-shadow: 0 0 18px rgba(255, 193, 7, 0.25);  }
-.metric-card-rain:hover  { box-shadow: 0 0 18px rgba(13, 110, 253, 0.25); }
-.metric-card-wind:hover  { box-shadow: 0 0 18px rgba(20, 184, 166, 0.25); }
+/* Subtle colored left-border accent on hover instead of neon glow */
+.metric-card-temp:hover  { border-left: 2px solid #e07856; }
+.metric-card-humid:hover { border-left: 2px solid #7fb8a8; }
+.metric-card-press:hover { border-left: 2px solid #8b9dc3; }
+.metric-card-solar:hover { border-left: 2px solid #d4a843; }
+.metric-card-rain:hover  { border-left: 2px solid #6ba3a8; }
+.metric-card-wind:hover  { border-left: 2px solid #8dbe9d; }
 
 /* ── Section title chips ─────────────────────────────────────── */
 .section-title {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(248, 249, 250, 0.45);
+  letter-spacing: 0.03em;
+  text-transform: none;
+  color: rgba(232, 230, 227, 0.5);
 }
 
 /* ── Primary metric value ────────────────────────────────────── */
 .metric-value {
   font-size: 1.75rem;
-  font-weight: 300;
-  letter-spacing: -0.02em;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
-  color: #f8f9fa;
+  color: #e8e6e3;
 }
 
 .metric-label {
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(152, 157, 155, 0.8);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: rgba(232, 230, 227, 0.55);
 }
 
 /* ── Divider ─────────────────────────────────────────────────── */
@@ -202,20 +137,20 @@ html, body {
 
 /* ── Chart tooltip ───────────────────────────────────────────── */
 .chart-tooltip {
-  background: rgba(10, 10, 26, 0.85) !important;
+  background: rgba(26, 31, 46, 0.9) !important;
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 0.5rem;
   font-size: 0.75rem;
-  color: #f8f9fa;
+  color: #e8e6e3;
   padding: 6px 10px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 /* ── Recharts overrides ──────────────────────────────────────── */
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line {
-  stroke: rgba(255,255,255,0.05) !important;
+  stroke: rgba(255, 255, 255, 0.05) !important;
 }
 
 .recharts-tooltip-wrapper {
@@ -224,61 +159,61 @@ html, body {
 
 /* ── Button base ─────────────────────────────────────────────── */
 .btn-glass {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.5rem;
   padding: 0.375rem 0.75rem;
-  color: #f8f9fa;
+  color: #e8e6e3;
   font-size: 0.8rem;
   font-weight: 500;
   transition: background 0.15s, box-shadow 0.15s;
   cursor: pointer;
 }
 .btn-glass:hover {
-  background: rgba(255,255,255,0.1);
-  box-shadow: 0 0 12px rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.06);
 }
 
 /* ── Select / Listbox ────────────────────────────────────────── */
 .glass-select {
-  background: rgba(13,110,253,0.15);
-  border: 1px solid rgba(13,110,253,0.35);
+  background: rgba(107, 163, 168, 0.12);
+  border: 1px solid rgba(107, 163, 168, 0.3);
   border-radius: 0.5rem;
-  color: #f8f9fa;
+  color: #e8e6e3;
   padding: 0.3rem 0.6rem;
   font-size: 0.85rem;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
 }
 .glass-select:hover {
-  background: rgba(13,110,253,0.22);
-  border-color: rgba(13,110,253,0.55);
+  background: rgba(107, 163, 168, 0.2);
+  border-color: rgba(107, 163, 168, 0.5);
 }
 
 /* ── Text inputs ─────────────────────────────────────────────── */
 .glass-input {
-  background: rgba(13,110,253,0.12);
-  border: 1px solid rgba(13,110,253,0.3);
+  background: rgba(107, 163, 168, 0.1);
+  border: 1px solid rgba(107, 163, 168, 0.25);
   border-radius: 0.5rem;
-  color: #f8f9fa;
+  color: #e8e6e3;
   padding: 0.3rem 0.6rem;
   font-size: 0.85rem;
   outline: none;
   transition: border-color 0.15s, background 0.15s;
 }
 .glass-input:focus {
-  border-color: rgba(13,110,253,0.65);
-  background: rgba(13,110,253,0.2);
+  border-color: rgba(107, 163, 168, 0.6);
+  background: rgba(107, 163, 168, 0.16);
 }
 
 /* ── Dropdown panels (Listbox / Menu options) ────────────────── */
 .glass-dropdown {
-  background: rgba(8, 12, 30, 0.94);
+  background: rgba(22, 28, 42, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.625rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
 /* ── Forecast table cells ────────────────────────────────────── */
@@ -287,11 +222,11 @@ html, body {
   text-align: center;
   padding: 4px 2px;
   font-size: 0.75rem;
-  border-right: 1px solid rgba(255,255,255,0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }

@@ -1,21 +1,21 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
 export enum MY_COLORS {
-  blue = "#0d6efd",
-  indigo = "#6610f2",
-  purple = "#6f42c1",
-  pink = "#d63384",
-  red = "#dc3545",
-  orange = "#fd7e14",
-  yellow = "#ffc107",
-  green = "#198754",
-  teal = "#14b8a6",
-  cyan = "#22d3ee",
+  blue = "#6ba3a8",
+  indigo = "#5b7c99",
+  purple = "#8b9dc3",
+  pink = "#c97b8e",
+  red = "#c97b6b",
+  orange = "#e07856",
+  yellow = "#d4a843",
+  green = "#8dbe9d",
+  teal = "#8dbe9d",
+  cyan = "#7fb8a8",
   white = "#fff",
   black = "#000",
-  light = "#f8f9fa",
-  dark = "#212529",
-  gray = "#6c757d",
+  light = "#e8e6e3",
+  dark = "#1a1f2e",
+  gray = "#8b9dc3",
 }
 
 export default MY_COLORS;

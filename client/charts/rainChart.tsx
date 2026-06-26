@@ -44,7 +44,7 @@ function RainChart({
       <div className="flex flex-row flex-wrap gap-4 mb-2 text-xs justify-end pr-4">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-sm opacity-80" style={{ backgroundColor: color }} />
-          <span className="text-[rgba(248,249,250,0.65)] font-medium">Rainfall Amount</span>
+          <span className="text-[rgba(232,230,227,0.65)] font-medium">Rainfall Amount</span>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ function RainChart({
           <CartesianGrid stroke="rgba(255, 255, 255, 0.05)" horizontal={true} vertical={false} strokeDasharray="3 3" />
           <XAxis
             dataKey={xkey}
-            tick={{ fill: "rgba(248, 249, 250, 0.45)", fontSize: 10 }}
+            tick={{ fill: "rgba(232, 230, 227, 0.45)", fontSize: 10 }}
             tickFormatter={formatXAxis}
             axisLine={false}
             tickLine={false}
@@ -77,7 +77,7 @@ function RainChart({
           <YAxis
             type="number"
             domain={[yDomainMin, yDomainMax]}
-            tick={{ fill: "rgba(248, 249, 250, 0.45)", fontSize: 10 }}
+            tick={{ fill: "rgba(232, 230, 227, 0.45)", fontSize: 10 }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) => `${v} mm`}
@@ -85,18 +85,18 @@ function RainChart({
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: "rgba(10, 10, 26, 0.85)",
+              backgroundColor: "rgba(26, 31, 46, 0.9)",
               backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               borderRadius: "0.5rem",
               fontSize: "0.75rem",
-              color: "#f8f9fa",
+              color: "#e8e6e3",
               padding: "6px 10px",
               boxShadow: "0 4px 16px rgba(0, 0, 0, 0.4)",
             }}
-            itemStyle={{ color: "#f8f9fa" }}
-            labelStyle={{ color: "rgba(248, 249, 250, 0.6)", fontWeight: 600, marginBottom: "4px" }}
+            itemStyle={{ color: "#e8e6e3" }}
+            labelStyle={{ color: "rgba(232, 230, 227, 0.6)", fontWeight: 600, marginBottom: "4px" }}
             labelFormatter={formatLabel}
           />
           <Area

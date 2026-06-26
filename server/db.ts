@@ -42,7 +42,7 @@ export async function loadData(
   if (!/^[a-z0-9][a-z0-9_-]*$/i.test(stationID) || stationID.length > 64) {
     throw new Error(`Invalid stationID: ${stationID}`);
   }
-  if (!/^[a-z0-9_]+$/i.test(measurement) || measurement.length > 64) {
+  if (!/^[a-z0-9_:]+$/i.test(measurement) || measurement.length > 64) {
     throw new Error(`Invalid measurement: ${measurement}`);
   }
   const diffMinutes = (end.getTime() - start.getTime()) / 1000 / 60;

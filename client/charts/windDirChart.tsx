@@ -36,7 +36,7 @@ function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
           <div className="flex flex-row flex-wrap gap-4 mb-2 text-xs justify-end pr-4">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
-              <span className="text-[rgba(248,249,250,0.65)] font-medium">Wind Direction</span>
+              <span className="text-[rgba(232,230,227,0.65)] font-medium">Wind Direction</span>
             </div>
           </div>
 
@@ -53,7 +53,7 @@ function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
               <CartesianGrid stroke="rgba(255, 255, 255, 0.05)" horizontal={true} vertical={false} strokeDasharray="3 3" />
               <XAxis
                 dataKey={xkey}
-                tick={{ fill: "rgba(248, 249, 250, 0.45)", fontSize: 10 }}
+                tick={{ fill: "rgba(232, 230, 227, 0.45)", fontSize: 10 }}
                 tickFormatter={formatXAxis}
                 axisLine={false}
                 tickLine={false}
@@ -64,7 +64,7 @@ function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
                 type="number"
                 domain={[0, 360]}
                 ticks={[0, 90, 180, 270, 360]}
-                tick={{ fill: "rgba(248, 249, 250, 0.45)", fontSize: 10 }}
+                tick={{ fill: "rgba(232, 230, 227, 0.45)", fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={(v) =>
@@ -74,18 +74,18 @@ function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "rgba(10, 10, 26, 0.85)",
+                  backgroundColor: "rgba(26, 31, 46, 0.9)",
                   backdropFilter: "blur(12px)",
                   WebkitBackdropFilter: "blur(12px)",
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   borderRadius: "0.5rem",
                   fontSize: "0.75rem",
-                  color: "#f8f9fa",
+                  color: "#e8e6e3",
                   padding: "6px 10px",
                   boxShadow: "0 4px 16px rgba(0, 0, 0, 0.4)",
                 }}
-                itemStyle={{ color: "#f8f9fa" }}
-                labelStyle={{ color: "rgba(248, 249, 250, 0.6)", fontWeight: 600, marginBottom: "4px" }}
+                itemStyle={{ color: "#e8e6e3" }}
+                labelStyle={{ color: "rgba(232, 230, 227, 0.6)", fontWeight: 600, marginBottom: "4px" }}
                 labelFormatter={formatLabel}
               />
               <Scatter dataKey={ykey} fill={color} isAnimationActive={false} />
