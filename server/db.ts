@@ -116,10 +116,10 @@ export async function loadData(
     };
   } catch (e) {
     console.error(e);
+    throw e;
   } finally {
     client.release();
   }
-  return null;
 }
 
 export async function loadRainData(stationID: string) {
@@ -172,10 +172,10 @@ export async function loadRainData(stationID: string) {
     ];
   } catch (e) {
     console.error(e);
+    throw e;
   } finally {
     client.release();
   }
-  return null;
 }
 
 function getQuery(id: string, entries: [string, any][]) {

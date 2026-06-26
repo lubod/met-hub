@@ -29,6 +29,7 @@ export async function handleGoogleLogin(response: CredentialResponse, authCtrl: 
     null,
     data.createdAt,
     authCtrl.authData.admin,
+    data.email,
   );
 }
 

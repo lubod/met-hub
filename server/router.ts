@@ -539,6 +539,9 @@ router.get(
   accessMiddleware((req) => req.params.stationID),
   catchAsync(async (req, res) => {
     const { stationID } = req.params;
+    if (stationID === "dom") {
+      throw new AppError(400, "Rain data not supported for dom");
+    }
     const data = await loadRainData(stationID);
     res.status(200).json(data);
   }),

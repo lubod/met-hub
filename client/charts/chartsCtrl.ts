@@ -48,8 +48,14 @@ class ChartsCtrl {
       console.info("no station -> no load");
       return;
     }
+    const hasDomAccess =
+      this.chartsData.station.id === "dom" &&
+      this.authData.isAuth &&
+      this.authData.email?.toLowerCase() === "lubo.drobny@gmail.com";
+
     if (
       !this.chartsData.station.public &&
+      !hasDomAccess &&
       (!this.authData.isAuth ||
         (this.authData.id !== this.chartsData.station.owner &&
           this.authData.id !== this.authData.admin))

@@ -49,6 +49,7 @@ export default class AuthCtrl {
           null,
           user.createdAt,
           admin,
+          user.email,
         );
       } else {
         this.authData.cancelAuth();
@@ -69,6 +70,7 @@ export default class AuthCtrl {
     refreshToken: string | null,
     createdAt: number,
     admin: string | null,
+    email: string | null = null,
   ) {
     this.authData.setAuth(
       given_name,
@@ -78,6 +80,7 @@ export default class AuthCtrl {
       refreshToken,
       createdAt,
       admin,
+      email,
     );
     this.appContext.fetchCfg();
   }
