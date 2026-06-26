@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import moment from "moment";
+import moment from "./dateFormatter";
 import React from "react";
 
 type Props = {

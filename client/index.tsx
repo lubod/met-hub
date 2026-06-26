@@ -118,9 +118,8 @@ export class AppContext {
       this.setStation(externalStation);
       this.headerCtrl.headerData.setIsExternalID(true);
     } else if (cfg != null && cfg.length > 0) {
-      const lastStation =
-        AllStationsCfgClient.getStationByID(localStorage.getItem("lastStationID"))
-        ?? cfg[0];
+      const lastId = localStorage.getItem("lastStationID");
+      const lastStation = cfg.find((s) => s.id === lastId) ?? cfg[0];
       this.setStation(lastStation);
     } else {
       this.setStation(null);

@@ -1,5 +1,9 @@
-import moment from "moment";
 import redisClient from "./redisClient";
+
+function formatDate(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
 
 export async function getForecast(lat: string, lon: string) {
   const cacheKey = `FORECAST_CACHE_${lat}_${lon}`;
@@ -40,7 +44,8 @@ export async function getForecast(lat: string, lon: string) {
 }
 
 export async function getAstronomicalData(lat: string, lon: string, date: Date) {
-  const cacheKey = `ASTRONOMICAL_DATA_CACHE_${lat}_${lon}_${moment(date).format("YYYY-MM-DD")}`;
+  const dateStr = formatDate(date);
+  const cacheKey = `ASTRONOMICAL_DATA_CACHE_${lat}_${lon}_${dateStr}`;
   const reply = await redisClient.get(cacheKey);
   if (reply != null) {
     try {
@@ -53,7 +58,7 @@ export async function getAstronomicalData(lat: string, lon: string, date: Date) 
       // corrupt cache entry – fall through to fetch
     }
   }
-  const url = `https://api.met.no/weatherapi/sunrise/3.0/sun?lat=${lat}&lon=${lon}&date=${moment(date).format("YYYY-MM-DD")}&offset=+02:00`;
+  const url = `https://api.met.no/weatherapi/sunrise/3.0/sun?lat=${lat}&lon=${lon}&date=${dateStr}&offset=+02:00`;
   console.info(`GET ${url}`);
   try {
     const response = await fetch(url, {

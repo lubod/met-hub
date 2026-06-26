@@ -1,4 +1,3 @@
-import axios from "axios";
 import { AppContext } from "..";
 import { IStation } from "../../common/allStationsCfg";
 import HeaderData from "./headerData";
@@ -33,15 +32,22 @@ export default class HeaderCtrl {
     try {
       const url = "/api/addStation";
       console.info(url);
-      const res = await axios.post(url, station, {
+      const res = await fetch(url, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },
+        body: JSON.stringify(station),
       });
-      return { id: res.data.id, err: "" };
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server error: ${res.status}`);
+      }
+      const data = await res.json();
+      return { id: data.id, err: "" };
     } catch (error: any) {
       console.error(error);
-      const msg = error?.response?.data?.msg ?? error?.message ?? "Unknown error";
+      const msg = error?.message ?? "Unknown error";
       return { id: "", err: msg };
     }
   }

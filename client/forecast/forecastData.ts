@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 import { action, makeObservable, observable } from "mobx";
-import moment from "moment";
+import moment from "../misc/dateFormatter";
 import { IStation } from "../../common/allStationsCfg";
 import { avgWind } from "../../common/units";
 

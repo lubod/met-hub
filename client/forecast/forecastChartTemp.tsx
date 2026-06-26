@@ -1,6 +1,6 @@
 import * as React from "react";
 import { observer } from "mobx-react";
-// import moment from "moment";
+import moment from "../misc/dateFormatter";
 import {
   Area,
   ComposedChart,
