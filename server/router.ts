@@ -629,17 +629,16 @@ router.post(
       }
 
       const id = crypto.randomBytes(4).toString("hex");
-      const station = {
+      const station: Omit<IStation, "measurement"> = {
         id,
         lat: latNum,
         lon: lonNum,
         owner,
         passkey,
         place: trimPlace,
-        measurement: null,
         public: true,
         type,
-      } as IStation;
+      };
       allStationsCfg.addStation(station);
       console.info("ADD station", id);
 

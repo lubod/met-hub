@@ -138,14 +138,17 @@ export class AllStationsCfg {
     return this.publicStations;
   }
 
-  async addStation(station: IStation) {
+  async addStation(stationInput: Omit<IStation, "measurement">) {
+    const station: IStation = {
+      ...stationInput,
+      measurement: null as any,
+    };
+    station.measurement = this.getMeas(station);
     await redisClient.hSet(
       ALL_STATIONS_CFG,
       station.id,
-      JSON.stringify(station),
+      JSON.stringify(stationInput),
     );
-    // eslint-disable-next-line no-param-reassign
-    station.measurement = this.getMeas(station);
     this.set(station);
     create(station.id);
   }
