@@ -4,6 +4,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   REACT_APP_GOOGLE_CLIENT_ID: "dummy-client-id-for-ci"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
