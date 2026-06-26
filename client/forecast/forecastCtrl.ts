@@ -32,11 +32,11 @@ export default class ForecastCtrl {
   async fetchData() {
     this.forecastData.forecast = null;
     if (this.forecastData.station == null) {
-      console.info("no station -> no forecast");
+      console.debug("no station -> no forecast");
       return;
     }
     const url = `/api/getForecast?lat=${this.forecastData.station.lat}&lon=${this.forecastData.station.lon}`;
-    console.info(url);
+    console.debug(url);
 
     try {
       this.forecastData.setLoading(true);
@@ -52,7 +52,7 @@ export default class ForecastCtrl {
       }
 
       const newData = await response.json();
-      // console.info(newData);
+      // console.debug(newData);
       this.forecastData.setForecast(newData);
       this.forecastData.setLoading(false);
     } catch (e) {
@@ -63,13 +63,13 @@ export default class ForecastCtrl {
   async fetchAstronomicalData(date: Date) {
     this.forecastData.astronomicalData = null;
     if (this.forecastData.station == null) {
-      console.info("no station -> no astronomical data");
+      console.debug("no station -> no astronomical data");
       return;
     }
     const url = `/api/getAstronomicalData?lat=${
       this.forecastData.station.lat
     }&lon=${this.forecastData.station.lon}&date=${date.toISOString()}`;
-    console.info(url);
+    console.debug(url);
 
     try {
       const response = await fetch(url, {
@@ -84,7 +84,7 @@ export default class ForecastCtrl {
       }
 
       const newData = await response.json();
-      // console.info(newData);
+      // console.debug(newData);
       this.forecastData.setAstronomicalData(newData);
     } catch (e) {
       console.error(e);

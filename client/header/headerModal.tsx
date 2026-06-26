@@ -35,7 +35,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
     });
     setError(res.err);
     if (res.id !== "") {
-      console.info(res.id);
+      console.debug(res.id);
       setStep2(true);
       setId(res.id);
     }

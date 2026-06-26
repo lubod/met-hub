@@ -13,7 +13,7 @@ type DomProps = {
 };
 
 const Dom = observer(({ appContext, className }: DomProps) => (
-  // console.info(
+  // console.debug(
   //   "dom render",
   //   appContext.authCtrl.authData.isAuth,
   //   appContext.cCtrl.domData.oldData,

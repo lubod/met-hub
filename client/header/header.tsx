@@ -15,7 +15,7 @@ type Props = {
 };
 
 const Header = observer(({ appContext }: Props) => (
-  // console.info("Header render");
+  // console.debug("Header render");
 
   <HeaderContainer>
     <div className="flex flex-row flex-wrap justify-between gap-2">

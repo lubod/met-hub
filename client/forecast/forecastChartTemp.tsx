@@ -115,7 +115,7 @@ const ForecastChartTemp = observer(
       return "#6ba3a8";
     }
 
-    console.info("render forecast chart temp");
+    console.debug("render forecast chart temp");
     return (
       <div className="flex flex-col">
         <div className="text-sm text-center text-gray border-gray py-4">

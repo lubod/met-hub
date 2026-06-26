@@ -297,7 +297,7 @@ const ForecastCharts = observer(
       );
     }
 
-    console.info(
+    console.debug(
       firstTimestamp,
       lastTimestamp,
       forecastCtrl.forecastData.offset1h,

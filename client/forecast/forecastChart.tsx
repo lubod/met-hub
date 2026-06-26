@@ -100,7 +100,7 @@ const ForecastChart = observer(
       }
     }
 
-    console.info("render forecast chart");
+    console.debug("render forecast chart");
     return (
       <div className="flex flex-col">
         <div className="text-sm text-center text-gray border-gray py-4">

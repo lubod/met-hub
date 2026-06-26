@@ -10,7 +10,7 @@ import Text from "./misc/text";
 import Heading from "./misc/heading";
 
 export async function handleGoogleLogin(response: CredentialResponse, authCtrl: AuthCtrl) {
-  console.info("google login", response);
+  console.debug("google login", response);
   const res = await fetch("/api/googleLogin", {
     method: "POST",
     body: JSON.stringify({
@@ -21,7 +21,7 @@ export async function handleGoogleLogin(response: CredentialResponse, authCtrl: 
     },
   });
   const data = await res.json();
-  // console.info(data); // todo
+  // console.debug(data); // todo
   authCtrl.setAuth(
     data.given_name,
     data.family_name,
@@ -40,7 +40,7 @@ type Props = {
 };
 
 const About = observer(({ appContext, className }: Props) => {
-  console.info("About render");
+  console.debug("About render");
 
   return (
     <Container className={className ?? "max-w-sm mx-auto"}>
@@ -70,7 +70,7 @@ const About = observer(({ appContext, className }: Props) => {
               handleGoogleLogin(credentialResponse, appContext.authCtrl);
             }}
             onError={() => {
-              console.log("Login Failed");
+              console.debug("Login Failed");
             }}
             theme="filled_black"
             shape="pill"

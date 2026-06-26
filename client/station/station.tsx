@@ -17,7 +17,7 @@ type Props = {
 };
 
 const Station = observer(({ appContext, className }: Props) => (
-  /* console.info( // todo
+  /* console.debug( // todo
     "station render",
     appContext.authCtrl.authData.isAuth,
     appContext.cCtrl.stationData.oldData,

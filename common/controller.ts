@@ -118,7 +118,7 @@ export class CController {
 
   private async fetchSData() {
     if (this.stationData.station == null || this.stationCfg == null) {
-      console.info("no station -> no data");
+      console.debug("no station -> no data");
       return;
     }
     this.stationData.setLoading(true);
@@ -131,7 +131,7 @@ export class CController {
 
   private async fetchSTrendData() {
     if (this.stationData.station == null || this.stationCfg == null) {
-      console.info("no station -> no trend data");
+      console.debug("no station -> no trend data");
       return;
     }
     const newData = await this.privateFetch(

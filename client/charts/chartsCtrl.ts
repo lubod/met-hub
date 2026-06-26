@@ -45,7 +45,7 @@ class ChartsCtrl {
 
   async load(range: IChartsRange, p: number, m: ISensor | null, stationID: string | null) {
     if (this.chartsData.station == null) {
-      console.info("no station -> no load");
+      console.debug("no station -> no load");
       return;
     }
     const hasDomAccess =
@@ -60,11 +60,11 @@ class ChartsCtrl {
         (this.authData.id !== this.chartsData.station.owner &&
           this.authData.id !== this.authData.admin))
     ) {
-      console.info("no auth -> no load");
+      console.debug("no auth -> no load");
       return;
     }
     if (m == null || stationID == null) {
-      console.info("no stationID -> no load");
+      console.debug("no stationID -> no load");
       return;
     }
     try {
@@ -79,7 +79,7 @@ class ChartsCtrl {
       if (m.col2 !== "") {
         url += `:${m.col2}`;
       }
-      console.info(url);
+      console.debug(url);
 
       const response = await fetch(url, {
         headers: {
@@ -123,7 +123,7 @@ class ChartsCtrl {
       for (const item of newData.data) {
         item.val = [item.min, item.max];
       }
-      // console.info("loaded data", min, max, avg, sum, newData);
+      // console.debug("loaded data", min, max, avg, sum, newData);
 
       this.chartsData.setNewData(false, newData.data, {
         min,

@@ -11,7 +11,7 @@ RUN ln -sf /app/html/ /app/html/callback && \
     chown -R appuser:appgroup /app
 USER appuser
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-  CMD wget -qO- http://localhost:8089/health || exit 1
+  CMD wget -qO- http://127.0.0.1:8089/health || exit 1
 CMD ["node", "/app/main.js"]
 
 FROM node:24-alpine AS met-hub-store

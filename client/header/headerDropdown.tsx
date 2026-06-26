@@ -17,7 +17,7 @@ const HeaderDropdown = observer(({ appContext }: Props) => (
           handleGoogleLogin(credentialResponse, appContext.authCtrl);
         }}
         onError={() => {
-          console.log("Login Failed");
+          console.debug("Login Failed");
         }}
         theme="filled_black"
         size="small"

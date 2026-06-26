@@ -585,10 +585,10 @@ export default class ForecastData implements IForecastData {
 
     this.calculate();
 
-    // console.info("ROWS", this.rows);
-    // console.info("DAYS", this.days);
-    // console.info("1h", this.forecast_1h);
-    // console.info("6h", this.forecast_6h);
+    // console.debug("ROWS", this.rows);
+    // console.debug("DAYS", this.days);
+    // console.debug("1h", this.forecast_1h);
+    // console.debug("6h", this.forecast_6h);
     this.forecast = newForecast;
   }
 }

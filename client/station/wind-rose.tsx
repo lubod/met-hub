@@ -54,7 +54,7 @@ const WindRose = observer(({ appContext }: Props) => {
     return d;
   }
 
-  // console.info('render windrose', props);
+  // console.debug('render windrose', props);
   const gustTrend = appContext.cCtrl.stationData.trendData.windgust;
   const speedTrend = appContext.cCtrl.stationData.trendData.windspeed;
   const dirTrend = appContext.cCtrl.stationData.trendData.winddir;

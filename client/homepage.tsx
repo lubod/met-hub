@@ -13,7 +13,7 @@ type Props = {
 };
 
 const HomePage = observer(({ appContext }: Props) => {
-  console.info("Homepage render", appContext.authCtrl.authData.isAuth);
+  console.debug("Homepage render", appContext.authCtrl.authData.isAuth);
 
   const showStation: boolean =
     appContext.headerCtrl.headerData.station != null &&

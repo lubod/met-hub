@@ -71,15 +71,15 @@ class DomData {
       const timestamp = new Date(this.data.timestamp);
       const diff = time.getTime() - timestamp.getTime();
       if (diff > 300000) {
-        // console.info('oldData = true');
+        // console.debug('oldData = true');
         this.oldData = true;
       } else {
-        // console.info('oldData = false');
+        // console.debug('oldData = false');
         this.oldData = false;
         this.try = 0;
       }
     } else {
-      // console.info('oldData = true');
+      // console.debug('oldData = true');
       this.oldData = true;
     }
   }
@@ -90,7 +90,7 @@ class DomData {
   }
 
   processData(newData: IDomData) {
-    // console.info("process dom data", newData, this);
+    // console.debug("process dom data", newData, this);
     if (newData != null) {
       this.data = newData;
       this.checkOldData(new Date());
@@ -99,7 +99,7 @@ class DomData {
   }
 
   processTrendData(newTrendData: IDomTrendData) {
-    // console.info("process dom trend data", newTrendData, this);
+    // console.debug("process dom trend data", newTrendData, this);
     if (newTrendData != null) {
       this.trendData = newTrendData;
     }

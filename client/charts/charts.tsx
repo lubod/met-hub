@@ -20,7 +20,7 @@ const Charts = observer(
     appContext,
   }: // range
   ChartsProps) => (
-    // console.info("render charts", chartsData);
+    // console.debug("render charts", chartsData);
     // const map = useMap();
     // map.invalidateSize();
     <div

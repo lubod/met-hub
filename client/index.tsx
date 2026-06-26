@@ -64,7 +64,7 @@ export class AppContext {
     const source = new ReconnectingEventSource("/events");
     source.addEventListener("message", this.listener);
     source.addEventListener("open", () => {
-      console.info("SSE connected");
+      console.debug("SSE connected");
     });
     source.addEventListener("error", (e) => {
       console.warn("SSE error/reconnecting:", e);
@@ -77,7 +77,7 @@ export class AppContext {
   }
 
   setStation(station: IStation | null) {
-    console.info("stationID", station);
+    console.debug("stationID", station);
     if (station == null) {
       this.headerCtrl.setStation(null);
       this.forecastCtrl.setStation(null);
@@ -106,13 +106,13 @@ export class AppContext {
   }
 
   async fetchCfg() {
-    console.info("fetch cfg");
+    console.debug("fetch cfg");
     const cfg = await AllStationsCfgClient.fetchAllStationsCfg();
     this.headerCtrl.setAllStations(cfg);
 
     const queryParams = new URLSearchParams(window.location.search);
     const id = queryParams.get("id");
-    console.info("External station ID", id);
+    console.debug("External station ID", id);
     const externalStation = AllStationsCfgClient.getStationByID(id);
     if (externalStation != null && externalStation.public) {
       this.setStation(externalStation);

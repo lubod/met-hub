@@ -31,7 +31,7 @@ export default class HeaderCtrl {
   async addStation(station: IStation) {
     try {
       const url = "/api/addStation";
-      console.info(url);
+      console.debug(url);
       const res = await fetch(url, {
         method: "POST",
         headers: {

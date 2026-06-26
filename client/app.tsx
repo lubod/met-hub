@@ -8,7 +8,7 @@ type AppProps = {
 };
 
 const App = observer(({ appContext }: AppProps) => {
-  console.info(
+  console.debug(
     "App render",
     appContext.authCtrl.authData.isAuth,
     window.location.pathname,
