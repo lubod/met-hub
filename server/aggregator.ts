@@ -4,6 +4,9 @@ import redisClient from "./redisClient";
 
 class Aggregator {
   measurements: IMeasurement[];
+  private timer: NodeJS.Timeout | null = null;
+  private isShuttingDown = false;
+  private activePromise: Promise<void> | null = null;
 
   constructor(measurements: IMeasurement[]) {
     this.measurements = measurements;
@@ -55,22 +58,46 @@ class Aggregator {
   }
 
   async aggregate() {
+    if (this.isShuttingDown) return;
     const to = Date.now() - (Date.now() % 60000) - 1;
     console.info("Aggregate", new Date(to));
-    try {
-      await Promise.all(this.measurements.map((meas) => this.aggregateMeasurement(meas, to)));
-    } catch (e) {
+
+    this.activePromise = Promise.all(
+      this.measurements.map((meas) => this.aggregateMeasurement(meas, to))
+    ).then(() => {
+      this.activePromise = null;
+    }).catch((e) => {
       console.error("Aggregation error:", e);
-    }
+      this.activePromise = null;
+    });
+
+    await this.activePromise;
+
+    if (this.isShuttingDown) return;
+
     const toMinute = Date.now() % 60000;
-    setTimeout(() => this.aggregate(), 60000 - toMinute + 5000);
+    this.timer = setTimeout(() => this.aggregate(), 60000 - toMinute + 5000);
   }
 
   start = async () => {
     console.info("start aggregator");
     const toMinute = Date.now() % 60000;
-    setTimeout(() => this.aggregate(), 60000 - toMinute + 5000);
+    this.timer = setTimeout(() => this.aggregate(), 60000 - toMinute + 5000);
   };
+
+  async shutdown() {
+    console.info("Shutting down aggregator...");
+    this.isShuttingDown = true;
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    if (this.activePromise) {
+      console.info("Waiting for active aggregations to complete...");
+      await this.activePromise;
+    }
+    console.info("Aggregator shut down completed.");
+  }
 }
 
 export default Aggregator;
