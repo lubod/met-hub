@@ -4,6 +4,7 @@
 import { action, makeObservable, observable } from "mobx";
 import moment from "moment";
 import { IStation } from "../../common/allStationsCfg";
+import { avgWind } from "../../common/units";
 
 export interface IGetForecastDataToDisplay {
   getDay(): string;
@@ -384,38 +385,32 @@ export default class ForecastData implements IForecastData {
   calculate() {
     let dayIndex = 0;
     let precipitation_amount_uptoFirst6 = 0;
-    let cloud_area_fractions = [];
-    let wind_dirs = [];
+    let wind_dirs: number[] = [];
 
-    // TODO
-    const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
-
-    const rad2deg = (radians: number) => radians * (180 / Math.PI);
-
-    const round = (value: number, precision: number) => {
-      const multiplier = 10 ** (precision || 0);
-      return Math.round(value * multiplier) / multiplier;
-    };
-
-    const avgWind = (directions: number[]) => {
-      let sinSum = 0;
-      let cosSum = 0;
-      directions.forEach((value) => {
-        sinSum += Math.sin(deg2rad(value));
-        cosSum += Math.cos(deg2rad(value));
-      });
-      return round((rad2deg(Math.atan2(sinSum, cosSum)) + 360) % 360, 0);
-    };
+    // Calculate time differences/weights for each row in the timeseries
+    const rowWeights = new Map<ForecastRow, number>();
+    for (let i = 0; i < this.rows.length; i += 1) {
+      const row = this.rows[i];
+      let weight = 1;
+      if (i < this.rows.length - 1) {
+        const nextRow = this.rows[i + 1];
+        const diffHours = (nextRow.timestamp.getTime() - row.timestamp.getTime()) / (1000 * 60 * 60);
+        if (diffHours > 0) {
+          weight = diffHours;
+        }
+      } else if (i > 0) {
+        weight = rowWeights.get(this.rows[i - 1]) || 1;
+      }
+      rowWeights.set(row, weight);
+    }
 
     if (this.rows.length >= 6) {
       const uptoFirst6 = 6 - (this.rows[0].timestamp.getUTCHours() % 6);
       for (let rowIndex = 0; rowIndex < uptoFirst6; rowIndex += 1) {
-        // console.info("CALCULATE", uptoFirst6, rowIndex, this.rows[rowIndex]);
-        precipitation_amount_uptoFirst6 +=
-          this.rows[rowIndex].precipitation_amount_1h;
-        cloud_area_fractions.push(this.rows[rowIndex].cloud_area_fraction);
+        precipitation_amount_uptoFirst6 += this.rows[rowIndex].precipitation_amount_1h;
       }
     }
+
     for (const day of this.days.values()) {
       day.air_temperature_max = Number.MIN_SAFE_INTEGER;
       day.air_temperature_min = Number.MAX_SAFE_INTEGER;
@@ -424,10 +419,16 @@ export default class ForecastData implements IForecastData {
       day.cloud_area_fraction_avg = 0;
       day.precipitation_amount = 0;
 
-      if (dayIndex === 0 && day.rows.length > 0) {
+      const isFirstDay = dayIndex === 0;
+
+      if (isFirstDay && day.rows.length > 0) {
         day.symbol_code_day = day.rows[0].symbol_code_12h;
         day.precipitation_amount += precipitation_amount_uptoFirst6;
       }
+
+      let cloudFractionSum = 0;
+      let totalCloudWeight = 0;
+
       for (let rowIndex = 0; rowIndex < day.rows.length; rowIndex += 1) {
         const row = day.rows[rowIndex];
         if (day.wind_speed_max < row.wind_speed) {
@@ -442,43 +443,41 @@ export default class ForecastData implements IForecastData {
         if (day.air_temperature_min > row.air_temperature) {
           day.air_temperature_min = row.air_temperature;
         }
+
         wind_dirs.push(row.wind_from_direction);
+
+        const weight = rowWeights.get(row) || 1;
+        if (row.cloud_area_fraction != null && !isNaN(row.cloud_area_fraction)) {
+          cloudFractionSum += row.cloud_area_fraction * weight;
+          totalCloudWeight += weight;
+        }
+
+        const isFirstRowOfFirstDay = isFirstDay && rowIndex === 0;
+
         switch (row.timestamp.getUTCHours()) {
           case 0:
             day.symbol_code_00Z = row.symbol_code_6h;
             day.precipitation_amount += row.precipitation_amount_6h;
-            for (let i = 0; i < 6; i += 1) {
-              cloud_area_fractions.push(row.cloud_area_fraction);
-            }
             break;
           case 6:
             day.symbol_code_06Z = row.symbol_code_6h;
             day.symbol_code_day = row.symbol_code_12h;
             day.precipitation_amount += row.precipitation_amount_6h;
-            for (let i = 0; i < 6; i += 1) {
-              cloud_area_fractions.push(row.cloud_area_fraction);
-            }
             break;
           case 12:
             day.symbol_code_12Z = row.symbol_code_6h;
             day.precipitation_amount += row.precipitation_amount_6h;
-            for (let i = 0; i < 6; i += 1) {
-              cloud_area_fractions.push(row.cloud_area_fraction);
-            }
             break;
           case 18:
             day.symbol_code_18Z = row.symbol_code_6h;
             day.symbol_code_night = row.symbol_code_12h;
             day.precipitation_amount += row.precipitation_amount_6h;
-            for (let i = 0; i < 6; i += 1) {
-              cloud_area_fractions.push(row.cloud_area_fraction);
-            }
             break;
           default:
         }
+
         if (
-          (row.timestamp.getUTCHours() % 6 === 0 ||
-            (dayIndex === 0 && rowIndex === 0)) &&
+          (row.timestamp.getUTCHours() % 6 === 0 || isFirstRowOfFirstDay) &&
           row.symbol_code_6h != null
         ) {
           this.forecast_6h.push(
@@ -487,7 +486,7 @@ export default class ForecastData implements IForecastData {
               row.symbol_code_6h,
               row.air_temperature_min_6h,
               row.air_temperature_max_6h,
-              dayIndex === 0 && rowIndex === 0
+              isFirstRowOfFirstDay
                 ? precipitation_amount_uptoFirst6
                 : row.precipitation_amount_6h,
               row.wind_speed,
@@ -510,12 +509,10 @@ export default class ForecastData implements IForecastData {
           );
         }
       }
-      day.cloud_area_fraction_avg =
-        cloud_area_fractions.reduce((p, c) => p + c, 0) /
-        cloud_area_fractions.length;
+
+      day.cloud_area_fraction_avg = totalCloudWeight > 0 ? (cloudFractionSum / totalCloudWeight) : 0;
       day.wind_dir_avg = avgWind(wind_dirs);
       dayIndex += 1;
-      cloud_area_fractions = [];
       wind_dirs = [];
     }
   }
