@@ -79,6 +79,37 @@ async function sendTestData() {
     console.error("Error sending station2 data:", err);
   }
 
+  // 3. Send data for dom station
+  const domData = {
+    timestamp: new Date().toISOString(),
+    vonku: { temp: 20.4, humidity: 55.2, rain: false },
+    tarif: { tarif: 1 },
+    obyvacka_vzduch: { temp: 21.8, reqall: 21.5 },
+    obyvacka_podlaha: { temp: 22.4, kuri: false, leto: false, low: false },
+    pracovna_vzduch: { temp: 21.2, reqall: 21.0 },
+    pracovna_podlaha: { temp: 22.1, kuri: false, leto: false, low: false },
+    spalna_vzduch: { temp: 21.0, reqall: 21.0 },
+    spalna_podlaha: { temp: 22.0, kuri: false, leto: false, low: false },
+    chalani_vzduch: { temp: 22.5, reqall: 22.0 },
+    chalani_podlaha: { temp: 23.0, kuri: false, leto: false, low: false },
+    petra_vzduch: { temp: 21.5, reqall: 21.5 },
+    petra_podlaha: { temp: 22.3, kuri: false, leto: false, low: false }
+  };
+
+  console.log("Sending POST update for dom station...");
+  try {
+    const resDom = await fetch("http://localhost:8089/setDomData?PASSKEY=dev-dom-passkey", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify(domData)
+    });
+    console.log(`dom Response Status: ${resDom.status} (${resDom.statusText})`);
+  } catch (err) {
+    console.error("Error sending dom data:", err);
+  }
+
   console.log("Test data generation complete!");
 }
 
