@@ -2,7 +2,7 @@ import {
   IStationData,
   IStationGoGenMe3900DataRaw,
 } from "../common/stationModel";
-import { calculateDewPoint, calculateFeelsLike } from "../common/units";
+import { calculateDewPoint, calculateFeelsLike, round } from "../common/units";
 import StationCommon from "./stationCommon";
 
 class StationGoGenMe3900 extends StationCommon {
@@ -41,10 +41,6 @@ class StationGoGenMe3900 extends StationCommon {
     const TO_KM = 1.6;
     const TO_HPA = 33.8639;
 
-    function round(value: number, precision: number) {
-      const multiplier = 10 ** (precision || 0);
-      return Math.round(value * multiplier) / multiplier;
-    }
 
     //    console.log(data)
     const timestamp = StationCommon.parseDate(data.dateutc);
