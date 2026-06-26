@@ -43,18 +43,27 @@ declare global {
 
 const DOM_ACCESS_EMAIL = "lubo.drobny@gmail.com";
 
-// Cache admin ID for 60 seconds to avoid a Redis fetch on every request
-let cachedAdminId: string | null = null;
+// Cache admin ID promise for 60 seconds to avoid a Redis fetch on every request
+let adminIdPromise: Promise<string | null> | null = null;
 let adminCacheExpiry = 0;
 
-async function getAdminId(): Promise<string | null> {
-  const now = Date.now();
-  if (cachedAdminId !== null && now < adminCacheExpiry) {
-    return cachedAdminId;
+function getAdminId(): Promise<string | null> {
+  if (process.env.NODE_ENV === "test") {
+    return redisClient.hGet("USERS", "admin").then((val) => val ?? null);
   }
-  cachedAdminId = (await redisClient.hGet("USERS", "admin")) ?? null;
+  const now = Date.now();
+  if (adminIdPromise !== null && now < adminCacheExpiry) {
+    return adminIdPromise;
+  }
   adminCacheExpiry = now + 60_000;
-  return cachedAdminId;
+  adminIdPromise = redisClient.hGet("USERS", "admin")
+    .then((val) => val ?? null)
+    .catch((err) => {
+      adminIdPromise = null;
+      adminCacheExpiry = 0;
+      throw err;
+    });
+  return adminIdPromise;
 }
 
 async function checkAuth(
@@ -274,13 +283,16 @@ function eventHandler(req: Request, res: Response) {
   });
 }
 
-router.get("/events", (req: Request, res: Response) => {
-  if (req.headers.accept === "text/event-stream") {
-    eventHandler(req, res);
-  } else {
-    res.json({ message: "Ok" });
-  }
-});
+router.get(
+  "/events",
+  catchAsync(async (req: Request, res: Response) => {
+    if (req.headers.accept === "text/event-stream") {
+      eventHandler(req, res);
+    } else {
+      res.json({ message: "Ok" });
+    }
+  }),
+);
 
 // LAST DATA
 

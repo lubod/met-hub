@@ -47,6 +47,9 @@ export class AllStationsCfg {
   }
 
   set(station: IStation) {
+    const exists = this.map.has(station.id);
+    const oldStation = this.map.get(station.id);
+
     this.map.set(station.id, station);
     if (station.passkey != null) {
       this.passkey2IDMap.set(station.passkey, station.id);
@@ -57,7 +60,18 @@ export class AllStationsCfg {
     }
     mys.add(station.id);
     this.userStations.set(station.owner, mys);
-    this.measurements.push(station.measurement);
+
+    if (!exists) {
+      this.measurements.push(station.measurement);
+    } else if (oldStation) {
+      const idx = this.measurements.indexOf(oldStation.measurement);
+      if (idx !== -1) {
+        this.measurements[idx] = station.measurement;
+      } else {
+        this.measurements.push(station.measurement);
+      }
+    }
+
     if (station.public) {
       this.publicStations.add(station.id);
     }
@@ -80,7 +94,8 @@ export class AllStationsCfg {
         console.error("readCfg: unknown station type, skipping:", station.id, station.type);
         continue;
       }
-      console.info(JSON.stringify(station));
+      const logStation = { ...station, passkey: station.passkey ? "***" : undefined };
+      console.info(JSON.stringify(logStation));
       this.set(station);
     }
   }
