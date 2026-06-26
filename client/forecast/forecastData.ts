@@ -352,7 +352,9 @@ export default class ForecastData implements IForecastData {
       setStation: action,
       setStep: action,
       setOffset1h: action,
+      setOffset6h: action,
       setLoading: action,
+      calculate: action,
     });
   }
 
