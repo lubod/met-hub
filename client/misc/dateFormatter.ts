@@ -13,8 +13,15 @@ class DateWrapper {
     if (fmt === "HH:mm") {
       return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
+    if (fmt === "HH:mm:ss") {
+      return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
     if (fmt === "DD.MM") {
       return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}`;
+    }
+    if (fmt === "DD MMM YYYY") {
+      const month = d.toLocaleDateString("en-US", { month: "short" });
+      return `${pad(d.getDate())} ${month} ${d.getFullYear()}`;
     }
     if (fmt === "MMM") {
       return d.toLocaleDateString("en-US", { month: "short" });
