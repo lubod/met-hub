@@ -14,7 +14,7 @@
     "build": "node esbuild.mjs",
     "builddev": "node esbuild.mjs",
     "start:dev": "webpack-dev-server",
-    "lint": "eslint . --ext .ts --ext .tsx --fix"
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts --ext .tsx --fix"
   },
   "engines": {
     "node": ">=24.0.0"
