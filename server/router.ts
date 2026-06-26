@@ -134,7 +134,8 @@ function catchAsync(fnc: AsyncRouteHandler): RequestHandler {
 
 // SSE
 
-const clients = new Map<number, Response>();
+export const clients = new Map<number, Response>();
+export const MAX_SSE_CONNECTIONS = 100;
 let lastEventTime = 0;
 let nextClientId = 1;
 
@@ -144,10 +145,38 @@ export const writeEvent = (data: string, type: "raw" | "ping" | "minute") => {
   }
   for (const [id, res] of clients) {
     try {
-      res.write(`data: ${data}:${type}\n\n`);
-    } catch {
-      console.info(`${id} SSE write failed, removing client`);
+      if (!res.writable || res.destroyed) {
+        console.info(`${id} SSE not writable, removing client`);
+        clients.delete(id);
+        try {
+          res.end();
+        } catch {}
+        continue;
+      }
+      const ok = res.write(`data: ${data}:${type}\n\n`, (err) => {
+        if (err) {
+          console.info(`${id} SSE write callback failed, removing client`);
+          clients.delete(id);
+          try {
+            res.end();
+          } catch {}
+        }
+      });
+      if (!ok) {
+        if (res.destroyed || !res.writable) {
+          console.info(`${id} SSE write returned false and socket destroyed/not writable, removing client`);
+          clients.delete(id);
+          try {
+            res.end();
+          } catch {}
+        }
+      }
+    } catch (err) {
+      console.info(`${id} SSE write failed synchronously, removing client`, err);
       clients.delete(id);
+      try {
+        res.end();
+      } catch {}
     }
   }
   lastEventTime = Date.now();
@@ -156,6 +185,23 @@ export const writeEvent = (data: string, type: "raw" | "ping" | "minute") => {
 setInterval(() => writeEvent("-", "ping"), 30000);
 
 function eventHandler(req: Request, res: Response) {
+  if (clients.size >= MAX_SSE_CONNECTIONS) {
+    const oldestId = clients.keys().next().value;
+    if (oldestId !== undefined) {
+      console.info(`Max SSE connections reached (${MAX_SSE_CONNECTIONS}). Evicting oldest client ${oldestId}`);
+      const oldestRes = clients.get(oldestId);
+      if (oldestRes) {
+        try {
+          oldestRes.write(`data: disconnected:max_connections\n\n`);
+          oldestRes.end();
+        } catch (e) {
+          console.error(`Error ending evicted client ${oldestId}`, e);
+        }
+      }
+      clients.delete(oldestId);
+    }
+  }
+
   res.writeHead(200, {
     "Cache-Control": "no-cache",
     Connection: "keep-alive",
@@ -167,9 +213,27 @@ function eventHandler(req: Request, res: Response) {
   clients.set(clientId, res);
   console.info(`${clientId} Connection opened`);
 
-  req.on("close", () => {
-    console.info(`${clientId} Connection closed`);
+  // Set socket idle timeout (e.g. 60 seconds)
+  req.socket.setTimeout(60000);
+  req.socket.on("timeout", () => {
+    console.info(`${clientId} SSE connection idle timeout`);
     clients.delete(clientId);
+    try {
+      res.end();
+    } catch {}
+  });
+
+  const cleanUp = () => {
+    console.info(`${clientId} Connection closed/finished`);
+    clients.delete(clientId);
+  };
+
+  req.on("close", cleanUp);
+  res.on("close", cleanUp);
+  res.on("finish", cleanUp);
+  res.on("error", (err) => {
+    console.warn(`${clientId} SSE response error`, err);
+    cleanUp();
   });
 }
 
