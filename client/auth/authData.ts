@@ -3,25 +3,25 @@
 import { observable, makeObservable, action } from "mobx";
 
 export default class AuthData {
-  id: string = null;
+  id: string | null = null;
 
-  given_name: string = null;
+  given_name: string | null = null;
 
-  family_name: string = null;
+  family_name: string | null = null;
 
-  expiresAt: number = null;
+  expiresAt: number | null = null;
 
-  createdAt: number = null;
+  createdAt: number | null = null;
 
-  access_token: string = null;
+  access_token: string | null = null;
 
-  refresh_token: string = null;
+  refresh_token: string | null = null;
 
   isAuth: boolean = false;
 
   location: string = "/";
 
-  admin: string = null;
+  admin: string | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -49,9 +49,9 @@ export default class AuthData {
     family_name: string,
     expiresAt: number,
     id: string,
-    refreshToken: string,
+    refreshToken: string | null,
     createdAt: number,
-    admin: string
+    admin: string | null
   ) {
     this.given_name = given_name;
     this.family_name = family_name;

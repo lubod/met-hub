@@ -145,6 +145,6 @@ describe("calculateFeelsLike", () => {
   it("wind chill result gets colder with stronger wind", () => {
     const mild = calculateFeelsLike(0, 50, 10);
     const strong = calculateFeelsLike(0, 50, 50);
-    expect(strong).toBeLessThan(mild);
+    expect(strong!).toBeLessThan(mild!);
   });
 });

@@ -3,19 +3,19 @@ import React from "react";
 import { Area, AreaChart, YAxis } from "recharts";
 
 type Props = {
-  data: Array<number>;
+  data: Array<number | null>;
   range: number;
   couldBeNegative: boolean;
   color: string;
 };
 
 const Trend = observer(({ data, range, couldBeNegative, color }: Props) => {
-  let max: number = null;
-  let min: number = null;
-  let avg: number = null;
-  let sum: number = null;
-  let domainMin = null;
-  let domainMax = null;
+  let max: number | null = null;
+  let min: number | null = null;
+  let avg: number | null = null;
+  let sum: number | null = null;
+  let domainMin: number | null = null;
+  let domainMax: number | null = null;
 
   function round(value: number, precision: number) {
     const multiplier = 10 ** (precision || 0);
@@ -24,25 +24,31 @@ const Trend = observer(({ data, range, couldBeNegative, color }: Props) => {
 
   const chdata = [];
   if (data != null) {
+    let count = 0;
     for (let i = 0; i < data.length; i += 1) {
-      if (i === 0) {
-        // eslint-disable-next-line no-multi-assign
-        max = min = sum = data[i];
-      } else {
-        if (data[i] > max) max = data[i];
-        if (data[i] < min) min = data[i];
-        sum += data[i];
+      const val = data[i];
+      if (val != null) {
+        if (max === null) {
+          max = min = sum = val;
+        } else {
+          if (val > max!) max = val;
+          if (val < min!) min = val;
+          sum = (sum ?? 0) + val;
+        }
+        count += 1;
       }
     }
-    avg = sum / data.length;
-    domainMin = round(avg - range / 2, 1);
-    domainMax = round(avg + range / 2, 1);
-    if (max - min > range) {
-      domainMin = min;
-      domainMax = max;
-    }
-    if (domainMin < 0 && couldBeNegative === false) {
-      domainMin = 0;
+    if (count > 0 && sum !== null && min !== null && max !== null) {
+      avg = sum / count;
+      domainMin = round(avg - range / 2, 1);
+      domainMax = round(avg + range / 2, 1);
+      if (max - min > range) {
+        domainMin = min;
+        domainMax = max;
+      }
+      if (domainMin < 0 && couldBeNegative === false) {
+        domainMin = 0;
+      }
     }
     for (let i = 0; i < data.length; i += 1) {
       chdata.push({ minute: i, value: data[i] });
@@ -74,7 +80,7 @@ const Trend = observer(({ data, range, couldBeNegative, color }: Props) => {
           isAnimationActive={false}
           dot={false}
         />
-        <YAxis hide type="number" domain={[domainMin, domainMax]} />
+        <YAxis hide type="number" domain={[domainMin ?? "auto", domainMax ?? "auto"]} />
       </AreaChart>
     </div>
   );

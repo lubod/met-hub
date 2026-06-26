@@ -28,7 +28,7 @@ export function random(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
 
-export const calculateDewPoint = (temp: number, humidity: number): number => {
+export const calculateDewPoint = (temp: number | null, humidity: number | null): number | null => {
   if (temp == null || humidity == null) return null;
   const b = 17.67;
   const c = 243.5;
@@ -44,14 +44,14 @@ export const calculateDewPoint = (temp: number, humidity: number): number => {
  * @param windSpeed Km/h
  */
 export const calculateFeelsLike = (
-  temp: number,
-  humidity: number,
-  windSpeed: number,
-): number => {
+  temp: number | null,
+  humidity: number | null,
+  windSpeed: number | null,
+): number | null => {
   if (temp == null) return null;
 
   // Wind Chill (for temp <= 10C and wind > 4.8 km/h)
-  if (temp <= 10 && windSpeed > 4.8) {
+  if (temp <= 10 && windSpeed != null && windSpeed > 4.8) {
     return round(
       13.12 +
         0.6215 * temp -
@@ -62,7 +62,7 @@ export const calculateFeelsLike = (
   }
 
   // Heat Index (for temp >= 26.7C)
-  if (temp >= 26.7 && humidity >= 40) {
+  if (temp >= 26.7 && humidity != null && humidity >= 40) {
     // Steadman's approximation / Rothfusz regression
     const T = temp * 1.8 + 32; // Convert to Fahrenheit
     const R = humidity;

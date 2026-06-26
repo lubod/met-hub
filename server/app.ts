@@ -21,7 +21,7 @@ const limiter = rateLimit({
 
 // GoGen ME 3900 posts every ~16s → ~38 req/10min per station.
 // A user can have up to 3 stations → ~113 req/10min. 600 gives ~5x headroom.
-const ingestMax = parseInt(process.env.INGEST_RATE_LIMIT, 10) || 600;
+const ingestMax = parseInt(process.env.INGEST_RATE_LIMIT || "", 10) || 600;
 const ingestLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: ingestMax,

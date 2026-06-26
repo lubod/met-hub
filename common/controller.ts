@@ -17,13 +17,11 @@ export class CController {
 
   domData: DomData;
 
-  domCfg: DomCfg;
-
-  stationID: string;
+  stationID: string = "";
 
   stationData: StationData;
 
-  stationCfg: StationCfg;
+  stationCfg: StationCfg | null = null;
 
   constructor(authData: AuthData, test: boolean = false) {
     this.authData = authData;
@@ -59,12 +57,18 @@ export class CController {
     return this.stationID;
   }
 
-  setStation(station: IStation) {
+  setStation(station: IStation | null) {
+    if (station == null) {
+      this.stationID = "";
+      this.stationCfg = null;
+      this.stationData.setStation(null);
+      return;
+    }
     this.stationID = station.id;
     if (station.id === "dom") {
       this.domData.setStation(station);
     } else {
-      this.stationCfg = station == null ? null : new StationCfg(station.id);
+      this.stationCfg = new StationCfg(station.id);
       this.stationData.setStation(station);
     }
   }
@@ -96,6 +100,7 @@ export class CController {
       temp: [],
       humidity: [],
       rain: [],
+      tarif: [],
       living_room_air: [],
       living_room_floor: [],
       guest_room_air: [],
@@ -112,7 +117,7 @@ export class CController {
   }
 
   private async fetchSData() {
-    if (this.stationData.station == null) {
+    if (this.stationData.station == null || this.stationCfg == null) {
       console.info("no station -> no data");
       return;
     }
@@ -125,7 +130,7 @@ export class CController {
   }
 
   private async fetchSTrendData() {
-    if (this.stationData.station == null) {
+    if (this.stationData.station == null || this.stationCfg == null) {
       console.info("no station -> no trend data");
       return;
     }

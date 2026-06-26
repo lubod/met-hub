@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.MY_JWT_SECRET;
+const JWT_SECRET = process.env.MY_JWT_SECRET as string;
 if (!JWT_SECRET) {
   throw new Error("MY_JWT_SECRET environment variable is not set");
 }
@@ -23,10 +23,13 @@ export function createToken(id: string) {
   };
 }
 
-export function verifyToken(token: any) {
+export function verifyToken(token: any): jwt.JwtPayload | null {
   if (token) {
     try {
-      return jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
+      if (typeof decoded === "object" && decoded !== null) {
+        return decoded;
+      }
     } catch (err) {
       return null;
     }

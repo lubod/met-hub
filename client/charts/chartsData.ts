@@ -10,33 +10,33 @@ export interface IChartsRange {
 }
 
 export class CData {
-  min: number;
+  min!: number | null;
 
-  max: number;
+  max!: number | null;
 
-  avg: number;
+  avg!: number | null;
 
-  sum: number;
+  sum!: number | null;
 
-  yDomainMin: number;
+  yDomainMin!: number;
 
-  yDomainMax: number;
+  yDomainMax!: number;
 
-  label: string;
+  label!: string;
 
-  unit: string;
+  unit!: string;
 
-  range: IChartsRange;
+  range!: IChartsRange;
 
-  couldBeNegative: boolean;
+  couldBeNegative!: boolean;
 
-  last: number;
+  last!: number | null;
 
-  first: number;
+  first!: number | null;
 
-  xDomainMin: string;
+  xDomainMin!: string;
 
-  xDomainMax: string;
+  xDomainMax!: string;
 }
 
 export const chartsRanges: Array<IChartsRange> = [
@@ -60,13 +60,13 @@ class ChartsData {
 
   range: IChartsRange = chartsRanges[4];
 
-  sensor: ISensor = null;
+  sensor: ISensor | null = null;
 
-  allSensors: ISensor[] = null;
+  allSensors: ISensor[] | null = null;
 
   loading: boolean = true;
 
-  station: IStation = null;
+  station: IStation | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -90,7 +90,7 @@ class ChartsData {
     });
   }
 
-  setStation(station: IStation) {
+  setStation(station: IStation | null) {
     this.station = station;
   }
 
@@ -106,11 +106,11 @@ class ChartsData {
     this.cdata = newCdata;
   }
 
-  setSensor(sensor: ISensor) {
+  setSensor(sensor: ISensor | null) {
     this.sensor = sensor;
   }
 
-  setAllSensors(measurements: ISensor[]) {
+  setAllSensors(measurements: ISensor[] | null) {
     this.allSensors = measurements;
   }
 

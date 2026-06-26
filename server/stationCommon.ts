@@ -39,7 +39,7 @@ function avgWind(directions: number[], speeds: number[]) {
 }
 
 export default abstract class StationCommon implements IMeasurement {
-  cfg: StationCfg = null;
+  cfg: StationCfg;
 
   constructor(stationID: string) {
     this.cfg = new StationCfg(stationID);
@@ -100,7 +100,7 @@ export default abstract class StationCommon implements IMeasurement {
     return this.cfg.KAFKA_KEY;
   }
 
-  static parseDate(dateutc: string): Date {
+  static parseDate(dateutc: string | null | undefined): Date {
     if (!dateutc || dateutc === "now") {
       return new Date();
     }
@@ -182,9 +182,9 @@ export default abstract class StationCommon implements IMeasurement {
         }
       }
       if (count > 0) {
-        result[field.key] = round(sum / count, field.precision);
+        (result as any)[field.key] = round(sum / count, field.precision);
       } else {
-        result[field.key] = null as any;
+        (result as any)[field.key] = null;
       }
     }
 

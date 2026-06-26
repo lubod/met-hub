@@ -73,6 +73,7 @@ const WindRose = observer(({ appContext }: Props) => {
   let dirTrendMaxCount = 1;
 
   dirTrend?.forEach((val) => {
+    if (val == null) return;
     const diri = Math.floor((Math.floor(val / 22.5) + 1) / 2) % 8;
 
     if (dirTrendMap.has(diri)) {

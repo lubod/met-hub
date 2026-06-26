@@ -33,6 +33,14 @@ interface IUser {
   expiresAt: number;
 }
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: IUser | null;
+    }
+  }
+}
+
 const DOM_ACCESS_EMAIL = "lubo.drobny@gmail.com";
 
 // Cache admin ID for 60 seconds to avoid a Redis fetch on every request
@@ -44,7 +52,7 @@ async function getAdminId(): Promise<string | null> {
   if (cachedAdminId !== null && now < adminCacheExpiry) {
     return cachedAdminId;
   }
-  cachedAdminId = await redisClient.hGet("USERS", "admin");
+  cachedAdminId = (await redisClient.hGet("USERS", "admin")) ?? null;
   adminCacheExpiry = now + 60_000;
   return cachedAdminId;
 }
@@ -77,8 +85,8 @@ async function checkAuth(
             given_name: payload.given_name ?? "",
             family_name: payload.family_name ?? "",
             email: payload.email ?? "",
-            createdAt: decoded.iat * 1000,
-            expiresAt: decoded.exp * 1000,
+            createdAt: (decoded.iat ?? 0) * 1000,
+            expiresAt: (decoded.exp ?? 0) * 1000,
           };
         }
       }
@@ -95,6 +103,9 @@ async function checkAccess(
   stationID: string,
   ownerOnly: boolean = true,
 ): Promise<void> {
+  if (stationID !== "dom" && allStationsCfg.getStationByID(stationID) == null) {
+    throw new AppError(400, "Invalid params");
+  }
   if (user != null) {
     const admin = await getAdminId();
     if (user.id === admin) {
@@ -131,6 +142,32 @@ function catchAsync(fnc: AsyncRouteHandler): RequestHandler {
     fnc(req, res, next).catch(next);
   };
 }
+
+const authMiddleware: RequestHandler = catchAsync(async (req, res, next) => {
+  const user = await checkAuth(req, true);
+  req.user = user;
+  next();
+});
+
+const requireAuthMiddleware: RequestHandler = catchAsync(async (req, res, next) => {
+  const user = await checkAuth(req, false);
+  req.user = user;
+  next();
+});
+
+const accessMiddleware = (
+  getStationID: (req: Request) => string | undefined,
+  ownerOnly: boolean = false,
+): RequestHandler => {
+  return catchAsync(async (req, res, next) => {
+    const stationID = getStationID(req);
+    if (!stationID) {
+      throw new AppError(400, "Invalid params");
+    }
+    await checkAccess(req.user ?? null, stationID, ownerOnly);
+    next();
+  });
+};
 
 // SSE
 
@@ -247,23 +284,15 @@ router.get("/events", (req: Request, res: Response) => {
 
 // LAST DATA
 
-async function getLastData(
-  measurement: IMeasurement,
-  req: Request,
-  res: Response,
-) {
-  const user = await checkAuth(req, true);
-  await checkAccess(user, measurement.getStationID(), false);
-  const reply = await redisClient.get(measurement.getRedisLastDataKey());
-  res.status(200).json(reply != null ? JSON.parse(reply) : null);
-}
-
 router.get(
   "/api/getLastData/station/:stationID",
+  authMiddleware,
+  accessMiddleware((req) => req.params.stationID),
   catchAsync(async (req, res) => {
     const station = allStationsCfg.getStationByID(req.params.stationID);
     if (station != null) {
-      await getLastData(station.measurement, req, res);
+      const reply = await redisClient.get(station.measurement.getRedisLastDataKey());
+      res.status(200).json(reply != null ? JSON.parse(reply) : null);
     } else {
       throw new AppError(400, "Invalid params");
     }
@@ -272,37 +301,34 @@ router.get(
 
 router.get(
   "/api/getLastData/dom",
+  authMiddleware,
+  accessMiddleware(() => "dom"),
   catchAsync(async (req, res) => {
-    await getLastData(dom, req, res);
+    const reply = await redisClient.get(dom.getRedisLastDataKey());
+    res.status(200).json(reply != null ? JSON.parse(reply) : null);
   }),
 );
 
 // TREND DATA
 
-async function getTrendData(
-  measurement: IMeasurement,
-  req: Request,
-  res: Response,
-) {
-  const user = await checkAuth(req, true);
-  await checkAccess(user, measurement.getStationID(), false);
-  const now = Date.now();
-  const reply = await redisClient.zRangeByScore(
-    measurement.getRedisTrendKey(),
-    now - 3600000,
-    now,
-  );
-  res
-    .status(200)
-    .json(reply.length > 0 ? measurement.transformTrendData(reply) : null);
-}
-
 router.get(
   "/api/getTrendData/station/:stationID",
+  authMiddleware,
+  accessMiddleware((req) => req.params.stationID),
   catchAsync(async (req, res) => {
     const station = allStationsCfg.getStationByID(req.params.stationID);
     if (station != null) {
-      await getTrendData(station.measurement, req, res);
+      const now = Date.now();
+      const reply = await redisClient.zRangeByScore(
+        station.measurement.getRedisTrendKey(),
+        now - 3600000,
+        now,
+      );
+      res
+        .status(200)
+        .json(
+          reply.length > 0 ? station.measurement.transformTrendData(reply) : null,
+        );
     } else {
       throw new AppError(400, "Invalid params");
     }
@@ -311,8 +337,18 @@ router.get(
 
 router.get(
   "/api/getTrendData/dom",
+  authMiddleware,
+  accessMiddleware(() => "dom"),
   catchAsync(async (req, res) => {
-    await getTrendData(dom, req, res);
+    const now = Date.now();
+    const reply = await redisClient.zRangeByScore(
+      dom.getRedisTrendKey(),
+      now - 3600000,
+      now,
+    );
+    res
+      .status(200)
+      .json(reply.length > 0 ? dom.transformTrendData(reply) : null);
   }),
 );
 
@@ -334,6 +370,9 @@ router.post(
       audience: process.env.CLIENT_ID,
     });
     const payload = ticket.getPayload();
+    if (payload == null) {
+      throw new AppError(401, "Invalid token payload");
+    }
     if (!payload.email_verified) {
       throw new AppError(401, "Email not verified");
     }
@@ -365,8 +404,9 @@ router.post(
 
 router.get(
   "/api/getUserProfile",
+  authMiddleware,
   catchAsync(async (req, res) => {
-    const user = await checkAuth(req, true);
+    const user = req.user ?? null;
     if (user != null) {
       const admin = await getAdminId();
       res.status(200).json({ admin, user });
@@ -378,12 +418,10 @@ router.get(
 
 router.get(
   "/api/getAllStationsCfg",
+  authMiddleware,
   catchAsync(async (req, res) => {
-    let user: IUser | null = null;
+    const user = req.user ?? null;
     const result: Array<Partial<IStation>> = [];
-    if (req.cookies.jwt) {
-      user = await checkAuth(req, true);
-    }
 
     const rs = new Set<string>();
 
@@ -444,6 +482,8 @@ router.get(
 
 router.get(
   "/api/loadData",
+  authMiddleware,
+  accessMiddleware((req) => req.query.stationID as string),
   catchAsync(async (req, res) => {
     if (
       req.query.stationID != null &&
@@ -467,8 +507,6 @@ router.get(
         measurement: string;
         stationID: string;
       };
-      const user = await checkAuth(req, true);
-      await checkAccess(user, stationID, false);
       const data = await loadData(
         stationID,
         start,
@@ -485,10 +523,10 @@ router.get(
 
 router.get(
   "/api/loadRainData/station/:stationID",
+  authMiddleware,
+  accessMiddleware((req) => req.params.stationID),
   catchAsync(async (req, res) => {
     const { stationID } = req.params;
-    const user = await checkAuth(req, true);
-    await checkAccess(user, stationID, false);
     const data = await loadRainData(stationID);
     res.status(200).json(data);
   }),
@@ -640,6 +678,7 @@ router.post(
 // add station
 router.post(
   "/api/addStation",
+  requireAuthMiddleware,
   catchAsync(async (req, res) => {
     if (
       req.body.lat != null &&
@@ -647,7 +686,7 @@ router.post(
       req.body.place != null &&
       req.body.type != null
     ) {
-      const user = await checkAuth(req);
+      const user = req.user!;
 
       const { lat, lon, place, passkey, type } = req.body;
 

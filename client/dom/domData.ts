@@ -10,6 +10,7 @@ class DomData {
     temp: [],
     humidity: [],
     rain: [],
+    tarif: [],
     living_room_air: [],
     living_room_floor: [],
     guest_room_air: [],
@@ -30,7 +31,7 @@ class DomData {
 
   loading: boolean = true;
 
-  station: IStation = null;
+  station: IStation | null = null;
 
   upDown = false;
 
@@ -57,7 +58,7 @@ class DomData {
     this.loading = loading;
   }
 
-  setStation(station: IStation) {
+  setStation(station: IStation | null) {
     this.station = station;
     this.ctime = new Date();
     this.oldData = true;

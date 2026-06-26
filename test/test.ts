@@ -59,12 +59,14 @@ async function run() {
 
   if (goGenID != null) {
     const station = allStationsCfg.getStationByID(goGenID);
-    if (station.type === StationType.GoGenMe3900) {
-      const simulator = new GoGenMe3900Simulator();
-      const meas = new StationGoGenMe3900(station.id);
-      await main(station, simulator, meas);
-    } else {
-      console.info(`Skipping default station ${goGenID}: type ${station.type} is not ${StationType.GoGenMe3900}`);
+    if (station != null) {
+      if (station.type === StationType.GoGenMe3900) {
+        const simulator = new GoGenMe3900Simulator();
+        const meas = new StationGoGenMe3900(station.id);
+        await main(station, simulator, meas);
+      } else {
+        console.info(`Skipping default station ${goGenID}: type ${station.type} is not ${StationType.GoGenMe3900}`);
+      }
     }
   } else {
     console.info("No default station configured, skipping GoGen test");
@@ -72,12 +74,14 @@ async function run() {
 
   if (garniID != null) {
     const station = allStationsCfg.getStationByID(garniID);
-    if (station.type === StationType.Garni1025Arcus) {
-      const simulator = new Garni1025ArcusSimulator();
-      const meas = new StationGarni1025Arcus(station.id);
-      await main(station, simulator, meas);
-    } else {
-      console.info(`Skipping second station ${garniID}: type ${station.type} is not ${StationType.Garni1025Arcus}`);
+    if (station != null) {
+      if (station.type === StationType.Garni1025Arcus) {
+        const simulator = new Garni1025ArcusSimulator();
+        const meas = new StationGarni1025Arcus(station.id);
+        await main(station, simulator, meas);
+      } else {
+        console.info(`Skipping second station ${garniID}: type ${station.type} is not ${StationType.Garni1025Arcus}`);
+      }
     }
   } else {
     console.info("No second station configured, skipping Garni test");

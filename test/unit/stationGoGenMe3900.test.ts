@@ -129,7 +129,7 @@ describe("StationGoGenMe3900.decodeData — derived fields", () => {
   it("feelslike is lower than temp in cold + windy conditions", () => {
     const coldWindy = { ...baseRaw, tempf: 32, windspeedmph: 25 }; // 0°C, 40 km/h
     const { decoded } = station.decodeData(coldWindy, "Test");
-    expect(decoded.feelslike).toBeLessThan(decoded.temp);
+    expect(decoded.feelslike!).toBeLessThan(decoded.temp!);
   });
 });
 

@@ -4,7 +4,7 @@ import React from "react";
 
 type Props = {
   label: string;
-  time: Date;
+  time: Date | null;
   format: string;
   old: boolean;
 };

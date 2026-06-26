@@ -35,7 +35,7 @@ const Header = observer(({ appContext }: Props) => (
         <div className="flex flex-col justify-center min-w-0">
           <StringData
             label=""
-            value={appContext.headerCtrl.headerData.station.place}
+            value={appContext.headerCtrl.headerData.station?.place ?? ""}
           />
         </div>
       )}

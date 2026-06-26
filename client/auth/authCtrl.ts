@@ -7,7 +7,7 @@ export default class AuthCtrl {
 
   timer: ReturnType<typeof setInterval> | null = null;
 
-  appContext: AppContext = null;
+  appContext!: AppContext;
 
   constructor(appContext: AppContext) {
     this.appContext = appContext;
@@ -19,7 +19,7 @@ export default class AuthCtrl {
   }
 
   checkAuth() {
-    if (Date.now() > this.authData.expiresAt) {
+    if (this.authData.expiresAt !== null && Date.now() > this.authData.expiresAt) {
       this.authData.cancelAuth();
     }
   }
@@ -66,9 +66,9 @@ export default class AuthCtrl {
     family_name: string,
     expiresAt: number,
     id: string,
-    refreshToken: string,
+    refreshToken: string | null,
     createdAt: number,
-    admin: string,
+    admin: string | null,
   ) {
     this.authData.setAuth(
       given_name,

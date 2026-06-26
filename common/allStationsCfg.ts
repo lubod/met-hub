@@ -119,7 +119,8 @@ export class AllStationsCfg {
   }
 
   getStationByPasskey(passkey: string) {
-    return this.map.get(this.passkey2ID(passkey));
+    const id = this.passkey2ID(passkey);
+    return id != null ? this.map.get(id) : undefined;
   }
 
   getStationByID(ID: string) {

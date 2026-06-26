@@ -31,7 +31,11 @@ function MapResizer({ lat, lon }: { lat: number; lon: number }) {
 
 const ChartsMap = observer(({ appContext }: Props) => {
   console.info("render map", appContext.chartsCtrl.chartsData.station);
-  const { lat, lon } = appContext.chartsCtrl.chartsData.station;
+  const station = appContext.chartsCtrl.chartsData.station;
+  if (station == null) {
+    return null;
+  }
+  const { lat, lon } = station;
 
   return (
     <div id="map" className="flex flex-col w-full h-52 lg:h-full lg:min-h-[30rem] rounded-xl overflow-hidden">

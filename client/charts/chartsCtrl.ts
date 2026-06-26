@@ -15,20 +15,26 @@ class ChartsCtrl {
     this.chartsData = new ChartsData();
   }
 
-  setStation(station: IStation) {
+  setStation(station: IStation | null) {
     if (this.timer != null) {
       clearInterval(this.timer);
+      this.timer = null;
     }
     this.chartsData.setStation(station);
-    this.reload();
-    this.timer = setInterval(() => {
+    if (station != null) {
       this.reload();
-    }, 60000);
+      this.timer = setInterval(() => {
+        this.reload();
+      }, 60000);
+    }
   }
 
   start() {}
 
   async reload() {
+    if (this.chartsData.station == null) {
+      return;
+    }
     this.load(
       this.chartsData.range,
       this.chartsData.page,
@@ -37,7 +43,11 @@ class ChartsCtrl {
     );
   }
 
-  async load(range: IChartsRange, p: number, m: ISensor, stationID: string) {
+  async load(range: IChartsRange, p: number, m: ISensor | null, stationID: string | null) {
+    if (this.chartsData.station == null) {
+      console.info("no station -> no load");
+      return;
+    }
     if (
       !this.chartsData.station.public &&
       (!this.authData.isAuth ||
@@ -88,7 +98,7 @@ class ChartsCtrl {
       const first = newData.stats.first
         ? parseFloat(newData.stats.first)
         : null;
-      const avg: number = newData.stats.avg
+      const avg: number | null = newData.stats.avg
         ? parseFloat(newData.stats.avg)
         : null;
 

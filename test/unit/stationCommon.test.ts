@@ -97,7 +97,7 @@ describe("StationCommon.aggregateRawData2Minute", () => {
       makeReading({ temp: 21.0 }),
     ];
     const result = station.aggregateRawData2Minute(minute, readings);
-    expect(result.temp).toBeCloseTo(21.0, 1);
+    expect(result!.temp!).toBeCloseTo(21.0, 1);
   });
 
   it("averages humidity across multiple readings", () => {
@@ -107,7 +107,7 @@ describe("StationCommon.aggregateRawData2Minute", () => {
       makeReading({ humidity: 80 }),
     ];
     const result = station.aggregateRawData2Minute(minute, readings);
-    expect(result.humidity).toBeCloseTo(70, 0);
+    expect(result!.humidity!).toBeCloseTo(70, 0);
   });
 
   it("uses vector average for wind direction — wraps across North", () => {
@@ -117,7 +117,7 @@ describe("StationCommon.aggregateRawData2Minute", () => {
       makeReading({ winddir: 10, windspeed: 10 }),
     ];
     const result = station.aggregateRawData2Minute(minute, readings);
-    expect(result.winddir < 20 || result.winddir > 340).toBe(true);
+    expect(result!.winddir! < 20 || result!.winddir! > 340).toBe(true);
   });
 
   it("uses last value for rain accumulation fields (not average)", () => {
@@ -128,20 +128,20 @@ describe("StationCommon.aggregateRawData2Minute", () => {
     ];
     const result = station.aggregateRawData2Minute(minute, readings);
     // dailyrain is cumulative — last value should be preserved
-    expect(result.dailyrain).toBe(3.0);
+    expect(result!.dailyrain).toBe(3.0);
   });
 
   it("sets timestamp to the minute argument", () => {
     const readings = [makeReading()];
     const result = station.aggregateRawData2Minute(minute, readings);
-    expect(result.timestamp.getTime()).toBe(minute);
+    expect(result!.timestamp.getTime()).toBe(minute);
   });
 
   it("handles a single reading correctly", () => {
     const reading = makeReading({ temp: 18.5, humidity: 72 });
     const result = station.aggregateRawData2Minute(minute, [reading]);
-    expect(result.temp).toBe(18.5);
-    expect(result.humidity).toBe(72);
+    expect(result!.temp).toBe(18.5);
+    expect(result!.humidity).toBe(72);
   });
 
   it("averages pressure correctly", () => {
@@ -150,8 +150,8 @@ describe("StationCommon.aggregateRawData2Minute", () => {
       makeReading({ pressurerel: 1020.0, pressureabs: 1018.0 }),
     ];
     const result = station.aggregateRawData2Minute(minute, readings);
-    expect(result.pressurerel).toBeCloseTo(1015.0, 1);
-    expect(result.pressureabs).toBeCloseTo(1013.0, 1);
+    expect(result!.pressurerel!).toBeCloseTo(1015.0, 1);
+    expect(result!.pressureabs!).toBeCloseTo(1013.0, 1);
   });
 
   it("skips null and undefined fields when calculating averages", () => {
@@ -161,8 +161,8 @@ describe("StationCommon.aggregateRawData2Minute", () => {
       makeReading({ temp: 30.0, humidity: 90 }),
     ];
     const result = station.aggregateRawData2Minute(minute, readings);
-    expect(result.temp).toBeCloseTo(25.0, 1);
-    expect(result.humidity).toBeCloseTo(85, 0);
+    expect(result!.temp!).toBeCloseTo(25.0, 1);
+    expect(result!.humidity!).toBeCloseTo(85, 0);
   });
 });
 

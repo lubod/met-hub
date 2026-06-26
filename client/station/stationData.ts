@@ -19,6 +19,9 @@ class StationData {
     solarradiation: [],
     uv: [],
     rainrate: [],
+    minuterain: [],
+    feelslike: [],
+    dewpt: [],
   } as IStationTrendData;
 
   ctime: Date = new Date();
@@ -35,7 +38,7 @@ class StationData {
 
   loading: boolean = true;
 
-  station: IStation = null;
+  station: IStation | null = null;
 
   constructor() {
     makeObservable(this, {
@@ -58,7 +61,7 @@ class StationData {
     });
   }
 
-  setStation(station: IStation) {
+  setStation(station: IStation | null) {
     this.station = station;
     this.ctime = new Date();
     this.oldData = true;
@@ -137,6 +140,9 @@ class StationData {
         solarradiation: [],
         uv: [],
         rainrate: [],
+        minuterain: [],
+        feelslike: [],
+        dewpt: [],
       } as IStationTrendData;
     }
   }

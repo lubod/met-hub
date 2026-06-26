@@ -3,7 +3,7 @@ import NumberData from "./numberData";
 
 type Props = {
   label: string;
-  value: number;
+  value: number | null;
   old: boolean;
   unit: string;
   fix: number;

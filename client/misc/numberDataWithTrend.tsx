@@ -7,8 +7,8 @@ import Trend from "./trend";
 import { ISensor } from "../../common/sensor";
 
 type Props = {
-  value: number;
-  trend: Array<number>;
+  value: number | null;
+  trend: Array<number | null>;
   old: boolean;
   onClick: any;
   sensor: ISensor;

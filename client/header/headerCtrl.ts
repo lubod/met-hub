@@ -21,11 +21,11 @@ export default class HeaderCtrl {
     }, 1000);
   }
 
-  setAllStations(allStations: Array<IStation>) {
+  setAllStations(allStations: Array<IStation> | null) {
     this.headerData.setAllStations(allStations);
   }
 
-  setStation(station: IStation) {
+  setStation(station: IStation | null) {
     this.headerData.setStation(station);
   }
 

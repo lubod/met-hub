@@ -20,67 +20,67 @@ export interface IGetForecastDataToDisplay {
 }
 
 export class ForecastRow {
-  timestamp: Date;
+  timestamp!: Date;
 
-  air_pressure_at_sea_level: number;
+  air_pressure_at_sea_level!: number;
 
-  air_temperature: number;
+  air_temperature!: number;
 
-  cloud_area_fraction: number;
+  cloud_area_fraction!: number;
 
-  relative_humidity: number;
+  relative_humidity!: number;
 
-  wind_from_direction: number;
+  wind_from_direction!: number;
 
-  wind_speed: number;
+  wind_speed!: number;
 
-  precipitation_amount_row: number;
+  precipitation_amount_row!: number | null;
 
-  precipitation_amount_1h: number;
+  precipitation_amount_1h!: number | null;
 
-  precipitation_amount_6h: number;
+  precipitation_amount_6h!: number | null;
 
-  symbol_code_1h: string;
+  symbol_code_1h!: string;
 
-  symbol_code_6h: string;
+  symbol_code_6h!: string;
 
-  symbol_code_12h: string;
+  symbol_code_12h!: string;
 
-  air_temperature_min_6h: number;
+  air_temperature_min_6h!: number | null;
 
-  air_temperature_max_6h: number;
+  air_temperature_max_6h!: number | null;
 }
 
 export class ForecastDay implements IGetForecastDataToDisplay {
-  timestamp: Date;
+  timestamp!: Date;
 
-  air_temperature_min: number;
+  air_temperature_min!: number;
 
-  air_temperature_max: number;
+  air_temperature_max!: number;
 
-  precipitation_amount: number;
+  precipitation_amount!: number;
 
-  wind_speed_max: number;
+  wind_speed_max!: number;
 
-  wind_speed_min: number;
+  wind_speed_min!: number;
 
-  symbol_code_00Z: string;
+  symbol_code_00Z!: string;
 
-  symbol_code_06Z: string;
+  symbol_code_06Z!: string;
 
-  symbol_code_12Z: string;
+  symbol_code_12Z!: string;
 
-  symbol_code_18Z: string;
+  symbol_code_18Z!: string;
 
-  symbol_code_day: string;
+  symbol_code_day!: string;
 
-  symbol_code_night: string;
+  symbol_code_night!: string;
 
-  cloud_area_fraction_avg: number;
+  cloud_area_fraction_avg!: number;
 
-  wind_dir_avg: number;
+  wind_dir_avg!: number;
 
-  rows: Array<ForecastRow>;
+  rows!: Array<ForecastRow>;
 
   getDay(): string {
     return moment(this.timestamp).format("ddd");
@@ -128,13 +128,13 @@ export class ForecastDay implements IGetForecastDataToDisplay {
 export interface IForecastData {
   forecast: any;
   astronomicalData: any;
-  sunrise: Date;
-  sunset: Date;
+  sunrise: Date | null;
+  sunset: Date | null;
   days: Map<string, ForecastDay>;
-  domainTempMin: number;
-  domainTempMax: number;
+  domainTempMin: number | null;
+  domainTempMax: number | null;
   loading: boolean;
-  station: IStation;
+  station: IStation | null;
 }
 
 export class Forecast6h implements IGetForecastDataToDisplay {
@@ -142,11 +142,11 @@ export class Forecast6h implements IGetForecastDataToDisplay {
 
   symbol_code: string;
 
-  air_temperature_min: number;
+  air_temperature_min: number | null;
 
-  air_temperature_max: number;
+  air_temperature_max: number | null;
 
-  precipitation_amount: number;
+  precipitation_amount: number | null;
 
   wind_speed: number;
 
@@ -157,9 +157,9 @@ export class Forecast6h implements IGetForecastDataToDisplay {
   constructor(
     timestamp: Date,
     symbol_code: string,
-    air_temperature_min: number,
-    air_temperature_max: number,
-    precipitation_amount: number,
+    air_temperature_min: number | null,
+    air_temperature_max: number | null,
+    precipitation_amount: number | null,
     wind_speed: number,
     wind_dir: number,
     cloud_area_fraction: number,
@@ -187,15 +187,15 @@ export class Forecast6h implements IGetForecastDataToDisplay {
   }
 
   getAirTemperatureMax(): string {
-    return this.air_temperature_max.toFixed(0);
+    return this.air_temperature_max != null ? this.air_temperature_max.toFixed(0) : "-";
   }
 
   getAirTemperatureMin(): string {
-    return this.air_temperature_min.toFixed(0);
+    return this.air_temperature_min != null ? this.air_temperature_min.toFixed(0) : "-";
   }
 
   getPrecipitationAmount(): string {
-    return this.precipitation_amount === 0
+    return this.precipitation_amount === 0 || this.precipitation_amount == null
       ? "-"
       : this.precipitation_amount.toFixed(1);
   }
@@ -224,7 +224,7 @@ export class Forecast1h implements IGetForecastDataToDisplay {
 
   air_temperature: number;
 
-  precipitation_amount: number;
+  precipitation_amount: number | null;
 
   wind_speed: number;
 
@@ -236,7 +236,7 @@ export class Forecast1h implements IGetForecastDataToDisplay {
     timestamp: Date,
     symbol_code: string,
     air_temperature: number,
-    precipitation_amount: number,
+    precipitation_amount: number | null,
     wind_speed: number,
     wind_dir: number,
     cloud_area_fraction: number,
@@ -271,7 +271,7 @@ export class Forecast1h implements IGetForecastDataToDisplay {
   }
 
   getPrecipitationAmount(): string {
-    return this.precipitation_amount === 0
+    return this.precipitation_amount === 0 || this.precipitation_amount == null
       ? "-"
       : this.precipitation_amount.toFixed(1);
   }
@@ -309,19 +309,19 @@ export default class ForecastData implements IForecastData {
 
   astronomicalData: any = null;
 
-  sunrise: Date = null;
+  sunrise: Date | null = null;
 
-  sunset: Date = null;
+  sunset: Date | null = null;
 
   days: Map<string, ForecastDay> = new Map<string, ForecastDay>();
 
-  domainTempMin: number = null;
+  domainTempMin: number | null = null;
 
-  domainTempMax: number = null;
+  domainTempMax: number | null = null;
 
   loading: boolean = true;
 
-  station: IStation = null;
+  station: IStation | null = null;
 
   forecast_6h: Array<Forecast6h> = [];
 
@@ -370,7 +370,7 @@ export default class ForecastData implements IForecastData {
     this.offset6h = offset6h;
   }
 
-  setStation(newStation: IStation) {
+  setStation(newStation: IStation | null) {
     this.station = newStation;
   }
 
@@ -409,7 +409,7 @@ export default class ForecastData implements IForecastData {
     if (this.rows.length >= 6) {
       const uptoFirst6 = 6 - (this.rows[0].timestamp.getUTCHours() % 6);
       for (let rowIndex = 0; rowIndex < uptoFirst6; rowIndex += 1) {
-        precipitation_amount_uptoFirst6 += this.rows[rowIndex].precipitation_amount_1h;
+        precipitation_amount_uptoFirst6 += this.rows[rowIndex]?.precipitation_amount_1h ?? 0;
       }
     }
 
@@ -459,21 +459,21 @@ export default class ForecastData implements IForecastData {
         switch (row.timestamp.getUTCHours()) {
           case 0:
             day.symbol_code_00Z = row.symbol_code_6h;
-            day.precipitation_amount += row.precipitation_amount_6h;
+            day.precipitation_amount += row.precipitation_amount_6h ?? 0;
             break;
           case 6:
             day.symbol_code_06Z = row.symbol_code_6h;
             day.symbol_code_day = row.symbol_code_12h;
-            day.precipitation_amount += row.precipitation_amount_6h;
+            day.precipitation_amount += row.precipitation_amount_6h ?? 0;
             break;
           case 12:
             day.symbol_code_12Z = row.symbol_code_6h;
-            day.precipitation_amount += row.precipitation_amount_6h;
+            day.precipitation_amount += row.precipitation_amount_6h ?? 0;
             break;
           case 18:
             day.symbol_code_18Z = row.symbol_code_6h;
             day.symbol_code_night = row.symbol_code_12h;
-            day.precipitation_amount += row.precipitation_amount_6h;
+            day.precipitation_amount += row.precipitation_amount_6h ?? 0;
             break;
           default:
         }
@@ -570,7 +570,7 @@ export default class ForecastData implements IForecastData {
 
       this.rows.push(row);
 
-      let forecastDay: ForecastDay = this.days.get(
+      let forecastDay = this.days.get(
         row.timestamp.toDateString(),
       );
       if (forecastDay == null) {

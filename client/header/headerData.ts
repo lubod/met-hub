@@ -4,11 +4,11 @@ import { IStation } from "../../common/allStationsCfg";
 export default class HeaderData {
   ctime: Date = new Date();
 
-  station: IStation = null;
+  station: IStation | null = null;
 
   isExternalID: boolean = false;
 
-  allStations: Array<IStation> = null;
+  allStations: Array<IStation> | null = null;
 
   showModal: boolean = false;
 
@@ -30,7 +30,7 @@ export default class HeaderData {
     this.showModal = showModal;
   }
 
-  setAllStations(allStations: Array<IStation>) {
+  setAllStations(allStations: Array<IStation> | null) {
     this.allStations = allStations;
   }
 
@@ -42,7 +42,7 @@ export default class HeaderData {
     this.isExternalID = isExternalID;
   }
 
-  setStation(station: IStation) {
+  setStation(station: IStation | null) {
     this.station = station;
   }
 }

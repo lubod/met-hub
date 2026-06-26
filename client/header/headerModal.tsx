@@ -27,11 +27,11 @@ const HeaderModal = observer(({ appContext }: Props) => {
       lon: parseFloat(lon),
       type,
       place,
-      passkey: null,
-      id: null,
-      measurement: null,
+      passkey: "dummy",
+      id: "",
+      measurement: null as any,
       public: true,
-      owner: null,
+      owner: "",
     });
     setError(res.err);
     if (res.id !== "") {
@@ -105,7 +105,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                           id="type"
                           name="type"
                           className="glass-select w-full"
-                          onChange={(e) => setType(e.target.value)}
+                          onChange={(e) => setType(e.target.value as StationType)}
                         >
                           <option value={StationType.GoGenMe3900}>GoGen Me 3900</option>
                         </select>

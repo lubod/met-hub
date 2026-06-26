@@ -6,28 +6,28 @@ import { propName } from "./units";
 export interface IStationData {
   timestamp: Date;
   place: string;
-  tempin: number;
-  humidityin: number;
-  temp: number;
-  humidity: number;
-  pressurerel: number;
-  pressureabs: number;
-  windgust: number;
-  windspeed: number;
-  winddir: number;
-  maxdailygust: number;
-  solarradiation: number;
-  uv: number;
-  rainrate: number;
-  eventrain: number;
-  hourlyrain: number;
-  dailyrain: number;
-  weeklyrain: number;
-  monthlyrain: number;
-  totalrain: number;
-  minuterain: number;
-  dewpt: number;
-  feelslike: number;
+  tempin: number | null;
+  humidityin: number | null;
+  temp: number | null;
+  humidity: number | null;
+  pressurerel: number | null;
+  pressureabs: number | null;
+  windgust: number | null;
+  windspeed: number | null;
+  winddir: number | null;
+  maxdailygust: number | null;
+  solarradiation: number | null;
+  uv: number | null;
+  rainrate: number | null;
+  eventrain: number | null;
+  hourlyrain: number | null;
+  dailyrain: number | null;
+  weeklyrain: number | null;
+  monthlyrain: number | null;
+  totalrain: number | null;
+  minuterain: number | null;
+  dewpt: number | null;
+  feelslike: number | null;
 }
 
 export interface IStationGarni1025ArcusDataRaw {
@@ -82,21 +82,21 @@ export interface IStationGoGenMe3900DataRaw {
 
 export interface IStationTrendData {
   timestamp: Array<Date>;
-  tempin: Array<number>;
-  humidityin: Array<number>;
-  temp: Array<number>;
-  humidity: Array<number>;
-  pressurerel: Array<number>;
-  pressureabs: Array<number>;
-  windgust: Array<number>;
-  windspeed: Array<number>;
-  winddir: Array<number>;
-    solarradiation: Array<number>;
-  uv: Array<number>;
-  rainrate: Array<number>;
-  minuterain: Array<number>;
-  feelslike: Array<number>;
-  dewpt: Array<number>;
+  tempin: Array<number | null>;
+  humidityin: Array<number | null>;
+  temp: Array<number | null>;
+  humidity: Array<number | null>;
+  pressurerel: Array<number | null>;
+  pressureabs: Array<number | null>;
+  windgust: Array<number | null>;
+  windspeed: Array<number | null>;
+  winddir: Array<number | null>;
+  solarradiation: Array<number | null>;
+  uv: Array<number | null>;
+  rainrate: Array<number | null>;
+  minuterain: Array<number | null>;
+  feelslike: Array<number | null>;
+  dewpt: Array<number | null>;
 }
 
 const station = {} as IStationData;

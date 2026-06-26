@@ -23,7 +23,7 @@ export default class ForecastCtrl {
     }, 1800000);
   }
 
-  setStation(station:IStation) {
+  setStation(station: IStation | null) {
     this.forecastData.setStation(station);
     this.fetchData();
     this.fetchAstronomicalData(new Date());

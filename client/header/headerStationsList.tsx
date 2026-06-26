@@ -20,8 +20,9 @@ const HeaderStationsList = observer(({ appContext }: StepsListProps) => (
     <div className="relative">
       <Listbox.Button className="glass-select relative w-full md:min-w-52 !py-1.5 !pl-3 !pr-8">
         <span className="block truncate">
-          {isMobile &&
-          appContext.headerCtrl.headerData.station.place.length > 14
+          {appContext.headerCtrl.headerData.station == null
+            ? "-"
+            : isMobile && appContext.headerCtrl.headerData.station.place.length > 14
             ? `${appContext.headerCtrl.headerData.station.place.substring(0, 13)}~`
             : appContext.headerCtrl.headerData.station.place}
         </span>

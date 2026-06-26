@@ -20,11 +20,14 @@ type ChartData = {
 };
 
 function Chart({ chdata, xkey, appContext }: ChartData) {
-  const y2key = appContext.chartsCtrl.chartsData.sensor.col2;
+  const sensor = appContext.chartsCtrl.chartsData.sensor;
+  if (!sensor) {
+    return null;
+  }
+  const y2key = sensor.col2;
   const { yDomainMin, yDomainMax, range, xDomainMin, xDomainMax } =
     appContext.chartsCtrl.chartsData.cdata;
-  const { color, unit } = appContext.chartsCtrl.chartsData.sensor;
-  const sensor = appContext.chartsCtrl.chartsData.sensor;
+  const { color, unit } = sensor;
 
   function formatXAxis(tickItem: string) {
     return moment(parseInt(tickItem, 10)).format(range.format);

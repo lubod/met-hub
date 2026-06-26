@@ -14,7 +14,7 @@ export default class GoData {
   }
 
   setForecastData(newForecast: any) {
-    const fd = new ForecastData(null, 0, 0);
+    const fd = new ForecastData();
     fd.setForecast(newForecast);
   }
 }

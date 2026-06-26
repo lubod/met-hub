@@ -5,7 +5,7 @@ const pool = new Pool({
   host: process.env.PG_HOST || "localhost",
   database: process.env.PG_DB || "postgres",
   password: process.env.PG_PASSWORD || "postgres",
-  port: parseInt(process.env.PG_PORT, 10) || 5432,
+  port: parseInt(process.env.PG_PORT || "", 10) || 5432,
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
