@@ -2,10 +2,10 @@
 /* eslint-disable import/no-import-module-exports */
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { ErrorBoundary } from "./errorBoundary";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import ReconnectingEventSource from "reconnecting-eventsource";
+import { ErrorBoundary } from "./errorBoundary";
 import AuthCtrl from "./auth/authCtrl";
 import HeaderCtrl from "./header/headerCtrl";
 import App from "./app";

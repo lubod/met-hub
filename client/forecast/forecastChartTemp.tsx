@@ -1,6 +1,5 @@
 import * as React from "react";
 import { observer } from "mobx-react";
-import moment from "../misc/dateFormatter";
 import {
   Area,
   ComposedChart,
@@ -10,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import moment from "../misc/dateFormatter";
 import MY_COLORS from "../../common/colors";
 import { ForecastDay, ForecastRow } from "./forecastData";
 

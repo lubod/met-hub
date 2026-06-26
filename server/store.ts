@@ -75,15 +75,15 @@ async function main(stations: Map<string, IStation>) {
               await store(station.measurement, o);
             } catch (err) {
               console.error(
-                `store: failed to process message ${msg.id} for station ${msg.message.id}:`,
+                `store: failed to process message ${msg.id} for station ${msg.message?.id || "unknown"}:`,
                 err,
               );
               try {
                 // eslint-disable-next-line no-await-in-loop
                 await client.xAdd("toStore:DLQ", "*", {
                   originalId: msg.id,
-                  m: msg.message.m,
-                  id: msg.message.id,
+                  m: msg.message?.m || "",
+                  id: msg.message?.id || "",
                   error: err instanceof Error ? err.message : String(err),
                   failedAt: new Date().toISOString(),
                 });

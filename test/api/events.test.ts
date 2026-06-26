@@ -2,6 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
 import http from "http";
 
+// ── Imports after mocks ───────────────────────────────────────────────────────
+import { Response } from "express";
+import app from "../../server/app";
+import { clients, writeEvent, MAX_SSE_CONNECTIONS } from "../../server/router";
+
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 const redisMock = vi.hoisted(() => ({
   connect: vi.fn(),
@@ -52,11 +57,6 @@ vi.mock("../../server/forecast", () => ({
   getForecast: vi.fn().mockResolvedValue({}),
   getAstronomicalData: vi.fn().mockResolvedValue({}),
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-import app from "../../server/app";
-import { clients, writeEvent, MAX_SSE_CONNECTIONS } from "../../server/router";
-import { Response } from "express";
 
 describe("SSE Client Map and writeEvent (router.ts)", () => {
   beforeEach(() => {
@@ -131,7 +131,7 @@ describe("SSE Client Map and writeEvent (router.ts)", () => {
   it("evicts the oldest client when connection count exceeds max connections cap", async () => {
     // Start server on a random port
     const server = app.listen(0);
-    const port = (server.address() as any).port;
+    const {port} = (server.address() as any);
 
     // Fill clients map to maximum cap
     const evictedMockEnd = vi.fn();

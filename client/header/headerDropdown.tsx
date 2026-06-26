@@ -61,5 +61,3 @@ const HeaderDropdown = observer(({ appContext }: Props) => (
 ));
 
 export default HeaderDropdown;
-
-//       <AddStation appContext={appContext} />

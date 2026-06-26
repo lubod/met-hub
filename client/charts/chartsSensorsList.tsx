@@ -9,7 +9,7 @@ type StepsListProps = {
 };
 
 const ChartsSensorsList = observer(({ chartsCtrl }: StepsListProps) => {
-  const sensor = chartsCtrl.chartsData.sensor;
+  const {sensor} = chartsCtrl.chartsData;
   const allSensors = chartsCtrl.chartsData.allSensors || [];
 
   return (

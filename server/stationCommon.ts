@@ -126,6 +126,13 @@ export default abstract class StationCommon implements IMeasurement {
     tmp.solarradiation = [];
     tmp.uv = [];
     tmp.rainrate = [];
+    tmp.maxdailygust = [];
+    tmp.eventrain = [];
+    tmp.hourlyrain = [];
+    tmp.dailyrain = [];
+    tmp.weeklyrain = [];
+    tmp.monthlyrain = [];
+    tmp.totalrain = [];
     tmp.feelslike = [];
     tmp.dewpt = [];
     let prev = 0;
@@ -147,6 +154,13 @@ export default abstract class StationCommon implements IMeasurement {
         tmp.solarradiation.push(value.solarradiation);
         tmp.uv.push(value.uv);
         tmp.rainrate.push(value.rainrate);
+        tmp.maxdailygust.push(value.maxdailygust);
+        tmp.eventrain.push(value.eventrain);
+        tmp.hourlyrain.push(value.hourlyrain);
+        tmp.dailyrain.push(value.dailyrain);
+        tmp.weeklyrain.push(value.weeklyrain);
+        tmp.monthlyrain.push(value.monthlyrain);
+        tmp.totalrain.push(value.totalrain);
         tmp.feelslike.push(value.feelslike);
         tmp.dewpt.push(value.dewpt);
         prev = time;

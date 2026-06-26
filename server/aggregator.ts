@@ -4,8 +4,11 @@ import redisClient from "./redisClient";
 
 class Aggregator {
   measurements: IMeasurement[];
+
   private timer: NodeJS.Timeout | null = null;
+
   private isShuttingDown = false;
+
   private activePromise: Promise<void> | null = null;
 
   constructor(measurements: IMeasurement[]) {
@@ -13,21 +16,29 @@ class Aggregator {
   }
 
   processMsg(minuteMap: Map<number, Array<any>>, message: string) {
-    let data: any;
     try {
-      data = JSON.parse(message);
-    } catch {
-      console.error("Aggregator: skipping corrupted message", message.slice(0, 100));
-      return;
+      const data = JSON.parse(message);
+      if (!data || !data.timestamp) {
+        throw new Error("Missing timestamp");
+      }
+      data.timestamp = new Date(data.timestamp);
+      if (Number.isNaN(data.timestamp.getTime())) {
+        throw new Error("Invalid timestamp");
+      }
+      const minute = Math.floor(data.timestamp.getTime() / 60000) * 60000;
+      let minuteBuffer = minuteMap.get(minute);
+      if (minuteBuffer == null) {
+        minuteBuffer = [];
+        minuteMap.set(minute, minuteBuffer);
+      }
+      minuteBuffer.push(data);
+    } catch (err) {
+      console.error(
+        "Aggregator: skipping corrupted message",
+        message.slice(0, 100),
+        err instanceof Error ? err.message : String(err),
+      );
     }
-    data.timestamp = new Date(data.timestamp);
-    const minute = Math.floor(data.timestamp.getTime() / 60000) * 60000;
-    let minuteBuffer = minuteMap.get(minute);
-    if (minuteBuffer == null) {
-      minuteBuffer = [];
-      minuteMap.set(minute, minuteBuffer);
-    }
-    minuteBuffer.push(data);
   }
 
   async aggregateMeasurement(meas: IMeasurement, to: number) {

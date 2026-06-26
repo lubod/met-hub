@@ -18,7 +18,13 @@ module.exports = {
     "no-console": 0,
     "import/no-unresolved": 0,
     "import/extensions": 0,
-    "no-restricted-syntax": 0,
+    "no-restricted-syntax": [
+      "error",
+      {
+        selector: "ForInStatement",
+        message: "for..in loops iterate over the entire prototype chain, use Object.keys().forEach() or for..of instead."
+      }
+    ],
     "class-methods-use-this": 0,
     "react/jsx-filename-extension": 0,
   },

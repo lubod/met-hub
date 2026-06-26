@@ -7,7 +7,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["common/**/*.ts", "server/**/*.ts"],
-      exclude: ["server/main.ts", "server/store.ts", "**/*.d.ts"],
+      exclude: ["**/*.d.ts"],
       reporter: ["text", "html"],
     },
   },

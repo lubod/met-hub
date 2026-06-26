@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
-import moment from "./dateFormatter";
 import React from "react";
+import moment from "./dateFormatter";
 
 type Props = {
   label: string;

@@ -41,7 +41,7 @@ async function main(
     await simulator.postData(data);
     // eslint-disable-next-line no-await-in-loop
     const sd = await simulator.fetchStationData(station.id);
-    const decoded = meas.decodeData(data, station.place).decoded;
+    const {decoded} = meas.decodeData(data, station.place);
     simulator.correctTimestamp(decoded, sd);
     assert.deepStrictEqual(sd, decoded);
     console.info("Redis OK", station.id);

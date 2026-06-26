@@ -1,4 +1,3 @@
-import moment from "../misc/dateFormatter";
 import React from "react";
 import {
   CartesianGrid,
@@ -9,6 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import moment from "../misc/dateFormatter";
 import { IChartsRange } from "./chartsData";
 
 type ChartData = {
@@ -50,7 +50,7 @@ function WindDirChart({ chdata, xkey, ykey, color, range }: ChartData) {
                 bottom: 0,
               }}
             >
-              <CartesianGrid stroke="rgba(255, 255, 255, 0.05)" horizontal={true} vertical={false} strokeDasharray="3 3" />
+              <CartesianGrid stroke="rgba(255, 255, 255, 0.05)" horizontal vertical={false} strokeDasharray="3 3" />
               <XAxis
                 dataKey={xkey}
                 tick={{ fill: "rgba(232, 230, 227, 0.45)", fontSize: 10 }}

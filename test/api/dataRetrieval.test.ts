@@ -10,6 +10,10 @@ import {
 } from "./_mocks";
 import { IStationData } from "../../common/stationModel";
 
+// ── Imports after mocks ───────────────────────────────────────────────────────
+
+import app from "../../server/app";
+
 // ── Hoisted mock objects ──────────────────────────────────────────────────────
 
 const redisMock = vi.hoisted(() => ({
@@ -68,10 +72,6 @@ vi.mock("../../server/forecast", () => ({
   getForecast: vi.fn().mockResolvedValue({ timeseries: [] }),
   getAstronomicalData: vi.fn().mockResolvedValue({ sunrise: "06:00" }),
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-
-import app from "../../server/app";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

@@ -167,8 +167,7 @@ const requireAuthMiddleware: RequestHandler = catchAsync(async (req, res, next) 
 const accessMiddleware = (
   getStationID: (req: Request) => string | undefined,
   ownerOnly: boolean = false,
-): RequestHandler => {
-  return catchAsync(async (req, res, next) => {
+): RequestHandler => catchAsync(async (req, res, next) => {
     const stationID = getStationID(req);
     if (!stationID) {
       throw new AppError(400, "Invalid params");
@@ -176,7 +175,6 @@ const accessMiddleware = (
     await checkAccess(req.user ?? null, stationID, ownerOnly);
     next();
   });
-};
 
 // SSE
 

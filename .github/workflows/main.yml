@@ -7,14 +7,29 @@ env:
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+      postgres:
+        image: postgres:alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+
+      - name: Initialize PostgreSQL Schema
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          psql -h localhost -U postgres -d postgres -f pg-schema.sql
+
       - name: npm install & build
         uses: actions/setup-node@v4
         with:
@@ -22,9 +37,21 @@ jobs:
       - run: npm install --legacy-peer-deps
       - run: npx tailwindcss -o esdist/fe/tailwind.css
       - run: NODE_OPTIONS="--max-old-space-size=4096" node esbuild.mjs
+
+      - name: Run ESLint
+        run: npm run lint
+      - name: Run Typecheck
+        run: npx tsc --noEmit
+      - name: Run Unit & API Tests
+        run: npm test
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run E2E Tests
+        run: npm run test:e2e
+
       - run: echo "docker build."
-      - run: docker build -f Dockerfile-met-hub -t ghcr.io/lubod/met-hub:latest .
-      - run: docker build -f Dockerfile-met-hub-store -t ghcr.io/lubod/met-hub-store:latest .
+      - run: docker build -f Dockerfile --target met-hub -t ghcr.io/lubod/met-hub:latest .
+      - run: docker build -f Dockerfile --target met-hub-store -t ghcr.io/lubod/met-hub-store:latest .
 
       - name: Log in to the Container registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9

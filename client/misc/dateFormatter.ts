@@ -7,7 +7,7 @@ class DateWrapper {
 
   format(fmt: string): string {
     const pad = (n: number) => String(n).padStart(2, "0");
-    const d = this.d;
+    const {d} = this;
     if (isNaN(d.getTime())) return "-";
 
     if (fmt === "HH:mm") {

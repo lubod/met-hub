@@ -1,4 +1,3 @@
-import moment from "../misc/dateFormatter";
 import React from "react";
 import {
   Area,
@@ -11,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import moment from "../misc/dateFormatter";
 import { AppContext } from "..";
 
 type ChartData = {
@@ -20,7 +20,7 @@ type ChartData = {
 };
 
 function Chart({ chdata, xkey, appContext }: ChartData) {
-  const sensor = appContext.chartsCtrl.chartsData.sensor;
+  const {sensor} = appContext.chartsCtrl.chartsData;
   if (!sensor) {
     return null;
   }
@@ -63,7 +63,7 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
             bottom: 0,
           }}
         >
-          <CartesianGrid stroke="rgba(255, 255, 255, 0.05)" horizontal={true} vertical={false} strokeDasharray="3 3" />
+          <CartesianGrid stroke="rgba(255, 255, 255, 0.05)" horizontal vertical={false} strokeDasharray="3 3" />
           {unit === "°C" && yDomainMin < 0 && yDomainMax > 0 && (
             <ReferenceLine
               y={0}

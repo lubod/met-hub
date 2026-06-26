@@ -1,5 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 
+import Aggregator from "../../server/aggregator";
+import { IMeasurement } from "../../server/measurement";
+
 // Hoist mock redisClient
 const redisMock = vi.hoisted(() => ({
   zRangeByScore: vi.fn().mockResolvedValue([]),
@@ -14,9 +17,6 @@ const redisMock = vi.hoisted(() => ({
 
 vi.mock("../../server/redisClient", () => ({ default: redisMock }));
 vi.mock("../../server/router", () => ({ writeEvent: vi.fn() }));
-
-import Aggregator from "../../server/aggregator";
-import { IMeasurement } from "../../server/measurement";
 
 describe("Aggregator Shutdown (aggregator.ts)", () => {
   it("shutdown() cancels active timer and waits for active promise", async () => {

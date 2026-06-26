@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import cloneDeep from "lodash.clonedeep";
 import {
   IDomTrendData,
   IDomData,
@@ -8,31 +9,7 @@ import {
 } from "../common/domModel";
 import { IMeasurement } from "./measurement";
 
-import cloneDeep from "lodash.clonedeep";
 
-// eslint-disable-next-line no-shadow
-export enum TABLES {
-  OBYVACKA_VZDUCH = "obyvacka_vzduch",
-  OBYVACKA_PODLAHA = "obyvacka_podlaha",
-  PRACOVNA_VZDUCH = "pracovna_vzduch",
-  PRACOVNA_PODLAHA = "pracovna_podlaha",
-  SPALNA_VZDUCH = "spalna_vzduch",
-  SPALNA_PODLAHA = "spalna_podlaha",
-  CHALANI_VZDUCH = "chalani_vzduch",
-  CHALANI_PODLAHA = "chalani_podlaha",
-  PETRA_VZDUCH = "petra_vzduch",
-  PETRA_PODLAHA = "petra_podlaha",
-  ZADVERIE_VZDUCH = "zadverie_vzduch",
-  ZADVERIE_PODLAHA = "zadverie_podlaha",
-  CHODBA_VZDUCH = "chodba_vzduch",
-  CHODBA_PODLAHA = "chodba_podlaha",
-  SATNA_VZDUCH = "satna_vzduch",
-  SATNA_PODLAHA = "satna_podlaha",
-  KUPELNA_HORE = "kupelna_hore",
-  KUPELNA_DOLE = "kupelna_dole",
-  VONKU = "vonku",
-  TARIF = "tarif",
-}
 
 export class Dom implements IMeasurement {
   cfg: DomCfg = new DomCfg();
@@ -41,6 +18,14 @@ export class Dom implements IMeasurement {
     return this.cfg.STATION_ID;
   }
 
+  /**
+   * Aggregates raw dom sensor data samples into 2-minute buckets.
+   * Note: This implements a "first sample wins" strategy (returning clone of data[0]).
+   * This is intentional for the home automation/heating system, as telemetry metrics
+   * (e.g. ambient/floor room temps, target requests, active boiler relays, low/night tariff statuses)
+   * are slow-changing and should not be mathematically averaged (which would corrupt boolean states
+   * or tariff modes).
+   */
   aggregateRawData2Minute(minute: number, data: Array<IDomData>): IDomData | null {
     if (data.length === 0) return null;
     const deepCopy = cloneDeep(data[0]);

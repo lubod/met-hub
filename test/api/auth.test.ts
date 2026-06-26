@@ -8,6 +8,10 @@ import {
 } from "./_mocks";
 import { allStationsCfg } from "../../server/state";
 
+// ── Imports after mocks ──────────────────────────────────────────────────────
+
+import app from "../../server/app";
+
 // ── Hoisted mock objects (available inside vi.mock factories) ────────────────
 
 const redisMock = vi.hoisted(() => ({
@@ -62,10 +66,6 @@ vi.mock("../../server/forecast", () => ({
   getForecast: vi.fn().mockResolvedValue({}),
   getAstronomicalData: vi.fn().mockResolvedValue({}),
 }));
-
-// ── Imports after mocks ──────────────────────────────────────────────────────
-
-import app from "../../server/app";
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import pkg from "../package.json";
 import { AppContext } from ".";
 import Myhr from "./misc/myhr";
 import { Container } from "./misc/container";
@@ -77,7 +78,7 @@ const About = observer(({ appContext, className }: Props) => {
         </div>
       </div>
       <Myhr />
-      <div className="metric-label text-center">v25</div>
+      <div className="metric-label text-center">v{pkg.version}</div>
     </Container>
   );
 });

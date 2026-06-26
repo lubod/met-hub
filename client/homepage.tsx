@@ -63,7 +63,3 @@ const HomePage = observer(({ appContext }: Props) => {
 });
 
 export default HomePage;
-
-// {appContext.authCtrl.authData.isAuth && (
-//  <Charts appContext={appContext} />
-// )}

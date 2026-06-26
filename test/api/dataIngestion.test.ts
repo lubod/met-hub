@@ -3,6 +3,10 @@ import request from "supertest";
 import { TEST_STATION_ID, TEST_PASSKEY, makeTestStation } from "./_mocks";
 import { IStationGoGenMe3900DataRaw } from "../../common/stationModel";
 
+// ── Imports after mocks ───────────────────────────────────────────────────────
+
+import app from "../../server/app";
+
 // ── Hoisted mock objects ──────────────────────────────────────────────────────
 
 const redisMock = vi.hoisted(() => ({
@@ -58,10 +62,6 @@ vi.mock("../../server/forecast", () => ({
   getForecast: vi.fn().mockResolvedValue({}),
   getAstronomicalData: vi.fn().mockResolvedValue({}),
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-
-import app from "../../server/app";
 
 // ── Test data ─────────────────────────────────────────────────────────────────
 

@@ -1,6 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import request from "supertest";
 
+// ── Imports after mocks ───────────────────────────────────────────────────────
+
+import app from "../../server/app";
+
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
 const redisMock = vi.hoisted(() => ({
@@ -53,10 +57,6 @@ vi.mock("../../server/forecast", () => ({
   getForecast: vi.fn().mockResolvedValue({}),
   getAstronomicalData: vi.fn().mockResolvedValue({}),
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-
-import app from "../../server/app";
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 

@@ -95,6 +95,13 @@ export interface IStationTrendData {
   uv: Array<number | null>;
   rainrate: Array<number | null>;
   minuterain: Array<number | null>;
+  maxdailygust: Array<number | null>;
+  eventrain: Array<number | null>;
+  hourlyrain: Array<number | null>;
+  dailyrain: Array<number | null>;
+  weeklyrain: Array<number | null>;
+  monthlyrain: Array<number | null>;
+  totalrain: Array<number | null>;
   feelslike: Array<number | null>;
   dewpt: Array<number | null>;
 }
