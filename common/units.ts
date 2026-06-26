@@ -1,10 +1,9 @@
-// eslint-disable-next-line import/prefer-default-export
-export const propName = (obj: any) =>
+export const propName = <T extends object>(obj: T): { [K in keyof T]: K } =>
   new Proxy(obj, {
     get(_, key) {
       return key;
     },
-  });
+  }) as any;
 
 export const deg2rad = (degrees: number) => degrees * (Math.PI / 180);
 
