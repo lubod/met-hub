@@ -28,7 +28,7 @@ jobs:
 
       - name: Initialize PostgreSQL Schema
         run: |
-          docker exec -i ${{ job.services.postgres.id }} psql -U postgres -d postgres < pg-schema.sql
+          docker exec -i ${{ job.services.postgres.id }} psql -h 127.0.0.1 -U postgres -d postgres < pg-schema.sql
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
