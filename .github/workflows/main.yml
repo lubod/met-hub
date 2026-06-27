@@ -13,12 +13,22 @@ jobs:
         image: redis:alpine
         ports:
           - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       postgres:
         image: postgres:alpine
         ports:
           - 5432:5432
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -28,7 +38,7 @@ jobs:
 
       - name: Initialize PostgreSQL Schema
         run: |
-          docker exec -i ${{ job.services.postgres.id }} psql -h 127.0.0.1 -U postgres -d postgres < pg-schema.sql
+          docker exec -i ${{ job.services.postgres.id }} psql -U postgres -d postgres < pg-schema.sql
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
