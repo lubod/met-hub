@@ -129,6 +129,16 @@ export class CController {
     if (newData != null) this.stationData.setLoading(false);
   }
 
+  private async fetchSDailyET0() {
+    if (this.stationData.station == null || this.stationCfg == null) {
+      return;
+    }
+    const newData = await this.privateFetch(
+      this.url(`/api/getDailyET0/station/${this.stationCfg.STATION_ID}`),
+    );
+    this.stationData.setDailyET0(newData);
+  }
+
   private async fetchSTrendData() {
     if (this.stationData.station == null || this.stationCfg == null) {
       console.debug("no station -> no trend data");
@@ -155,6 +165,7 @@ export class CController {
       await this.fetchDomData();
     } else {
       await this.fetchSData();
+      await this.fetchSDailyET0();
     }
   }
 

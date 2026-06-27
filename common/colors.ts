@@ -16,6 +16,7 @@ export enum MY_COLORS {
   light = "#e8e6e3",
   dark = "#1a1f2e",
   gray = "#8b9dc3",
+  gray2 = "#8a8f98",
 }
 
 export default MY_COLORS;

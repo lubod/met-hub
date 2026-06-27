@@ -12,7 +12,7 @@ import redisClient from "./redisClient";
 import { allStationsCfg, AppError } from "./state";
 import { dom } from "./dom";
 import { IMeasurement } from "./measurement";
-import { loadData, loadRainData } from "./db";
+import { loadData, loadRainData, loadDailyET0 } from "./db";
 import { getForecast, getAstronomicalData } from "./forecast";
 import { IStation } from "../common/allStationsCfg";
 
@@ -359,6 +359,23 @@ router.get(
     res
       .status(200)
       .json(reply.length > 0 ? dom.transformTrendData(reply) : null);
+  }),
+);
+
+// DAILY ET0 (grass watering hint)
+
+router.get(
+  "/api/getDailyET0/station/:stationID",
+  authMiddleware,
+  accessMiddleware((req) => req.params.stationID),
+  catchAsync(async (req, res) => {
+    const station = allStationsCfg.getStationByID(req.params.stationID);
+    if (station != null) {
+      const data = await loadDailyET0(req.params.stationID, allStationsCfg);
+      res.status(200).json(data);
+    } else {
+      throw new AppError(400, "Invalid params");
+    }
   }),
 );
 

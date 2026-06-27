@@ -109,6 +109,21 @@ export interface IStationTrendData {
 const station = {} as IStationData;
 
 export class STATION_MEASUREMENTS_DESC {
+  static ET0: ISensor = {
+    col: "et0",
+    unit: "mm",
+    fix: 1,
+    range: 1.0,
+    couldBeNegative: false,
+    table: "station",
+    label: "Grass ET0",
+    col2: "",
+    chartType: "rain",
+    color: MY_COLORS.green,
+    id: "et0",
+    agg: "sum",
+  };
+
   static FEELSLIKE: ISensor = {
     col: propName(station).feelslike,
     unit: "°C",
@@ -426,6 +441,7 @@ export class STATION_MEASUREMENTS_DESC {
 }
 
 export const STATION_SENSORS: ISensor[] = [
+  STATION_MEASUREMENTS_DESC.ET0,
   STATION_MEASUREMENTS_DESC.FEELSLIKE,
   STATION_MEASUREMENTS_DESC.DEWPOINT,
   STATION_MEASUREMENTS_DESC.WINDDIR,

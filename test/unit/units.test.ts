@@ -6,6 +6,10 @@ import {
   avgWind,
   calculateDewPoint,
   calculateFeelsLike,
+  getDayOfYear,
+  calculateRa,
+  calculatePenmanMonteithInstantaneousET0,
+  calculateHargreavesET0,
 } from "../../common/units";
 
 describe("deg2rad", () => {
@@ -146,5 +150,51 @@ describe("calculateFeelsLike", () => {
     const mild = calculateFeelsLike(0, 50, 10);
     const strong = calculateFeelsLike(0, 50, 50);
     expect(strong!).toBeLessThan(mild!);
+  });
+});
+
+describe("getDayOfYear", () => {
+  it("calculates January 1st correctly", () => {
+    expect(getDayOfYear(new Date(2026, 0, 1))).toBe(1);
+  });
+
+  it("calculates December 31st correctly (non-leap year)", () => {
+    expect(getDayOfYear(new Date(2026, 11, 31))).toBe(365);
+  });
+
+  it("calculates December 31st correctly (leap year)", () => {
+    expect(getDayOfYear(new Date(2024, 11, 31))).toBe(366);
+  });
+});
+
+describe("calculateRa", () => {
+  it("calculates extraterrestrial radiation correctly", () => {
+    // Expected Ra for lat 50.08, day 172 (summer solstice) is around 41-42 MJ/m^2/day
+    const Ra = calculateRa(50.08, 172);
+    expect(Ra).toBeGreaterThan(40);
+    expect(Ra).toBeLessThan(43);
+  });
+});
+
+describe("calculatePenmanMonteithInstantaneousET0", () => {
+  it("returns null if temp or humidity is null", () => {
+    expect(calculatePenmanMonteithInstantaneousET0(null, 50, 10, 500, 1013, 50.08, 172)).toBeNull();
+    expect(calculatePenmanMonteithInstantaneousET0(20, null, 10, 500, 1013, 50.08, 172)).toBeNull();
+  });
+
+  it("calculates reasonable reference evapotranspiration rate", () => {
+    // 20°C, 50% RH, 10km/h wind (2.78m/s), 600W/m^2 solar, 1013hPa pressure, lat 50.08, day 172
+    const rate = calculatePenmanMonteithInstantaneousET0(20, 50, 10, 600, 1013, 50.08, 172);
+    expect(rate).toBeGreaterThan(0);
+    // Reference evapotranspiration daily rate (in mm/day) for these warm/sunny conditions should be reasonable
+    expect(rate).toBeLessThan(12.0);
+  });
+});
+
+describe("calculateHargreavesET0", () => {
+  it("calculates reference evapotranspiration using temperature max/min", () => {
+    const dailyET0 = calculateHargreavesET0(10, 25, 50.08, 172);
+    expect(dailyET0).toBeGreaterThan(0);
+    expect(dailyET0).toBeLessThan(10);
   });
 });

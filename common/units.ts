@@ -36,6 +36,87 @@ export const calculateDewPoint = (temp: number | null, humidity: number | null):
   return round((c * lambda) / (b - lambda), 1);
 };
 
+export const DEFAULT_LAT = 50.08;
+
+export const getDayOfYear = (date: Date): number => {
+  const start = new Date(date.getFullYear(), 0, 0);
+  const diff = date.getTime() - start.getTime() + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
+  const oneDay = 1000 * 60 * 60 * 24;
+  return Math.floor(diff / oneDay);
+};
+
+export const calculateRa = (latitude: number, dayOfYear: number): number => {
+  const phi = deg2rad(latitude);
+  const dr = 1 + 0.033 * Math.cos((2 * Math.PI * dayOfYear) / 365);
+  const delta = 0.409 * Math.sin(((2 * Math.PI * dayOfYear) / 365) - 1.39);
+  
+  const omegaTemp = -Math.tan(phi) * Math.tan(delta);
+  let omegaS = 0;
+  if (omegaTemp <= -1) {
+    omegaS = Math.PI;
+  } else if (omegaTemp >= 1) {
+    omegaS = 0;
+  } else {
+    omegaS = Math.acos(omegaTemp);
+  }
+  
+  const Ra = 37.586 * dr * (omegaS * Math.sin(phi) * Math.sin(delta) + Math.cos(phi) * Math.cos(delta) * Math.sin(omegaS));
+  return Ra;
+};
+
+export const calculatePenmanMonteithInstantaneousET0 = (
+  temp: number | null,
+  humidity: number | null,
+  windSpeedKmH: number | null,
+  solarRadiationWm2: number | null,
+  pressureHpa: number | null,
+  latitude: number,
+  dayOfYear: number,
+): number | null => {
+  if (temp == null || humidity == null) return null;
+  
+  const T = temp;
+  const u2 = windSpeedKmH != null ? windSpeedKmH / 3.6 : 2.0;
+  const Rs = solarRadiationWm2 != null ? solarRadiationWm2 * 0.0864 : 0;
+  const es = 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
+  const ea = (es * humidity) / 100;
+  const deltaVal = (4098 * es) / (T + 237.3) ** 2;
+  const P = (pressureHpa != null ? pressureHpa : 1013.25) / 10;
+  const gamma = 0.000665 * P;
+  
+  const Ra = calculateRa(latitude, dayOfYear);
+  const Rso = 0.75 * Ra;
+  
+  let fcloud = 0.5;
+  if (Rs > 0 && Rso > 0) {
+    fcloud = Math.min(1.0, Rs / Rso);
+  }
+  
+  const sigma = 4.903e-9;
+  const Tk = T + 273.15;
+  const Rnl = sigma * (Tk ** 4) * (0.34 - 0.14 * Math.sqrt(ea)) * (1.35 * fcloud - 0.35);
+  const Rn = (1 - 0.23) * Rs - Rnl;
+  const G = 0;
+  
+  const num = 0.408 * deltaVal * (Rn - G) + gamma * (900 / (T + 273.15)) * u2 * (es - ea);
+  const den = deltaVal + gamma * (1 + 0.34 * u2);
+  
+  return round(Math.max(0, num / den), 3);
+};
+
+export const calculateHargreavesET0 = (
+  tmin: number,
+  tmax: number,
+  latitude: number,
+  dayOfYear: number,
+): number => {
+  const Tmean = (tmax + tmin) / 2;
+  const Ra = calculateRa(latitude, dayOfYear);
+  const RaEvap = 0.408 * Ra;
+  const ET0 = 0.0023 * RaEvap * (Tmean + 17.8) * Math.sqrt(Math.max(0, tmax - tmin));
+  return round(Math.max(0, ET0), 3);
+};
+
 /**
  * Calculates "Feels Like" temperature.
  * Uses Wind Chill for cold temps (< 10C) and Heat Index for warm temps (> 26.7C).

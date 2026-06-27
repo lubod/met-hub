@@ -41,6 +41,8 @@ class StationData {
 
   raindata: any = null;
 
+  dailyET0: { et0: number; rain: number } | null = null;
+
   try: number = 0;
 
   loading: boolean = true;
@@ -55,6 +57,7 @@ class StationData {
       floatingRainData: observable,
       inData: observable,
       raindata: observable,
+      dailyET0: observable,
       loading: observable,
       station: observable,
       setData: action,
@@ -63,6 +66,7 @@ class StationData {
       setLoading: action,
       setFloatingRainData: action,
       setRaindata: action,
+      setDailyET0: action,
       setStation: action,
       setInData: action,
     });
@@ -74,12 +78,17 @@ class StationData {
     this.oldData = true;
     this.floatingRainData = false;
     this.raindata = null;
+    this.dailyET0 = null;
     this.try = 0;
     this.loading = true;
   }
 
   setRaindata(raindata: any) {
     this.raindata = raindata;
+  }
+
+  setDailyET0(dailyET0: { et0: number; rain: number } | null) {
+    this.dailyET0 = dailyET0;
   }
 
   setLoading(loading: boolean) {
