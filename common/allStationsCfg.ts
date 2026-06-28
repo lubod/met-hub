@@ -2,9 +2,8 @@
 import { dom } from "../server/dom";
 import redisClient from "../server/redisClient";
 import { IMeasurement } from "../server/measurement";
-import StationGarni1025Arcus from "../server/stationGarni1025Arcus";
-import StationGoGenMe3900 from "../server/stationGoGenMe3900";
 import StationWU from "../server/stationWU";
+import StationEcowitt from "../server/stationEcowitt";
 import StationJson from "../server/stationJson";
 import { StationCfg } from "./stationCfg";
 import { StationType } from "./stationType";
@@ -43,6 +42,8 @@ export class AllStationsCfg {
       case StationType.GoGenMe3900:
       case StationType.WU:
         return new StationWU(station.id);
+      case StationType.Ecowitt:
+        return new StationEcowitt(station.id);
       case StationType.Json:
         return new StationJson(station.id);
       default:

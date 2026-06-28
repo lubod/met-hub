@@ -7,6 +7,7 @@ import { vi } from "vitest";
 import type { IStation } from "../../common/allStationsCfg";
 import { StationType } from "../../common/stationType";
 import StationWU from "../../server/stationWU";
+import StationEcowitt from "../../server/stationEcowitt";
 import StationJson from "../../server/stationJson";
 import type { IMeasurement } from "../../server/measurement";
 
@@ -21,6 +22,8 @@ function createMeasurement(type: StationType, stationID: string): IMeasurement {
   switch (type) {
     case StationType.Json:
       return new StationJson(stationID);
+    case StationType.Ecowitt:
+      return new StationEcowitt(stationID);
     default:
       return new StationWU(stationID);
   }

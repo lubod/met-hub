@@ -750,6 +750,7 @@ router.post(
       if (
         type !== StationType.GoGenMe3900 &&
         type !== StationType.WU &&
+        type !== StationType.Ecowitt &&
         type !== StationType.Json
       ) {
         throw new AppError(400, `Unknown station type ${type}`);

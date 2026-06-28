@@ -294,7 +294,7 @@ describe("POST /data/report (Ecowitt protocol)", () => {
     redisMock.multi.mockReturnValue(freshMulti());
   });
 
-  it("returns 200 when station is found by PASSKEY and data is fresh", async () => {
+  it("returns 200 when station is found by PASSKEY and data is fresh (WU decoder fallback)", async () => {
     mockGetStationByPasskey.mockReturnValue(makeTestStation({ type: StationType.WU }));
 
     const res = await request(app)
@@ -302,6 +302,39 @@ describe("POST /data/report (Ecowitt protocol)", () => {
       .send({ ...freshRaw(), PASSKEY: TEST_PASSKEY });
 
     expect(res.status).toBe(200);
+  });
+
+  it("returns 200 and stores correct metric values when station has Ecowitt type", async () => {
+    mockGetStationByPasskey.mockReturnValue(makeTestStation({ type: StationType.Ecowitt }));
+    const multi = freshMulti();
+    redisMock.multi.mockReturnValue(multi);
+
+    const metricEcowittPayload = {
+      PASSKEY: TEST_PASSKEY,
+      stationtype: "GW2000A_V2.1.4",
+      dateutc: freshRaw().dateutc,
+      tempc: "17.4",
+      humidity: "62",
+      windspeedkmh: "14.2",
+      baromrelhpa: "1012.8",
+      dailyrainmm: "1.8",
+    };
+
+    const res = await request(app)
+      .post("/data/report")
+      .send(metricEcowittPayload);
+
+    expect(res.status).toBe(200);
+
+    expect(multi.set).toHaveBeenCalled();
+    const setCall = multi.set.mock.calls.find((c: any) => c[0] === `station_${TEST_STATION_ID}-last`);
+    expect(setCall).toBeDefined();
+    const storedData = JSON.parse(setCall[1]);
+    expect(storedData.temp).toBe(17.4);
+    expect(storedData.humidity).toBe(62);
+    expect(storedData.windspeed).toBe(14.2);
+    expect(storedData.pressurerel).toBe(1012.8);
+    expect(storedData.dailyrain).toBe(1.8);
   });
 
   it("returns 400 when PASSKEY is missing or unknown", async () => {

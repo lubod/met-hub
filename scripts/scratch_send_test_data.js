@@ -112,16 +112,16 @@ async function sendTestData() {
 
   // 4. Send Ecowitt custom server protocol
   const ecowittData = {
-    PASSKEY: "localpasskey",
+    PASSKEY: "ecowittpasskey",
     stationtype: "GW2000A_V2.1.4",
     dateutc: dateUtcStr,
-    tempf: "70.2",
+    tempc: "21.2",
     humidity: "60",
-    windspeedmph: "6.0",
-    windgustmph: "9.0",
-    baromabsin: "29.90",
-    rainratein: "0.0",
-    dailyrainin: "0.15"
+    windspeedkmh: "9.6",
+    windgustkmh: "14.4",
+    baromabshpa: "1012.5",
+    rainratemm: "0.0",
+    dailyrainmm: "3.8"
   };
 
   console.log("Sending POST update for Ecowitt customized server...");

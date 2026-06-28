@@ -10,11 +10,18 @@ const ASSETS = [
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        return Promise.allSettled(
+          ASSETS.map((asset) => {
+            return cache.add(asset).catch((err) => {
+              console.warn(`Failed to precache ${asset}:`, err);
+            });
+          })
+        );
+      })
+      .then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (e) => {

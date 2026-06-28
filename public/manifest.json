@@ -6,18 +6,24 @@
       "src": "/icon-192.png",
       "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/icon-512.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512-maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     }
   ],
   "start_url": "/",
   "background_color": "#121214",
-  "theme_color": "#0ea5e9",
+  "theme_color": "#121214",
   "display": "standalone",
-  "orientation": "portrait"
+  "orientation": "any"
 }

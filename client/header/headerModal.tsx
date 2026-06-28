@@ -23,6 +23,15 @@ const HeaderModal = observer(({ appContext }: Props) => {
 
   async function submit(e: any) {
     e.preventDefault();
+    if (
+      (type === StationType.WU ||
+        type === StationType.Ecowitt ||
+        type === StationType.Json) &&
+      !passkey.trim()
+    ) {
+      setError("Passkey is required for Weather Underground, Ecowitt, and JSON stations.");
+      return;
+    }
     const res = await appContext.headerCtrl.addStation({
       lat: parseFloat(lat),
       lon: parseFloat(lon),
@@ -109,7 +118,8 @@ const HeaderModal = observer(({ appContext }: Props) => {
                           onChange={(e) => setType(e.target.value as StationType)}
                         >
                           <option value={StationType.GoGenMe3900}>GoGen Me 3900</option>
-                          <option value={StationType.WU}>Weather Underground / Ecowitt</option>
+                          <option value={StationType.WU}>Weather Underground</option>
+                          <option value={StationType.Ecowitt}>Ecowitt (Custom Server)</option>
                           <option value={StationType.Json}>JSON Ingestion</option>
                         </select>
                       </div>
@@ -175,19 +185,27 @@ const HeaderModal = observer(({ appContext }: Props) => {
                           </div>
                         )}
 
-                        {type === StationType.WU && (
+                        {type === StationType.Ecowitt && (
                           <div>
                             <div>
-                              Configure customized upload to www.met-hub.com:
+                              Configure customized Ecowitt upload to www.met-hub.com:
                             </div>
                             <div className="mt-2 text-sm space-y-1 text-light/90">
-                              <p className="font-semibold text-sky-400">Option A: Ecowitt Custom Server</p>
                               <li className="pl-2">Protocol: Ecowitt</li>
                               <li className="pl-2">Server: www.met-hub.com</li>
                               <li className="pl-2">Path: /data/report</li>
                               <li className="pl-2">PASSKEY: {passkey || "(your-passkey)"}</li>
-                              
-                              <p className="font-semibold text-sky-400 mt-2">Option B: Weather Underground Protocol</p>
+                              <li className="pl-2">Port: 80</li>
+                            </div>
+                          </div>
+                        )}
+
+                        {type === StationType.WU && (
+                          <div>
+                            <div>
+                              Configure customized Weather Underground upload to www.met-hub.com:
+                            </div>
+                            <div className="mt-2 text-sm space-y-1 text-light/90">
                               <li className="pl-2">Protocol: Wunderground</li>
                               <li className="pl-2">Server: www.met-hub.com</li>
                               <li className="pl-2">Path: /weatherstation/updateweatherstation.php</li>
