@@ -61,7 +61,7 @@ const About = observer(({ appContext, className }: Props) => {
         </p>
         <p className="text-white/70 text-sm leading-relaxed">
           Currently you can see data from:
-          <span className="block mt-1 text-white/50">GoGEN ME 3900 · GARNI 1025 Arcus</span>
+          <span className="block mt-1 text-white/50">GoGEN ME 3900 · GARNI 1025 Arcus · Weather Underground / Ecowitt · JSON</span>
         </p>
         <p className="text-white/70 text-sm leading-relaxed">Login to add your stations and see also historical data</p>
         <div className="flex flex-row justify-center">
