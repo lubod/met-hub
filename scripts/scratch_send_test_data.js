@@ -110,6 +110,63 @@ async function sendTestData() {
     console.error("Error sending dom data:", err);
   }
 
+  // 4. Send Ecowitt custom server protocol
+  const ecowittData = {
+    PASSKEY: "localpasskey",
+    stationtype: "GW2000A_V2.1.4",
+    dateutc: dateUtcStr,
+    tempf: "70.2",
+    humidity: "60",
+    windspeedmph: "6.0",
+    windgustmph: "9.0",
+    baromabsin: "29.90",
+    rainratein: "0.0",
+    dailyrainin: "0.15"
+  };
+
+  console.log("Sending POST update for Ecowitt customized server...");
+  try {
+    const resEcowitt = await fetch("http://localhost:8089/data/report", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify(ecowittData)
+    });
+    console.log(`Ecowitt Response Status: ${resEcowitt.status} (${resEcowitt.statusText})`);
+  } catch (err) {
+    console.error("Error sending Ecowitt data:", err);
+  }
+
+  // 5. Send JSON protocol
+  const jsonPayload = {
+    timestamp: now.toISOString(),
+    temp: 23.5,
+    humidity: 48,
+    windspeed: 12.4,
+    feelslike: 22.8,
+    dewpt: 11.2,
+    pressurerel: 1012.8,
+    pressureabs: 1008.2,
+    rainrate: 0.0,
+    dailyrain: 1.2
+  };
+
+  console.log("Sending POST update for JSON protocol...");
+  try {
+    const resJson = await fetch("http://localhost:8089/api/ingest/station_json", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "x-passkey": "jsonpasskey"
+      },
+      body: JSON.stringify(jsonPayload)
+    });
+    console.log(`JSON Response Status: ${resJson.status} (${resJson.statusText})`);
+  } catch (err) {
+    console.error("Error sending JSON data:", err);
+  }
+
   console.log("Test data generation complete!");
 }
 
