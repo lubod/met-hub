@@ -679,6 +679,33 @@ router.post(
 );
 
 router.post(
+  "/data/report",
+  catchAsync(async (req, res) => {
+    await setData(req.body.PASSKEY, null, req.body);
+    res.sendStatus(200);
+  }),
+);
+
+router.post(
+  "/api/ingest/:stationID",
+  catchAsync(async (req, res) => {
+    const passkey = req.headers["x-passkey"] || req.body.PASSKEY;
+    if (typeof passkey !== "string") {
+      throw new AppError(401, "Invalid passkey header/param");
+    }
+    const station = allStationsCfg.getStationByID(req.params.stationID);
+    if (station == null) {
+      throw new AppError(400, "Unknown station ID");
+    }
+    if (station.passkey !== passkey) {
+      throw new AppError(401, "Unauthorized: Invalid passkey");
+    }
+    await setData(null, req.params.stationID, req.body);
+    res.sendStatus(200);
+  }),
+);
+
+router.post(
   "/setDomData",
   catchAsync(async (req, res) => {
     const passkey = req.query.PASSKEY || req.body.PASSKEY || req.headers["x-passkey"];
@@ -720,7 +747,11 @@ router.post(
 
       const { lat, lon, place, passkey, type } = req.body;
 
-      if (type !== StationType.GoGenMe3900) {
+      if (
+        type !== StationType.GoGenMe3900 &&
+        type !== StationType.WU &&
+        type !== StationType.Json
+      ) {
         throw new AppError(400, `Unknown station type ${type}`);
       }
 

@@ -132,6 +132,15 @@ const appContext: AppContext = new AppContext();
 appContext.start();
 appContext.authCtrl.authData.setLocation(window.location.pathname);
 
+if ("serviceWorker" in navigator && window.location.hostname !== "localhost") {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((reg) => console.log("ServiceWorker registered:", reg.scope))
+      .catch((err) => console.error("ServiceWorker registration failed:", err));
+  });
+}
+
 const appContainer = document.getElementById("app");
 if (appContainer) {
   const root = createRoot(appContainer);

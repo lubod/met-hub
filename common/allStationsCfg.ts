@@ -4,6 +4,8 @@ import redisClient from "../server/redisClient";
 import { IMeasurement } from "../server/measurement";
 import StationGarni1025Arcus from "../server/stationGarni1025Arcus";
 import StationGoGenMe3900 from "../server/stationGoGenMe3900";
+import StationWU from "../server/stationWU";
+import StationJson from "../server/stationJson";
 import { StationCfg } from "./stationCfg";
 import { StationType } from "./stationType";
 import { create } from "../server/db";
@@ -38,9 +40,11 @@ export class AllStationsCfg {
       case StationType.Dom:
         return dom;
       case StationType.Garni1025Arcus:
-        return new StationGarni1025Arcus(station.id);
       case StationType.GoGenMe3900:
-        return new StationGoGenMe3900(station.id);
+      case StationType.WU:
+        return new StationWU(station.id);
+      case StationType.Json:
+        return new StationJson(station.id);
       default:
         throw new Error(`Unknown station type ${station.type}`);
     }

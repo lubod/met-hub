@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
 import { TEST_STATION_ID, TEST_PASSKEY, makeTestStation } from "./_mocks";
 import { IStationGoGenMe3900DataRaw } from "../../common/stationModel";
+import { StationType } from "../../common/stationType";
 
 // ── Imports after mocks ───────────────────────────────────────────────────────
 
@@ -283,5 +284,80 @@ describe("POST /setDomData", () => {
       .post("/setDomData")
       .send(validDomPayload);
     expect(res.status).toBe(401);
+  });
+});
+
+describe("POST /data/report (Ecowitt protocol)", () => {
+  beforeEach(() => {
+    mockGetStationByID.mockReturnValue(undefined);
+    mockGetStationByPasskey.mockReturnValue(undefined);
+    redisMock.multi.mockReturnValue(freshMulti());
+  });
+
+  it("returns 200 when station is found by PASSKEY and data is fresh", async () => {
+    mockGetStationByPasskey.mockReturnValue(makeTestStation({ type: StationType.WU }));
+
+    const res = await request(app)
+      .post("/data/report")
+      .send({ ...freshRaw(), PASSKEY: TEST_PASSKEY });
+
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 400 when PASSKEY is missing or unknown", async () => {
+    mockGetStationByPasskey.mockReturnValue(undefined);
+
+    const res = await request(app)
+      .post("/data/report")
+      .send({ tempf: "72.0" });
+
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("POST /api/ingest/:stationID (JSON protocol)", () => {
+  beforeEach(() => {
+    mockGetStationByID.mockReturnValue(undefined);
+    redisMock.multi.mockReturnValue(freshMulti());
+  });
+
+  const validJsonPayload = {
+    timestamp: "now",
+    temp: 22.5,
+    humidity: 45,
+    windspeed: 15.2,
+    feelslike: 21.8,
+  };
+
+  it("returns 200 when station ID is found, x-passkey header matches, and data is fresh", async () => {
+    mockGetStationByID.mockReturnValue(makeTestStation({ type: StationType.Json }));
+
+    const res = await request(app)
+      .post(`/api/ingest/${TEST_STATION_ID}`)
+      .set("x-passkey", TEST_PASSKEY)
+      .send(validJsonPayload);
+
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 401 when x-passkey header is invalid or missing", async () => {
+    mockGetStationByID.mockReturnValue(makeTestStation({ type: StationType.Json }));
+
+    const res = await request(app)
+      .post(`/api/ingest/${TEST_STATION_ID}`)
+      .send(validJsonPayload);
+
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 400 when station ID is unknown", async () => {
+    mockGetStationByID.mockReturnValue(undefined);
+
+    const res = await request(app)
+      .post("/api/ingest/unknown-station")
+      .set("x-passkey", TEST_PASSKEY)
+      .send(validJsonPayload);
+
+    expect(res.status).toBe(400);
   });
 });

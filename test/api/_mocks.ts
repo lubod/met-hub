@@ -6,7 +6,9 @@
 import { vi } from "vitest";
 import type { IStation } from "../../common/allStationsCfg";
 import { StationType } from "../../common/stationType";
-import StationGoGenMe3900 from "../../server/stationGoGenMe3900";
+import StationWU from "../../server/stationWU";
+import StationJson from "../../server/stationJson";
+import type { IMeasurement } from "../../server/measurement";
 
 // ── Test fixtures ────────────────────────────────────────────────────────────
 
@@ -15,14 +17,24 @@ export const TEST_ADMIN_ID = "admin-xyz";
 export const TEST_STATION_ID = "station-test01";
 export const TEST_PASSKEY = "TEST-PASSKEY-001";
 
+function createMeasurement(type: StationType, stationID: string): IMeasurement {
+  switch (type) {
+    case StationType.Json:
+      return new StationJson(stationID);
+    default:
+      return new StationWU(stationID);
+  }
+}
+
 export function makeTestStation(overrides: Partial<IStation> = {}): IStation {
-  const measurement = new StationGoGenMe3900(TEST_STATION_ID);
+  const type = overrides.type ?? StationType.GoGenMe3900;
+  const measurement = createMeasurement(type, TEST_STATION_ID);
   return {
     id: TEST_STATION_ID,
     place: "Test Garden",
     lat: 48.0,
     lon: 17.0,
-    type: StationType.GoGenMe3900,
+    type,
     passkey: TEST_PASSKEY,
     public: false,
     owner: TEST_USER_ID,
@@ -35,13 +47,13 @@ export const TEST_PUBLIC_STATION_ID = "station-public01";
 
 export function makePublicStation(): IStation {
   // Measurement ID must match station ID so checkAccess sees the right key
-  const measurement = new StationGoGenMe3900(TEST_PUBLIC_STATION_ID);
+  const measurement = new StationWU(TEST_PUBLIC_STATION_ID);
   return {
     id: TEST_PUBLIC_STATION_ID,
     place: "Public Garden",
     lat: 48.0,
     lon: 17.0,
-    type: StationType.GoGenMe3900,
+    type: StationType.WU,
     passkey: "PUBLIC-PASSKEY-001",
     public: true,
     owner: TEST_USER_ID,

@@ -40,6 +40,7 @@ app.use(
       connectSrc: [`'self'`, `*.google.com`],
       imgSrc: [`'self'`, `*.openstreetmap.org`, `unpkg.com`, `data:`],
       frameAncestors: [`'self'`, `*.chatademian.com`],
+      workerSrc: [`'self'`, `blob:`],
     },
   }),
 );
@@ -70,6 +71,8 @@ app.get("/health", (req: Request, res: Response) => {
 app.use("/setData", ingestLimiter);
 app.use("/setDomData", ingestLimiter);
 app.use("/weatherstation/updateweatherstation.php", ingestLimiter);
+app.use("/data/report", ingestLimiter);
+app.use("/api/ingest", ingestLimiter);
 
 app.use(limiter);
 
