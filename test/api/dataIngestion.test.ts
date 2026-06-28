@@ -329,7 +329,7 @@ describe("POST /data/report (Ecowitt protocol)", () => {
     expect(multi.set).toHaveBeenCalled();
     const setCall = multi.set.mock.calls.find((c: any) => c[0] === `station_${TEST_STATION_ID}-last`);
     expect(setCall).toBeDefined();
-    const storedData = JSON.parse(setCall[1]);
+    const storedData = JSON.parse(setCall![1]);
     expect(storedData.temp).toBe(17.4);
     expect(storedData.humidity).toBe(62);
     expect(storedData.windspeed).toBe(14.2);
