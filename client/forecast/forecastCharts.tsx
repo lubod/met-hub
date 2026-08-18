@@ -1,6 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable camelcase */
 import * as React from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import ForecastChart from "./forecastChart";
 import {
@@ -11,7 +12,6 @@ import {
 } from "./forecastData";
 import ForecastChartTemp from "./forecastChartTemp";
 import ForecastCtrl from "./forecastCtrl";
-import Myhr from "../misc/myhr";
 import ForecastStepsList from "./forecastStepList";
 
 const FORECAST_COLORS: Record<string, string> = {
@@ -25,6 +25,10 @@ const FORECAST_COLORS: Record<string, string> = {
 type CellProps = {
   value: string;
   color: string;
+  unit?: string;
+  isHovered?: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
   maxLimit1?: number;
   maxLimit2?: number;
   maxLimit3?: number;
@@ -36,6 +40,10 @@ type CellProps = {
 function Cell({
   value,
   color,
+  unit,
+  isHovered,
+  onMouseEnter,
+  onMouseLeave,
   maxLimit1,
   maxLimit2,
   maxLimit3,
@@ -50,98 +58,141 @@ function Cell({
 
   let bgOpacity = 0;
 
-  if (color === "orange") {
+  if (color === "orange" && !Number.isNaN(val)) {
     // Continuous gradient for temperatures
     if (val > 0) {
-      // Map 0 -> 35 degrees to 0 -> 80% opacity
-      bgOpacity = Math.min((val / 35) * 0.8, 0.8);
+      bgOpacity = Math.min((val / 35) * 0.7, 0.7);
     } else if (val < 0) {
-      // Map 0 -> -20 degrees to 0 -> 80% opacity
-      bgOpacity = Math.min((Math.abs(val) / 20) * 0.8, 0.8);
+      bgOpacity = Math.min((Math.abs(val) / 20) * 0.7, 0.7);
     }
-  } else if (color === "purple") {
-    // Continuous gradient for wind speed (0 to 60 km/h mapped to 0 to 70% opacity)
-    bgOpacity = Math.min((val / 60) * 0.7, 0.7);
-  } else {
-    // Stepped logic for other metrics (rain, clouds)
-    if (maxLimit1 != null && val > maxLimit1) bgOpacity = 0.1;
-    if (maxLimit2 != null && val > maxLimit2) bgOpacity = 0.25;
-    if (maxLimit3 != null && val > maxLimit3) bgOpacity = 0.5;
+  } else if (color === "purple" && !Number.isNaN(val)) {
+    bgOpacity = Math.min((val / 60) * 0.6, 0.6);
+  } else if (!Number.isNaN(val)) {
+    // Stepped logic for rain, clouds
+    if (maxLimit1 != null && val > maxLimit1) bgOpacity = 0.15;
+    if (maxLimit2 != null && val > maxLimit2) bgOpacity = 0.3;
+    if (maxLimit3 != null && val > maxLimit3) bgOpacity = 0.55;
 
-    if (minLimit1 != null && val < minLimit1) bgOpacity = 0.1;
-    if (minLimit2 != null && val < minLimit2) bgOpacity = 0.25;
-    if (minLimit3 != null && val < minLimit3) bgOpacity = 0.5;
+    if (minLimit1 != null && val < minLimit1) bgOpacity = 0.15;
+    if (minLimit2 != null && val < minLimit2) bgOpacity = 0.3;
+    if (minLimit3 != null && val < minLimit3) bgOpacity = 0.55;
+  }
+
+  let formattedValue = value;
+  if (unit === "°" && value !== "-" && !Number.isNaN(val)) {
+    formattedValue = `${val > 0 ? `+${val}` : val}°`;
+  } else if (unit === "%" && value !== "-" && !Number.isNaN(val)) {
+    formattedValue = `${val}%`;
+  } else if (unit === "mm" && value !== "-" && !Number.isNaN(val)) {
+    formattedValue = `${val}`;
   }
 
   return (
     <div
-      className="text-center text-light/90 border-s text-xs py-1.5 basis-full min-w-11 font-medium select-none transition-colors"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className={`text-center text-light border-s text-xs py-1.5 basis-full min-w-11 font-medium select-none transition-all duration-150 flex items-center justify-center ${
+        isHovered ? "bg-white/[0.12] !border-cyan/40 font-semibold" : ""
+      }`}
       style={{
-        borderLeftColor: "rgba(255, 255, 255, 0.06)",
+        borderLeftColor: isHovered ? undefined : "rgba(255, 255, 255, 0.05)",
         backgroundColor:
-          bgOpacity > 0
+          !isHovered && bgOpacity > 0
             ? `${hex}${Math.round(bgOpacity * 255)
                 .toString(16)
                 .padStart(2, "0")}`
             : undefined,
       }}
     >
-      {value}
+      <span className="tabular-nums">{formattedValue}</span>
     </div>
   );
 }
 
 type RowsProps = {
   data: Array<IGetForecastDataToDisplay>;
+  hours: number;
+  hoveredCol: number | null;
+  setHoveredCol: (idx: number | null) => void;
 };
 
-function MyRows1({ data }: RowsProps) {
-  const size = "34px";
+function MyRows1({ data, hours, hoveredCol, setHoveredCol }: RowsProps) {
+  const size = "32px";
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex flex-row w-full">
-        {data.map((item: IGetForecastDataToDisplay) => (
+      {/* Day Row */}
+      <div className="flex flex-row w-full font-semibold text-light/90">
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => (
           <Cell
-            key={item.getDay() + item.getDay2()}
+            key={`day-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
             value={item.getDay()}
             color="gray2"
+            isHovered={hoveredCol === idx}
+            onMouseEnter={() => setHoveredCol(idx)}
+            onMouseLeave={() => setHoveredCol(null)}
           />
         ))}
       </div>
-      <div className="flex flex-row w-full">
-        {data.map((item: IGetForecastDataToDisplay) => (
+
+      {/* Date / Time Row */}
+      <div className="flex flex-row w-full text-light/60 text-[11px]">
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => (
           <Cell
-            key={item.getDay() + item.getDay2()}
+            key={`day2-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
             value={item.getDay2()}
             color="gray2"
+            isHovered={hoveredCol === idx}
+            onMouseEnter={() => setHoveredCol(idx)}
+            onMouseLeave={() => setHoveredCol(null)}
           />
         ))}
       </div>
-      <div className="flex flex-row w-full">
-        {data.map((item: IGetForecastDataToDisplay) => (
+
+      {/* Weather Icon Row */}
+      <div className="flex flex-row w-full py-1">
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => (
           <div
-            className="text-center border-s border-gray2 flex justify-center basis-full min-w-11"
-            key={item.getDay() + item.getDay2()}
+            className={`text-center border-s flex items-center justify-center basis-full min-w-11 transition-transform ${
+              hoveredCol === idx
+                ? "bg-white/[0.12] scale-110 !border-cyan/40"
+                : ""
+            }`}
+            style={{
+              borderLeftColor:
+                hoveredCol === idx ? undefined : "rgba(255, 255, 255, 0.05)",
+            }}
+            key={`sym-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
+            onMouseEnter={() => setHoveredCol(idx)}
+            onMouseLeave={() => setHoveredCol(null)}
           >
             {item.getSymbolCode() != null && (
               <img
                 width={size}
                 height={size}
-                src={`svg/${item.getSymbolCode()}.svg`} // TODO
+                src={`svg/${item.getSymbolCode()}.svg`}
                 alt={item.getSymbolCode()}
+                className="drop-shadow-md"
               />
             )}
-            {item.getSymbolCode() == null && <>-</>}
+            {item.getSymbolCode() == null && (
+              <span className="text-light/40">-</span>
+            )}
           </div>
         ))}
       </div>
+
+      {/* Max Temperature Row */}
       <div className="flex flex-row w-full">
-        {data.map((item: IGetForecastDataToDisplay) => (
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => (
           <Cell
-            key={item.getDay() + item.getDay2()}
+            key={`tmax-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
             value={item.getAirTemperatureMax()}
             color="orange"
+            unit="°"
+            isHovered={hoveredCol === idx}
+            onMouseEnter={() => setHoveredCol(idx)}
+            onMouseLeave={() => setHoveredCol(null)}
             maxLimit1={24}
             maxLimit2={29}
             maxLimit3={34}
@@ -151,46 +202,65 @@ function MyRows1({ data }: RowsProps) {
           />
         ))}
       </div>
-      <div className="flex flex-row w-full">
-        {data.map((item: IGetForecastDataToDisplay) => (
-          <Cell
-            key={item.getDay() + item.getDay2()}
-            value={item.getAirTemperatureMin()}
-            color="orange"
-            maxLimit1={18}
-            maxLimit2={21}
-            maxLimit3={24}
-            minLimit1={0}
-            minLimit2={-10}
-            minLimit3={-20}
-          />
-        ))}
-      </div>
+
+      {/* Min Temperature Row (for 24h and 6h modes) */}
+      {hours !== 1 && (
+        <div className="flex flex-row w-full">
+          {data.map((item: IGetForecastDataToDisplay, idx: number) => (
+            <Cell
+              key={`tmin-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
+              value={item.getAirTemperatureMin()}
+              color="orange"
+              unit="°"
+              isHovered={hoveredCol === idx}
+              onMouseEnter={() => setHoveredCol(idx)}
+              onMouseLeave={() => setHoveredCol(null)}
+              maxLimit1={18}
+              maxLimit2={21}
+              maxLimit3={24}
+              minLimit1={0}
+              minLimit2={-10}
+              minLimit3={-20}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function MyRowsRainCloud({ data }: RowsProps) {
+function MyRowsRainCloud({ data, hoveredCol, setHoveredCol }: RowsProps) {
   return (
     <div className="flex flex-col w-full">
+      {/* Rain Row */}
       <div className="flex flex-row w-full">
-        {data.map((item: IGetForecastDataToDisplay) => (
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => (
           <Cell
             value={item.getPrecipitationAmount()}
             color="blue"
-            key={item.getDay() + item.getDay2()}
+            unit="mm"
+            key={`rain-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
+            isHovered={hoveredCol === idx}
+            onMouseEnter={() => setHoveredCol(idx)}
+            onMouseLeave={() => setHoveredCol(null)}
             maxLimit1={0.01}
             maxLimit2={3}
             maxLimit3={10}
           />
         ))}
       </div>
+
+      {/* Clouds Row */}
       <div className="flex flex-row w-full">
-        {data.map((item: IGetForecastDataToDisplay) => (
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => (
           <Cell
-            key={item.getDay() + item.getDay2()}
+            key={`cloud-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
             value={item.getCloudAreaFraction()}
             color="light"
+            unit="%"
+            isHovered={hoveredCol === idx}
+            onMouseEnter={() => setHoveredCol(idx)}
+            onMouseLeave={() => setHoveredCol(null)}
             maxLimit1={50}
             maxLimit2={70}
             maxLimit3={90}
@@ -201,48 +271,65 @@ function MyRowsRainCloud({ data }: RowsProps) {
   );
 }
 
-function MyRowsWind({ data }: RowsProps) {
+function MyRowsWind({ data, hoveredCol, setHoveredCol }: RowsProps) {
   return (
     <div className="flex flex-col w-full">
+      {/* Wind Speed Row */}
       <div className="flex flex-row w-full">
-        {data.map((item: IGetForecastDataToDisplay) => (
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => (
           <Cell
-            key={item.getDay() + item.getDay2()}
+            key={`wind-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
             value={item.getWindSpeed()}
             color="purple"
+            isHovered={hoveredCol === idx}
+            onMouseEnter={() => setHoveredCol(idx)}
+            onMouseLeave={() => setHoveredCol(null)}
             maxLimit1={19}
             maxLimit2={29}
             maxLimit3={39}
           />
         ))}
       </div>
+
+      {/* Wind Direction Row */}
       <div className="flex flex-row w-full">
-        {data.map((item: IGetForecastDataToDisplay) => {
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => {
           const windSpeed = parseFloat(item.getWindSpeed());
           const hex = FORECAST_COLORS.purple;
           const bgOpacity = Math.min((windSpeed / 60) * 0.7, 0.7);
 
           return (
             <div
-              className="text-center border-s border-purple flex justify-center basis-full min-w-11 py-1"
-              key={item.getDay() + item.getDay2()}
+              className={`text-center border-s flex items-center justify-center basis-full min-w-11 py-1.5 transition-all ${
+                hoveredCol === idx
+                  ? "bg-white/[0.12] !border-cyan/40 scale-105"
+                  : ""
+              }`}
+              key={`wdir-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
+              onMouseEnter={() => setHoveredCol(idx)}
+              onMouseLeave={() => setHoveredCol(null)}
               style={{
+                borderLeftColor:
+                  hoveredCol === idx ? undefined : "rgba(255, 255, 255, 0.05)",
                 backgroundColor:
-                  bgOpacity > 0
+                  hoveredCol !== idx && bgOpacity > 0
                     ? `${hex}${Math.round(bgOpacity * 255)
                         .toString(16)
                         .padStart(2, "0")}`
                     : undefined,
               }}
             >
-              <svg width="25px" height="25px">
-                <polygon
-                  points="8 3, 12 21, 16 3"
-                  fill="white"
-                  stroke="white"
-                  transform={`rotate(${item.getWindDir()} 12 12)`}
-                />
-              </svg>
+              <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center border border-white/15 shadow-sm">
+                <svg width="16px" height="16px" viewBox="0 0 24 24">
+                  <polygon
+                    points="8 4, 12 20, 16 4"
+                    fill="rgba(255, 255, 255, 0.95)"
+                    stroke="rgba(0, 0, 0, 0.4)"
+                    strokeWidth="0.5"
+                    transform={`rotate(${item.getWindDir()} 12 12)`}
+                  />
+                </svg>
+              </div>
             </div>
           );
         })}
@@ -260,6 +347,8 @@ type Props = {
 
 const ForecastCharts = observer(
   ({ days, forecast_6h, forecast_1h, forecastCtrl }: Props) => {
+    const [hoveredCol, setHoveredCol] = useState<number | null>(null);
+
     let lastTimestamp = null;
     let firstTimestamp = null;
     let cols;
@@ -306,61 +395,91 @@ const ForecastCharts = observer(
     const dataToDisplay =
       hours === 24 ? days : hours === 6 ? forecast_6h : forecast_1h;
 
+    const totalWidth = cols * 44;
+
     return (
-      <>
-        <div className="mb-4 flex flex-row justify-center">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-row justify-center">
           <ForecastStepsList forecastCtrl={forecastCtrl} />
         </div>
-        <div className="flex flex-col overflow-x-auto pb-2 scroll-smooth">
-          <MyRows1 data={dataToDisplay} />
-          {firstTimestamp != null && lastTimestamp != null && (
-            <div className="">
-              <ForecastChartTemp
-                data={days}
-                lastTimestamp={lastTimestamp}
-                firstTimestamp={firstTimestamp}
-                hours={forecastCtrl.forecastData.step.hours}
-                offset6h={forecastCtrl.forecastData.offset6h}
-                width={cols * 44}
+
+        {/* Single continuous horizontal scroll container */}
+        <div className="flex flex-col overflow-x-auto pb-4 scroll-smooth">
+          <div className="flex flex-col gap-6" style={{ minWidth: totalWidth }}>
+            {/* 1. Temperature & Conditions Section */}
+            <div className="flex flex-col">
+              <MyRows1
+                data={dataToDisplay}
+                hours={hours}
+                hoveredCol={hoveredCol}
+                setHoveredCol={setHoveredCol}
               />
+              {firstTimestamp != null && lastTimestamp != null && (
+                <div className="mt-1">
+                  <ForecastChartTemp
+                    data={days}
+                    lastTimestamp={lastTimestamp}
+                    firstTimestamp={firstTimestamp}
+                    hours={forecastCtrl.forecastData.step.hours}
+                    offset6h={forecastCtrl.forecastData.offset6h}
+                    width={totalWidth}
+                  />
+                </div>
+              )}
             </div>
-          )}
-          <div className="my-4">
-            <Myhr />
+
+            <div className="border-t border-white/5" />
+
+            {/* 2. Precipitation & Cloud Cover Section */}
+            <div className="flex flex-col">
+              <MyRowsRainCloud
+                data={dataToDisplay}
+                hours={hours}
+                hoveredCol={hoveredCol}
+                setHoveredCol={setHoveredCol}
+              />
+              {firstTimestamp != null && lastTimestamp != null && (
+                <div className="mt-1">
+                  <ForecastChart
+                    data={days}
+                    lastTimestamp={lastTimestamp}
+                    firstTimestamp={firstTimestamp}
+                    hours={forecastCtrl.forecastData.step.hours}
+                    offset6h={forecastCtrl.forecastData.offset6h}
+                    width={totalWidth}
+                    type="rain_cloud"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-white/5" />
+
+            {/* 3. Wind Speed & Direction Section */}
+            <div className="flex flex-col">
+              <MyRowsWind
+                data={dataToDisplay}
+                hours={hours}
+                hoveredCol={hoveredCol}
+                setHoveredCol={setHoveredCol}
+              />
+              {firstTimestamp != null && lastTimestamp != null && (
+                <div className="mt-1">
+                  <ForecastChart
+                    data={days}
+                    lastTimestamp={lastTimestamp}
+                    firstTimestamp={firstTimestamp}
+                    hours={forecastCtrl.forecastData.step.hours}
+                    offset6h={forecastCtrl.forecastData.offset6h}
+                    width={totalWidth}
+                    type="wind"
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          <MyRowsRainCloud data={dataToDisplay} />
-          {firstTimestamp != null && lastTimestamp != null && (
-            <div className="">
-              <ForecastChart
-                data={days}
-                lastTimestamp={lastTimestamp}
-                firstTimestamp={firstTimestamp}
-                hours={forecastCtrl.forecastData.step.hours}
-                offset6h={forecastCtrl.forecastData.offset6h}
-                width={cols * 44}
-                type="rain_cloud"
-              />
-            </div>
-          )}
-          <div className="my-4">
-            <Myhr />
-          </div>
-          <MyRowsWind data={dataToDisplay} />
-          {firstTimestamp != null && lastTimestamp != null && (
-            <div className="mb-3">
-              <ForecastChart
-                data={days}
-                lastTimestamp={lastTimestamp}
-                firstTimestamp={firstTimestamp}
-                hours={forecastCtrl.forecastData.step.hours}
-                offset6h={forecastCtrl.forecastData.offset6h}
-                width={cols * 44}
-                type="wind"
-              />
-            </div>
-          )}
         </div>
-      </>
+      </div>
     );
   },
 );

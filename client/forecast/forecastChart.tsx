@@ -6,10 +6,11 @@ import {
   Line,
   ReferenceLine,
   ResponsiveContainer,
-  // Tooltip,
+  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import moment from "../misc/dateFormatter";
 import MY_COLORS from "../../common/colors";
 import { ForecastDay, ForecastRow } from "./forecastData";
 
@@ -23,16 +24,82 @@ type Props = {
   type: "rain_cloud" | "wind";
 };
 
+function CustomRainCloudTooltip({ active, payload, label }: any) {
+  if (!active || !payload || !payload.length) return null;
+  const timeFormatted = moment(new Date(label)).format("ddd, MMM D • HH:mm");
+
+  const clouds = payload.find((p: any) => p.dataKey === "clouds")?.value;
+  const rain = payload.find((p: any) => p.dataKey === "rain")?.value;
+
+  return (
+    <div className="glass-card !bg-midnight/90 !backdrop-blur-md !border-white/10 !p-2.5 !rounded-xl shadow-xl text-xs flex flex-col gap-1.5 min-w-36 pointer-events-none">
+      <div className="text-light/60 font-medium text-[11px] border-b border-white/5 pb-1 mb-0.5">
+        {timeFormatted}
+      </div>
+      {clouds != null && (
+        <div className="flex items-center justify-between gap-3">
+          <span className="flex items-center gap-1.5 text-light/80">
+            <span
+              className="w-2 h-2 rounded-full inline-block"
+              style={{ backgroundColor: MY_COLORS.light }}
+            />
+            Cloud Cover:
+          </span>
+          <span className="font-semibold text-light tabular-nums">
+            {clouds.toFixed(0)}%
+          </span>
+        </div>
+      )}
+      {rain != null && (
+        <div className="flex items-center justify-between gap-3">
+          <span className="flex items-center gap-1.5 text-light/80">
+            <span
+              className="w-2 h-2 rounded-full inline-block"
+              style={{ backgroundColor: MY_COLORS.blue }}
+            />
+            Precipitation:
+          </span>
+          <span className="font-bold text-blue tabular-nums">
+            {rain.toFixed(1)} mm
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CustomWindTooltip({ active, payload, label }: any) {
+  if (!active || !payload || !payload.length) return null;
+  const timeFormatted = moment(new Date(label)).format("ddd, MMM D • HH:mm");
+  const windSpeed = payload.find((p: any) => p.dataKey === "wind_speed")?.value;
+
+  return (
+    <div className="glass-card !bg-midnight/90 !backdrop-blur-md !border-white/10 !p-2.5 !rounded-xl shadow-xl text-xs flex flex-col gap-1.5 min-w-36 pointer-events-none">
+      <div className="text-light/60 font-medium text-[11px] border-b border-white/5 pb-1 mb-0.5">
+        {timeFormatted}
+      </div>
+      {windSpeed != null && (
+        <div className="flex items-center justify-between gap-3">
+          <span className="flex items-center gap-1.5 text-light/80">
+            <span
+              className="w-2 h-2 rounded-full inline-block"
+              style={{ backgroundColor: MY_COLORS.purple }}
+            />
+            Wind Speed:
+          </span>
+          <span className="font-bold text-light tabular-nums">
+            {windSpeed.toFixed(1)} km/h
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const ForecastChart = observer(
   ({ data, lastTimestamp, firstTimestamp, hours, offset6h, width, type }: Props) => {
     if (firstTimestamp == null || lastTimestamp == null) return null;
     const chdata = [];
-
-    /*
-    function formatLabel(label: string) {
-      return moment(label).format("MMM DD HH:mm");
-    }
-    */
 
     let domainWindMax = 20;
 
@@ -103,27 +170,33 @@ const ForecastChart = observer(
     console.debug("render forecast chart");
     return (
       <div className="flex flex-col">
-        <div className="text-sm text-center text-gray border-gray py-4">
+        <div className="text-xs uppercase tracking-wider font-semibold text-center text-light/70 py-3 flex items-center justify-center gap-2">
           {type === "rain_cloud" ? (
             <>
-              Rain
-              <span className="text-blue border-blue">&#8226;</span>{" "}
-              <span className="">Clouds</span>
-              <span className="text-light border-light">&#8226;</span>
+              <span className="text-blue flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue inline-block" />
+                Rain (mm)
+              </span>
+              <span className="text-light/30">•</span>
+              <span className="text-light/70 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-light/70 inline-block" />
+                Clouds (%)
+              </span>
             </>
           ) : (
-            <>
-              <span className="">Wind speed</span>
-              <span className="text-purple border-purple">&#8226;</span>{" "}
-            </>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple inline-block" />
+              Wind Speed (km/h)
+            </span>
           )}
         </div>
         <div className="w-full" style={{ minWidth: width }}>
-          <ResponsiveContainer width="100%" height={106}>
+          <ResponsiveContainer width="100%" height={115}>
             <ComposedChart
+              syncId="met-forecast-sync"
               data={chdata}
               margin={{
-                top: 0,
+                top: 5,
                 right: 0,
                 left: 0,
                 bottom: 0,
@@ -136,13 +209,13 @@ const ForecastChart = observer(
                     stopColor={MY_COLORS.blue}
                     stopOpacity={0.8}
                   />
-                  <stop offset="95%" stopColor={MY_COLORS.blue} stopOpacity={0} />
+                  <stop offset="95%" stopColor={MY_COLORS.blue} stopOpacity={0.1} />
                 </linearGradient>
                 <linearGradient id="colorClouds" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
                     stopColor={MY_COLORS.light}
-                    stopOpacity={0.3}
+                    stopOpacity={0.25}
                   />
                   <stop offset="95%" stopColor={MY_COLORS.light} stopOpacity={0} />
                 </linearGradient>
@@ -151,7 +224,9 @@ const ForecastChart = observer(
                 <Area
                   type="monotoneX"
                   dataKey="clouds"
+                  name="Cloud Cover"
                   stroke={MY_COLORS.light}
+                  strokeOpacity={0.5}
                   fillOpacity={1}
                   fill="url(#colorClouds)"
                   isAnimationActive={false}
@@ -162,7 +237,9 @@ const ForecastChart = observer(
                 <Area
                   type="step"
                   dataKey="rain"
+                  name="Precipitation"
                   stroke={MY_COLORS.blue}
+                  strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorRain)"
                   isAnimationActive={false}
@@ -173,6 +250,7 @@ const ForecastChart = observer(
                 <Line
                   type="monotoneX"
                   dataKey="wind_speed"
+                  name="Wind Speed"
                   stroke={MY_COLORS.purple}
                   dot={false}
                   strokeWidth={2}
@@ -193,7 +271,7 @@ const ForecastChart = observer(
                     offset: -5,
                     children: `${v}`,
                     fill: "#fff",
-                    fillOpacity: 0.3,
+                    fillOpacity: 0.4,
                     fontSize: 10,
                   }}
                 />
@@ -215,13 +293,14 @@ const ForecastChart = observer(
               {type === "wind" && (
                 <YAxis yAxisId="wind_speed" hide type="number" domain={[0, domainWindMax]} />
               )}
-              {/* 
               <Tooltip
-                labelStyle={{ color: "black" }}
-                itemStyle={{ color: "black" }}
-                // eslint-disable-next-line react/jsx-no-bind
-                labelFormatter={formatLabel}
-            /> */}
+                content={type === "rain_cloud" ? <CustomRainCloudTooltip /> : <CustomWindTooltip />}
+                cursor={{
+                  stroke: "rgba(255, 255, 255, 0.25)",
+                  strokeWidth: 1,
+                  strokeDasharray: "3 3",
+                }}
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </div>

@@ -1,5 +1,3 @@
-import { Listbox } from "@headlessui/react";
-import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import React from "react";
 import { observer } from "mobx-react";
 import ForecastCtrl from "./forecastCtrl";
@@ -10,37 +8,27 @@ type StepsListProps = {
 };
 
 const ForecastStepsList = observer(({ forecastCtrl }: StepsListProps) => (
-  <Listbox
-    value={forecastCtrl.forecastData.step}
-    onChange={(e) => {
-      forecastCtrl.forecastData.setStep(e);
-    }}
-  >
-    <div className="relative">
-      <Listbox.Button className="glass-select relative w-full min-w-32 !py-1.5 !pl-3 !pr-8">
-        <span className="block truncate">
-          {forecastCtrl.forecastData.step.display}
-        </span>
-        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-          <ChevronUpDownIcon
-            className="h-5 w-5 text-light opacity-60"
-            aria-hidden="true"
-          />
-        </span>
-      </Listbox.Button>
-      <Listbox.Options className="glass-dropdown absolute z-50 overflow-auto mt-1 w-full p-1 text-light">
-        {forecastHours.map((step) => (
-          <Listbox.Option
-            key={step.hours}
-            className="flex w-full items-center rounded-lg px-2 py-1.5 text-sm text-light hover:bg-white/10 cursor-pointer"
-            value={step}
-          >
-            {step.display}
-          </Listbox.Option>
-        ))}
-      </Listbox.Options>
-    </div>
-  </Listbox>
+  <div className="inline-flex p-1 rounded-xl bg-white/[0.04] border border-white/10 shadow-inner backdrop-blur-md">
+    {forecastHours.map((step) => {
+      const active = forecastCtrl.forecastData.step.hours === step.hours;
+      return (
+        <button
+          key={step.hours}
+          type="button"
+          onClick={() => {
+            forecastCtrl.forecastData.setStep(step);
+          }}
+          className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${
+            active
+              ? "bg-cyan/20 text-cyan border border-cyan/40 shadow-sm font-semibold"
+              : "text-light/60 hover:text-light hover:bg-white/5 border border-transparent"
+          }`}
+        >
+          {step.display}
+        </button>
+      );
+    })}
+  </div>
 ));
 
 export default ForecastStepsList;
