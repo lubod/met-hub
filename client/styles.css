@@ -3,7 +3,13 @@
 @import "tailwindcss/utilities";
 
 /* ── Natural Sky-Inspired Background & Modern Typography ──────── */
-html, body {
+html {
+  overflow-x: clip;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+body {
   background-color: #0b0d14;
   margin: 0;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -12,7 +18,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   color: #e8e6e3;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* ── Background layers ───────────────────────────────────────── */
@@ -23,10 +29,8 @@ html, body {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 20% 0%, rgba(96, 125, 139, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(130, 152, 145, 0.08) 0%, transparent 50%);
-  filter: blur(40px);
-  animation: meshShift 40s ease-in-out infinite alternate;
+    radial-gradient(ellipse 80% 50% at 20% 0%, rgba(96, 125, 139, 0.14) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 80% 100%, rgba(130, 152, 145, 0.1) 0%, transparent 70%);
 }
 
 /* Soft hill silhouette at the bottom */
@@ -49,11 +53,6 @@ html, body {
 .App {
   position: relative;
   z-index: 2;
-}
-
-@keyframes meshShift {
-  0% { transform: scale(1) translate(0, 0); }
-  100% { transform: scale(1.06) translate(1.5%, 1.5%); }
 }
 
 /* ── Glassmorphism 2.0 cards ─────────────────────────────────── */
@@ -184,12 +183,13 @@ html, body {
   border-radius: 50%;
   background: inherit;
   opacity: 0.6;
-  animation: pulsePing 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+  animation: pulsePing 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 @keyframes pulsePing {
   0% { transform: scale(1); opacity: 0.8; }
-  75%, 100% { transform: scale(2.5); opacity: 0; }
+  70%, 100% { transform: scale(2.2); opacity: 0; }
 }
 
 /* ── Divider ─────────────────────────────────────────────────── */

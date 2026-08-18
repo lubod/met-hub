@@ -12,7 +12,7 @@ type Props = {
 const ForecastHeader = observer(({ appContext }: Props) => (
   <div className="flex flex-col gap-4">
     <div className="flex flex-row items-center justify-between">
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3">
         <Text>METEO FORECAST</Text>
         <span className="live-pulse-badge">
           <span className="live-pulse-dot" />
@@ -22,7 +22,7 @@ const ForecastHeader = observer(({ appContext }: Props) => (
       <button
         type="button"
         aria-label="Reload"
-        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-light/70 hover:text-light transition-all border border-white/5 cursor-pointer"
+        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-light/70 hover:text-light transition-all border border-white/10 cursor-pointer shadow-sm"
         onClick={() => {
           appContext.forecastCtrl.fetchData();
           appContext.forecastCtrl.fetchAstronomicalData(new Date());
@@ -35,8 +35,8 @@ const ForecastHeader = observer(({ appContext }: Props) => (
         />
       </button>
     </div>
-    <div className="grid grid-cols-2 gap-3">
-      <div className="glass-card !p-3 rounded-xl border border-white/5 flex flex-col justify-center">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="glass-card !p-4 rounded-xl border border-white/10 flex flex-col justify-center shadow-sm">
         <Time
           label="Sunrise"
           time={appContext.forecastCtrl.forecastData.sunrise}
@@ -44,7 +44,7 @@ const ForecastHeader = observer(({ appContext }: Props) => (
           old={false}
         />
       </div>
-      <div className="glass-card !p-3 rounded-xl border border-white/5 flex flex-col justify-center">
+      <div className="glass-card !p-4 rounded-xl border border-white/10 flex flex-col justify-center shadow-sm">
         <Time
           label="Sunset"
           time={appContext.forecastCtrl.forecastData.sunset}

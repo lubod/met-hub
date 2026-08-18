@@ -12,7 +12,7 @@ type Props = {
 };
 
 const Forecast = observer(({ appContext, className }: Props) => (
-  <Container className={className}>
+  <Container className={`flex flex-col gap-6 ${className}`}>
     <ForecastHeader appContext={appContext} />
     <Myhr />
     <ForecastCharts
@@ -22,13 +22,15 @@ const Forecast = observer(({ appContext, className }: Props) => (
       forecastCtrl={appContext.forecastCtrl}
     />
     <Myhr />
-    <div className="flex flex-row justify-center text-sm text-gray gap-1">
-      <div>Data & icons source:</div>
+    <div className="flex flex-row justify-center text-xs text-light/50 gap-1.5 pt-1 pb-2">
+      <span>Data & icons source:</span>
       <a
-        className="text-cyan/70 hover:text-cyan underline"
+        className="text-cyan/80 hover:text-cyan underline font-medium transition-colors"
         href="https://www.met.no/en"
+        target="_blank"
+        rel="noopener noreferrer"
       >
-        Norwegian Meteo Institute
+        Norwegian Meteorological Institute
       </a>
     </div>
   </Container>

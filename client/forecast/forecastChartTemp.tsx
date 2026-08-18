@@ -137,89 +137,89 @@ const ForecastChartTemp = observer(
           <span>Temperature Curve</span>
           <span className="w-1.5 h-1.5 rounded-full bg-orange inline-block" />
         </div>
-        <div className="w-full" style={{ minWidth: width }}>
-          <ResponsiveContainer width="100%" height={115}>
-            <ComposedChart
-              syncId="met-forecast-sync"
-              data={chdata}
-              margin={{
-                top: 5,
-                right: 0,
-                left: 0,
-                bottom: 0,
-              }}
-            >
-              {refLines.map((v) => (
-                <ReferenceLine
-                  key={v}
-                  y={v}
-                  yAxisId="temperature"
-                  stroke={getStroke(v)}
-                  strokeOpacity={v === 0 ? 0.8 : 0.35}
-                  strokeDasharray="4 2"
-                  label={{
-                    position: "left",
-                    offset: -5,
-                    children: `${v}°`,
-                    fill: getStroke(v),
-                    fillOpacity: v === 0 ? 0.9 : 0.6,
-                    fontSize: 10,
-                  }}
-                />
-              ))}
-              <Area
-                type="monotoneX"
-                dataKey="temperature"
-                name="Temperature"
-                stroke={MY_COLORS.orange}
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorUv)"
-                isAnimationActive={false}
+        <div style={{ width, minWidth: width, maxWidth: width }}>
+          <ComposedChart
+            syncId="met-forecast-sync"
+            width={width}
+            height={120}
+            data={chdata}
+            margin={{
+              top: 5,
+              right: 0,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            {refLines.map((v) => (
+              <ReferenceLine
+                key={v}
+                y={v}
                 yAxisId="temperature"
-              />
-              <defs>
-                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor={MY_COLORS.orange}
-                    stopOpacity={0.6}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor={MY_COLORS.orange}
-                    stopOpacity={0.02}
-                  />
-                </linearGradient>
-              </defs>
-              <XAxis
-                dataKey="timestamp"
-                hide
-                axisLine={false}
-                domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
-                scale="time"
-                type="number"
-              />
-              <YAxis
-                yAxisId="temperature"
-                hide
-                type="number"
-                domain={[domainTempMin, domainTempMax]}
-              />
-              <Tooltip
-                content={<CustomTempTooltip />}
-                cursor={{
-                  stroke: "rgba(255, 255, 255, 0.25)",
-                  strokeWidth: 1,
-                  strokeDasharray: "3 3",
+                stroke={getStroke(v)}
+                strokeOpacity={v === 0 ? 0.8 : 0.35}
+                strokeDasharray="4 2"
+                label={{
+                  position: "left",
+                  offset: -5,
+                  children: `${v}°`,
+                  fill: getStroke(v),
+                  fillOpacity: v === 0 ? 0.9 : 0.6,
+                  fontSize: 10,
                 }}
               />
-            </ComposedChart>
-          </ResponsiveContainer>
+            ))}
+            <Area
+              type="monotoneX"
+              dataKey="temperature"
+              name="Temperature"
+              stroke={MY_COLORS.orange}
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorUv)"
+              isAnimationActive={false}
+              yAxisId="temperature"
+            />
+            <defs>
+              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor={MY_COLORS.orange}
+                  stopOpacity={0.6}
+                />
+                <stop
+                  offset="95%"
+                  stopColor={MY_COLORS.orange}
+                  stopOpacity={0.02}
+                />
+              </linearGradient>
+            </defs>
+            <XAxis
+              dataKey="timestamp"
+              hide
+              axisLine={false}
+              domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
+              scale="time"
+              type="number"
+            />
+            <YAxis
+              yAxisId="temperature"
+              hide
+              type="number"
+              domain={[domainTempMin, domainTempMax]}
+            />
+            <Tooltip
+              content={<CustomTempTooltip />}
+              cursor={{
+                stroke: "rgba(255, 255, 255, 0.25)",
+                strokeWidth: 1,
+                strokeDasharray: "3 3",
+              }}
+            />
+          </ComposedChart>
         </div>
       </div>
     );
   },
 );
 
-export default ForecastChartTemp;;
+export default ForecastChartTemp;

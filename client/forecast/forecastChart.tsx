@@ -190,119 +190,144 @@ const ForecastChart = observer(
             </span>
           )}
         </div>
-        <div className="w-full" style={{ minWidth: width }}>
-          <ResponsiveContainer width="100%" height={115}>
-            <ComposedChart
-              syncId="met-forecast-sync"
-              data={chdata}
-              margin={{
-                top: 5,
-                right: 0,
-                left: 0,
-                bottom: 0,
-              }}
-            >
-              <defs>
-                <linearGradient id="colorRain" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor={MY_COLORS.blue}
-                    stopOpacity={0.8}
-                  />
-                  <stop offset="95%" stopColor={MY_COLORS.blue} stopOpacity={0.1} />
-                </linearGradient>
-                <linearGradient id="colorClouds" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor={MY_COLORS.light}
-                    stopOpacity={0.25}
-                  />
-                  <stop offset="95%" stopColor={MY_COLORS.light} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              {type === "rain_cloud" && (
-                <Area
-                  type="monotoneX"
-                  dataKey="clouds"
-                  name="Cloud Cover"
-                  stroke={MY_COLORS.light}
-                  strokeOpacity={0.5}
-                  fillOpacity={1}
-                  fill="url(#colorClouds)"
-                  isAnimationActive={false}
-                  yAxisId="clouds"
+        <div style={{ width, minWidth: width, maxWidth: width }}>
+          <ComposedChart
+            syncId="met-forecast-sync"
+            width={width}
+            height={120}
+            data={chdata}
+            margin={{
+              top: 5,
+              right: 0,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <defs>
+              <linearGradient id="colorRain" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor={MY_COLORS.blue}
+                  stopOpacity={0.8}
                 />
-              )}
-              {type === "rain_cloud" && (
-                <Area
-                  type="step"
-                  dataKey="rain"
-                  name="Precipitation"
-                  stroke={MY_COLORS.blue}
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#colorRain)"
-                  isAnimationActive={false}
-                  yAxisId="rain"
+                <stop offset="95%" stopColor={MY_COLORS.blue} stopOpacity={0.1} />
+              </linearGradient>
+              <linearGradient id="colorClouds" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor={MY_COLORS.light}
+                  stopOpacity={0.25}
                 />
-              )}
-              {type === "wind" && (
-                <Line
-                  type="monotoneX"
-                  dataKey="wind_speed"
-                  name="Wind Speed"
-                  stroke={MY_COLORS.purple}
-                  dot={false}
-                  strokeWidth={2}
-                  isAnimationActive={false}
-                  yAxisId="wind_speed"
-                />
-              )}
-              {type === "wind" && refLines.map((v) => (
-                <ReferenceLine
-                  key={v}
-                  y={v}
-                  yAxisId="wind_speed"
-                  stroke="#fff"
-                  strokeOpacity={0.2}
-                  strokeDasharray="4 2"
-                  label={{
-                    position: "left",
-                    offset: -5,
-                    children: `${v}`,
-                    fill: "#fff",
-                    fillOpacity: 0.4,
-                    fontSize: 10,
-                  }}
-                />
-              ))}
-              <XAxis
-                dataKey="timestamp"
-                hide
-                axisLine={false}
-                domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
-                scale="time"
-                type="number"
+                <stop offset="95%" stopColor={MY_COLORS.light} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            {type === "rain_cloud" && (
+              <Area
+                type="monotoneX"
+                dataKey="clouds"
+                name="Cloud Cover"
+                stroke={MY_COLORS.light}
+                strokeOpacity={0.5}
+                fillOpacity={1}
+                fill="url(#colorClouds)"
+                isAnimationActive={false}
+                yAxisId="clouds"
               />
-              {type === "rain_cloud" && (
-                <>
-                  <YAxis yAxisId="rain" hide type="number" domain={[0, 5]} />
-                  <YAxis yAxisId="clouds" hide type="number" domain={[0, 100]} />
-                </>
-              )}
-              {type === "wind" && (
-                <YAxis yAxisId="wind_speed" hide type="number" domain={[0, domainWindMax]} />
-              )}
-              <Tooltip
-                content={type === "rain_cloud" ? <CustomRainCloudTooltip /> : <CustomWindTooltip />}
-                cursor={{
-                  stroke: "rgba(255, 255, 255, 0.25)",
-                  strokeWidth: 1,
-                  strokeDasharray: "3 3",
+            )}
+            {type === "rain_cloud" && (
+              <Area
+                type="step"
+                dataKey="rain"
+                name="Precipitation"
+                stroke={MY_COLORS.blue}
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorRain)"
+                isAnimationActive={false}
+                yAxisId="rain"
+              />
+            )}
+            {type === "wind" && (
+              <Line
+                type="monotoneX"
+                dataKey="wind_speed"
+                name="Wind Speed"
+                stroke={MY_COLORS.purple}
+                dot={false}
+                strokeWidth={2}
+                isAnimationActive={false}
+                yAxisId="wind_speed"
+              />
+            )}
+            {type === "wind" && refLines.map((v) => (
+              <ReferenceLine
+                key={v}
+                y={v}
+                yAxisId="wind_speed"
+                stroke="#fff"
+                strokeOpacity={0.2}
+                strokeDasharray="4 2"
+                label={{
+                  position: "left",
+                  offset: -5,
+                  children: `${v}`,
+                  fill: "#fff",
+                  fillOpacity: 0.4,
+                  fontSize: 10,
                 }}
               />
-            </ComposedChart>
-          </ResponsiveContainer>
+            ))}
+            <XAxis
+              dataKey="timestamp"
+              hide
+              axisLine={false}
+              domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
+              scale="time"
+              type="number"
+            />
+            {type === "rain_cloud" && (
+              <>
+                <YAxis
+                  yAxisId="rain"
+                  hide
+                  type="number"
+                  domain={[0, 5]}
+                />
+                <YAxis
+                  yAxisId="clouds"
+                  hide
+                  type="number"
+                  domain={[0, 100]}
+                />
+                <Tooltip
+                  content={<CustomRainCloudTooltip />}
+                  cursor={{
+                    stroke: "rgba(255, 255, 255, 0.25)",
+                    strokeWidth: 1,
+                    strokeDasharray: "3 3",
+                  }}
+                />
+              </>
+            )}
+            {type === "wind" && (
+              <>
+                <YAxis
+                  yAxisId="wind_speed"
+                  hide
+                  type="number"
+                  domain={[0, domainWindMax]}
+                />
+                <Tooltip
+                  content={<CustomWindTooltip />}
+                  cursor={{
+                    stroke: "rgba(255, 255, 255, 0.25)",
+                    strokeWidth: 1,
+                    strokeDasharray: "3 3",
+                  }}
+                />
+              </>
+            )}
+          </ComposedChart>
         </div>
       </div>
     );
