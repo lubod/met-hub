@@ -22,14 +22,14 @@ async function sendTestData() {
     winddir: 120,
     windspeedmph: 5.4,
     windgustmph: 8.2,
-    maxdailygust: 12.0,
+    maxdailygust: 14.5,
     rainratein: 0.05,
-    eventrainin: 0.1,
-    hourlyrainin: 0.15,
-    dailyrainin: 0.2,
-    weeklyrainin: 0.5,
-    monthlyrainin: 1.2,
-    totalrainin: 3.4,
+    eventrainin: 0.15,
+    hourlyrainin: 0.2,
+    dailyrainin: 0.35,
+    weeklyrainin: 0.85,
+    monthlyrainin: 2.1,
+    totalrainin: 5.8,
     solarradiation: 450.0,
     uv: 4
   };
@@ -64,11 +64,11 @@ async function sendTestData() {
     windgustmph: "6.8",
     winddir: "240",
     rainin: "0.0",
-    dailyrainin: "0.1",
-    solarradiation: "320.0",
-    UV: "3.0",
-    indoortempf: "71.2",
-    indoorhumidity: "52"
+    dailyrainin: "0.45",
+    solarradiation: "380.0",
+    UV: "4.0",
+    indoortempf: "71.6",
+    indoorhumidity: "48"
   });
 
   console.log("Sending GET update for station2...");
@@ -117,11 +117,23 @@ async function sendTestData() {
     dateutc: dateUtcStr,
     tempc: "21.2",
     humidity: "60",
+    tempinc: "22.5",
+    humidityin: "49",
     windspeedkmh: "9.6",
     windgustkmh: "14.4",
+    maxdailygustkmh: "24.8",
+    winddir: "160",
     baromabshpa: "1012.5",
+    baromrelhpa: "1015.8",
     rainratemm: "0.0",
-    dailyrainmm: "3.8"
+    eventrainmm: "3.2",
+    hourlyrainmm: "4.5",
+    dailyrainmm: "8.6",
+    weeklyrainmm: "18.2",
+    monthlyrainmm: "42.0",
+    totalrainmm: "115.4",
+    solarradiation: "520.0",
+    uv: "5"
   };
 
   console.log("Sending POST update for Ecowitt customized server...");
@@ -143,13 +155,25 @@ async function sendTestData() {
     timestamp: now.toISOString(),
     temp: 23.5,
     humidity: 48,
+    tempin: 21.8,
+    humidityin: 46,
     windspeed: 12.4,
+    windgust: 18.2,
+    maxdailygust: 26.5,
+    winddir: 290,
     feelslike: 22.8,
     dewpt: 11.2,
     pressurerel: 1012.8,
     pressureabs: 1008.2,
     rainrate: 0.0,
-    dailyrain: 1.2
+    eventrain: 2.8,
+    hourlyrain: 3.6,
+    dailyrain: 6.4,
+    weeklyrain: 14.8,
+    monthlyrain: 36.2,
+    totalrain: 98.0,
+    solarradiation: 510.0,
+    uv: 5
   };
 
   console.log("Sending POST update for JSON protocol...");

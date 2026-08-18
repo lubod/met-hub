@@ -16,23 +16,25 @@ type Props = {
   className?: string;
 };
 
-const Station = observer(({ appContext, className }: Props) => (
-  /* console.debug( // todo
-    "station render",
-    appContext.authCtrl.authData.isAuth,
-    appContext.cCtrl.stationData.oldData,
-    appContext.cCtrl.stationData.station
-  ); */
+const Station = observer(({ appContext, className }: Props) => {
+  const isIndoor =
+    appContext.authCtrl.authData.isAuth && appContext.cCtrl.stationData.inData;
 
-  <Container className={className}>
-    <StationHeader appContext={appContext} />
-    <Myhr />
-    <StationOutIn appContext={appContext} />
-    <Myhr />
-    <WindRose appContext={appContext} />
-    <Myhr />
-    <StationRain appContext={appContext} />
-  </Container>
-));
+  return (
+    <Container className={className}>
+      <StationHeader appContext={appContext} />
+      <Myhr />
+      <StationOutIn appContext={appContext} />
+      {!isIndoor && (
+        <>
+          <Myhr />
+          <WindRose appContext={appContext} />
+          <Myhr />
+          <StationRain appContext={appContext} />
+        </>
+      )}
+    </Container>
+  );
+});
 
 export default Station;

@@ -85,27 +85,34 @@ describe("StationGarni1025Arcus.decodeData — unit conversions", () => {
   });
 });
 
-describe("StationGarni1025Arcus.decodeData — null fields", () => {
-  it("maxdailygust is null (not in Garni protocol)", () => {
+describe("StationGarni1025Arcus.decodeData — standard vs extended fields", () => {
+  it("maxdailygust, eventrain, hourlyrain, weeklyrain, monthlyrain, totalrain default to null when omitted", () => {
     const { decoded } = station.decodeData(baseRaw, "Test");
     expect(decoded.maxdailygust).toBeNull();
-  });
-
-  it("eventrain is null (not in Garni protocol)", () => {
-    const { decoded } = station.decodeData(baseRaw, "Test");
     expect(decoded.eventrain).toBeNull();
-  });
-
-  it("hourlyrain is null (not in Garni protocol)", () => {
-    const { decoded } = station.decodeData(baseRaw, "Test");
     expect(decoded.hourlyrain).toBeNull();
-  });
-
-  it("weeklyrain, monthlyrain, totalrain are null", () => {
-    const { decoded } = station.decodeData(baseRaw, "Test");
     expect(decoded.weeklyrain).toBeNull();
     expect(decoded.monthlyrain).toBeNull();
     expect(decoded.totalrain).toBeNull();
+  });
+
+  it("decodes optional extended rain and maxdailygust when present in payload", () => {
+    const extended = {
+      ...baseRaw,
+      maxdailygustmph: 15.0, // 24.0 km/h
+      eventrainin: 0.1,      // 2.54 -> 2.5 mm
+      hourlyrainin: 0.2,     // 5.08 -> 5.1 mm
+      weeklyrainin: 0.8,     // 20.32 -> 20.3 mm
+      monthlyrainin: 1.5,    // 38.1 mm
+      totalrainin: 4.0,      // 101.6 mm
+    };
+    const { decoded } = station.decodeData(extended, "Test");
+    expect(decoded.maxdailygust).toBe(24.0);
+    expect(decoded.eventrain).toBeCloseTo(2.5, 1);
+    expect(decoded.hourlyrain).toBeCloseTo(5.1, 1);
+    expect(decoded.weeklyrain).toBeCloseTo(20.3, 1);
+    expect(decoded.monthlyrain).toBe(38.1);
+    expect(decoded.totalrain).toBe(101.6);
   });
 });
 

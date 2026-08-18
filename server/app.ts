@@ -84,7 +84,14 @@ app.use(router);
 
 // eslint-disable-next-line no-unused-vars
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  const code = err.code || err.status || err.statusCode || 500;
+  const code =
+    typeof err.statusCode === "number"
+      ? err.statusCode
+      : typeof err.status === "number"
+      ? err.status
+      : typeof err.code === "number"
+      ? err.code
+      : 500;
   console.error("ERROR:", code, err.msg ?? err.message, err.stack);
   res.status(code).json({ code, msg: err.msg ?? err.message });
 });

@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from "react";
 import { observer } from "mobx-react";
-import { Switch } from "@headlessui/react";
 import { AppContext } from "..";
 import Text from "../misc/text";
 import StationOut from "./stationOut";
@@ -11,39 +10,41 @@ type Props = {
   appContext: AppContext;
 };
 
-const StationOutIn = observer(({ appContext }: Props) => (
-  <div className="flex flex-col gap-4">
-    <div className="flex flex-row justify-center gap-2">
-      <Text>DATA</Text>
-      {appContext.authCtrl.authData.isAuth && (
-        <div className="flex flex-row gap-2">
-          <div className="flex flex-col place-content-center">
-            <Switch
-              checked={appContext.cCtrl.stationData.inData}
-              onChange={(e) => {
-                appContext.cCtrl.stationData.setInData(e);
+const StationOutIn = observer(({ appContext }: Props) => {
+  const {isAuth} = appContext.authCtrl.authData;
+  const isIndoor = isAuth && appContext.cCtrl.stationData.inData;
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-row items-center justify-between">
+        <Text>CONDITIONS</Text>
+        {isAuth && (
+          <div className="flex items-center p-0.5 rounded-lg bg-black/30 border border-white/[0.06]">
+            <button
+              type="button"
+              className={`segmented-btn ${!isIndoor ? "active" : ""}`}
+              onClick={() => {
+                appContext.cCtrl.stationData.setInData(false);
               }}
-              className="bg-white/20 border border-white/20 relative inline-flex h-[16px] w-[32px] shrink-0 cursor-pointer rounded-full ease-in-out"
             >
-              {!appContext.cCtrl.stationData.inData && (
-                <span className="translate-x-0 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-cyan shadow-lg ring-0 transition duration-200 ease-in-out" />
-              )}
-              {appContext.cCtrl.stationData.inData && (
-                <span className="translate-x-4 pointer-events-none inline-block h-[16px] w-[16px] transform rounded-full bg-cyan shadow-lg ring-0 transition duration-200 ease-in-out" />
-              )}
-            </Switch>
+              Outdoor
+            </button>
+            <button
+              type="button"
+              className={`segmented-btn ${isIndoor ? "active" : ""}`}
+              onClick={() => {
+                appContext.cCtrl.stationData.setInData(true);
+              }}
+            >
+              Indoor
+            </button>
           </div>
-          <div className="metric-label">OUT / IN</div>
-        </div>
-      )}
+        )}
+      </div>
+      {!isIndoor && <StationOut appContext={appContext} />}
+      {isIndoor && <StationIn appContext={appContext} />}
     </div>
-    {appContext.cCtrl.stationData.inData === false && (
-      <StationOut appContext={appContext} />
-    )}
-    {appContext.cCtrl.stationData.inData === true && (
-      <StationIn appContext={appContext} />
-    )}
-  </div>
-));
+  );
+});
 
 export default StationOutIn;

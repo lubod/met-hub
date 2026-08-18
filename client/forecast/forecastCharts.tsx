@@ -75,9 +75,9 @@ function Cell({
 
   return (
     <div
-      className="text-center text-light border-s text-sm py-1.5 basis-full min-w-11"
+      className="text-center text-light/90 border-s text-xs py-1.5 basis-full min-w-11 font-medium select-none transition-colors"
       style={{
-        borderLeftColor: hex,
+        borderLeftColor: "rgba(255, 255, 255, 0.06)",
         backgroundColor:
           bgOpacity > 0
             ? `${hex}${Math.round(bgOpacity * 255)
@@ -311,7 +311,7 @@ const ForecastCharts = observer(
         <div className="mb-4 flex flex-row justify-center">
           <ForecastStepsList forecastCtrl={forecastCtrl} />
         </div>
-        <div className="flex flex-col overflow-x-auto">
+        <div className="flex flex-col overflow-x-auto pb-2 scroll-smooth">
           <MyRows1 data={dataToDisplay} />
           {firstTimestamp != null && lastTimestamp != null && (
             <div className="">

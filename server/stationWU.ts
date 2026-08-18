@@ -78,7 +78,7 @@ export default class StationWU extends StationCommon {
     const windgustRaw = num(data, ["windgustmph"]);
     const windgust = conv(windgustRaw, TO_KM, 1);
 
-    const maxdailygustRaw = num(data, ["maxdailygust"]);
+    const maxdailygustRaw = num(data, ["maxdailygust", "maxdailygustmph"]);
     const maxdailygust = conv(maxdailygustRaw, TO_KM, 1);
 
     const rainrateRaw = num(data, ["rainratein", "rainin"]);

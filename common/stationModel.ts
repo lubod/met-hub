@@ -50,6 +50,13 @@ export interface IStationGarni1025ArcusDataRaw {
   UV: number;
   indoortempf: number;
   indoorhumidity: number;
+  maxdailygust?: number;
+  maxdailygustmph?: number;
+  eventrainin?: number;
+  hourlyrainin?: number;
+  weeklyrainin?: number;
+  monthlyrainin?: number;
+  totalrainin?: number;
 }
 
 export interface IStationGoGenMe3900DataRaw {

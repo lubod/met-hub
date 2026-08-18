@@ -12,6 +12,16 @@ type Props = {
   appContext: AppContext;
 };
 
+function getCardinal(deg: number | null): string {
+  if (deg == null) return "–";
+  const cardinals = [
+    "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+    "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
+  ];
+  const val = Math.floor((deg / 22.5) + 0.5);
+  return cardinals[val % 16];
+}
+
 const WindRose = observer(({ appContext }: Props) => {
   function polarToCartesian(
     centerX: number,
@@ -54,7 +64,6 @@ const WindRose = observer(({ appContext }: Props) => {
     return d;
   }
 
-  // console.debug('render windrose', props);
   const gustTrend = appContext.cCtrl.stationData.trendData.windgust;
   const speedTrend = appContext.cCtrl.stationData.trendData.windspeed;
   const dirTrend = appContext.cCtrl.stationData.trendData.winddir;
@@ -65,11 +74,12 @@ const WindRose = observer(({ appContext }: Props) => {
   const { color } = STATION_MEASUREMENTS_DESC.WINDDIR;
   const old = appContext.cCtrl.stationData.oldData;
 
-  const width = 200;
+  const width = 210;
   const height = width;
-  const offset = 30;
+  const center = width / 2;
+  const offset = 26;
   const radius = width / 2 - offset;
-  const dirTrendMap = new Map();
+  const dirTrendMap = new Map<number, number>();
   let dirTrendMaxCount = 1;
 
   dirTrend?.forEach((val) => {
@@ -77,7 +87,7 @@ const WindRose = observer(({ appContext }: Props) => {
     const diri = Math.floor((Math.floor(val / 22.5) + 1) / 2) % 8;
 
     if (dirTrendMap.has(diri)) {
-      const count = dirTrendMap.get(diri) + 1;
+      const count = (dirTrendMap.get(diri) ?? 0) + 1;
       dirTrendMap.set(diri, count);
       if (count > dirTrendMaxCount) {
         dirTrendMaxCount = count;
@@ -87,116 +97,211 @@ const WindRose = observer(({ appContext }: Props) => {
     }
   });
 
+  const cardinal = getCardinal(dir);
+
   return (
-    <div className="flex flex-row">
-      <div className="flex flex-col py-4 basis-2/3 place-items-center">
+    <div className="flex flex-row items-center justify-between gap-2">
+      {/* ── Left: Technical Radar Dial ─────────────────────────── */}
+      <div className="flex flex-col py-1 basis-3/5 items-center justify-center">
         <div
-          className="w-full max-w-[200px] aspect-square"
-          style={{ cursor: "pointer" }}
+          role="button"
+          tabIndex={0}
+          className="w-full max-w-[210px] aspect-square relative select-none transition-transform hover:scale-[1.02] cursor-pointer"
           onClick={() =>
             appContext.setMeasurementAndLoad(STATION_MEASUREMENTS_DESC.WINDDIR)
           }
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              appContext.setMeasurementAndLoad(STATION_MEASUREMENTS_DESC.WINDDIR);
+            }
+          }}
         >
           <svg
             viewBox={`0 0 ${width} ${height}`}
-            className="w-full h-full"
+            className="w-full h-full overflow-visible"
           >
+            <defs>
+              <filter id="wind-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor={color} floodOpacity="0.5" />
+              </filter>
+            </defs>
+
+            {/* Radar Background grid */}
             <circle
-              cx={width / 2}
-              cy={height / 2}
+              cx={center}
+              cy={center}
               r={radius}
-              stroke="rgba(255,255,255,0.2)"
+              stroke="rgba(255,255,255,0.12)"
+              strokeWidth="1"
+              fill="rgba(18, 22, 33, 0.4)"
+            />
+            <circle
+              cx={center}
+              cy={center}
+              r={radius * 0.65}
+              stroke="rgba(255,255,255,0.06)"
+              strokeWidth="1"
+              strokeDasharray="2 3"
               fill="none"
             />
-            {[0, 45, 90, 135, 180, 225, 270, 315].map((value) => (
-              <line
-                key={value}
-                x1={width / 2}
-                y1={offset + 4}
-                x2={width / 2}
-                y2={offset + 10}
-                stroke="rgba(255,255,255,0.2)"
-                transform={`rotate(${value} ${width / 2} ${width / 2})`}
-              />
-            ))}
-            {dir != null && (
-              <polygon
-                points={`${width / 2 - 5} ${offset + 14}, ${width / 2} ${
-                  offset + 50
-                }, ${width / 2 + 5} ${offset + 14}`}
-                fill={color}
-                stroke={color}
-                transform={`rotate(${dir} ${width / 2} ${height / 2})`}
-              />
+
+            {/* Crosshair Lines */}
+            <line
+              x1={center}
+              y1={center - radius}
+              x2={center}
+              y2={center + radius}
+              stroke="rgba(255,255,255,0.06)"
+              strokeWidth="1"
+            />
+            <line
+              x1={center - radius}
+              y1={center}
+              x2={center + radius}
+              y2={center}
+              stroke="rgba(255,255,255,0.06)"
+              strokeWidth="1"
+            />
+
+            {/* Radial 15° & 45° Tick Marks */}
+            {Array.from({ length: 24 }).map((_, i) => {
+              const deg = i * 15;
+              const isMajor = deg % 45 === 0;
+              const tickLen = isMajor ? 7 : 3.5;
+              const tickWidth = isMajor ? 1.5 : 1;
+              const tickStroke = isMajor ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.12)";
+              return (
+                <line
+                  key={deg}
+                  x1={center}
+                  y1={center - radius}
+                  x2={center}
+                  y2={center - radius + tickLen}
+                  stroke={tickStroke}
+                  strokeWidth={tickWidth}
+                  transform={`rotate(${deg} ${center} ${center})`}
+                />
+              );
+            })}
+
+            {/* Historical Wind Direction Density Arcs */}
+            {[...dirTrendMap.keys()].map((diri) =>
+              [...Array(Math.floor((dirTrendMap.get(diri) ?? 0) / 4 + 1)).keys()].map(
+                (count) => (
+                  <path
+                    key={`${diri}-${count}`}
+                    d={describeArc(
+                      center,
+                      center,
+                      radius - 9 - count * 2,
+                      diri * 45 - 20,
+                      diri * 45 + 20,
+                    )}
+                    stroke={color}
+                    strokeWidth={2.5}
+                    strokeOpacity={0.6}
+                    fill="none"
+                  />
+                ),
+              ),
             )}
+
+            {/* Active Wind Direction Arrow / Needle */}
+            {dir != null && (
+              <g transform={`rotate(${dir} ${center} ${center})`} filter="url(#wind-glow)">
+                {/* Needle path */}
+                <polygon
+                  points={`${center},${center - radius + 4} ${center - 5},${center - 28} ${center + 5},${center - 28}`}
+                  fill={color}
+                />
+                {/* Opposing counterweight needle */}
+                <polygon
+                  points={`${center},${center + 26} ${center - 3},${center + 14} ${center + 3},${center + 14}`}
+                  fill="rgba(255,255,255,0.3)"
+                />
+              </g>
+            )}
+
+            {/* Center Digital Readout Disc */}
+            <circle
+              cx={center}
+              cy={center}
+              r={24}
+              fill="#0e121c"
+              stroke="rgba(255,255,255,0.15)"
+              strokeWidth="1.5"
+            />
+
+            {/* Center Text: Cardinal Heading + Degrees */}
             <text
-              x={width / 2}
-              y="23"
-              fontSize="20"
+              x={center}
+              y={center - 2}
+              fontSize="12"
+              fontWeight="700"
+              letterSpacing="0.05em"
+              textAnchor="middle"
+              fill="#ffffff"
+            >
+              {cardinal}
+            </text>
+            <text
+              x={center}
+              y={center + 11}
+              fontSize="9"
+              fontWeight="500"
+              textAnchor="middle"
+              fill="rgba(232, 230, 227, 0.6)"
+            >
+              {dir != null ? `${Math.round(dir)}°` : "–"}
+            </text>
+
+            {/* Cardinal Labels on Perimeter */}
+            <text
+              x={center}
+              y={offset - 8}
+              fontSize="13"
+              fontWeight="800"
               textAnchor="middle"
               fill={color}
             >
               N
             </text>
             <text
-              x={width / 2}
-              y={width - 10}
-              fontSize="20"
+              x={center}
+              y={width - 5}
+              fontSize="12"
+              fontWeight="600"
               textAnchor="middle"
-              fill="rgba(255,255,255,0.45)"
+              fill="rgba(255,255,255,0.5)"
             >
               S
             </text>
             <text
-              x={20 - 5}
-              y={width / 2 + 7}
-              fontSize="20"
+              x={8}
+              y={center + 4}
+              fontSize="12"
+              fontWeight="600"
               textAnchor="middle"
-              fill="rgba(255,255,255,0.45)"
+              fill="rgba(255,255,255,0.5)"
             >
               W
             </text>
             <text
-              x={width - 20}
-              y={width / 2 + 7}
-              fontSize="20"
+              x={width - 8}
+              y={center + 4}
+              fontSize="12"
+              fontWeight="600"
               textAnchor="middle"
-              fill="rgba(255,255,255,0.45)"
+              fill="rgba(255,255,255,0.5)"
             >
               E
             </text>
-            <text
-              x={width / 2}
-              y={width / 2 + 4}
-              fontSize="14"
-              textAnchor="middle"
-              fill={MY_COLORS.gray}
-            >
-              {STATION_MEASUREMENTS_DESC.WINDDIR.label}
-            </text>
-            {[...dirTrendMap.keys()].map((diri) =>
-              [...Array(Math.floor(dirTrendMap.get(diri) / 4 + 1)).keys()].map(
-                (count) => (
-                  <path
-                    key={`${diri}-${count}`}
-                    d={describeArc(
-                      width / 2,
-                      width / 2,
-                      radius - 3 - count,
-                      diri * 45 - 22.5,
-                      diri * 45 + 22.5,
-                    )}
-                    stroke={color}
-                    strokeWidth={2}
-                    fill="none"
-                  />
-                ),
-              ),
-            )}
           </svg>
         </div>
       </div>
-      <div className="flex flex-col gap-4 basis-1/3">
+
+      {/* ── Right: Wind Metrics Column ─────────────────────────── */}
+      <div className="flex flex-col gap-3 basis-2/5">
         <NumberDataWithTrend
           sensor={STATION_MEASUREMENTS_DESC.WINDSPEED}
           value={speed}

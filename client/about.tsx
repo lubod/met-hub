@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { CredentialResponse } from "@react-oauth/google";
 import pkg from "../package.json";
 import { AppContext } from ".";
 import Myhr from "./misc/myhr";
@@ -63,19 +63,9 @@ const About = observer(({ appContext, className }: Props) => {
           Currently you can see data from:
           <span className="block mt-1 text-white/50">GoGEN ME 3900 · GARNI 1025 Arcus · Weather Underground / Ecowitt · JSON</span>
         </p>
-        <p className="text-white/70 text-sm leading-relaxed">Login to add your stations and see also historical data</p>
-        <div className="flex flex-row justify-center">
-          <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              handleGoogleLogin(credentialResponse, appContext.authCtrl);
-            }}
-            onError={() => {
-              console.debug("Login Failed");
-            }}
-            theme="filled_black"
-            shape="pill"
-          />
-        </div>
+        <p className="text-white/70 text-sm leading-relaxed">
+          Sign in via the top-right header to manage your stations and view comprehensive historical analytics.
+        </p>
       </div>
       <Myhr />
       <div className="metric-label text-center">v{pkg.version}</div>

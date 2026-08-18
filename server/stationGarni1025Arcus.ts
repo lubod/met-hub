@@ -47,6 +47,11 @@ export default class StationGarni1025Arcus extends StationCommon {
     const humidity = round(data.humidity * 1.0, 0);
     const windspeed = round(data.windspeedmph * TO_KM, 1);
 
+    const toNum = (v: any) =>
+      v != null && v !== "" && !Number.isNaN(Number(v)) ? Number(v) : null;
+
+    const maxDailyGustRaw = toNum(data.maxdailygust) ?? toNum(data.maxdailygustmph);
+
     const decoded: IStationData = {
       timestamp,
       tempin: round((5 / 9) * (data.indoortempf - 32), 1),
@@ -55,14 +60,14 @@ export default class StationGarni1025Arcus extends StationCommon {
       temp,
       windspeed,
       windgust: round(data.windgustmph * TO_KM, 1),
-      maxdailygust: null,
+      maxdailygust: maxDailyGustRaw != null ? round(maxDailyGustRaw * TO_KM, 1) : null,
       rainrate: round(data.rainin * TO_MM, 1),
-      eventrain: null,
-      hourlyrain: null,
+      eventrain: toNum(data.eventrainin) != null ? round(toNum(data.eventrainin)! * TO_MM, 1) : null,
+      hourlyrain: toNum(data.hourlyrainin) != null ? round(toNum(data.hourlyrainin)! * TO_MM, 1) : null,
       dailyrain: round(data.dailyrainin * TO_MM, 1),
-      weeklyrain: null,
-      monthlyrain: null,
-      totalrain: null,
+      weeklyrain: toNum(data.weeklyrainin) != null ? round(toNum(data.weeklyrainin)! * TO_MM, 1) : null,
+      monthlyrain: toNum(data.monthlyrainin) != null ? round(toNum(data.monthlyrainin)! * TO_MM, 1) : null,
+      totalrain: toNum(data.totalrainin) != null ? round(toNum(data.totalrainin)! * TO_MM, 1) : null,
       solarradiation: round(data.solarradiation * 1.0, 0),
       uv: round(data.UV * 1.0, 0),
       humidity,

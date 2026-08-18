@@ -234,6 +234,55 @@ describe("GET /weatherstation/updateweatherstation.php (legacy protocol)", () =>
     expect(res.status).toBe(200);
   });
 
+  it("stores correctly decoded Garni measurements in Redis", async () => {
+    mockGetStationByPasskey.mockReturnValue(makeTestStation({ type: StationType.Garni1025Arcus }));
+    const multi = freshMulti();
+    redisMock.multi.mockReturnValue(multi);
+
+    const qs = new URLSearchParams({
+      ID: TEST_STATION_ID,
+      PASSWORD: "",
+      action: "updateraww",
+      realtime: "1",
+      rtfreq: "5",
+      dateutc: "now",
+      baromin: "29.92",
+      tempf: "68.0",
+      dewptf: "50.0",
+      humidity: "55",
+      windspeedmph: "6.25",
+      windgustmph: "12.5",
+      maxdailygustmph: "15.0",
+      winddir: "90",
+      rainin: "0.1",
+      dailyrainin: "0.4",
+      solarradiation: "350.0",
+      UV: "3.0",
+      indoortempf: "71.6",
+      indoorhumidity: "48",
+    });
+
+    const res = await request(app).get(
+      `/weatherstation/updateweatherstation.php?${qs}`,
+    );
+    expect(res.status).toBe(200);
+
+    expect(multi.set).toHaveBeenCalled();
+    const setCall = multi.set.mock.calls.find((c: any) => c[0] === `station_${TEST_STATION_ID}-last`);
+    expect(setCall).toBeDefined();
+    const stored = JSON.parse(setCall![1]);
+    expect(stored.temp).toBe(20.0);
+    expect(stored.tempin).toBe(22.0);
+    expect(stored.humidity).toBe(55);
+    expect(stored.humidityin).toBe(48);
+    expect(stored.pressureabs).toBeCloseTo(1013.2, 0);
+    expect(stored.windspeed).toBe(10.0);
+    expect(stored.windgust).toBe(20.0);
+    expect(stored.maxdailygust).toBe(24.0);
+    expect(stored.solarradiation).toBe(350);
+    expect(stored.uv).toBe(3);
+  });
+
   it("returns 400 when station ID is missing or unknown", async () => {
     mockGetStationByID.mockReturnValue(undefined);
 
@@ -255,8 +304,8 @@ describe("POST /setDomData", () => {
     tarif: { tarif: 1 },
     obyvacka_vzduch: { temp: 21, reqall: 21 },
     obyvacka_podlaha: { temp: 22, kuri: false, leto: false, low: false },
-    pracovna_vzduch: { temp: 21, reqall: 21 },
-    pracovna_podlaha: { temp: 22, kuri: false, leto: false, low: false },
+    pracovna_vzduch: { temp: 21.5, reqall: 21 },
+    pracovna_podlaha: { temp: 22.2, kuri: false, leto: false, low: false },
     spalna_vzduch: { temp: 21, reqall: 21 },
     spalna_podlaha: { temp: 22, kuri: false, leto: false, low: false },
     chalani_vzduch: { temp: 21, reqall: 21 },
@@ -265,11 +314,24 @@ describe("POST /setDomData", () => {
     petra_podlaha: { temp: 22, kuri: false, leto: false, low: false }
   };
 
-  it("returns 200 when DOM_PASSKEY matches", async () => {
+  it("returns 200 and stores Dom smart home data when DOM_PASSKEY matches", async () => {
+    const multi = freshMulti();
+    redisMock.multi.mockReturnValue(multi);
+
     const res = await request(app)
       .post("/setDomData?PASSKEY=test-dom-passkey")
       .send(validDomPayload);
     expect(res.status).toBe(200);
+
+    expect(multi.set).toHaveBeenCalled();
+    const setCall = multi.set.mock.calls.find((c: any) => c[0] === "dom-last");
+    expect(setCall).toBeDefined();
+    const stored = JSON.parse(setCall![1]);
+    expect(stored.temp).toBe(20);
+    expect(stored.humidity).toBe(50);
+    expect(stored.living_room_air).toBe(21);
+    expect(stored.living_room_reqall).toBe(21);
+    expect(stored.guest_room_air).toBe(21.5);
   });
 
   it("returns 401 when DOM_PASSKEY is invalid", async () => {

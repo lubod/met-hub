@@ -338,7 +338,13 @@ export async function loadData(
       },
       data: resData.rows,
     };
-  } catch (e) {
+  } catch (e: any) {
+    if (e?.code === "42P01") {
+      return {
+        stats: { min: null, max: null, avg: null, first: null, last: null },
+        data: [],
+      };
+    }
     console.error(e);
     throw e;
   } finally {
@@ -377,7 +383,10 @@ export async function loadDailyET0(
     const et0Sum = et0.reduce((acc, v) => acc + v, 0);
     const rainSum = rain.reduce((acc, v) => acc + v, 0);
     return { et0: round(et0Sum, 1), rain: round(rainSum, 1) };
-  } catch (e) {
+  } catch (e: any) {
+    if (e?.code === "42P01") {
+      return { et0: 0, rain: 0 };
+    }
     console.error(e);
     throw e;
   } finally {
@@ -433,7 +442,10 @@ export async function loadRainData(stationID: string) {
       { interval: "1week", sum: row["1week"] },
       { interval: "4week", sum: row["4week"] },
     ];
-  } catch (e) {
+  } catch (e: any) {
+    if (e?.code === "42P01") {
+      return [];
+    }
     console.error(e);
     throw e;
   } finally {

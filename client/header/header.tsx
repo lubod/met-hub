@@ -14,46 +14,82 @@ type Props = {
   appContext: AppContext;
 };
 
-const Header = observer(({ appContext }: Props) => (
-  // console.debug("Header render");
+const Header = observer(({ appContext }: Props) => {
+  const isFresh = !appContext.cCtrl.stationData.oldData;
 
-  <HeaderContainer>
-    <div className="flex flex-row flex-wrap justify-between gap-2">
-      <Time
-        label="Current time"
-        time={appContext.headerCtrl.headerData.ctime}
-        format="HH:mm:ss"
-        old={false}
-      />
-      {appContext.headerCtrl.headerData.isExternalID === false &&
-        appContext.headerCtrl.headerData.allStations != null && (
+  return (
+    <HeaderContainer>
+      <div className="flex flex-row flex-wrap items-center justify-between gap-3">
+        {/* Left: Brand Identity + Live Badge */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#e07856] via-[#6ba3a8] to-[#8dbe9d] p-[1px] flex items-center justify-center shadow-md shadow-[#e07856]/10">
+              <div className="w-full h-full bg-[#0e121c] rounded-[7px] flex items-center justify-center text-xs font-black text-white select-none">
+                ⚡
+              </div>
+            </div>
+            <span className="font-extrabold tracking-wider text-sm bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/70 select-none">
+              MET-HUB
+            </span>
+          </div>
+
+          <div
+            className="live-pulse select-none"
+            style={{
+              backgroundColor: isFresh ? "rgba(141, 190, 157, 0.12)" : "rgba(212, 168, 67, 0.12)",
+              border: `1px solid ${isFresh ? "rgba(141, 190, 157, 0.3)" : "rgba(212, 168, 67, 0.3)"}`,
+              color: isFresh ? "#8dbe9d" : "#d4a843",
+            }}
+          >
+            <span
+              className="live-pulse-dot"
+              style={{ backgroundColor: isFresh ? "#8dbe9d" : "#d4a843" }}
+            />
+            <span>{isFresh ? "Live" : "Stale"}</span>
+          </div>
+        </div>
+
+        {/* Center: Station selector */}
+        {appContext.headerCtrl.headerData.isExternalID === false &&
+          appContext.headerCtrl.headerData.allStations != null && (
+            <div className="flex flex-col justify-center min-w-0">
+              <HeaderStationsList appContext={appContext} />
+            </div>
+          )}
+        {appContext.headerCtrl.headerData.isExternalID === true && (
           <div className="flex flex-col justify-center min-w-0">
-            <HeaderStationsList appContext={appContext} />
+            <StringData
+              label=""
+              value={appContext.headerCtrl.headerData.station?.place ?? ""}
+            />
           </div>
         )}
-      {appContext.headerCtrl.headerData.isExternalID === true && (
-        <div className="flex flex-col justify-center min-w-0">
-          <StringData
-            label=""
-            value={appContext.headerCtrl.headerData.station?.place ?? ""}
+
+        {/* Right: Time & User menu */}
+        <div className="flex items-center gap-3">
+          <Time
+            label="Current time"
+            time={appContext.headerCtrl.headerData.ctime}
+            format="HH:mm:ss"
+            old={false}
           />
+          {appContext.headerCtrl.headerData.isExternalID === false && (
+            <nav className="flex flex-row items-center gap-1 shrink-0">
+              <HeaderModal appContext={appContext} />
+              <HeaderDropdown appContext={appContext} />
+            </nav>
+          )}
+          {appContext.headerCtrl.headerData.isExternalID === true && (
+            <div className="shrink-0">
+              <a href="https://www.met-hub.com">
+                <StringData label="Powered by" value="www.met-hub.com" />
+              </a>
+            </div>
+          )}
         </div>
-      )}
-      {appContext.headerCtrl.headerData.isExternalID === false && (
-        <nav className="flex flex-col justify-center shrink-0">
-          <HeaderModal appContext={appContext} />
-          <HeaderDropdown appContext={appContext} />
-        </nav>
-      )}
-      {appContext.headerCtrl.headerData.isExternalID === true && (
-        <div className="shrink-0">
-          <a href="https://www.met-hub.com">
-            <StringData label="Powered by" value="www.met-hub.com" />
-          </a>
-        </div>
-      )}
-    </div>
-  </HeaderContainer>
-));
+      </div>
+    </HeaderContainer>
+  );
+});
 
 export default Header;
