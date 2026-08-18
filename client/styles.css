@@ -314,3 +314,19 @@ body {
 ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.28); }
 
+/* ── Mobile Touch Scroll Pass-through & Recharts Gestures ──── */
+.forecast-scroll-area {
+  touch-action: pan-x pan-y !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+.recharts-wrapper,
+.recharts-surface,
+.recharts-surface svg,
+.recharts-wrapper svg {
+  touch-action: pan-y !important;
+  user-select: none;
+  -webkit-user-select: none;
+}
+

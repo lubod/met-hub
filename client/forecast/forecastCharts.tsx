@@ -493,7 +493,7 @@ const ForecastCharts = observer(
         </div>
 
         {/* Single continuous horizontal scroll container */}
-        <div className="flex flex-col overflow-x-auto pb-4 overscroll-x-contain touch-pan-y">
+        <div className="flex flex-col overflow-x-auto pb-4 forecast-scroll-area">
           <div
             className="flex flex-col gap-8"
             style={{ width: cardWidth, minWidth: cardWidth }}
