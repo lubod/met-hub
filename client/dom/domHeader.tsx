@@ -22,9 +22,7 @@ const DomHeader = observer(({ appContext }: Props) => (
         }}
       >
         <LoadImg
-          rotate={
-            appContext.cCtrl.domData.loading || appContext.cCtrl.domData.oldData
-          }
+          rotate={appContext.cCtrl.domData.loading}
           src="icons8-refresh-25.svg"
           alt=""
         />

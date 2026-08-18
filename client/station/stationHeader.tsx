@@ -22,10 +22,7 @@ const StationHeader = observer(({ appContext }: Props) => (
         }}
       >
         <LoadImg
-          rotate={
-            appContext.cCtrl.stationData.loading ||
-            appContext.cCtrl.stationData.oldData
-          }
+          rotate={appContext.cCtrl.stationData.loading}
           src="icons8-refresh-25.svg"
           alt=""
         />

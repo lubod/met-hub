@@ -9,10 +9,20 @@ import Time from "../misc/time";
 import HeaderDropdown from "./headerDropdown";
 import HeaderStationsList from "./headerStationsList";
 import HeaderModal from "./headerModal";
+import HeaderData from "./headerData";
 
 type Props = {
   appContext: AppContext;
 };
+
+const HeaderCurrentTime = observer(({ headerData }: { headerData: HeaderData }) => (
+  <Time
+    label="Current time"
+    time={headerData.ctime}
+    format="HH:mm:ss"
+    old={false}
+  />
+));
 
 const Header = observer(({ appContext }: Props) => {
   const isFresh = !appContext.cCtrl.stationData.oldData;
@@ -67,12 +77,7 @@ const Header = observer(({ appContext }: Props) => {
 
         {/* Right: Time & User menu */}
         <div className="flex items-center gap-3">
-          <Time
-            label="Current time"
-            time={appContext.headerCtrl.headerData.ctime}
-            format="HH:mm:ss"
-            old={false}
-          />
+          <HeaderCurrentTime headerData={appContext.headerCtrl.headerData} />
           {appContext.headerCtrl.headerData.isExternalID === false && (
             <nav className="flex flex-row items-center gap-1 shrink-0">
               <HeaderModal appContext={appContext} />

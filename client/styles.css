@@ -170,26 +170,11 @@ body {
 }
 
 .live-pulse-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   position: relative;
-}
-
-.live-pulse-dot::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 50%;
-  background: inherit;
-  opacity: 0.6;
-  will-change: transform, opacity;
-  animation: pulsePing 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes pulsePing {
-  0% { transform: scale(1); opacity: 0.8; }
-  70%, 100% { transform: scale(2.2); opacity: 0; }
+  box-shadow: 0 0 6px currentColor;
 }
 
 /* ── Divider ─────────────────────────────────────────────────── */
