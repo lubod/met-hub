@@ -15,3 +15,4 @@ default
 client/.DS_Store
 coverage/
 public/tailwind.css
+review-client-findings.md
