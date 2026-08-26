@@ -11,6 +11,10 @@ import { create } from "../server/db";
 
 export const ALL_STATIONS_CFG = "ALL_STATIONS_CFG";
 
+// Pub/sub channel: addStation notifies other processes (store service) to
+// hot-reload a station entry without a restart.
+export const STATIONS_CFG_CHANGED = "STATIONS_CFG_CHANGED";
+
 export interface IStation {
   lat: number;
   lon: number;
@@ -34,7 +38,7 @@ export class AllStationsCfg {
 
   measurements: Array<IMeasurement> = [];
 
-  getMeas(station: IStation): IMeasurement {
+  getMeas(station: Pick<IStation, "type" | "id">): IMeasurement {
     switch (station.type) {
       case StationType.Dom:
         return dom;
@@ -160,17 +164,16 @@ export class AllStationsCfg {
   }
 
   async addStation(stationInput: Omit<IStation, "measurement">) {
-    const station: IStation = {
-      ...stationInput,
-      measurement: null as any,
-    };
-    station.measurement = this.getMeas(station);
+    const measurement = this.getMeas(stationInput);
     await redisClient.hSet(
       ALL_STATIONS_CFG,
-      station.id,
+      stationInput.id,
       JSON.stringify(stationInput),
     );
-    this.set(station);
-    create(station.id);
+    await redisClient.publish(STATIONS_CFG_CHANGED, stationInput.id);
+    this.set({ ...stationInput, measurement });
+    // Table must exist before the first datapoint arrives; create() throws on
+    // failure so the API request surfaces provisioning problems.
+    await create(stationInput.id);
   }
 }

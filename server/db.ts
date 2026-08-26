@@ -32,7 +32,7 @@ function clampDt(dt: number): number {
  * resets at local midnight (negative deltas from counter resets are treated as
  * a new day). `rawRows` must be ordered by timestamp ASC.
  */
-function computeET0Series(
+export function computeET0Series(
   rawRows: any[],
   lat: number,
 ): { et0: number[]; rain: number[] } {
@@ -231,7 +231,7 @@ export async function loadData(
       const intervalMs = interval * 60 * 1000;
       const buckets: Array<{ timestamp: number; et0Sum: number; rainSum: number; count: number }> = [];
       let tBucket = start.getTime();
-      while (tBucket <= end.getTime()) {
+      while (tBucket < end.getTime()) {
         buckets.push({
           timestamp: tBucket,
           et0Sum: 0,
@@ -339,7 +339,9 @@ export async function loadData(
       data: resData.rows,
     };
   } catch (e: any) {
-    if (e?.code === "42P01") {
+    // 42P01: table missing; 42703: legacy table lacking ET0 input columns —
+    // both mean "no computable data", not a server error.
+    if (e?.code === "42P01" || e?.code === "42703") {
       return {
         stats: { min: null, max: null, avg: null, first: null, last: null },
         data: [],
@@ -384,7 +386,7 @@ export async function loadDailyET0(
     const rainSum = rain.reduce((acc, v) => acc + v, 0);
     return { et0: round(et0Sum, 1), rain: round(rainSum, 1) };
   } catch (e: any) {
-    if (e?.code === "42P01") {
+    if (e?.code === "42P01" || e?.code === "42703") {
       return { et0: 0, rain: 0 };
     }
     console.error(e);
@@ -443,8 +445,19 @@ export async function loadRainData(stationID: string) {
       { interval: "4week", sum: row["4week"] },
     ];
   } catch (e: any) {
-    if (e?.code === "42P01") {
-      return [];
+    // 42P01: table missing (station not provisioned yet);
+    // 42703: legacy table lacking rain columns — treat as no data.
+    if (e?.code === "42P01" || e?.code === "42703") {
+      return [
+        { interval: "1hour", sum: 0 },
+        { interval: "3hour", sum: 0 },
+        { interval: "6hour", sum: 0 },
+        { interval: "12hour", sum: 0 },
+        { interval: "1day", sum: 0 },
+        { interval: "3day", sum: 0 },
+        { interval: "1week", sum: 0 },
+        { interval: "4week", sum: 0 },
+      ];
     }
     console.error(e);
     throw e;
@@ -453,7 +466,7 @@ export async function loadRainData(stationID: string) {
   }
 }
 
-function getQuery(id: string, entries: [string, any][]) {
+export function getQuery(id: string, entries: [string, any][]) {
   if (!/^[a-z0-9][a-z0-9_-]*$/i.test(id) || id.length > 64) {
     throw new Error(`Invalid station ID: ${id}`);
   }
@@ -550,6 +563,7 @@ export async function create(id: string) {
   } catch (e) {
     await dbclient.query("ROLLBACK");
     console.error(e);
+    throw e;
   } finally {
     dbclient.release();
   }

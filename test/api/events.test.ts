@@ -163,8 +163,8 @@ describe("SSE Client Map and writeEvent (router.ts)", () => {
       // Swallowed to prevent uncaught exception on connection close
     });
 
-    // Give it a tiny bit of time to establish connection
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    // Wait for the connection to register and the oldest client to be evicted
+    await vi.waitFor(() => expect(evictedMockEnd).toHaveBeenCalled());
 
     // Check that clients map eviction worked
     expect(clients.size).toBe(MAX_SSE_CONNECTIONS); // Should remain at max limit after evicting the oldest and adding the new one

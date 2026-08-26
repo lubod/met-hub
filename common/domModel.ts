@@ -659,6 +659,13 @@ export const DOM_SENSORS: ISensor[] = [
   DOM_SENSORS_DESC.PETRA_ROOM_AIR,
   DOM_SENSORS_DESC.PETRA_ROOM_FLOOR,
   DOM_SENSORS_DESC.PETRA_ROOM_REQALL,
+  // Heat-state booleans are real PG columns on station_dom and are requested
+  // as col2 overlays by the room-floor charts (measurement=floor:heat).
+  DOM_SENSORS_DESC.LIVING_ROOM_HEAT,
+  DOM_SENSORS_DESC.GUEST_ROOM_HEAT,
+  DOM_SENSORS_DESC.BED_ROOM_HEAT,
+  DOM_SENSORS_DESC.BOYS_ROOM_HEAT,
+  DOM_SENSORS_DESC.PETRA_ROOM_HEAT,
 ];
 
 export class DomCfg {

@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import StationGoGenMe3900 from "../../server/stationGoGenMe3900";
+import StationWU from "../../server/stationWU";
 import { IStationGoGenMe3900DataRaw } from "../../common/stationModel";
 
-const station = new StationGoGenMe3900("test-id");
+const station = new StationWU("test-id");
 
 // A complete, known raw payload in the EasyWeatherV1.5.2 protocol
 const baseRaw: IStationGoGenMe3900DataRaw = {
@@ -33,7 +33,7 @@ const baseRaw: IStationGoGenMe3900DataRaw = {
   model: "WS2900",
 };
 
-describe("StationGoGenMe3900.decodeData — unit conversions", () => {
+describe("StationWU.decodeData — GoGen payload unit conversions", () => {
   it("converts outdoor temperature from °F to °C", () => {
     const { decoded } = station.decodeData(baseRaw, "Test");
     // (5/9) * (59 - 32) = 15.0
@@ -113,7 +113,7 @@ describe("StationGoGenMe3900.decodeData — unit conversions", () => {
   });
 });
 
-describe("StationGoGenMe3900.decodeData — derived fields", () => {
+describe("StationWU.decodeData — GoGen derived fields", () => {
   it("computes dewpoint from temp and humidity", () => {
     const { decoded } = station.decodeData(baseRaw, "Test");
     // 15°C, 65% humidity → dewpoint ≈ 8.5°C (Magnus formula)
@@ -133,7 +133,7 @@ describe("StationGoGenMe3900.decodeData — derived fields", () => {
   });
 });
 
-describe("StationGoGenMe3900.decodeData — timestamp parsing", () => {
+describe("StationWU.decodeData — GoGen timestamp parsing", () => {
   it("parses a valid UTC dateutc string", () => {
     const { date, decoded } = station.decodeData(baseRaw, "Test");
     expect(decoded.timestamp).toBeInstanceOf(Date);
@@ -151,9 +151,8 @@ describe("StationGoGenMe3900.decodeData — timestamp parsing", () => {
     expect(decoded.timestamp.getTime()).toBeLessThanOrEqual(after);
   });
 
-  it("falls back to current time when dateutc is garbage", () => {
-    const before = Date.now();
+  it("yields an Invalid Date when dateutc is garbage (ingestion rejects with 400)", () => {
     const { decoded } = station.decodeData({ ...baseRaw, dateutc: "not-a-date" }, "Test");
-    expect(decoded.timestamp.getTime()).toBeGreaterThanOrEqual(before);
+    expect(Number.isNaN(decoded.timestamp.getTime())).toBe(true);
   });
 });

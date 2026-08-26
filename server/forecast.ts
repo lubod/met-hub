@@ -6,7 +6,11 @@ function formatDate(date: Date): string {
 }
 
 export async function getForecast(lat: string, lon: string) {
-  const cacheKey = `FORECAST_CACHE_${lat}_${lon}`;
+  // ~1.1 km grid: bounds the Redis cache-key space so unauthenticated
+  // high-precision requests cannot flood keys or hammer upstream met.no.
+  const qlat = parseFloat(lat).toFixed(2);
+  const qlon = parseFloat(lon).toFixed(2);
+  const cacheKey = `FORECAST_CACHE_${qlat}_${qlon}`;
   const reply = await redisClient.get(cacheKey);
   if (reply != null) {
     try {
@@ -19,7 +23,8 @@ export async function getForecast(lat: string, lon: string) {
       // corrupt cache entry – fall through to fetch
     }
   }
-  const url = `https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=${lat}&lon=${lon}`;
+  const url =
+    `https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=${qlat}&lon=${qlon}`;
   console.info(`GET ${url}`);
   try {
     const response = await fetch(url, {
@@ -27,6 +32,7 @@ export async function getForecast(lat: string, lon: string) {
         Accept: "application/json",
         "User-Agent": "met-hub.com",
       },
+      signal: AbortSignal.timeout(10_000),
     });
     if (!response.ok) {
       throw new Error(`An error has occured: ${response.status}`);
@@ -45,7 +51,7 @@ export async function getForecast(lat: string, lon: string) {
 
 export async function getAstronomicalData(lat: string, lon: string, date: Date) {
   const dateStr = formatDate(date);
-  const cacheKey = `ASTRONOMICAL_DATA_CACHE_${lat}_${lon}_${dateStr}`;
+  const cacheKey = `ASTRONOMICAL_DATA_CACHE_${parseFloat(lat).toFixed(2)}_${parseFloat(lon).toFixed(2)}_${dateStr}`;
   const reply = await redisClient.get(cacheKey);
   if (reply != null) {
     try {
@@ -66,6 +72,7 @@ export async function getAstronomicalData(lat: string, lon: string, date: Date) 
         Accept: "application/json",
         "User-Agent": "met-hub.com",
       },
+      signal: AbortSignal.timeout(10_000),
     });
     if (!response.ok) {
       throw new Error(`An error has occured: ${response.status}`);

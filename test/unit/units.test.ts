@@ -116,6 +116,14 @@ describe("calculateDewPoint", () => {
     const dew = calculateDewPoint(30, 10);
     expect(dew).toBeLessThan(0);
   });
+
+  it("returns null at 0% humidity (log is undefined, previously NaN)", () => {
+    expect(calculateDewPoint(20, 0)).toBeNull();
+  });
+
+  it("returns null for humidity above 100%", () => {
+    expect(calculateDewPoint(20, 101)).toBeNull();
+  });
 });
 
 describe("calculateFeelsLike", () => {

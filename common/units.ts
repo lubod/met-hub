@@ -29,7 +29,7 @@ export function random(min: number, max: number) {
 }
 
 export const calculateDewPoint = (temp: number | null, humidity: number | null): number | null => {
-  if (temp == null || humidity == null) return null;
+  if (temp == null || humidity == null || humidity <= 0 || humidity > 100) return null;
   const b = 17.67;
   const c = 243.5;
   const lambda = Math.log(humidity / 100) + (b * temp) / (c + temp);

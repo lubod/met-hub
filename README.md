@@ -69,8 +69,21 @@ To populate the database tables with test telemetry:
 node scripts/scratch_send_test_data.js
 ```
 
-## 4. Verification & Testing
+## 4. Ingestion Authentication
 
+Every data-ingestion endpoint requires a station passkey:
+
+| Endpoint | Protocol | Passkey location | Notes |
+| --- | --- | --- | --- |
+| `POST /api/ingest/:stationID` | JSON | `x-passkey` header (or `PASSKEY` body field) | Exact match required |
+| `POST /setData/:stationID` | Ecowitt-style (WS View) | `PASSKEY` body field | Exact match required; stations provisioned with the legacy `"dummy"` sentinel accept any value — re-provision them with a real ≥12-char passkey when possible |
+| `POST /setData`, `POST /data/report` | WU/Ecowitt body upload | `PASSKEY` body field | Station looked up by passkey |
+| `GET /weatherstation/updateweatherstation.php` | Weather Underground | `ID` query parameter | The device's `ID` must equal the station passkey |
+| `POST /setDomData` | Smart-home JSON | `PASSKEY` query/body/header | Must equal `DOM_PASSKEY` |
+
+Passkeys are user-supplied at station creation, must be at least 12 characters, and cannot be the reserved value `"dummy"`. Samples dated more than 5 minutes in the future or more than 1 hour in the past are rejected.
+
+## 5. Verification & Testing
 - **Linting**:
   ```bash
   npm run lint

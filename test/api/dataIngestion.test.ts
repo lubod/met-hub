@@ -163,6 +163,68 @@ describe("POST /setData/:stationID", () => {
 
     expect(res.status).toBe(400);
   });
+
+  it("returns 401 when PASSKEY is wrong and station is not legacy-dummy", async () => {
+    mockGetStationByID.mockReturnValue(makeTestStation());
+
+    const res = await request(app)
+      .post(`/setData/${TEST_STATION_ID}`)
+      .send({ ...freshRaw(), PASSKEY: "WRONG-PASSKEY" });
+
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 401 when no PASSKEY is provided", async () => {
+    mockGetStationByID.mockReturnValue(makeTestStation());
+    const { PASSKEY: _omitted, ...withoutPasskey } = freshRaw();
+
+    const res = await request(app)
+      .post(`/setData/${TEST_STATION_ID}`)
+      .send(withoutPasskey);
+
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 200 when x-passkey header matches", async () => {
+    mockGetStationByID.mockReturnValue(makeTestStation());
+
+    const res = await request(app)
+      .post(`/setData/${TEST_STATION_ID}`)
+      .set("x-passkey", TEST_PASSKEY)
+      .send(freshRaw());
+
+    expect(res.status).toBe(200);
+  });
+
+  it("accepts any passkey for legacy stations provisioned with 'dummy'", async () => {
+    mockGetStationByID.mockReturnValue(makeTestStation({ passkey: "dummy" }));
+
+    const res = await request(app)
+      .post(`/setData/${TEST_STATION_ID}`)
+      .send(freshRaw());
+
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 400 when dateutc is in the future beyond clock-skew tolerance", async () => {
+    mockGetStationByID.mockReturnValue(makeTestStation());
+
+    const res = await request(app)
+      .post(`/setData/${TEST_STATION_ID}`)
+      .send({ ...freshRaw(), dateutc: "2099-01-01 00:00:00" });
+
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 when dateutc is unparseable", async () => {
+    mockGetStationByID.mockReturnValue(makeTestStation());
+
+    const res = await request(app)
+      .post(`/setData/${TEST_STATION_ID}`)
+      .send({ ...freshRaw(), dateutc: "not-a-date" });
+
+    expect(res.status).toBe(400);
+  });
 });
 
 describe("POST /setData (by PASSKEY in body)", () => {
@@ -232,6 +294,14 @@ describe("GET /weatherstation/updateweatherstation.php (legacy protocol)", () =>
       `/weatherstation/updateweatherstation.php?${qs}`,
     );
     expect(res.status).toBe(200);
+  });
+
+  it("returns 400 when dateutc is unparseable", async () => {
+    mockGetStationByPasskey.mockReturnValue(makeTestStation());
+    const res = await request(app).get(
+      "/weatherstation/updateweatherstation.php?ID=x&dateutc=garbage&tempf=59",
+    );
+    expect(res.status).toBe(400);
   });
 
   it("stores correctly decoded Garni measurements in Redis", async () => {

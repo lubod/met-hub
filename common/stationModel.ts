@@ -223,7 +223,7 @@ export class STATION_MEASUREMENTS_DESC {
 
   static PRESSUREABS: ISensor = {
     col: propName(station).pressureabs,
-    unit: "hP",
+    unit: "hPa",
     fix: 1,
     range: 1,
     couldBeNegative: false,
@@ -238,7 +238,7 @@ export class STATION_MEASUREMENTS_DESC {
 
   static PRESSUREREL: ISensor = {
     col: propName(station).pressurerel,
-    unit: "hP",
+    unit: "hPa",
     fix: 1,
     range: 1,
     couldBeNegative: false,
@@ -471,3 +471,13 @@ export const STATION_SENSORS: ISensor[] = [
   STATION_MEASUREMENTS_DESC.TEMPERATUREIN,
   STATION_MEASUREMENTS_DESC.HUMIDITYIN,
 ];
+
+// Sensors backed by a physical PG column. `maxdailygust` and `totalrain` are
+// decoded/trend fields only — getQuery()/create() never persist them, so
+// querying them via loadData would always fail (42703). Used by the server
+// column whitelist and the client chart-selector lists.
+export const STATION_DB_SENSORS: ISensor[] = STATION_SENSORS.filter(
+  (s) =>
+    s.col !== STATION_MEASUREMENTS_DESC.MAXDAILYGUST.col &&
+    s.col !== STATION_MEASUREMENTS_DESC.TOTALRAIN.col,
+);

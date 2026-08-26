@@ -73,9 +73,9 @@ describe("Store Service Unit Tests", () => {
     await import("../../server/store");
 
     // Wait for the async loop to process and exit
-    await new Promise((resolve) => {
-      setTimeout(() => resolve(true), 100);
-    });
+    await vi.waitFor(() =>
+      expect(redisMock.xDel).toHaveBeenCalledWith("toStore", ["msg-123"]),
+    );
 
     // Verify client.xAdd was called to publish to the DLQ
     expect(redisMock.xAdd).toHaveBeenCalledWith(

@@ -3,7 +3,7 @@ import { StationCfg } from "../common/stationCfg";
 import {
   IStationData,
   IStationTrendData,
-  STATION_SENSORS,
+  STATION_DB_SENSORS,
 } from "../common/stationModel";
 import { deg2rad, rad2deg, round } from "../common/units";
 import { IMeasurement } from "./measurement";
@@ -65,7 +65,7 @@ export default abstract class StationCommon implements IMeasurement {
   }
 
   getSensors() {
-    return STATION_SENSORS;
+    return STATION_DB_SENSORS;
   }
 
   getSocketChannel() {
@@ -104,11 +104,9 @@ export default abstract class StationCommon implements IMeasurement {
     if (!dateutc || dateutc === "now") {
       return new Date();
     }
-    const timestamp = new Date(`${dateutc} UTC`);
-    if (isNaN(timestamp.getTime())) {
-      return new Date();
-    }
-    return timestamp;
+    // Strict parse: an unparseable value yields an Invalid Date, which the
+    // ingestion endpoints reject with 400 (no silent fallback to "now").
+    return new Date(`${dateutc} UTC`);
   }
 
   transformTrendData(data: any) {
@@ -210,7 +208,7 @@ export default abstract class StationCommon implements IMeasurement {
         windSpeed.push(element.windspeed);
       }
     });
-    result.winddir = avgWind(windDir, windSpeed);
+    result.winddir = windDir.length > 0 ? avgWind(windDir, windSpeed) : null;
     console.info("Aggregated station minute", result.timestamp, result.place);
     return result;
   }

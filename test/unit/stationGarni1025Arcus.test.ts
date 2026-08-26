@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import StationGarni1025Arcus from "../../server/stationGarni1025Arcus";
+import StationWU from "../../server/stationWU";
 import { IStationGarni1025ArcusDataRaw } from "../../common/stationModel";
 
-const station = new StationGarni1025Arcus("test-garni-id");
+const station = new StationWU("test-garni-id");
 
 const baseRaw: IStationGarni1025ArcusDataRaw = {
   ID: "test-id",
@@ -26,7 +26,7 @@ const baseRaw: IStationGarni1025ArcusDataRaw = {
   indoorhumidity: 50,
 };
 
-describe("StationGarni1025Arcus.decodeData — unit conversions", () => {
+describe("StationWU.decodeData — Garni payload unit conversions", () => {
   it("converts outdoor temperature from °F to °C", () => {
     const { decoded } = station.decodeData(baseRaw, "Test");
     // (5/9) * (68 - 32) = 20.0
@@ -85,7 +85,7 @@ describe("StationGarni1025Arcus.decodeData — unit conversions", () => {
   });
 });
 
-describe("StationGarni1025Arcus.decodeData — standard vs extended fields", () => {
+describe("StationWU.decodeData — Garni standard vs extended fields", () => {
   it("maxdailygust, eventrain, hourlyrain, weeklyrain, monthlyrain, totalrain default to null when omitted", () => {
     const { decoded } = station.decodeData(baseRaw, "Test");
     expect(decoded.maxdailygust).toBeNull();
@@ -116,7 +116,7 @@ describe("StationGarni1025Arcus.decodeData — standard vs extended fields", () 
   });
 });
 
-describe("StationGarni1025Arcus.decodeData — derived fields", () => {
+describe("StationWU.decodeData — Garni derived fields", () => {
   it("dewpt is decoded from station's dewptf field (not recalculated)", () => {
     const { decoded } = station.decodeData(baseRaw, "Test");
     // (5/9) * (50 - 32) = 10.0°C
@@ -135,7 +135,7 @@ describe("StationGarni1025Arcus.decodeData — derived fields", () => {
   });
 });
 
-describe("StationGarni1025Arcus.decodeData — timestamp", () => {
+describe("StationWU.decodeData — Garni timestamp", () => {
   it("parses a valid UTC dateutc string", () => {
     const { decoded } = station.decodeData(baseRaw, "Test");
     expect(decoded.timestamp.getUTCFullYear()).toBe(2024);

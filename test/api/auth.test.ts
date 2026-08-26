@@ -108,7 +108,7 @@ describe("GET /api/getUserProfile", () => {
     expect(res.body.user.given_name).toBe("Jan");
   });
 
-  it("includes admin info when logged-in user is admin", async () => {
+  it("reports isAdmin=true (boolean) when logged-in user is admin, without leaking the admin id", async () => {
     mockVerifyToken.mockReturnValue(adminPayload());
     redisMock.hGet.mockImplementation(async (_hash: string, key: string) => {
       if (key === TEST_ADMIN_ID) {
@@ -125,8 +125,26 @@ describe("GET /api/getUserProfile", () => {
       .set("Cookie", "jwt=admin-token");
 
     expect(res.status).toBe(200);
-    expect(res.body.admin).toBe(TEST_ADMIN_ID);
+    expect(res.body.isAdmin).toBe(true);
     expect(res.body.user.id).toBe(TEST_ADMIN_ID);
+    expect(res.body.admin).toBeUndefined();
+  });
+
+  it("reports isAdmin=false for a regular user", async () => {
+    mockVerifyToken.mockReturnValue(userPayload());
+    redisMock.hGet.mockImplementation(async (_hash: string, key: string) => {
+      if (key === TEST_USER_ID) {
+        return JSON.stringify({ given_name: "Regular", family_name: "User" });
+      }
+      return null;
+    });
+
+    const res = await request(app)
+      .get("/api/getUserProfile")
+      .set("Cookie", "jwt=user-token");
+
+    expect(res.status).toBe(200);
+    expect(res.body.isAdmin).toBe(false);
   });
 
   it("returns null when JWT is valid but user is not in Redis (deleted)", async () => {

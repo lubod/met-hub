@@ -1,5 +1,10 @@
 import { createClient, commandOptions } from "redis";
-import { AllStationsCfg, IStation } from "../common/allStationsCfg";
+import {
+  AllStationsCfg,
+  IStation,
+  ALL_STATIONS_CFG,
+  STATIONS_CFG_CHANGED,
+} from "../common/allStationsCfg";
 import { StationType } from "../common/stationType";
 import { dom } from "./dom";
 import { store } from "./db";
@@ -114,10 +119,49 @@ async function main(stations: Map<string, IStation>) {
 }
 
 const allStationsCfg = new AllStationsCfg();
+
+// Hot-reload a single station entry after an addStation in the web process;
+// without this, aggregated minutes for new stations hit the unknown-ID branch
+// and are dropped until restart.
+async function reloadStation(id: string) {
+  try {
+    const raw = await redisClient.hGet(ALL_STATIONS_CFG, id);
+    if (raw == null) return;
+    const parsed = JSON.parse(raw) as Omit<IStation, "measurement">;
+    const measurement = allStationsCfg.getMeas(parsed);
+    allStationsCfg.set({ ...parsed, measurement });
+    console.info("store: reloaded station config", id);
+  } catch (err) {
+    console.error(`store: failed to reload station config ${id}:`, err);
+  }
+}
+
+async function startConfigWatcher() {
+  // Pub/sub requires a dedicated connection; the main stream client cannot
+  // enter subscriber mode while doing xRead.
+  const sub = client.duplicate();
+  await sub.connect();
+  await sub.subscribe(STATIONS_CFG_CHANGED, (id) => {
+    reloadStation(id).catch((err) => {
+      console.error("store: reload failed:", err);
+    });
+  });
+}
+
 redisClient
   .connect()
   .then(() => allStationsCfg.readCfg())
-  .then(() => {
+  .then(async () => {
+    // Hot-reload is an enhancement: if pub/sub cannot start, the store must
+    // still consume the toStore stream.
+    try {
+      await startConfigWatcher();
+    } catch (err) {
+      console.error(
+        "store: config watcher failed to start (no hot-reload):",
+        err,
+      );
+    }
     const stations = allStationsCfg.getStations();
     stations.set(dom.getStationID(), {
       id: dom.getStationID(),

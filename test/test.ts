@@ -1,12 +1,11 @@
 import assert from "assert";
-import StationGoGenMe3900 from "../server/stationGoGenMe3900";
+import StationWU from "../server/stationWU";
 import { AllStationsCfg, IStation } from "../common/allStationsCfg";
 import { StationType } from "../common/stationType";
 import { GoGenMe3900Simulator } from "./goGenMe3900Simulator";
 import { CSimulator } from "./simulator";
 import { IMeasurement } from "../server/measurement";
 import { Garni1025ArcusSimulator } from "./garni1025ArcusSimulator";
-import StationGarni1025Arcus from "../server/stationGarni1025Arcus";
 import redisClient from "../server/redisClient";
 
 async function main(
@@ -62,7 +61,7 @@ async function run() {
     if (station != null) {
       if (station.type === StationType.GoGenMe3900) {
         const simulator = new GoGenMe3900Simulator();
-        const meas = new StationGoGenMe3900(station.id);
+        const meas = new StationWU(station.id);
         await main(station, simulator, meas);
       } else {
         console.info(`Skipping default station ${goGenID}: type ${station.type} is not ${StationType.GoGenMe3900}`);
@@ -77,7 +76,7 @@ async function run() {
     if (station != null) {
       if (station.type === StationType.Garni1025Arcus) {
         const simulator = new Garni1025ArcusSimulator();
-        const meas = new StationGarni1025Arcus(station.id);
+        const meas = new StationWU(station.id);
         await main(station, simulator, meas);
       } else {
         console.info(`Skipping second station ${garniID}: type ${station.type} is not ${StationType.Garni1025Arcus}`);

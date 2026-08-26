@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import request from "supertest";
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
@@ -53,6 +53,30 @@ vi.mock("../../server/forecast", () => ({
   getForecast: vi.fn().mockResolvedValue({}),
   getAstronomicalData: vi.fn().mockResolvedValue({}),
 }));
+
+
+// Env vars are mutated per test; restore them unconditionally so a failing
+// expect can never pollute subsequent tests in this file.
+const MANAGED_ENV_KEYS = ["ENV", "CORS_ORIGIN", "INGEST_RATE_LIMIT"];
+let envSnapshot: Record<string, string | undefined>;
+
+beforeEach(() => {
+  envSnapshot = {};
+  for (const key of MANAGED_ENV_KEYS) {
+    envSnapshot[key] = process.env[key];
+  }
+});
+
+afterEach(() => {
+  for (const key of MANAGED_ENV_KEYS) {
+    const original = envSnapshot[key];
+    if (original === undefined) {
+      delete process.env[key];
+    } else {
+      process.env[key] = original;
+    }
+  }
+});
 
 describe("App Security Configuration", () => {
   it("throws an error on import if CORS_ORIGIN is missing and ENV is not dev", async () => {

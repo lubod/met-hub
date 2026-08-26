@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import StationGoGenMe3900 from "../../server/stationGoGenMe3900";
+import StationWU from "../../server/stationWU";
 import StationCommon from "../../server/stationCommon";
 import { IStationData } from "../../common/stationModel";
 
-// StationCommon is abstract; use GoGenMe3900 as a concrete subclass
-const station = new StationGoGenMe3900("test-station");
+// StationCommon is abstract; use StationWU as the production concrete subclass
+const station = new StationWU("test-station");
 
 // Helper: build a minimal IStationData reading
 function makeReading(overrides: Partial<IStationData> = {}): IStationData {
@@ -71,10 +71,9 @@ describe("StationCommon.parseDate", () => {
     expect(d.getTime()).toBeGreaterThanOrEqual(before);
   });
 
-  it("returns current time when dateutc is an invalid string", () => {
-    const before = Date.now();
+  it("yields an Invalid Date for an unparseable string (ingestion rejects with 400)", () => {
     const d = StationCommon.parseDate("not-a-date");
-    expect(d.getTime()).toBeGreaterThanOrEqual(before);
+    expect(Number.isNaN(d.getTime())).toBe(true);
   });
 
   it("parses timestamp with seconds component", () => {

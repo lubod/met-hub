@@ -2,6 +2,17 @@ import { IMeasurement } from "./measurement";
 import { writeEvent } from "./router";
 import redisClient from "./redisClient";
 
+// Atomically retrieves and removes all raw samples with score <= `to`.
+// Doing ZRANGEBYSCORE+ZREM in one script closes the race where a sample
+// arriving between read and remove was deleted without ever being aggregated.
+const POP_RAW_LUA = `
+local members = redis.call('ZRANGEBYSCORE', KEYS[1], '-inf', ARGV[1])
+for i = 1, #members do
+  redis.call('ZREM', KEYS[1], members[i])
+end
+return members
+`;
+
 class Aggregator {
   measurements: IMeasurement[];
 
@@ -42,7 +53,11 @@ class Aggregator {
   }
 
   async aggregateMeasurement(meas: IMeasurement, to: number) {
-    const res = await redisClient.zRangeByScore(meas.getRedisRawDataKey(), 0, to);
+    const popped = await redisClient.eval(POP_RAW_LUA, {
+      keys: [meas.getRedisRawDataKey()],
+      arguments: [String(to)],
+    });
+    const res = (Array.isArray(popped) ? popped : []) as string[];
     if (res.length === 0) return;
 
     const minuteMap: Map<number, Array<any>> = new Map();
@@ -64,7 +79,6 @@ class Aggregator {
       }),
     );
 
-    await redisClient.zRemRangeByScore(meas.getRedisRawDataKey(), 0, to);
     writeEvent(meas.getStationID(), "minute");
   }
 

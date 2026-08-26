@@ -22,6 +22,13 @@ const DOM_PASSKEY = process.env.DOM_PASSKEY || (process.env.ENV !== "prod" ? "de
 if (!DOM_PASSKEY) {
   throw new Error("DOM_PASSKEY environment variable is not set");
 }
+
+// Ingested samples may be at most this far in the future (device clock skew).
+const FUTURE_SKEW_MS = 5 * 60 * 1000;
+
+// Serializes the check-then-persist critical section of station provisioning
+// within this process (single-writer assumption; config lives in Redis).
+let addStationQueue: Promise<unknown> = Promise.resolve();
 const router = express.Router();
 
 interface IUser {
@@ -436,7 +443,8 @@ router.get(
     const user = req.user ?? null;
     if (user != null) {
       const admin = await getAdminId();
-      res.status(200).json({ admin, user });
+      // Boolean only: the raw admin account id must not leak to clients.
+      res.status(200).json({ user, isAdmin: user.id === admin });
     } else {
       res.status(200).json(null);
     }
@@ -637,10 +645,17 @@ async function setData(PASSKEY: string | null, id: string | null, data: any) {
   }
   const { measurement } = station;
   const { date, decoded } = measurement.decodeData(data, station.place);
+  const ts = date.getTime();
+  if (Number.isNaN(ts)) {
+    throw new AppError(400, "Invalid data timestamp");
+  }
   const now = Date.now();
-  const diff = now - date.getTime();
+  const diff = now - ts;
   if (diff >= 3600000) {
     throw new AppError(400, `Old data ${date}`);
+  }
+  if (-diff > FUTURE_SKEW_MS) {
+    throw new AppError(400, `Future data ${date}`);
   }
   await redisClient
     .multi()
@@ -673,6 +688,20 @@ router.post(
 router.post(
   "/setData/:stationID",
   catchAsync(async (req, res) => {
+    const station = allStationsCfg.getStationByID(req.params.stationID);
+    if (station == null) {
+      throw new AppError(400, "Unknown PASSKEY or ID");
+    }
+    // Transition: stations provisioned with the legacy "dummy" sentinel
+    // (GoGen/WS View devices send their own hardware key) accept any value;
+    // everything else requires an exact match.
+    const provided =
+      typeof req.body?.PASSKEY === "string"
+        ? req.body.PASSKEY
+        : req.headers["x-passkey"];
+    if (station.passkey !== "dummy" && provided !== station.passkey) {
+      throw new AppError(401, "Unauthorized: Invalid passkey");
+    }
     await setData(null, req.params.stationID, req.body);
     res.sendStatus(200);
   }),
@@ -714,10 +743,17 @@ router.post(
     }
     const data = req.body;
     const { date, decoded } = dom.decodeData(data, "Dom");
+    const ts = date.getTime();
+    if (Number.isNaN(ts)) {
+      throw new AppError(400, "Invalid data timestamp");
+    }
     const now = Date.now();
-    const diff = now - date.getTime();
+    const diff = now - ts;
     if (diff >= 3600000) {
       throw new AppError(400, `Old data ${date}`);
+    }
+    if (-diff > FUTURE_SKEW_MS) {
+      throw new AppError(400, `Future data ${date}`);
     }
     await redisClient
       .multi()
@@ -777,36 +813,47 @@ router.post(
         throw new AppError(400, "Place name too long");
       }
 
-      if (!passkey || String(passkey).trim() === "") {
-        throw new AppError(400, "Passkey is required");
+      const pk = String(passkey).trim();
+      if (pk.length < 12) {
+        throw new AppError(400, "Passkey must be at least 12 characters");
+      }
+      if (pk === "dummy") {
+        throw new AppError(400, "Passkey is reserved");
       }
 
       const owner = user.id;
-      const exists = allStationsCfg.getStationByPasskey(passkey);
-      if (exists) {
-        throw new AppError(400, `Station with this passkey already exists`);
-      }
 
-      const userStations = allStationsCfg.getStationsByUser(owner);
-      const count = userStations != null ? userStations.size : 0;
-      if (count >= 3) {
-        throw new AppError(400, `Max number of stations per user reached`);
-      }
+      // Uniqueness / quota checks and persistence must not interleave with a
+      // concurrent addStation in this process.
+      const task = addStationQueue.then(async () => {
+        const exists = allStationsCfg.getStationByPasskey(pk);
+        if (exists) {
+          throw new AppError(400, `Station with this passkey already exists`);
+        }
 
-      const id = crypto.randomBytes(4).toString("hex");
-      const station: Omit<IStation, "measurement"> = {
-        id,
-        lat: latNum,
-        lon: lonNum,
-        owner,
-        passkey,
-        place: trimPlace,
-        public: true,
-        type,
-      };
-      allStationsCfg.addStation(station);
-      console.info("ADD station", id);
+        const userStations = allStationsCfg.getStationsByUser(owner);
+        const count = userStations != null ? userStations.size : 0;
+        if (count >= 3) {
+          throw new AppError(400, `Max number of stations per user reached`);
+        }
 
+        const id = crypto.randomBytes(4).toString("hex");
+        const station: Omit<IStation, "measurement"> = {
+          id,
+          lat: latNum,
+          lon: lonNum,
+          owner,
+          passkey: pk,
+          place: trimPlace,
+          public: true,
+          type,
+        };
+        await allStationsCfg.addStation(station);
+        console.info("ADD station", id);
+        return id;
+      });
+      addStationQueue = task.catch(() => {});
+      const id = await task;
       res.status(200).json({ id });
     } else {
       throw new AppError(400, "Invalid params");

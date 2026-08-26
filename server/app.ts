@@ -57,11 +57,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.use(express.static(__dirname));
+app.use(express.static(publicDirectoryPath));
 app.use(express.urlencoded({ extended: true, limit: "32kb" }));
 app.use(cookieParser());
 app.use(express.json({ limit: "32kb" }));
-app.use(express.static(publicDirectoryPath));
 
 // Health check is before the rate limiter so it doesn't count against limits
 app.get("/health", (req: Request, res: Response) => {
@@ -93,7 +92,9 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
       ? err.code
       : 500;
   console.error("ERROR:", code, err.msg ?? err.message, err.stack);
-  res.status(code).json({ code, msg: err.msg ?? err.message });
+  res
+    .status(code)
+    .json({ code, msg: err instanceof AppError ? err.msg : "Internal Server Error" });
 });
 
 export default app;
