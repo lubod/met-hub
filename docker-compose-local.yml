@@ -10,9 +10,10 @@ services:
       target: met-hub
     image: met-hub
     container_name: met-hub
+    restart: unless-stopped
     depends_on:
-      - redis
-#      - postgres
+      redis:
+        condition: service_healthy
     env_file:
       - met-hub.env
     environment:
@@ -27,9 +28,12 @@ services:
       target: met-hub-store
     image: met-hub-store
     container_name: met-hub-store
+    restart: unless-stopped
     depends_on:
-      - redis
-      - postgres
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_started
     env_file:
       - met-hub.env
     environment:
@@ -39,6 +43,12 @@ services:
   redis:
     image: redis
     container_name: redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 6
     ports:
       - "6380:6379"
     networks:
