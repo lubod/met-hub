@@ -5,11 +5,13 @@ deploy
 met-hub.env
 default
 .redis-stations.cfg
-esbuild-local.mjs
 .TODO
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 .DS_Store
+
 client/.DS_Store
+coverage/
+public/tailwind.css

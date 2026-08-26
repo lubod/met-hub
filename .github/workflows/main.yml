@@ -1,17 +1,27 @@
 name: Build
-on: [push]
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   REACT_APP_GOOGLE_CLIENT_ID: "dummy-client-id-for-ci"
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
-  Explore-GitHub-Actions:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v4
 
@@ -28,6 +38,8 @@ jobs:
         run: npm run lint
       - name: Run Typecheck
         run: npx tsc --noEmit
+      - name: Run unit and API tests
+        run: npm test
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -39,6 +51,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Immutable sha tag for rollbacks; mutable latest only from main,
+      # which is the only branch that triggers this workflow.
       - name: Build and push met-hub
         uses: docker/build-push-action@v5
         with:
@@ -46,7 +60,9 @@ jobs:
           file: Dockerfile
           target: met-hub
           push: true
-          tags: ghcr.io/lubod/met-hub:latest
+          tags: |
+            ghcr.io/lubod/met-hub:${{ github.sha }}
+            ghcr.io/lubod/met-hub:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -57,8 +73,8 @@ jobs:
           file: Dockerfile
           target: met-hub-store
           push: true
-          tags: ghcr.io/lubod/met-hub-store:latest
+          tags: |
+            ghcr.io/lubod/met-hub-store:${{ github.sha }}
+            ghcr.io/lubod/met-hub-store:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - run: echo "🍏 This job's status is ${{ job.status }}."

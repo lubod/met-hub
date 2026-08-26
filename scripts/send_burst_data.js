@@ -21,7 +21,15 @@ async function sendBurst() {
     const uv1 = Math.max(1, Math.round(solar1 / 90));
 
     // 1. Station 1 (GoGen)
-    const station1Data = {
+    async function send(url, opts) {
+  const res = await fetch(url, opts);
+  if (!res.ok) {
+    throw new Error(`${url} -> HTTP ${res.status}`);
+  }
+  return res;
+}
+
+const station1Data = {
       PASSKEY: "localpasskey",
       stationtype: "EasyWeatherV1.5.2",
       dateutc: dateUtcStr,
@@ -46,7 +54,7 @@ async function sendBurst() {
       uv: uv1
     };
 
-    await fetch("http://localhost:8089/setData/station1", {
+    await send("http://localhost:8089/setData/station1", {
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify(station1Data)
@@ -75,7 +83,7 @@ async function sendBurst() {
       indoorhumidity: "49"
     });
 
-    await fetch(`http://localhost:8089/weatherstation/updateweatherstation.php?${station2Params.toString()}`);
+    await send(`http://localhost:8089/weatherstation/updateweatherstation.php?${station2Params.toString()}`);
 
     // 3. Station Ecowitt
     const ecowittData = {
@@ -103,7 +111,7 @@ async function sendBurst() {
       uv: String(uv1)
     };
 
-    await fetch("http://localhost:8089/data/report", {
+    await send("http://localhost:8089/data/report", {
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify(ecowittData)
@@ -135,7 +143,7 @@ async function sendBurst() {
       uv: uv1
     };
 
-    await fetch("http://localhost:8089/api/ingest/station_json", {
+    await send("http://localhost:8089/api/ingest/station_json", {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -161,7 +169,7 @@ async function sendBurst() {
       petra_podlaha: { temp: 22.4, kuri: false, leto: false, low: false }
     };
 
-    await fetch("http://localhost:8089/setDomData?PASSKEY=dev-dom-passkey", {
+    await send("http://localhost:8089/setDomData?PASSKEY=dev-dom-passkey", {
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify(domData)
