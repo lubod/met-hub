@@ -106,6 +106,11 @@ Passkeys are user-supplied at station creation, must be at least 12 characters, 
 
 ## 5. Station Management
 
+Admin-configurable runtime settings (MQTT broker, data retention, cloud
+bridge capture/relay) live on the **Settings** page (header menu, admins
+only). They persist in PostgreSQL, apply without restarts, and fall back
+to the environment variables below until first saved.
+
 Signed-in users can add stations via the header menu (**Add new
 station**). Rules enforced by `POST /api/addStation`:
 

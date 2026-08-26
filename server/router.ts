@@ -14,6 +14,9 @@ import { dom } from "./dom";
 import { IMeasurement } from "./measurement";
 import { loadData, loadRainData, loadDailyET0 } from "./db";
 import { getForecast, getAstronomicalData } from "./forecast";
+import * as settingsService from "./settings";
+import { runRetention } from "./retention";
+import { connectedClients, publishLast } from "./mqttBroker";
 import { IStation } from "../common/allStationsCfg";
 
 const clientOAuth = new OAuth2Client(process.env.CLIENT_ID);
@@ -63,8 +66,14 @@ function getAdminId(): Promise<string | null> {
     return adminIdPromise;
   }
   adminCacheExpiry = now + 60_000;
-  adminIdPromise = redisClient.hGet("USERS", "admin")
-    .then((val) => val ?? null)
+  adminIdPromise = redisClient
+    .hGet("USERS", "admin")
+    .then((val) => {
+      // A transient miss (e.g. first call racing Redis connect) must not
+      // lock admins out for the full window.
+      if (val == null) adminCacheExpiry = now + 5_000;
+      return val ?? null;
+    })
     .catch((err) => {
       adminIdPromise = null;
       adminCacheExpiry = 0;
@@ -167,6 +176,16 @@ const authMiddleware: RequestHandler = catchAsync(async (req, res, next) => {
 
 const requireAuthMiddleware: RequestHandler = catchAsync(async (req, res, next) => {
   const user = await checkAuth(req, false);
+  req.user = user;
+  next();
+});
+
+const requireAdmin: RequestHandler = catchAsync(async (req, _res, next) => {
+  const user = await checkAuth(req);
+  const admin = await getAdminId();
+  if (user == null || admin == null || user.id !== admin) {
+    throw new AppError(403, "Admins only");
+  }
   req.user = user;
   next();
 });
@@ -665,14 +684,93 @@ async function setData(PASSKEY: string | null, id: string | null, data: any) {
       value: JSON.stringify(decoded),
     })
     .exec();
+  publishLast(station.id, decoded);
   writeEvent(station.id, "raw");
+}
+
+// ── Cloud bridge: auto-claim unknown devices and optional upstream relay ──
+
+function sniffStationType(payload: Record<string, unknown>): StationType {
+  const keys = new Set(Object.keys(payload));
+  const metric = ["tempc", "tempinc", "windspeedkmh", "windgustkmh", "baromrelhpa",
+    "baromabshpa", "rainratemm", "eventrainmm", "hourlyrainmm", "dailyrainmm",
+    "weeklyrainmm", "monthlyrainmm", "totalrainmm"];
+  if (metric.some((k) => keys.has(k))) return StationType.Ecowitt;
+  return StationType.WU;
+}
+
+async function tryAutoClaim(identifier: string, req: Request): Promise<boolean> {
+  const { bridge } = settingsService.getSettings();
+  if (!bridge.autoClaim || !identifier) return false;
+  if (identifier.length < 8 || identifier.length > 64) return false;
+  const day = new Date().toISOString().slice(0, 10);
+  const ip = req.ip ?? "unknown";
+  const capKey = `bridge:cap:${ip}:${day}`;
+  const perIp = await redisClient.incr(capKey);
+  if (perIp === 1) await redisClient.expire(capKey, 172_800);
+  if (perIp > bridge.autoClaimMaxPerDay) return false;
+  const total = await redisClient.incr("bridge:claimed:total");
+  if (total > 50) return false;
+
+  const id = crypto.randomBytes(4).toString("hex");
+  await allStationsCfg.addStation({
+    id,
+    lat: 0,
+    lon: 0,
+    type: sniffStationType(req.body ?? req.query),
+    place: `Intercepted ${identifier.slice(0, 12)}`,
+    passkey: identifier,
+    public: false,
+    owner: bridge.ownerId || (await getAdminId()) || "",
+  });
+  console.info("bridge: auto-claimed station", id, "for", identifier.slice(0, 8));
+  return true;
+}
+
+function relayLater(url: string, init: RequestInit): void {
+  fetch(url, { ...init, signal: AbortSignal.timeout(10_000) })
+    .then(async (res) => {
+      if (!res.ok) console.warn(`bridge: relay ${url} -> ${res.status}`);
+    })
+    .catch((err) =>
+      console.warn(
+        "bridge: relay failed:",
+        err instanceof Error ? err.message : err,
+      ),
+    );
+}
+
+function relayUpstream(req: Request): void {
+  const { bridge } = settingsService.getSettings();
+  if (!bridge.forwardUpstream) return;
+  if (req.path === "/weatherstation/updateweatherstation.php") {
+    const query = new URLSearchParams(
+      req.query as Record<string, string>,
+    ).toString();
+    relayLater(`${bridge.upstreamWuUrl}?${query}`, { method: "GET" });
+    return;
+  }
+  const isJson = String(req.headers["content-type"] ?? "").includes("application/json");
+  relayLater(bridge.upstreamEcowittUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": isJson
+        ? "application/json"
+        : "application/x-www-form-urlencoded",
+    },
+    body: isJson ? JSON.stringify(req.body) : new URLSearchParams(req.body).toString(),
+  });
 }
 
 router.get(
   "/weatherstation/updateweatherstation.php",
   catchAsync(async (req, res) => {
     const stationID = typeof req.query.ID === "string" ? req.query.ID : null;
+    if (stationID != null && allStationsCfg.getStationByPasskey(stationID) == null) {
+      await tryAutoClaim(stationID, req);
+    }
     await setData(stationID, null, req.query);
+    relayUpstream(req);
     res.sendStatus(200);
   }),
 );
@@ -680,7 +778,12 @@ router.get(
 router.post(
   "/setData",
   catchAsync(async (req, res) => {
-    await setData(req.body.PASSKEY, null, req.body);
+    const passkey = typeof req.body.PASSKEY === "string" ? req.body.PASSKEY : null;
+    if (passkey != null && allStationsCfg.getStationByPasskey(passkey) == null) {
+      await tryAutoClaim(passkey, req);
+    }
+    await setData(passkey, null, req.body);
+    relayUpstream(req);
     res.sendStatus(200);
   }),
 );
@@ -710,7 +813,12 @@ router.post(
 router.post(
   "/data/report",
   catchAsync(async (req, res) => {
-    await setData(req.body.PASSKEY, null, req.body);
+    const passkey = typeof req.body.PASSKEY === "string" ? req.body.PASSKEY : null;
+    if (passkey != null && allStationsCfg.getStationByPasskey(passkey) == null) {
+      await tryAutoClaim(passkey, req);
+    }
+    await setData(passkey, null, req.body);
+    relayUpstream(req);
     res.sendStatus(200);
   }),
 );
@@ -763,6 +871,7 @@ router.post(
         value: JSON.stringify(decoded),
       })
       .exec();
+  publishLast(dom.getStationID(), decoded);
     writeEvent(dom.getStationID(), "raw");
     res.sendStatus(200);
   }),
@@ -860,5 +969,66 @@ router.post(
     }
   }),
 );
+
+// ── Admin settings ──
+
+router.get("/api/settings", requireAdmin, catchAsync(async (req, res) => {
+  settingsService.assertInitialized();
+  res.status(200).json({
+    settings: settingsService.getSettings(),
+    runtime: {
+      mqttClients: connectedClients(),
+      retentionLastRun: await redisClient.get("RETENTION_LAST_RUN"),
+    },
+  });
+}));
+
+router.put("/api/settings/:section", requireAdmin, catchAsync(async (req, res) => {
+  settingsService.assertInitialized();
+  const section = req.params.section as "mqtt" | "retention" | "bridge";
+  const updated = await settingsService.updateSection(
+    section,
+    req.body ?? {},
+    req.user!.email,
+  );
+  res.status(200).json({ settings: updated });
+}));
+
+router.post("/api/settings/retention/run", requireAdmin, catchAsync(async (req, res) => {
+  const report = await runRetention();
+  await redisClient.set("RETENTION_LAST_RUN", report.finishedAt);
+  res.status(200).json(report);
+}));
+
+// ── MQTT credentials (self-service) ──
+
+router.post("/api/mqtt/credentials", requireAuthMiddleware, catchAsync(async (req, res) => {
+  settingsService.assertInitialized();
+  const user = req.user!;
+  const token = crypto.randomBytes(24).toString("hex");
+  await redisClient.hSet(
+    "MQTT_CREDS",
+    user.id,
+    crypto.createHash("sha256").update(token).digest("hex"),
+  );
+  await redisClient.hSet(
+    "MQTT_CREDS_INFO",
+    user.id,
+    JSON.stringify({ created: Date.now(), email: user.email }),
+  );
+  res.status(200).json({
+    username: user.id,
+    password: token,
+    brokerUrl: `wss://${req.hostname}/mqtt`,
+    discoveryPrefix: `methub/discovery/${user.id}/homeassistant`,
+  });
+}));
+
+router.delete("/api/mqtt/credentials", requireAuthMiddleware, catchAsync(async (req, res) => {
+  const user = req.user!;
+  await redisClient.hDel("MQTT_CREDS", user.id);
+  await redisClient.hDel("MQTT_CREDS_INFO", user.id);
+  res.status(200).json({});
+}));
 
 export default router;

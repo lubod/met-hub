@@ -1,6 +1,7 @@
 import { IMeasurement } from "./measurement";
 import { writeEvent } from "./router";
 import redisClient from "./redisClient";
+import { publishMinute, publishAvailability } from "./mqttBroker";
 
 // Atomically retrieves and removes all raw samples with score <= `to`.
 // Doing ZRANGEBYSCORE+ZREM in one script closes the race where a sample
@@ -58,7 +59,11 @@ class Aggregator {
       arguments: [String(to)],
     });
     const res = (Array.isArray(popped) ? popped : []) as string[];
-    if (res.length === 0) return;
+    if (res.length === 0) {
+      // No fresh samples this tick: flag the station as stale on MQTT.
+      publishAvailability(meas.getStationID(), false);
+      return;
+    }
 
     const minuteMap: Map<number, Array<any>> = new Map();
     for (const item of res) {
@@ -71,6 +76,8 @@ class Aggregator {
         const agg = meas.aggregateRawData2Minute(minute, minuteMap.get(minute));
         const sagg = JSON.stringify(agg);
         await redisClient.xAdd("toStore", "*", { m: sagg, id: meas.getStationID() });
+        publishMinute(meas.getStationID(), agg);
+        publishAvailability(meas.getStationID(), true);
         await redisClient
           .multi()
           .zAdd(meas.getRedisTrendKey(), { score: minute, value: sagg })

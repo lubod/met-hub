@@ -8,6 +8,8 @@ import {
 import { StationType } from "../common/stationType";
 import { dom } from "./dom";
 import { store } from "./db";
+import { runRetention, setRetentionTables } from "./retention";
+import { initSettings, getSettings } from "./settings";
 import redisClient from "./redisClient";
 
 const client = createClient({
@@ -120,6 +122,38 @@ async function main(stations: Map<string, IStation>) {
 
 const allStationsCfg = new AllStationsCfg();
 
+// Retention runs inside the store process — it already owns PostgreSQL
+// writes. Tables resolve lazily so hot-reloaded stations are included.
+setRetentionTables(() => {
+  const tables = new Set<string>(["station_dom"]);
+  for (const m of allStationsCfg.getMeasurements()) {
+    for (const t of m.getTables()) tables.add(t);
+  }
+  return tables;
+});
+
+let lastRetentionDay = "";
+
+async function retentionTick(): Promise<void> {
+  if (isShuttingDown) return;
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const { days, hour } = getSettings().retention;
+  if (now.getUTCHours() !== hour || lastRetentionDay === today) return;
+  lastRetentionDay = today;
+  try {
+    const report = await runRetention();
+    console.info("store: retention report:", JSON.stringify(report));
+  } catch (err) {
+    console.error("store: retention failed:", err);
+  }
+}
+
+setInterval(() => {
+    retentionTick();
+  }, 10 * 60 * 1000).unref();
+
+
 // Hot-reload a single station entry after an addStation in the web process;
 // without this, aggregated minutes for new stations hit the unknown-ID branch
 // and are dropped until restart.
@@ -152,6 +186,13 @@ redisClient
   .connect()
   .then(() => allStationsCfg.readCfg())
   .then(async () => {
+    // Settings (retention window) are an enhancement: boot must survive a
+    // settings-table failure and keep consuming the toStore stream.
+    try {
+      await initSettings();
+    } catch (err) {
+      console.error("store: settings init failed (defaults in use):", err);
+    }
     // Hot-reload is an enhancement: if pub/sub cannot start, the store must
     // still consume the toStore stream.
     try {
