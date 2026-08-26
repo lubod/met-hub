@@ -54,9 +54,11 @@ const HomePage = observer(({ appContext }: Props) => {
             {showAbout && (
               <About appContext={appContext} className="h-full !max-w-none" />
             )}
+            {/* Dom has no forecast/map: fill the right column with history */}
+            {showDom && showCharts && <Charts appContext={appContext} />}
           </div>
         </div>
-        {showCharts && <Charts appContext={appContext} />}
+        {showCharts && !showDom && <Charts appContext={appContext} />}
       </div>
     </div>
   );

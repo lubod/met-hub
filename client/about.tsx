@@ -11,27 +11,40 @@ import Heading from "./misc/heading";
 
 export async function handleGoogleLogin(response: CredentialResponse, authCtrl: AuthCtrl) {
   console.debug("google login", response);
-  const res = await fetch("/api/googleLogin", {
-    method: "POST",
-    body: JSON.stringify({
-      token: response.credential,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await res.json();
-  // console.debug(data); // todo
-  authCtrl.setAuth(
-    data.given_name,
-    data.family_name,
-    data.expiresAt,
-    data.id,
-    null,
-    data.createdAt,
-    authCtrl.authData.admin,
-    data.email,
-  );
+  try {
+    const res = await fetch("/api/googleLogin", {
+      method: "POST",
+      body: JSON.stringify({
+        token: response.credential,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => null);
+      throw new Error(errBody?.msg || `Login failed (${res.status})`);
+    }
+    const data = await res.json();
+    authCtrl.setAuth(
+      data.given_name,
+      data.family_name,
+      data.expiresAt,
+      data.id,
+      data.createdAt,
+      null,
+      data.email,
+    );
+    // Pick up the authoritative isAdmin flag and station list from the server.
+    await authCtrl.fetchProfile();
+  } catch (e) {
+    console.error("google login failed:", e);
+    alert(
+      e instanceof Error && e.message
+        ? `Sign-in failed: ${e.message}`
+        : "Sign-in failed. Please try again.",
+    );
+  }
 }
 
 type Props = {

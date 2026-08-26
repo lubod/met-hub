@@ -5,7 +5,6 @@ import {
   ComposedChart,
   ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
@@ -22,37 +21,6 @@ type Props = {
   width: number;
 };
 
-function CustomTempTooltip({ active, payload, label }: any) {
-  if (!active || !payload || !payload.length) return null;
-  const tempVal = payload[0]?.value;
-  if (tempVal == null) return null;
-
-  const timeFormatted = moment(new Date(label)).format("ddd, MMM D • HH:mm");
-  const isPositive = tempVal >= 0;
-
-  return (
-    <div className="glass-card !bg-midnight/90 !backdrop-blur-md !border-white/10 !p-2.5 !rounded-xl shadow-xl text-xs flex flex-col gap-1 min-w-32 pointer-events-none">
-      <div className="text-light/60 font-medium text-[11px] border-b border-white/5 pb-1 mb-0.5">
-        {timeFormatted}
-      </div>
-      <div className="flex items-center justify-between gap-3">
-        <span className="flex items-center gap-1.5 text-light/80">
-          <span
-            className="w-2 h-2 rounded-full inline-block"
-            style={{ backgroundColor: isPositive ? MY_COLORS.orange : MY_COLORS.blue }}
-          />
-          Temperature:
-        </span>
-        <span
-          className="font-bold tabular-nums"
-          style={{ color: isPositive ? MY_COLORS.orange : MY_COLORS.blue }}
-        >
-          {tempVal > 0 ? `+${tempVal.toFixed(1)}` : tempVal.toFixed(1)} °C
-        </span>
-      </div>
-    </div>
-  );
-}
 
 const ForecastChartTemp = observer(
   ({ data, lastTimestamp, firstTimestamp, hours, offset6h, width }: Props) => {
@@ -195,8 +163,11 @@ const ForecastChartTemp = observer(
             </defs>
             <XAxis
               dataKey="timestamp"
-              hide
-              axisLine={false}
+              axisLine={{ stroke: "rgba(255, 255, 255, 0.15)" }}
+              tick={{ fill: "#e8e6e3", fontSize: 12 }}
+              tickLine={false}
+              minTickGap={48}
+              tickFormatter={(t) => moment(new Date(Number(t))).format("HH:mm")}
               domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
               scale="time"
               type="number"
@@ -206,14 +177,6 @@ const ForecastChartTemp = observer(
               hide
               type="number"
               domain={[domainTempMin, domainTempMax]}
-            />
-            <Tooltip
-              content={<CustomTempTooltip />}
-              cursor={{
-                stroke: "rgba(255, 255, 255, 0.25)",
-                strokeWidth: 1,
-                strokeDasharray: "3 3",
-              }}
             />
           </ComposedChart>
         </div>

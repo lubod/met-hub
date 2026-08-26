@@ -6,7 +6,6 @@ import {
   Line,
   ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
@@ -24,77 +23,7 @@ type Props = {
   type: "rain_cloud" | "wind";
 };
 
-function CustomRainCloudTooltip({ active, payload, label }: any) {
-  if (!active || !payload || !payload.length) return null;
-  const timeFormatted = moment(new Date(label)).format("ddd, MMM D • HH:mm");
 
-  const clouds = payload.find((p: any) => p.dataKey === "clouds")?.value;
-  const rain = payload.find((p: any) => p.dataKey === "rain")?.value;
-
-  return (
-    <div className="glass-card !bg-midnight/90 !backdrop-blur-md !border-white/10 !p-2.5 !rounded-xl shadow-xl text-xs flex flex-col gap-1.5 min-w-36 pointer-events-none">
-      <div className="text-light/60 font-medium text-[11px] border-b border-white/5 pb-1 mb-0.5">
-        {timeFormatted}
-      </div>
-      {clouds != null && (
-        <div className="flex items-center justify-between gap-3">
-          <span className="flex items-center gap-1.5 text-light/80">
-            <span
-              className="w-2 h-2 rounded-full inline-block"
-              style={{ backgroundColor: MY_COLORS.light }}
-            />
-            Cloud Cover:
-          </span>
-          <span className="font-semibold text-light tabular-nums">
-            {clouds.toFixed(0)}%
-          </span>
-        </div>
-      )}
-      {rain != null && (
-        <div className="flex items-center justify-between gap-3">
-          <span className="flex items-center gap-1.5 text-light/80">
-            <span
-              className="w-2 h-2 rounded-full inline-block"
-              style={{ backgroundColor: MY_COLORS.blue }}
-            />
-            Precipitation:
-          </span>
-          <span className="font-bold text-blue tabular-nums">
-            {rain.toFixed(1)} mm
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function CustomWindTooltip({ active, payload, label }: any) {
-  if (!active || !payload || !payload.length) return null;
-  const timeFormatted = moment(new Date(label)).format("ddd, MMM D • HH:mm");
-  const windSpeed = payload.find((p: any) => p.dataKey === "wind_speed")?.value;
-
-  return (
-    <div className="glass-card !bg-midnight/90 !backdrop-blur-md !border-white/10 !p-2.5 !rounded-xl shadow-xl text-xs flex flex-col gap-1.5 min-w-36 pointer-events-none">
-      <div className="text-light/60 font-medium text-[11px] border-b border-white/5 pb-1 mb-0.5">
-        {timeFormatted}
-      </div>
-      {windSpeed != null && (
-        <div className="flex items-center justify-between gap-3">
-          <span className="flex items-center gap-1.5 text-light/80">
-            <span
-              className="w-2 h-2 rounded-full inline-block"
-              style={{ backgroundColor: MY_COLORS.purple }}
-            />
-            Wind Speed:
-          </span>
-          <span className="font-bold text-light tabular-nums">
-            {windSpeed.toFixed(1)} km/h
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
 
 const ForecastChart = observer(
   ({ data, lastTimestamp, firstTimestamp, hours, offset6h, width, type }: Props) => {
@@ -279,8 +208,11 @@ const ForecastChart = observer(
             ))}
             <XAxis
               dataKey="timestamp"
-              hide
-              axisLine={false}
+              axisLine={{ stroke: "rgba(255, 255, 255, 0.15)" }}
+              tick={{ fill: "#e8e6e3", fontSize: 12 }}
+              tickLine={false}
+              minTickGap={48}
+              tickFormatter={(t) => moment(new Date(Number(t))).format("HH:mm")}
               domain={[firstTimestamp.getTime(), lastTimestamp.getTime()]}
               scale="time"
               type="number"
@@ -299,33 +231,15 @@ const ForecastChart = observer(
                   type="number"
                   domain={[0, 100]}
                 />
-                <Tooltip
-                  content={<CustomRainCloudTooltip />}
-                  cursor={{
-                    stroke: "rgba(255, 255, 255, 0.25)",
-                    strokeWidth: 1,
-                    strokeDasharray: "3 3",
-                  }}
-                />
               </>
             )}
             {type === "wind" && (
-              <>
-                <YAxis
-                  yAxisId="wind_speed"
-                  hide
-                  type="number"
-                  domain={[0, domainWindMax]}
-                />
-                <Tooltip
-                  content={<CustomWindTooltip />}
-                  cursor={{
-                    stroke: "rgba(255, 255, 255, 0.25)",
-                    strokeWidth: 1,
-                    strokeDasharray: "3 3",
-                  }}
-                />
-              </>
+              <YAxis
+                yAxisId="wind_speed"
+                hide
+                type="number"
+                domain={[0, domainWindMax]}
+              />
             )}
           </ComposedChart>
         </div>

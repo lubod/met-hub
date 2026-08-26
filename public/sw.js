@@ -1,4 +1,4 @@
-const CACHE_NAME = "methub-v1";
+const CACHE_NAME = "methub-v2";
 const ASSETS = [
   "/",
   "/index.js",

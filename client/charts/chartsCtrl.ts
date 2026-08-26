@@ -10,6 +10,9 @@ class ChartsCtrl {
 
   timer: ReturnType<typeof setInterval> | null = null;
 
+  // Monotonic token: responses from superseded loads are discarded.
+  loadSeq: number = 0;
+
   constructor(authData: AuthData) {
     this.authData = authData;
     this.chartsData = new ChartsData();
@@ -58,7 +61,7 @@ class ChartsCtrl {
       !hasDomAccess &&
       (!this.authData.isAuth ||
         (this.authData.id !== this.chartsData.station.owner &&
-          this.authData.id !== this.authData.admin))
+          !this.authData.isAdmin))
     ) {
       console.debug("no auth -> no load");
       return;
@@ -67,6 +70,7 @@ class ChartsCtrl {
       console.debug("no stationID -> no load");
       return;
     }
+    const seq = ++this.loadSeq;
     try {
       this.chartsData.setLoading(true);
       const o = range.sec * 1000;
@@ -88,26 +92,22 @@ class ChartsCtrl {
       });
 
       if (!response.ok) {
-        this.chartsData.setNewData(false, [], new CData());
-        const message = `An error has occured: ${response.status}`;
-        throw new Error(message);
+        // Keep last-good chart/stats; surface in console only.
+        throw new Error(`An error has occured: ${response.status}`);
       }
 
       const newData = await response.json();
-      if (newData == null) {
-        this.chartsData.setNewData(false, [], new CData());
-        return;
-      }
-      const min = newData.stats.min ? parseFloat(newData.stats.min) : null;
-      const max = newData.stats.max ? parseFloat(newData.stats.max) : null;
-      const last = newData.stats.last ? parseFloat(newData.stats.last) : null;
-      const first = newData.stats.first
-        ? parseFloat(newData.stats.first)
-        : null;
-      const avg: number | null = newData.stats.avg
-        ? parseFloat(newData.stats.avg)
-        : null;
-
+      if (seq !== this.loadSeq) return;
+      if (newData == null) return;
+      const num = (v: unknown): number | null => {
+        const parsed = v != null ? parseFloat(String(v)) : Number.NaN;
+        return Number.isFinite(parsed) ? parsed : null;
+      };
+      const min = num(newData.stats.min);
+      const max = num(newData.stats.max);
+      const last = num(newData.stats.last);
+      const first = num(newData.stats.first);
+      const avg = num(newData.stats.avg);
       const total: number | null = null;
       // const y = m.col;
       const y2 = m.col2;
@@ -141,9 +141,10 @@ class ChartsCtrl {
         xDomainMin: start.toISOString(),
         xDomainMax: end.toISOString(),
       });
-      // this.chartsData.setLoading(false);
     } catch (e) {
       console.error(e);
+    } finally {
+      if (seq === this.loadSeq) this.chartsData.setLoading(false);
     }
   }
 }

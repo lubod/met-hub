@@ -95,23 +95,8 @@ export class CController {
   }
 
   private async fetchDomTrendData() {
-    this.domData.trendData = {
-      timestamp: [],
-      temp: [],
-      humidity: [],
-      rain: [],
-      tarif: [],
-      living_room_air: [],
-      living_room_floor: [],
-      guest_room_air: [],
-      guest_room_floor: [],
-      bed_room_air: [],
-      bed_room_floor: [],
-      boys_room_air: [],
-      boys_room_floor: [],
-      petra_room_air: [],
-      petra_room_floor: [],
-    } as IDomTrendData;
+    // No pre-clear: processTrendData replaces wholesale on success; on failure
+    // the previous (valid) trend stays visible.
     const newData = await this.privateFetch(this.url("/api/getTrendData/dom"));
     if (newData != null) this.domData.processTrendData(newData);
   }
@@ -125,8 +110,9 @@ export class CController {
     const newData = await this.privateFetch(
       this.url(`/api/getLastData/station/${this.stationCfg.STATION_ID}`),
     );
-    this.stationData.setData(newData);
-    if (newData != null) this.stationData.setLoading(false);
+    // Keep last-good readings on failure; always release the spinner.
+    if (newData != null) this.stationData.setData(newData);
+    this.stationData.setLoading(false);
   }
 
   private async fetchSDailyET0() {
@@ -136,7 +122,7 @@ export class CController {
     const newData = await this.privateFetch(
       this.url(`/api/getDailyET0/station/${this.stationCfg.STATION_ID}`),
     );
-    this.stationData.setDailyET0(newData);
+    if (newData != null) this.stationData.setDailyET0(newData);
   }
 
   private async fetchSTrendData() {
@@ -147,7 +133,7 @@ export class CController {
     const newData = await this.privateFetch(
       this.url(`/api/getTrendData/station/${this.stationCfg.STATION_ID}`),
     );
-    this.stationData.setTrendData(newData);
+    if (newData != null) this.stationData.setTrendData(newData);
   }
 
   async fetchRainData() {

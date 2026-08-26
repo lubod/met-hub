@@ -17,7 +17,7 @@ import { IStation } from "../common/allStationsCfg";
 import { AllStationsCfgClient } from "../common/allStationsCfgClient";
 import { DOM_SENSORS, DOM_SENSORS_DESC } from "../common/domModel";
 import {
-  STATION_SENSORS,
+  STATION_DB_SENSORS,
   STATION_MEASUREMENTS_DESC,
 } from "../common/stationModel";
 import { CController } from "../common/controller";
@@ -91,7 +91,7 @@ export class AppContext {
       this.chartsCtrl.chartsData.setSensor(DOM_SENSORS_DESC.LIVING_ROOM_AIR);
     } else {
       // todo
-      this.chartsCtrl.chartsData.setAllSensors(STATION_SENSORS);
+      this.chartsCtrl.chartsData.setAllSensors(STATION_DB_SENSORS);
       this.chartsCtrl.chartsData.setSensor(
         STATION_MEASUREMENTS_DESC.TEMPERATURE,
       );

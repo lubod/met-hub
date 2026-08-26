@@ -22,7 +22,6 @@ const DomRoomsUp = observer(({ appContext }: Props) => (
       heat={appContext.cCtrl.domData.data.bed_room_heat}
       off={appContext.cCtrl.domData.data.bed_room_off}
       low={appContext.cCtrl.domData.data.bed_room_low}
-      authData={appContext.authCtrl.authData}
       onClickAir={() =>
         appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BED_ROOM_AIR)
       }
@@ -42,7 +41,6 @@ const DomRoomsUp = observer(({ appContext }: Props) => (
       heat={appContext.cCtrl.domData.data.boys_room_heat}
       off={appContext.cCtrl.domData.data.boys_room_off}
       low={appContext.cCtrl.domData.data.boys_room_low}
-      authData={appContext.authCtrl.authData}
       onClickAir={() =>
         appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BOYS_ROOM_AIR)
       }
@@ -62,7 +60,6 @@ const DomRoomsUp = observer(({ appContext }: Props) => (
       heat={appContext.cCtrl.domData.data.petra_room_heat}
       off={appContext.cCtrl.domData.data.petra_room_off}
       low={appContext.cCtrl.domData.data.petra_room_low}
-      authData={appContext.authCtrl.authData}
       onClickAir={() =>
         appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.PETRA_ROOM_AIR)
       }

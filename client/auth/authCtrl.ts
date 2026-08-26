@@ -14,10 +14,6 @@ export default class AuthCtrl {
     this.authData = new AuthData();
   }
 
-  getAccessToken() {
-    return this.authData.access_token;
-  }
-
   checkAuth() {
     if (this.authData.expiresAt !== null && Date.now() > this.authData.expiresAt) {
       this.authData.cancelAuth();
@@ -40,15 +36,14 @@ export default class AuthCtrl {
       });
       const json = await res.json();
       if (json?.user != null) {
-        const { admin, user } = json;
+        const { isAdmin, user } = json;
         this.setAuth(
           user.given_name,
           user.family_name,
           user.expiresAt,
           user.id,
-          null,
           user.createdAt,
-          admin,
+          isAdmin,
           user.email,
         );
       } else {
@@ -67,9 +62,8 @@ export default class AuthCtrl {
     family_name: string,
     expiresAt: number,
     id: string,
-    refreshToken: string | null,
     createdAt: number,
-    admin: string | null,
+    isAdmin: boolean | null,
     email: string | null = null,
   ) {
     this.authData.setAuth(
@@ -77,9 +71,8 @@ export default class AuthCtrl {
       family_name,
       expiresAt,
       id,
-      refreshToken,
       createdAt,
-      admin,
+      isAdmin,
       email,
     );
     this.appContext.fetchCfg();
@@ -87,7 +80,12 @@ export default class AuthCtrl {
 
   async logout() {
     this.authData.cancelAuth();
-    await fetch("/api/logout", {});
-    this.appContext.fetchCfg();
+    try {
+      await fetch("/api/logout", {});
+    } catch (e) {
+      console.error("logout request failed:", e);
+    } finally {
+      this.appContext.fetchCfg();
+    }
   }
 }

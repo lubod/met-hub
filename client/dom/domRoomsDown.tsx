@@ -22,7 +22,6 @@ const DomRoomsDown = observer(({ appContext }: Props) => (
       heat={appContext.cCtrl.domData.data.living_room_heat}
       off={appContext.cCtrl.domData.data.living_room_off}
       low={appContext.cCtrl.domData.data.living_room_low}
-      authData={appContext.authCtrl.authData}
       onClickAir={() =>
         appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.LIVING_ROOM_AIR)
       }
@@ -42,7 +41,6 @@ const DomRoomsDown = observer(({ appContext }: Props) => (
       heat={appContext.cCtrl.domData.data.guest_room_heat}
       off={appContext.cCtrl.domData.data.guest_room_off}
       low={appContext.cCtrl.domData.data.guest_room_low}
-      authData={appContext.authCtrl.authData}
       onClickAir={() =>
         appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.GUEST_ROOM_AIR)
       }

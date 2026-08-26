@@ -27,7 +27,6 @@ class DomData {
 
   oldData: boolean = true;
 
-  try: number = 0;
 
   loading: boolean = true;
 
@@ -62,7 +61,6 @@ class DomData {
     this.station = station;
     this.ctime = new Date();
     this.oldData = true;
-    this.try = 0;
     this.loading = true;
   }
 
@@ -76,17 +74,11 @@ class DomData {
       } else {
         // console.debug('oldData = false');
         this.oldData = false;
-        this.try = 0;
       }
     } else {
       // console.debug('oldData = true');
       this.oldData = true;
     }
-  }
-
-  setTime(newTime: Date) {
-    this.ctime = newTime;
-    this.checkOldData(newTime);
   }
 
   processData(newData: IDomData) {

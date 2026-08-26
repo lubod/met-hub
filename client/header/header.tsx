@@ -29,9 +29,9 @@ const Header = observer(({ appContext }: Props) => {
 
   return (
     <HeaderContainer>
-      <div className="flex flex-row flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center gap-3 md:grid md:grid-cols-[1fr_auto_1fr]">
         {/* Left: Brand Identity + Live Badge */}
-        <div className="flex items-center gap-3">
+        <div className="flex w-full items-center gap-3 max-md:w-full md:w-auto">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#e07856] via-[#6ba3a8] to-[#8dbe9d] p-[1px] flex items-center justify-center shadow-md shadow-[#e07856]/10">
               <div className="w-full h-full bg-[#0e121c] rounded-[7px] flex items-center justify-center text-xs font-black text-white select-none">
@@ -43,29 +43,19 @@ const Header = observer(({ appContext }: Props) => {
             </span>
           </div>
 
-          <div
-            className="live-pulse select-none"
-            style={{
-              backgroundColor: isFresh ? "rgba(141, 190, 157, 0.12)" : "rgba(212, 168, 67, 0.12)",
-              border: `1px solid ${isFresh ? "rgba(141, 190, 157, 0.3)" : "rgba(212, 168, 67, 0.3)"}`,
-              color: isFresh ? "#8dbe9d" : "#d4a843",
-            }}
-          >
-            <span
-              className="live-pulse-dot"
-              style={{ backgroundColor: isFresh ? "#8dbe9d" : "#d4a843" }}
-            />
-            <span>{isFresh ? "Live" : "Stale"}</span>
+
+          <div className="max-md:ml-auto">
+            <HeaderCurrentTime headerData={appContext.headerCtrl.headerData} />
           </div>
         </div>
 
-        {/* Center: Station selector */}
-        {appContext.headerCtrl.headerData.isExternalID === false &&
-          appContext.headerCtrl.headerData.allStations != null && (
-            <div className="flex flex-col justify-center min-w-0">
-              <HeaderStationsList appContext={appContext} />
-            </div>
-          )}
+        {/* Center: Add station & Login / user menu */}
+        {appContext.headerCtrl.headerData.isExternalID === false && (
+          <nav className="order-last flex flex-row items-center gap-1 shrink-0 md:order-none md:justify-center">
+            <HeaderModal appContext={appContext} />
+            <HeaderDropdown appContext={appContext} />
+          </nav>
+        )}
         {appContext.headerCtrl.headerData.isExternalID === true && (
           <div className="flex flex-col justify-center min-w-0">
             <StringData
@@ -75,23 +65,20 @@ const Header = observer(({ appContext }: Props) => {
           </div>
         )}
 
-        {/* Right: Time & User menu */}
-        <div className="flex items-center gap-3">
-          <HeaderCurrentTime headerData={appContext.headerCtrl.headerData} />
-          {appContext.headerCtrl.headerData.isExternalID === false && (
-            <nav className="flex flex-row items-center gap-1 shrink-0">
-              <HeaderModal appContext={appContext} />
-              <HeaderDropdown appContext={appContext} />
-            </nav>
-          )}
-          {appContext.headerCtrl.headerData.isExternalID === true && (
-            <div className="shrink-0">
-              <a href="https://www.met-hub.com">
-                <StringData label="Powered by" value="www.met-hub.com" />
-              </a>
+        {/* Right: Station selector (or powered-by on external views) */}
+        {appContext.headerCtrl.headerData.isExternalID === false &&
+          appContext.headerCtrl.headerData.allStations != null && (
+            <div className="order-last ml-auto flex min-w-0 md:order-none md:ml-0 md:w-auto md:justify-self-end">
+              <HeaderStationsList appContext={appContext} />
             </div>
           )}
-        </div>
+        {appContext.headerCtrl.headerData.isExternalID === true && (
+          <div className="ml-auto shrink-0 md:ml-0 md:justify-self-end">
+            <a href="https://www.met-hub.com">
+              <StringData label="Powered by" value="www.met-hub.com" />
+            </a>
+          </div>
+        )}
       </div>
     </HeaderContainer>
   );

@@ -80,7 +80,7 @@ function Cell({
 
   let formattedValue = value;
   if (unit === "°" && value !== "-" && !Number.isNaN(val)) {
-    formattedValue = `${val > 0 ? `+${val}` : val}°`;
+    formattedValue = `${val}°`;
   } else if (unit === "%" && value !== "-" && !Number.isNaN(val)) {
     formattedValue = `${val}%`;
   } else if (unit === "mm" && value !== "-" && !Number.isNaN(val)) {
@@ -141,17 +141,40 @@ function MyRows1({
         className="flex flex-row font-semibold text-light/90 border-b border-white/5"
         style={{ width: totalWidth }}
       >
-        {data.map((item: IGetForecastDataToDisplay, idx: number) => (
-          <Cell
-            key={`day-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
-            value={item.getDay()}
-            color="gray2"
-            colWidth={colWidth}
-            isHovered={hoveredCol === idx}
-            onMouseEnter={() => setHoveredCol(idx)}
-            onMouseLeave={() => setHoveredCol(null)}
-          />
-        ))}
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => {
+          // Same color and thresholds as the rain row cells below
+          const val = parseFloat(item.getPrecipitationAmount());
+          const rainBg =
+            !Number.isNaN(val) && val > 0.01
+              ? `#6ba3a8${Math.round(
+                  (val > 10 ? 0.55 : val > 3 ? 0.3 : 0.15) * 255,
+                )
+                  .toString(16)
+                  .padStart(2, "0")}`
+              : undefined;
+          return (
+            <div
+              key={`day-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
+              className={`text-center text-light/90 font-semibold border-s text-xs py-2.5 flex-shrink-0 select-none transition-all duration-150 flex items-center justify-center ${
+                hoveredCol === idx
+                  ? "bg-white/[0.14] !border-cyan/40 font-semibold"
+                  : ""
+              }`}
+              style={{
+                width: colWidth,
+                minWidth: colWidth,
+                maxWidth: colWidth,
+                borderLeftColor:
+                  hoveredCol === idx ? undefined : "rgba(255, 255, 255, 0.05)",
+                backgroundColor: hoveredCol === idx ? undefined : rainBg,
+              }}
+              onMouseEnter={() => setHoveredCol(idx)}
+              onMouseLeave={() => setHoveredCol(null)}
+            >
+              {item.getDay()}
+            </div>
+          );
+        })}
       </div>
 
       {/* Date / Time Row */}
@@ -159,17 +182,37 @@ function MyRows1({
         className="flex flex-row text-light/60 text-[11px] border-b border-white/5"
         style={{ width: totalWidth }}
       >
-        {data.map((item: IGetForecastDataToDisplay, idx: number) => (
-          <Cell
-            key={`day2-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
-            value={item.getDay2()}
-            color="gray2"
-            colWidth={colWidth}
-            isHovered={hoveredCol === idx}
-            onMouseEnter={() => setHoveredCol(idx)}
-            onMouseLeave={() => setHoveredCol(null)}
-          />
-        ))}
+        {data.map((item: IGetForecastDataToDisplay, idx: number) => {
+          const m = /^([0-9]+)([a-zA-Z]{2})$/.exec(item.getDay2());
+          return (
+            <div
+              key={`day2-${item.getDay()}-${item.getDay2()}-${item.getTimestamp()?.getTime()}`}
+              className={`text-center text-light/60 text-[11px] border-s py-2.5 flex-shrink-0 flex items-center justify-center select-none transition-all duration-150 ${
+                hoveredCol === idx
+                  ? "bg-white/[0.14] !border-cyan/40 font-semibold"
+                  : ""
+              }`}
+              style={{
+                width: colWidth,
+                minWidth: colWidth,
+                maxWidth: colWidth,
+                borderLeftColor:
+                  hoveredCol === idx ? undefined : "rgba(255, 255, 255, 0.05)",
+              }}
+              onMouseEnter={() => setHoveredCol(idx)}
+              onMouseLeave={() => setHoveredCol(null)}
+            >
+              {m ? (
+                <span className="tabular-nums">
+                  {m[1]}
+                  <sup className="text-[8px] align-super">{m[2]}</sup>
+                </span>
+              ) : (
+                item.getDay2()
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Weather Icon Row */}
@@ -196,13 +239,18 @@ function MyRows1({
             onMouseLeave={() => setHoveredCol(null)}
           >
             {item.getSymbolCode() != null && (
-              <img
-                width={size}
-                height={size}
-                src={`svg/${item.getSymbolCode()}.svg`}
-                alt={item.getSymbolCode()}
-                className="drop-shadow-md"
-              />
+              <span
+                className="flex items-center justify-center"
+                style={{ width: size + 6, height: size + 6 }}
+              >
+                <img
+                  width={size}
+                  height={size}
+                  src={`svg/${item.getSymbolCode()}.svg`}
+                  alt={item.getSymbolCode()}
+                  className="drop-shadow-md"
+                />
+              </span>
             )}
             {item.getSymbolCode() == null && (
               <span className="text-light/40">-</span>

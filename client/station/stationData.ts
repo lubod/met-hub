@@ -2,10 +2,8 @@ import { action, makeObservable, observable } from "mobx";
 import { IStationData, IStationTrendData } from "../../common/stationModel";
 import { IStation } from "../../common/allStationsCfg";
 
-class StationData {
-  data: IStationData = {} as IStationData;
-
-  trendData: IStationTrendData = {
+function emptyTrendData(): IStationTrendData {
+  return {
     timestamp: [],
     tempin: [],
     humidityin: [],
@@ -31,6 +29,13 @@ class StationData {
     dewpt: [],
   } as IStationTrendData;
 
+}
+
+class StationData {
+  data: IStationData = {} as IStationData;
+
+  trendData: IStationTrendData = emptyTrendData();
+
   ctime: Date = new Date();
 
   oldData: boolean = true;
@@ -42,8 +47,6 @@ class StationData {
   raindata: any = null;
 
   dailyET0: { et0: number; rain: number } | null = null;
-
-  try: number = 0;
 
   loading: boolean = true;
 
@@ -79,7 +82,10 @@ class StationData {
     this.floatingRainData = false;
     this.raindata = null;
     this.dailyET0 = null;
-    this.try = 0;
+    // Drop readings and trends from the previous station so nothing stale
+    // renders before the first fetch for the new one lands.
+    this.data = {} as IStationData;
+    this.trendData = emptyTrendData();
     this.loading = true;
   }
 
@@ -105,17 +111,11 @@ class StationData {
       } else {
         // console.debug('oldData = false');
         this.oldData = false;
-        this.try = 0;
       }
     } else {
       // console.debug('oldData = true');
       this.oldData = true;
     }
-  }
-
-  setTime(newTime: Date) {
-    this.ctime = newTime;
-    this.checkOldData(newTime);
   }
 
   setFloatingRainData(newFloatingRainData: boolean) {
@@ -142,31 +142,7 @@ class StationData {
     if (newTrendData != null) {
       this.trendData = newTrendData;
     } else {
-      this.trendData = {
-        timestamp: [],
-        tempin: [],
-        humidityin: [],
-        temp: [],
-        humidity: [],
-        pressureabs: [],
-        pressurerel: [],
-        windgust: [],
-        windspeed: [],
-        winddir: [],
-        solarradiation: [],
-        uv: [],
-        rainrate: [],
-        minuterain: [],
-        maxdailygust: [],
-        eventrain: [],
-        hourlyrain: [],
-        dailyrain: [],
-        weeklyrain: [],
-        monthlyrain: [],
-        totalrain: [],
-        feelslike: [],
-        dewpt: [],
-      } as IStationTrendData;
+      this.trendData = emptyTrendData();
     }
   }
 }

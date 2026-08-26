@@ -41,7 +41,7 @@ export default class HeaderCtrl {
       });
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Server error: ${res.status}`);
+        throw new Error(errorData.msg || errorData.error || `Server error: ${res.status}`);
       }
       const data = await res.json();
       return { id: data.id, err: "" };

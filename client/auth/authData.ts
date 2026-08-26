@@ -13,15 +13,13 @@ export default class AuthData {
 
   createdAt: number | null = null;
 
-  access_token: string | null = null;
-
-  refresh_token: string | null = null;
-
   isAuth: boolean = false;
 
   location: string = "/";
 
-  admin: string | null = null;
+  // Boolean flag from /api/getUserProfile — the raw admin account id never
+  // reaches the client.
+  isAdmin: boolean | null = null;
 
   email: string | null = null;
 
@@ -31,12 +29,10 @@ export default class AuthData {
       given_name: observable,
       family_name: observable,
       expiresAt: observable,
-      access_token: observable,
-      refresh_token: observable,
       createdAt: observable,
       isAuth: observable,
       location: observable,
-      admin: observable,
+      isAdmin: observable,
       email: observable,
       setAuth: action,
       cancelAuth: action,
@@ -47,25 +43,24 @@ export default class AuthData {
     this.location = location;
   }
 
+  // Session lives in the httpOnly JWT cookie; no tokens are stored client-side.
   setAuth(
     given_name: string,
     family_name: string,
     expiresAt: number,
     id: string,
-    refreshToken: string | null,
     createdAt: number,
-    admin: string | null,
+    isAdmin: boolean | null,
     email: string | null = null
   ) {
     this.given_name = given_name;
     this.family_name = family_name;
     this.expiresAt = expiresAt;
     this.id = id;
-    this.refresh_token = refreshToken;
     this.createdAt = createdAt;
     this.isAuth = true;
     this.location = "/";
-    this.admin = admin;
+    this.isAdmin = isAdmin;
     this.email = email;
   }
 
@@ -74,12 +69,10 @@ export default class AuthData {
     this.given_name = null;
     this.family_name = null;
     this.expiresAt = null;
-    this.access_token = null;
-    this.refresh_token = null;
     this.createdAt = null;
     this.isAuth = false;
     this.location = "/";
-    this.admin = null;
+    this.isAdmin = null;
     this.email = null;
   }
 }

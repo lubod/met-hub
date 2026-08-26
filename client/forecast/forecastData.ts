@@ -95,7 +95,7 @@ export class ForecastDay implements IGetForecastDataToDisplay {
   }
 
   getAirTemperatureMin(): string {
-    return this.air_temperature_min?.toFixed(0);
+    return this.air_temperature_min == null ? "-" : this.air_temperature_min.toFixed(0);
   }
 
   getAirTemperatureMax(): string {

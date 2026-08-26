@@ -4,6 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react";
 import React, { Fragment, useState } from "react";
 import { AppContext } from "..";
+import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 import { StationType } from "../../common/stationType";
 import Myhr from "../misc/myhr";
 
@@ -20,9 +21,25 @@ const HeaderModal = observer(({ appContext }: Props) => {
   const [error, setError] = useState("");
   const [step2, setStep2] = useState(false);
   const [id, setId] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  function close() {
+    appContext.headerCtrl.headerData.setShowModal(false);
+    // Fresh form on next open; no stale step-2 instructions or passkeys.
+    setLat("");
+    setLon("");
+    setPlace("");
+    setType(StationType.GoGenMe3900);
+    setPasskey("");
+    setError("");
+    setStep2(false);
+    setId("");
+    setSubmitting(false);
+  }
 
   async function submit(e: any) {
     e.preventDefault();
+    if (submitting) return;
     if (
       (type === StationType.WU ||
         type === StationType.Ecowitt ||
@@ -32,22 +49,28 @@ const HeaderModal = observer(({ appContext }: Props) => {
       setError("Passkey is required for Weather Underground, Ecowitt, and JSON stations.");
       return;
     }
-    const res = await appContext.headerCtrl.addStation({
-      lat: parseFloat(lat),
-      lon: parseFloat(lon),
-      type,
-      place,
-      passkey: passkey.trim() || "dummy",
-      id: "",
-      measurement: null as any,
-      public: true,
-      owner: "",
-    });
-    setError(res.err);
-    if (res.id !== "") {
-      console.debug(res.id);
-      setStep2(true);
-      setId(res.id);
+    setSubmitting(true);
+    try {
+      const res = await appContext.headerCtrl.addStation({
+        lat: parseFloat(lat),
+        lon: parseFloat(lon),
+        type,
+        place,
+        passkey: passkey.trim() || "dummy",
+        id: "",
+        measurement: null as any,
+        public: true,
+        owner: "",
+      });
+      setError(res.err);
+      if (res.id !== "") {
+        // Refresh the station-selector options without switching selection.
+        await AllStationsCfgClient.fetchAllStationsCfg();
+        setStep2(true);
+        setId(res.id);
+      }
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -60,7 +83,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
       <Dialog
         as="div"
         className="relative z-[100] text-light"
-        onClose={() => appContext.headerCtrl.headerData.setShowModal(false)}
+        onClose={close}
       >
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm max-h-screen overflow-auto">
           <div className="flex flex-row justify-center p-4 text-center">
@@ -139,18 +162,17 @@ const HeaderModal = observer(({ appContext }: Props) => {
                       <button
                         type="button"
                         className="btn-glass"
-                        onClick={() =>
-                          appContext.headerCtrl.headerData.setShowModal(false)
-                        }
+                        onClick={close}
                       >
                         Cancel
                       </button>
                       <button
                         type="button"
                         className="btn-glass"
+                        disabled={submitting}
                         onClick={(e) => submit(e)}
                       >
-                        Submit
+                        {submitting ? "Submitting…" : "Submit"}
                       </button>
                     </div>
                   </div>
@@ -163,7 +185,6 @@ const HeaderModal = observer(({ appContext }: Props) => {
                       <div className="flex flex-col md:basis-1/2 gap-4">
                         <div className="">Step 2:</div>
                         <div>New station was created with station_id={id}</div>
-                        
                         {type === StationType.GoGenMe3900 && (
                           <div>
                             <div>
@@ -231,9 +252,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                         <button
                           type="button"
                           className="btn-glass mt-4"
-                          onClick={() =>
-                            appContext.headerCtrl.headerData.setShowModal(false)
-                          }
+                          onClick={close}
                         >
                           Done
                         </button>

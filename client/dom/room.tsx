@@ -3,7 +3,6 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { DOM_SENSORS_DESC } from "../../common/domModel";
-import AuthData from "../auth/authData";
 import NumberDataAlone from "../misc/numberDataAlone";
 import NumberDataWithTrend from "../misc/numberDataWithTrend";
 import StringData from "../misc/stringData";
@@ -18,7 +17,6 @@ type RoomProps = {
   room: string;
   airTrend: Array<number>;
   floorTrend: Array<number>;
-  authData: AuthData;
   onClickAir: any;
   onClickFloor: any;
   old: boolean;
