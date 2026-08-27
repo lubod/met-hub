@@ -7,6 +7,7 @@ export interface MqttSettings {
 }
 
 export interface RetentionSettings {
+  enabled: boolean;
   days: number;
   hour: number;
 }
@@ -42,7 +43,7 @@ class SettingsData {
 
   mqtt: MqttSettings = { enabled: false, haDiscovery: true, topicBase: "methub" };
 
-  retention: RetentionSettings = { days: 730, hour: 3 };
+  retention: RetentionSettings = { enabled: false, days: 730, hour: 3 };
 
   bridge: BridgeSettings = {
     autoClaim: false,
@@ -88,6 +89,11 @@ class SettingsData {
       headers: { "Content-Type": "application/json" },
     })
       .then(async (res) => {
+        if (res.status === 403) {
+          // Non-admin: admin sections render as read-only placeholders.
+          this.loaded = true;
+          return;
+        }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         this.setMqtt(json.settings.mqtt);

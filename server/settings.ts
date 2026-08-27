@@ -18,6 +18,7 @@ export interface MqttSettings {
 }
 
 export interface RetentionSettings {
+  enabled: boolean;
   days: number;
   hour: number;
 }
@@ -41,7 +42,7 @@ export const SETTINGS_CHANGED = "SETTINGS_CHANGED";
 
 const DEFAULTS: AppSettings = {
   mqtt: { enabled: false, haDiscovery: true, topicBase: "methub" },
-  retention: { days: 730, hour: 3 },
+  retention: { enabled: false, days: 730, hour: 3 },
   bridge: {
     autoClaim: false,
     autoClaimMaxPerDay: 5,
@@ -81,13 +82,19 @@ export function validateSection(
     if (typeof value.topicBase !== "string" || !/^[a-z0-9_-]{1,32}$/i.test(value.topicBase))
       throw new AppError(400, "mqtt.topicBase must be 1-32 chars [a-z0-9_-]");
   } else if (section === "retention") {
-    const days = Number(value.days);
-    const hour = Number(value.hour);
-    // Charts serve up to 366-day ranges — keep at least that much history.
-    if (!Number.isFinite(days) || days < 400 || days > 3650)
-      throw new AppError(400, "retention.days must be between 400 and 3650");
-    if (!Number.isFinite(hour) || hour < 0 || hour > 23)
-      throw new AppError(400, "retention.hour must be 0-23");
+    // Deletion is opt-in: disabled (the default) means nothing is ever
+    // removed.
+    if (value.enabled !== undefined && typeof value.enabled !== "boolean")
+      throw new AppError(400, "retention.enabled must be boolean");
+    if (value.enabled === true) {
+      const days = Number(value.days);
+      const hour = Number(value.hour);
+      // Charts serve up to 366-day ranges — keep at least that much history.
+      if (!Number.isFinite(days) || days < 400 || days > 3650)
+        throw new AppError(400, "retention.days must be between 400 and 3650");
+      if (!Number.isFinite(hour) || hour < 0 || hour > 23)
+        throw new AppError(400, "retention.hour must be 0-23");
+    }
   } else if (section === "bridge") {
     if (typeof value.autoClaim !== "boolean") throw new AppError(400, "bridge.autoClaim must be boolean");
     const perDay = Number(value.autoClaimMaxPerDay);

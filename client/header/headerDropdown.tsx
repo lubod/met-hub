@@ -45,17 +45,15 @@ const HeaderDropdown = observer(({ appContext }: Props) => (
               Add new station
             </button>
           </Menu.Item>
-          {appContext.authCtrl.authData.isAdmin === true && (
-            <Menu.Item as="div" className="flex w-full items-center rounded-lg p-1">
-              <button
-                type="button"
-                className="flex w-full items-center rounded-lg px-2 py-1.5 text-sm hover:bg-white/10"
-                onClick={() => appContext.authCtrl.authData.setLocation("/settings")}
-              >
-                Settings
-              </button>
-            </Menu.Item>
-          )}
+          <Menu.Item as="div" className="flex w-full items-center rounded-lg p-1">
+            <button
+              type="button"
+              className="flex w-full items-center rounded-lg px-2 py-1.5 text-sm hover:bg-white/10"
+              onClick={() => appContext.authCtrl.authData.setLocation("/settings")}
+            >
+              Settings
+            </button>
+          </Menu.Item>
           <Menu.Item as="div" className="flex w-full items-center rounded-lg p-1">
             <button
               type="button"

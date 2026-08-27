@@ -190,6 +190,18 @@ describe("Settings API (admin-only)", () => {
     expect(res.body.settings.retention.days).toBe(800);
   });
 
+  it("saves enabled=false as the no-deletion state", async () => {
+    authed();
+    const res = await request(app)
+      .put("/api/settings/retention")
+      .set("Cookie", "jwt=admin-token")
+      .send({ enabled: false, days: 800, hour: 2 });
+    expect(res.status).toBe(200);
+    expect(res.body.settings.retention.enabled).toBe(false);
+  });
+
+
+
 });
 
 describe("POST /api/mqtt/credentials (self-service)", () => {

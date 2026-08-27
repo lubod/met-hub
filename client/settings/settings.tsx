@@ -71,12 +71,17 @@ const TextField = function TextField({
   );
 };
 
-const SectionTitle = ({ text }: { text: string }) => <h2 className="text-base font-medium text-white/90">{text}</h2>;
+const SectionTitle = ({ text }: { text: string }) => (
+  <h2 className="text-base font-medium text-white/90">{text}</h2>
+);
 
-const SettingsView = observer(({
-  appContext,
-  className,
-}: Props) => {
+const AdminChip = () => (
+  <span className="rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-400">
+    admin only
+  </span>
+);
+
+const SettingsView = observer(({ appContext, className }: Props) => {
   const data = settingsCtrl.data;
   const isAdmin = appContext.authCtrl.authData.isAdmin === true;
   const isAuth = appContext.authCtrl.authData.isAuth;
@@ -109,7 +114,9 @@ const SettingsView = observer(({
           ← Back
         </button>
       </div>
-      {data.error !== "" && <div className="text-red text-sm">{data.error}</div>}
+      {data.error !== "" && (
+        <div className="text-red text-sm">{data.error}</div>
+      )}
       <Myhr />
 
       {/* MQTT credentials — self-service for every signed-in user */}
@@ -165,15 +172,20 @@ const SettingsView = observer(({
       )}
       <Myhr />
 
-      {/* Admin-only sections */}
-      {isAdmin && (
-        <>
-          {!data.loaded && data.loading && <div className="text-light/60">Loading…</div>}
-          {data.loaded && (
-            <>
-              {/* MQTT */}
-              <div className="flex items-center justify-between">
+      {/* Admin sections — visible to everyone, editable by admins only */}
+      <>
+        {!data.loaded && data.loading && (
+          <div className="text-light/60">Loading…</div>
+        )}
+        {data.loaded && (
+          <>
+            {/* MQTT */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <SectionTitle text="MQTT broker" />
+                <AdminChip />
+              </div>
+              {isAdmin && (
                 <button
                   type="button"
                   className="btn-glass px-3 py-1.5 text-sm"
@@ -182,7 +194,9 @@ const SettingsView = observer(({
                 >
                   {data.saving === "mqtt" ? "Saving…" : "Save MQTT"}
                 </button>
-              </div>
+              )}
+            </div>
+            {isAdmin ? (
               <div className="flex flex-col gap-1">
                 <Toggle
                   label="MQTT broker enabled"
@@ -192,7 +206,9 @@ const SettingsView = observer(({
                 <Toggle
                   label="Home Assistant auto-discovery"
                   value={data.mqtt.haDiscovery}
-                  onChange={(v) => data.setMqtt({ ...data.mqtt, haDiscovery: v })}
+                  onChange={(v) =>
+                    data.setMqtt({ ...data.mqtt, haDiscovery: v })
+                  }
                 />
                 <TextField
                   label="Topic base"
@@ -203,11 +219,20 @@ const SettingsView = observer(({
                   Connected clients: {data.runtime.mqttClients}
                 </div>
               </div>
-              <Myhr />
+            ) : (
+              <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-light/50">
+                This section is available to administrators only.
+              </div>
+            )}
+            <Myhr />
 
-              {/* Retention */}
-              <div className="flex items-center justify-between">
+            {/* Retention */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <SectionTitle text="Data retention" />
+                <AdminChip />
+              </div>
+              {isAdmin && (
                 <button
                   type="button"
                   className="btn-glass px-3 py-1.5 text-sm"
@@ -216,24 +241,48 @@ const SettingsView = observer(({
                 >
                   {data.saving === "retention" ? "Saving…" : "Save retention"}
                 </button>
-              </div>
+              )}
+            </div>
+            {isAdmin ? (
               <div className="flex flex-col gap-1">
-                <TextField
-                  label="Keep history (days, min 400)"
-                  type="number"
-                  value={String(data.retention.days)}
+                <Toggle
+                  label="Data retention enabled (deletes old rows)"
+                  value={data.retention.enabled}
                   onChange={(v) =>
-                    data.setRetention({ ...data.retention, days: Number(v) })
+                    data.setRetention({ ...data.retention, enabled: v })
                   }
                 />
-                <TextField
-                  label="Run at hour (UTC, 0-23)"
-                  type="number"
-                  value={String(data.retention.hour)}
-                  onChange={(v) =>
-                    data.setRetention({ ...data.retention, hour: Number(v) })
-                  }
-                />
+                {!data.retention.enabled && (
+                  <div className="text-xs opacity-50">
+                    Off — nothing is ever deleted.
+                  </div>
+                )}
+                {data.retention.enabled && (
+                  <>
+                    <TextField
+                      label="Keep history (days, min 400)"
+                      type="number"
+                      value={String(data.retention.days)}
+                      onChange={(v) =>
+                        data.setRetention({
+                          ...data.retention,
+                          days: Number(v),
+                        })
+                      }
+                    />
+                    <TextField
+                      label="Run at hour (UTC, 0-23)"
+                      type="number"
+                      value={String(data.retention.hour)}
+                      onChange={(v) =>
+                        data.setRetention({
+                          ...data.retention,
+                          hour: Number(v),
+                        })
+                      }
+                    />
+                  </>
+                )}
                 <div className="text-xs opacity-50">
                   Last run: {data.runtime.retentionLastRun ?? "never"}
                   {data.report !== "" ? ` — ${data.report}` : ""}
@@ -247,11 +296,20 @@ const SettingsView = observer(({
                   {data.saving === "retention-run" ? "Running…" : "Run now"}
                 </button>
               </div>
-              <Myhr />
+            ) : (
+              <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-light/50">
+                This section is available to administrators only.
+              </div>
+            )}
+            <Myhr />
 
-              {/* Cloud bridge */}
-              <div className="flex items-center justify-between">
+            {/* Cloud bridge */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <SectionTitle text="Cloud bridge (intercept & relay)" />
+                <AdminChip />
+              </div>
+              {isAdmin && (
                 <button
                   type="button"
                   className="btn-glass px-3 py-1.5 text-sm"
@@ -260,12 +318,16 @@ const SettingsView = observer(({
                 >
                   {data.saving === "bridge" ? "Saving…" : "Save bridge"}
                 </button>
-              </div>
+              )}
+            </div>
+            {isAdmin ? (
               <div className="flex flex-col gap-1">
                 <Toggle
                   label="Auto-claim unknown stations from intercepted traffic"
                   value={data.bridge.autoClaim}
-                  onChange={(v) => data.setBridge({ ...data.bridge, autoClaim: v })}
+                  onChange={(v) =>
+                    data.setBridge({ ...data.bridge, autoClaim: v })
+                  }
                 />
                 <TextField
                   label="Auto-claim cap per day (per IP)"
@@ -300,10 +362,14 @@ const SettingsView = observer(({
                   }
                 />
               </div>
-            </>
-          )}
-        </>
-      )}
+            ) : (
+              <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-light/50">
+                This section is available to administrators only.
+              </div>
+            )}
+          </>
+        )}
+      </>
     </Container>
   );
 });

@@ -138,7 +138,8 @@ async function retentionTick(): Promise<void> {
   if (isShuttingDown) return;
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
-  const { days, hour } = getSettings().retention;
+  const { enabled, days, hour } = getSettings().retention;
+  if (!enabled) return; // off = no deletion, ever
   if (now.getUTCHours() !== hour || lastRetentionDay === today) return;
   lastRetentionDay = today;
   try {
