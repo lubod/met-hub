@@ -41,7 +41,7 @@ export interface AppSettings {
 export const SETTINGS_CHANGED = "SETTINGS_CHANGED";
 
 const DEFAULTS: AppSettings = {
-  mqtt: { enabled: false, haDiscovery: true, topicBase: "methub" },
+  mqtt: { enabled: false, haDiscovery: false, topicBase: "methub" },
   retention: { enabled: false, days: 730, hour: 3 },
   bridge: {
     autoClaim: false,
