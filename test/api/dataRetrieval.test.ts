@@ -38,6 +38,11 @@ const mockGetStationByID = vi.hoisted(() => vi.fn(() => undefined as any));
 const mockGetStationsByUser = vi.hoisted(() => vi.fn(() => undefined as Set<string> | undefined));
 const mockGetPublicStations = vi.hoisted(() => vi.fn(() => new Set<string>()));
 const mockLoadData = vi.hoisted(() => vi.fn().mockResolvedValue([]));
+const mockLoadHeatingData = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({
+    today: { totalKWh: 12.5, totalRuntimeMinutes: 300, rooms: {} },
+  }),
+);
 
 // ── Module mocks ──────────────────────────────────────────────────────────────
 
@@ -65,6 +70,7 @@ vi.mock("../../server/state", async (importOriginal) => {
 vi.mock("../../server/db", () => ({
   loadData: mockLoadData,
   loadRainData: vi.fn().mockResolvedValue([]),
+  loadHeatingData: mockLoadHeatingData,
   create: vi.fn(),
 }));
 
@@ -229,6 +235,43 @@ describe("GET /api/loadData", () => {
     );
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
+  });
+});
+
+// ── Tests: loadHeatingData ───────────────────────────────────────────────────
+
+describe("GET /api/loadHeatingData/dom", () => {
+  beforeEach(() => {
+    mockVerifyToken.mockReturnValue(null);
+    redisMock.hGet.mockResolvedValue(null);
+    mockGetPublicStations.mockReturnValue(new Set(["dom"]));
+    mockLoadHeatingData.mockClear();
+  });
+
+  it("returns 200 and heating stats for public dom station", async () => {
+    const res = await request(app).get("/api/loadHeatingData/dom");
+    expect(res.status).toBe(200);
+    expect(res.body.today.totalKWh).toBe(12.5);
+    expect(mockLoadHeatingData).toHaveBeenCalledWith({});
+  });
+
+  it("passes parsed custom powers from query parameters", async () => {
+    const res = await request(app).get(
+      "/api/loadHeatingData/dom?living_room=4.5&guest_room=1.5",
+    );
+    expect(res.status).toBe(200);
+    expect(mockLoadHeatingData).toHaveBeenCalledWith({
+      living_room: 4.5,
+      guest_room: 1.5,
+    });
+  });
+
+  it("returns 403 when dom station is private and request is unauthenticated", async () => {
+    mockGetPublicStations.mockReturnValue(new Set()); // dom is not public
+    mockGetStationByID.mockReturnValue(makeTestStation({ id: "dom", public: false }));
+
+    const res = await request(app).get("/api/loadHeatingData/dom");
+    expect(res.status).toBe(403);
   });
 });
 

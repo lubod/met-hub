@@ -15,7 +15,7 @@ vi.mock("../../server/pgPool", () => ({
 // ── Imports after mocks ──────────────────────────────────────────────────────
 // Import order is deliberate: pgPool must be mocked before this module loads.
 // eslint-disable-next-line import/first
-import { computeET0Series, getQuery, loadRainData } from "../../server/db";
+import { computeET0Series, getQuery, loadRainData, loadHeatingData } from "../../server/db";
 
 describe("getQuery (upsert SQL builder)", () => {
   it("builds a parameterized upsert with quoted identifiers", () => {
@@ -128,5 +128,108 @@ describe("loadRainData error tolerance", () => {
   it("rethrows unrelated database errors", async () => {
     queryMock.mockRejectedValue(new Error("connection refused"));
     await expect(loadRainData("st1")).rejects.toThrow("connection refused");
+  });
+});
+
+describe("loadHeatingData", () => {
+  beforeEach(() => {
+    queryMock.mockReset();
+    releaseMock.mockClear();
+  });
+
+  it("calculates runtime minutes and kWh accurately from 2-minute sample counts", async () => {
+    queryMock.mockResolvedValue({
+      rows: [
+        {
+          living_today: "30",    // 30 * 2 = 60 min (1 hr) * 4.0 kW = 4.0 kWh
+          guest_today: "15",     // 15 * 2 = 30 min (0.5 hr) * 1.3 kW = 0.65 kWh
+          bed_today: "60",       // 60 * 2 = 120 min (2 hr) * 1.2 kW = 2.4 kWh
+          boys_today: "0",       // 0 kWh
+          petra_today: "45",     // 45 * 2 = 90 min (1.5 hr) * 1.3 kW = 1.95 kWh
+          living_yesterday: "0",
+          guest_yesterday: "0",
+          bed_yesterday: "0",
+          boys_yesterday: "0",
+          petra_yesterday: "0",
+          living_24h: "0",
+          guest_24h: "0",
+          bed_24h: "0",
+          boys_24h: "0",
+          petra_24h: "0",
+          living_7d: "0",
+          guest_7d: "0",
+          bed_7d: "0",
+          boys_7d: "0",
+          petra_7d: "0",
+          living_30d: "0",
+          guest_30d: "0",
+          bed_30d: "0",
+          boys_30d: "0",
+          petra_30d: "0",
+        },
+      ],
+    });
+
+    const stats = await loadHeatingData({
+      living_room: 4.0,
+      guest_room: 1.3,
+      bed_room: 1.2,
+      boys_room: 2.0,
+      petra_room: 1.3,
+      entry_hall: 0.329,
+      bath_down: 0.506,
+      bath_up: 0.541,
+      wardrobe: 0.132,
+      hall_up: 0.247,
+    });
+    expect(stats).not.toBeNull();
+    if (!stats) throw new Error("stats is null");
+    expect(stats.today.rooms.living_room.runtimeMinutes).toBe(60);
+    expect(stats.today.rooms.living_room.kwh).toBe(4.0);
+    expect(stats.today.rooms.guest_room.runtimeMinutes).toBe(30);
+    expect(stats.today.rooms.guest_room.kwh).toBe(0.65);
+    expect(stats.today.rooms.bed_room.runtimeMinutes).toBe(120);
+    expect(stats.today.rooms.bed_room.kwh).toBe(2.4);
+    expect(stats.today.rooms.boys_room.runtimeMinutes).toBe(0);
+    expect(stats.today.rooms.boys_room.kwh).toBe(0);
+    expect(stats.today.rooms.petra_room.runtimeMinutes).toBe(90);
+    expect(stats.today.rooms.petra_room.kwh).toBe(1.95);
+
+    // Total: 4.0 + 0.65 + 2.4 + 0 + 1.95 = 9.0 kWh
+    expect(stats.today.totalKWh).toBe(9.0);
+    expect(stats.today.totalRuntimeMinutes).toBe(300);
+  });
+
+  it("applies custom powers when provided", async () => {
+    queryMock.mockResolvedValue({
+      rows: [
+        {
+          living_today: "60", // 120 min = 2 hr * custom 5.0 kW = 10.0 kWh
+          guest_today: "0",
+          bed_today: "0",
+          boys_today: "0",
+          petra_today: "0",
+          living_yesterday: "0", guest_yesterday: "0", bed_yesterday: "0", boys_yesterday: "0", petra_yesterday: "0",
+          living_24h: "0", guest_24h: "0", bed_24h: "0", boys_24h: "0", petra_24h: "0",
+          living_7d: "0", guest_7d: "0", bed_7d: "0", boys_7d: "0", petra_7d: "0",
+          living_30d: "0", guest_30d: "0", bed_30d: "0", boys_30d: "0", petra_30d: "0",
+        },
+      ],
+    });
+
+    const stats = await loadHeatingData({ living_room: 5.0 });
+    expect(stats).not.toBeNull();
+    if (!stats) throw new Error("stats is null");
+    expect(stats.today.rooms.living_room.powerKw).toBe(5.0);
+    expect(stats.today.rooms.living_room.kwh).toBe(10.0);
+  });
+
+  it("gracefully returns zeroed stats if station_dom table is missing", async () => {
+    queryMock.mockRejectedValue({ code: "42P01" });
+    const stats = await loadHeatingData();
+    expect(stats).not.toBeNull();
+    if (!stats) throw new Error("stats is null");
+    expect(stats.today.totalKWh).toBe(0);
+    expect(stats.today.rooms.living_room.kwh).toBe(0);
   });
 });

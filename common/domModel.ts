@@ -90,6 +90,42 @@ export interface IDomData {
   petra_room_heat: boolean;
   petra_room_off: boolean;
   petra_room_low: boolean;
+
+  // Secondary house circuits
+  entry_hall_air?: number;
+  entry_hall_floor?: number;
+  entry_hall_reqall?: number;
+  entry_hall_heat?: boolean;
+  entry_hall_off?: boolean;
+  entry_hall_low?: boolean;
+
+  bath_down_air?: number;
+  bath_down_floor?: number;
+  bath_down_reqall?: number;
+  bath_down_heat?: boolean;
+  bath_down_off?: boolean;
+  bath_down_low?: boolean;
+
+  bath_up_air?: number;
+  bath_up_floor?: number;
+  bath_up_reqall?: number;
+  bath_up_heat?: boolean;
+  bath_up_off?: boolean;
+  bath_up_low?: boolean;
+
+  wardrobe_air?: number;
+  wardrobe_floor?: number;
+  wardrobe_reqall?: number;
+  wardrobe_heat?: boolean;
+  wardrobe_off?: boolean;
+  wardrobe_low?: boolean;
+
+  hall_up_air?: number;
+  hall_up_floor?: number;
+  hall_up_reqall?: number;
+  hall_up_heat?: boolean;
+  hall_up_off?: boolean;
+  hall_up_low?: boolean;
 }
 
 export interface IDomTrendData {
@@ -108,6 +144,207 @@ export interface IDomTrendData {
   boys_room_floor: Array<number>;
   petra_room_air: Array<number>;
   petra_room_floor: Array<number>;
+  living_room_heat?: Array<boolean>;
+  guest_room_heat?: Array<boolean>;
+  bed_room_heat?: Array<boolean>;
+  boys_room_heat?: Array<boolean>;
+  petra_room_heat?: Array<boolean>;
+
+  entry_hall_air?: Array<number>;
+  entry_hall_floor?: Array<number>;
+  entry_hall_heat?: Array<boolean>;
+
+  bath_down_air?: Array<number>;
+  bath_down_floor?: Array<number>;
+  bath_down_heat?: Array<boolean>;
+
+  bath_up_air?: Array<number>;
+  bath_up_floor?: Array<number>;
+  bath_up_heat?: Array<boolean>;
+
+  wardrobe_air?: Array<number>;
+  wardrobe_floor?: Array<number>;
+  wardrobe_heat?: Array<boolean>;
+
+  hall_up_air?: Array<number>;
+  hall_up_floor?: Array<number>;
+  hall_up_heat?: Array<boolean>;
+}
+
+export interface IDomRoomHeatingInfo {
+  id: string;
+  name: string;
+  slovakName: string;
+  areaM2: number;
+  defaultPowerKw: number;
+  level: "down" | "up";
+  airKey: keyof IDomData;
+  floorKey: keyof IDomData;
+  reqKey: keyof IDomData;
+  heatKey: keyof IDomData;
+  offKey: keyof IDomData;
+  lowKey: keyof IDomData;
+}
+
+export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
+  living_room: {
+    id: "living_room",
+    name: "LIVING ROOM",
+    slovakName: "Obývačka",
+    areaM2: 40,
+    defaultPowerKw: 2.254, // 2254 W
+    level: "down",
+    airKey: "living_room_air",
+    floorKey: "living_room_floor",
+    reqKey: "living_room_reqall",
+    heatKey: "living_room_heat",
+    offKey: "living_room_off",
+    lowKey: "living_room_low",
+  },
+  guest_room: {
+    id: "guest_room",
+    name: "GUEST ROOM",
+    slovakName: "Hosťovská",
+    areaM2: 13,
+    defaultPowerKw: 0.665, // 665 W
+    level: "down",
+    airKey: "guest_room_air",
+    floorKey: "guest_room_floor",
+    reqKey: "guest_room_reqall",
+    heatKey: "guest_room_heat",
+    offKey: "guest_room_off",
+    lowKey: "guest_room_low",
+  },
+  entry_hall: {
+    id: "entry_hall",
+    name: "ENTRY HALL",
+    slovakName: "Vstupná chodba",
+    areaM2: 4,
+    defaultPowerKw: 0.329, // 329 W
+    level: "down",
+    airKey: "entry_hall_air",
+    floorKey: "entry_hall_floor",
+    reqKey: "entry_hall_reqall",
+    heatKey: "entry_hall_heat",
+    offKey: "entry_hall_off",
+    lowKey: "entry_hall_low",
+  },
+  bath_down: {
+    id: "bath_down",
+    name: "BATHROOM DOWN",
+    slovakName: "Kúpeľňa dole",
+    areaM2: 5,
+    defaultPowerKw: 0.506, // 506 W
+    level: "down",
+    airKey: "bath_down_air",
+    floorKey: "bath_down_floor",
+    reqKey: "bath_down_reqall",
+    heatKey: "bath_down_heat",
+    offKey: "bath_down_off",
+    lowKey: "bath_down_low",
+  },
+  boys_room: {
+    id: "boys_room",
+    name: "BOYS",
+    slovakName: "Chalani",
+    areaM2: 20,
+    defaultPowerKw: 0.984, // 984 W
+    level: "up",
+    airKey: "boys_room_air",
+    floorKey: "boys_room_floor",
+    reqKey: "boys_room_reqall",
+    heatKey: "boys_room_heat",
+    offKey: "boys_room_off",
+    lowKey: "boys_room_low",
+  },
+  petra_room: {
+    id: "petra_room",
+    name: "PETRA",
+    slovakName: "Petra",
+    areaM2: 13,
+    defaultPowerKw: 0.672, // 672 W
+    level: "up",
+    airKey: "petra_room_air",
+    floorKey: "petra_room_floor",
+    reqKey: "petra_room_reqall",
+    heatKey: "petra_room_heat",
+    offKey: "petra_room_off",
+    lowKey: "petra_room_low",
+  },
+  bed_room: {
+    id: "bed_room",
+    name: "BED ROOM",
+    slovakName: "Spálňa",
+    areaM2: 12,
+    defaultPowerKw: 0.577, // 577 W
+    level: "up",
+    airKey: "bed_room_air",
+    floorKey: "bed_room_floor",
+    reqKey: "bed_room_reqall",
+    heatKey: "bed_room_heat",
+    offKey: "bed_room_off",
+    lowKey: "bed_room_low",
+  },
+  bath_up: {
+    id: "bath_up",
+    name: "BATHROOM UP",
+    slovakName: "Kúpeľňa hore",
+    areaM2: 5,
+    defaultPowerKw: 0.541, // 541 W
+    level: "up",
+    airKey: "bath_up_air",
+    floorKey: "bath_up_floor",
+    reqKey: "bath_up_reqall",
+    heatKey: "bath_up_heat",
+    offKey: "bath_up_off",
+    lowKey: "bath_up_low",
+  },
+  wardrobe: {
+    id: "wardrobe",
+    name: "WARDROBE",
+    slovakName: "Šatník",
+    areaM2: 2,
+    defaultPowerKw: 0.132, // 132 W
+    level: "up",
+    airKey: "wardrobe_air",
+    floorKey: "wardrobe_floor",
+    reqKey: "wardrobe_reqall",
+    heatKey: "wardrobe_heat",
+    offKey: "wardrobe_off",
+    lowKey: "wardrobe_low",
+  },
+  hall_up: {
+    id: "hall_up",
+    name: "HALL UP",
+    slovakName: "Chodba hore",
+    areaM2: 3,
+    defaultPowerKw: 0.247, // 247 W
+    level: "up",
+    airKey: "hall_up_air",
+    floorKey: "hall_up_floor",
+    reqKey: "hall_up_reqall",
+    heatKey: "hall_up_heat",
+    offKey: "hall_up_off",
+    lowKey: "hall_up_low",
+  },
+};
+
+export interface IDomHeatingStatsInterval {
+  totalKWh: number;
+  totalRuntimeMinutes: number;
+  rooms: Record<string, {
+    runtimeMinutes: number;
+    kwh: number;
+    powerKw: number;
+  }>;
+}
+
+export interface IDomHeatingStats {
+  today: IDomHeatingStatsInterval;
+  yesterday: IDomHeatingStatsInterval;
+  last24h: IDomHeatingStatsInterval;
+  last7d: IDomHeatingStatsInterval;
+  last30d: IDomHeatingStatsInterval;
 }
 
 const dom = {} as IDomData;

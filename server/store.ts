@@ -7,7 +7,7 @@ import {
 } from "../common/allStationsCfg";
 import { StationType } from "../common/stationType";
 import { dom } from "./dom";
-import { store } from "./db";
+import { store, ensureDomTableColumns } from "./db";
 import { runRetention, setRetentionTables } from "./retention";
 import { initSettings, getSettings } from "./settings";
 import redisClient from "./redisClient";
@@ -193,6 +193,11 @@ redisClient
       await initSettings();
     } catch (err) {
       console.error("store: settings init failed (defaults in use):", err);
+    }
+    try {
+      await ensureDomTableColumns();
+    } catch (err) {
+      console.error("store: dom columns check failed:", err);
     }
     // Hot-reload is an enhancement: if pub/sub cannot start, the store must
     // still consume the toStore stream.

@@ -12,7 +12,7 @@ import redisClient from "./redisClient";
 import { allStationsCfg, AppError } from "./state";
 import { dom } from "./dom";
 import { IMeasurement } from "./measurement";
-import { loadData, loadRainData, loadDailyET0 } from "./db";
+import { loadData, loadRainData, loadDailyET0, loadHeatingData } from "./db";
 import { getForecast, getAstronomicalData } from "./forecast";
 import * as settingsService from "./settings";
 import { runRetention } from "./retention";
@@ -585,6 +585,37 @@ router.get(
       throw new AppError(400, "Rain data not supported for dom");
     }
     const data = await loadRainData(stationID);
+    res.status(200).json(data);
+  }),
+);
+
+// HEATING & ELECTRICITY CONSUMPTION FOR DOM
+router.get(
+  "/api/loadHeatingData/dom",
+  authMiddleware,
+  accessMiddleware(() => "dom"),
+  catchAsync(async (req, res) => {
+    const powers: Record<string, number> = {};
+    const roomKeys = [
+      "living_room",
+      "guest_room",
+      "entry_hall",
+      "bath_down",
+      "boys_room",
+      "petra_room",
+      "bed_room",
+      "bath_up",
+      "wardrobe",
+      "hall_up",
+    ] as const;
+    for (const key of roomKeys) {
+      if (typeof req.query[key] === "string") {
+        const v = parseFloat(req.query[key] as string);
+        if (!Number.isNaN(v)) powers[key] = v;
+      }
+    }
+
+    const data = await loadHeatingData(powers);
     res.status(200).json(data);
   }),
 );

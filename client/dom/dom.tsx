@@ -5,6 +5,7 @@ import Myhr from "../misc/myhr";
 import { Container } from "../misc/container";
 import DomHeader from "./domHeader";
 import DomGardenHouse from "./domGardenHouse";
+import DomEnergyOverview from "./domEnergyOverview";
 import DomRoomsUpDown from "./domRoomsUpDown";
 
 type DomProps = {
@@ -13,16 +14,12 @@ type DomProps = {
 };
 
 const Dom = observer(({ appContext, className }: DomProps) => (
-  // console.debug(
-  //   "dom render",
-  //   appContext.authCtrl.authData.isAuth,
-  //   appContext.cCtrl.domData.oldData,
-  // );
-
   <Container className={className}>
     <DomHeader appContext={appContext} />
     <Myhr />
     <DomGardenHouse appContext={appContext} />
+    <Myhr />
+    <DomEnergyOverview appContext={appContext} />
     <Myhr />
     <DomRoomsUpDown appContext={appContext} />
   </Container>

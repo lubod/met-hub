@@ -101,6 +101,14 @@ export class CController {
     if (newData != null) this.domData.processTrendData(newData);
   }
 
+  async fetchDomHeatingData() {
+    const q = this.domData.getPowersQueryString();
+    const newData = await this.privateFetch(
+      this.url(`/api/loadHeatingData/dom${q ? `?${q}` : ""}`),
+    );
+    if (newData != null) this.domData.processHeatingStats(newData);
+  }
+
   private async fetchSData() {
     if (this.stationData.station == null || this.stationCfg == null) {
       console.debug("no station -> no data");
@@ -149,6 +157,7 @@ export class CController {
   async fetchData() {
     if (this.stationID === "dom") {
       await this.fetchDomData();
+      await this.fetchDomHeatingData();
     } else {
       await this.fetchSData();
       await this.fetchSDailyET0();

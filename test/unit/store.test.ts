@@ -39,6 +39,7 @@ vi.mock("../../server/redisClient", () => ({
 const mockStore = vi.fn();
 vi.mock("../../server/db", () => ({
   store: mockStore,
+  ensureDomTableColumns: vi.fn().mockResolvedValue(undefined),
 }));
 
 // Mock process.exit

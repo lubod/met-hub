@@ -2,72 +2,121 @@ import React from "react";
 import { observer } from "mobx-react";
 import { AppContext } from "..";
 import { DOM_SENSORS_DESC } from "../../common/domModel";
-import Myhr from "../misc/myhr";
 import Room from "./room";
 
 type Props = {
   appContext: AppContext;
 };
 
-const DomRoomsUp = observer(({ appContext }: Props) => (
-  <>
-    <Room
-      room="BED ROOM"
-      floorTrend={appContext.cCtrl.domData.trendData.bed_room_floor}
-      airTrend={appContext.cCtrl.domData.trendData.bed_room_air}
-      air={appContext.cCtrl.domData.data.bed_room_air}
-      old={appContext.cCtrl.domData.oldData}
-      floor={appContext.cCtrl.domData.data.bed_room_floor}
-      required={appContext.cCtrl.domData.data.bed_room_reqall}
-      heat={appContext.cCtrl.domData.data.bed_room_heat}
-      off={appContext.cCtrl.domData.data.bed_room_off}
-      low={appContext.cCtrl.domData.data.bed_room_low}
-      onClickAir={() =>
-        appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BED_ROOM_AIR)
-      }
-      onClickFloor={() =>
-        appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BED_ROOM_FLOOR)
-      }
-    />
-    <Myhr />
-    <Room
-      room="BOYS"
-      floorTrend={appContext.cCtrl.domData.trendData.boys_room_floor}
-      airTrend={appContext.cCtrl.domData.trendData.boys_room_air}
-      air={appContext.cCtrl.domData.data.boys_room_air}
-      old={appContext.cCtrl.domData.oldData}
-      floor={appContext.cCtrl.domData.data.boys_room_floor}
-      required={appContext.cCtrl.domData.data.boys_room_reqall}
-      heat={appContext.cCtrl.domData.data.boys_room_heat}
-      off={appContext.cCtrl.domData.data.boys_room_off}
-      low={appContext.cCtrl.domData.data.boys_room_low}
-      onClickAir={() =>
-        appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BOYS_ROOM_AIR)
-      }
-      onClickFloor={() =>
-        appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BOYS_ROOM_FLOOR)
-      }
-    />
-    <Myhr />
-    <Room
-      room="PETRA"
-      floorTrend={appContext.cCtrl.domData.trendData.petra_room_floor}
-      airTrend={appContext.cCtrl.domData.trendData.petra_room_air}
-      air={appContext.cCtrl.domData.data.petra_room_air}
-      old={appContext.cCtrl.domData.oldData}
-      floor={appContext.cCtrl.domData.data.petra_room_floor}
-      required={appContext.cCtrl.domData.data.petra_room_reqall}
-      heat={appContext.cCtrl.domData.data.petra_room_heat}
-      off={appContext.cCtrl.domData.data.petra_room_off}
-      low={appContext.cCtrl.domData.data.petra_room_low}
-      onClickAir={() =>
-        appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.PETRA_ROOM_AIR)
-      }
-      onClickFloor={() =>
-        appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.PETRA_ROOM_FLOOR)
-      }
-    />
-  </>
-));
+const DomRoomsUp = observer(({ appContext }: Props) => {
+  const { domData } = appContext.cCtrl;
+
+  return (
+    <div className="flex flex-col gap-3">
+      <Room
+        room="BED ROOM"
+        areaM2={domData.roomAreas.bed_room}
+        powerKw={domData.roomPowers.bed_room}
+        floorTrend={domData.trendData.bed_room_floor}
+        airTrend={domData.trendData.bed_room_air}
+        air={domData.data.bed_room_air}
+        old={domData.oldData}
+        floor={domData.data.bed_room_floor}
+        required={domData.data.bed_room_reqall}
+        heat={domData.data.bed_room_heat}
+        off={domData.data.bed_room_off}
+        low={domData.data.bed_room_low}
+        onClickAir={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BED_ROOM_AIR)
+        }
+        onClickFloor={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BED_ROOM_FLOOR)
+        }
+      />
+      <Room
+        room="BOYS"
+        areaM2={domData.roomAreas.boys_room}
+        powerKw={domData.roomPowers.boys_room}
+        floorTrend={domData.trendData.boys_room_floor}
+        airTrend={domData.trendData.boys_room_air}
+        air={domData.data.boys_room_air}
+        old={domData.oldData}
+        floor={domData.data.boys_room_floor}
+        required={domData.data.boys_room_reqall}
+        heat={domData.data.boys_room_heat}
+        off={domData.data.boys_room_off}
+        low={domData.data.boys_room_low}
+        onClickAir={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BOYS_ROOM_AIR)
+        }
+        onClickFloor={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BOYS_ROOM_FLOOR)
+        }
+      />
+      <Room
+        room="PETRA"
+        areaM2={domData.roomAreas.petra_room}
+        powerKw={domData.roomPowers.petra_room}
+        floorTrend={domData.trendData.petra_room_floor}
+        airTrend={domData.trendData.petra_room_air}
+        air={domData.data.petra_room_air}
+        old={domData.oldData}
+        floor={domData.data.petra_room_floor}
+        required={domData.data.petra_room_reqall}
+        heat={domData.data.petra_room_heat}
+        off={domData.data.petra_room_off}
+        low={domData.data.petra_room_low}
+        onClickAir={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.PETRA_ROOM_AIR)
+        }
+        onClickFloor={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.PETRA_ROOM_FLOOR)
+        }
+      />
+      <Room
+        room="BATHROOM UP"
+        areaM2={domData.roomAreas.bath_up}
+        powerKw={domData.roomPowers.bath_up}
+        floorTrend={domData.trendData.bath_up_floor}
+        airTrend={domData.trendData.bath_up_air}
+        air={domData.data.bath_up_air}
+        old={domData.oldData}
+        floor={domData.data.bath_up_floor}
+        required={domData.data.bath_up_reqall}
+        heat={domData.data.bath_up_heat}
+        off={domData.data.bath_up_off}
+        low={domData.data.bath_up_low}
+      />
+      <Room
+        room="WARDROBE"
+        areaM2={domData.roomAreas.wardrobe}
+        powerKw={domData.roomPowers.wardrobe}
+        floorTrend={domData.trendData.wardrobe_floor}
+        airTrend={domData.trendData.wardrobe_air}
+        air={domData.data.wardrobe_air}
+        old={domData.oldData}
+        floor={domData.data.wardrobe_floor}
+        required={domData.data.wardrobe_reqall}
+        heat={domData.data.wardrobe_heat}
+        off={domData.data.wardrobe_off}
+        low={domData.data.wardrobe_low}
+      />
+      <Room
+        room="HALL UP"
+        areaM2={domData.roomAreas.hall_up}
+        powerKw={domData.roomPowers.hall_up}
+        floorTrend={domData.trendData.hall_up_floor}
+        airTrend={domData.trendData.hall_up_air}
+        air={domData.data.hall_up_air}
+        old={domData.oldData}
+        floor={domData.data.hall_up_floor}
+        required={domData.data.hall_up_reqall}
+        heat={domData.data.hall_up_heat}
+        off={domData.data.hall_up_off}
+        low={domData.data.hall_up_low}
+      />
+    </div>
+  );
+});
 
 export default DomRoomsUp;

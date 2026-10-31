@@ -95,6 +95,21 @@ export class Dom implements IMeasurement {
     tmp.boys_room_floor = [];
     tmp.petra_room_air = [];
     tmp.petra_room_floor = [];
+    tmp.living_room_heat = [];
+    tmp.guest_room_heat = [];
+    tmp.bed_room_heat = [];
+    tmp.boys_room_heat = [];
+    tmp.petra_room_heat = [];
+    tmp.entry_hall_heat = [];
+    tmp.bath_down_heat = [];
+    tmp.bath_up_heat = [];
+    tmp.wardrobe_heat = [];
+    tmp.hall_up_heat = [];
+    tmp.entry_hall_floor = [];
+    tmp.bath_down_floor = [];
+    tmp.bath_up_floor = [];
+    tmp.wardrobe_floor = [];
+    tmp.hall_up_floor = [];
 
     data.forEach((item: any) => {
       const value: IDomData = JSON.parse(item);
@@ -114,6 +129,22 @@ export class Dom implements IMeasurement {
       tmp.boys_room_floor.push(value.boys_room_floor);
       tmp.petra_room_air.push(value.petra_room_air);
       tmp.petra_room_floor.push(value.petra_room_floor);
+      tmp.living_room_heat!.push(Boolean(value.living_room_heat));
+      tmp.guest_room_heat!.push(Boolean(value.guest_room_heat));
+      tmp.bed_room_heat!.push(Boolean(value.bed_room_heat));
+      tmp.boys_room_heat!.push(Boolean(value.boys_room_heat));
+      tmp.petra_room_heat!.push(Boolean(value.petra_room_heat));
+      tmp.entry_hall_heat!.push(Boolean(value.entry_hall_heat));
+      tmp.bath_down_heat!.push(Boolean(value.bath_down_heat));
+      tmp.bath_up_heat!.push(Boolean(value.bath_up_heat));
+      tmp.wardrobe_heat!.push(Boolean(value.wardrobe_heat));
+      tmp.hall_up_heat!.push(Boolean(value.hall_up_heat));
+
+      if (value.entry_hall_floor != null) tmp.entry_hall_floor!.push(value.entry_hall_floor);
+      if (value.bath_down_floor != null) tmp.bath_down_floor!.push(value.bath_down_floor);
+      if (value.bath_up_floor != null) tmp.bath_up_floor!.push(value.bath_up_floor);
+      if (value.wardrobe_floor != null) tmp.wardrobe_floor!.push(value.wardrobe_floor);
+      if (value.hall_up_floor != null) tmp.hall_up_floor!.push(value.hall_up_floor);
     });
     return tmp;
   }
@@ -156,6 +187,42 @@ export class Dom implements IMeasurement {
       petra_room_heat: Boolean(data.petra_podlaha.kuri),
       petra_room_off: Boolean(data.petra_podlaha.leto),
       petra_room_low: Boolean(data.petra_podlaha.low),
+
+      // Secondary house circuits
+      entry_hall_air: data.zadverie_vzduch?.temp,
+      entry_hall_floor: data.zadverie_podlaha?.temp,
+      entry_hall_reqall: data.zadverie_vzduch?.reqall ?? data.zadverie_podlaha?.reqall,
+      entry_hall_heat: Boolean(data.zadverie_podlaha?.kuri),
+      entry_hall_off: Boolean(data.zadverie_podlaha?.leto),
+      entry_hall_low: Boolean(data.zadverie_podlaha?.low),
+
+      bath_down_air: data.kupelna_dole?.temp,
+      bath_down_floor: data.kupelna_dole?.temp,
+      bath_down_reqall: data.kupelna_dole?.reqall,
+      bath_down_heat: Boolean(data.kupelna_dole?.kuri),
+      bath_down_off: Boolean(data.kupelna_dole?.leto),
+      bath_down_low: Boolean(data.kupelna_dole?.low),
+
+      bath_up_air: data.kupelna_hore?.temp,
+      bath_up_floor: data.kupelna_hore?.temp,
+      bath_up_reqall: data.kupelna_hore?.reqall,
+      bath_up_heat: Boolean(data.kupelna_hore?.kuri),
+      bath_up_off: Boolean(data.kupelna_hore?.leto),
+      bath_up_low: Boolean(data.kupelna_hore?.low),
+
+      wardrobe_air: data.satna_vzduch?.temp,
+      wardrobe_floor: data.satna_podlaha?.temp,
+      wardrobe_reqall: data.satna_vzduch?.reqall ?? data.satna_podlaha?.reqall,
+      wardrobe_heat: Boolean(data.satna_podlaha?.kuri),
+      wardrobe_off: Boolean(data.satna_podlaha?.leto),
+      wardrobe_low: Boolean(data.satna_podlaha?.low),
+
+      hall_up_air: data.chodba_vzduch?.temp,
+      hall_up_floor: data.chodba_podlaha?.temp,
+      hall_up_reqall: data.chodba_vzduch?.reqall ?? data.chodba_podlaha?.reqall,
+      hall_up_heat: Boolean(data.chodba_podlaha?.kuri),
+      hall_up_off: Boolean(data.chodba_podlaha?.leto),
+      hall_up_low: Boolean(data.chodba_podlaha?.low),
       place,
     };
     const date = new Date(decoded.timestamp);

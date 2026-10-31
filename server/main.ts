@@ -7,6 +7,7 @@ import { dom } from "./dom";
 import redisClient from "./redisClient";
 import { initSettings } from "./settings";
 import { initMqttBroker } from "./mqttBroker";
+import { ensureDomTableColumns } from "./db";
 
 redisClient.connect().catch((err) => {
   console.error("Fatal: failed to connect to Redis:", err);
@@ -22,6 +23,7 @@ const server = httpServer.listen(8089, "0.0.0.0", () => {
 });
 
 initSettings()
+  .then(() => ensureDomTableColumns())
   .then(() => allStationsCfg.readCfg())
   .then(async () => {
     const measurements = allStationsCfg.getMeasurements();

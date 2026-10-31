@@ -67,7 +67,10 @@ export class AppContext {
       console.debug("SSE connected");
     });
     source.addEventListener("error", (e) => {
-      console.warn("SSE error/reconnecting:", e);
+      // ReconnectingEventSource retries with backoff and re-establishes
+      // the stream automatically (incl. wake-from-suspend, where Chromium
+      // surfaces ERR_NETWORK_IO_SUSPENDED). Log verbosity accordingly.
+      console.debug("SSE disconnected, auto-reconnecting:", e);
     });
   }
 

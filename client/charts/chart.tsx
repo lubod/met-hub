@@ -48,7 +48,15 @@ function Chart({ chdata, xkey, appContext }: ChartData) {
         {y2key && (
           <div className="flex items-center gap-2">
             <span className="w-3 h-0.5" style={{ backgroundColor: "#c97b8e" }} />
-            <span className="text-[rgba(232,230,227,0.65)] font-medium">Indoor {sensor.label}</span>
+            <span className="text-[rgba(232,230,227,0.65)] font-medium">
+              {sensor.table === "dom"
+                ? y2key.endsWith("_heat")
+                  ? "Heating State"
+                  : y2key.endsWith("_reqall")
+                  ? "Target Setpoint"
+                  : sensor.col2
+                : `Indoor ${sensor.label}`}
+            </span>
           </div>
         )}
       </div>

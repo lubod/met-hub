@@ -1,5 +1,5 @@
 import { AllStationsCfg } from "../common/allStationsCfg";
-import { IDomDataRaw } from "../common/domModel";
+import { IDomDataRaw, IDomHeatingStats } from "../common/domModel";
 import { IStationData } from "../common/stationModel";
 import { dom } from "./dom";
 import { IMeasurement } from "./measurement";
@@ -461,6 +461,269 @@ export async function loadRainData(stationID: string) {
     }
     console.error(e);
     throw e;
+  } finally {
+    client.release();
+  }
+}
+
+export async function loadHeatingData(
+  customPowers?: Record<string, number>,
+): Promise<IDomHeatingStats | null> {
+  const defaultPowers: Record<string, number> = {
+    living_room: 2.254,
+    guest_room: 0.665,
+    entry_hall: 0.329,
+    bath_down: 0.506,
+    boys_room: 0.984,
+    petra_room: 0.672,
+    bed_room: 0.577,
+    bath_up: 0.541,
+    wardrobe: 0.132,
+    hall_up: 0.247,
+  };
+  const powers = { ...defaultPowers, ...customPowers };
+
+  const emptyStats = (): IDomHeatingStats => {
+    const buildInterval = () => ({
+      totalKWh: 0,
+      totalRuntimeMinutes: 0,
+      rooms: {
+        living_room: { runtimeMinutes: 0, kwh: 0, powerKw: powers.living_room },
+        guest_room: { runtimeMinutes: 0, kwh: 0, powerKw: powers.guest_room },
+        entry_hall: { runtimeMinutes: 0, kwh: 0, powerKw: powers.entry_hall },
+        bath_down: { runtimeMinutes: 0, kwh: 0, powerKw: powers.bath_down },
+        boys_room: { runtimeMinutes: 0, kwh: 0, powerKw: powers.boys_room },
+        petra_room: { runtimeMinutes: 0, kwh: 0, powerKw: powers.petra_room },
+        bed_room: { runtimeMinutes: 0, kwh: 0, powerKw: powers.bed_room },
+        bath_up: { runtimeMinutes: 0, kwh: 0, powerKw: powers.bath_up },
+        wardrobe: { runtimeMinutes: 0, kwh: 0, powerKw: powers.wardrobe },
+        hall_up: { runtimeMinutes: 0, kwh: 0, powerKw: powers.hall_up },
+      },
+    });
+    return {
+      today: buildInterval(),
+      yesterday: buildInterval(),
+      last24h: buildInterval(),
+      last7d: buildInterval(),
+      last30d: buildInterval(),
+    };
+  };
+
+  const client = await pool.connect();
+  try {
+    const table = "station_dom";
+    const buildQuery = (includeSecondary: boolean) => `
+      SELECT
+        -- Today
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND living_room_heat = true) AS living_today,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND guest_room_heat = true) AS guest_today,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND bed_room_heat = true) AS bed_today,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND boys_room_heat = true) AS boys_today,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND petra_room_heat = true) AS petra_today
+        ${
+          includeSecondary
+            ? `,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND entry_hall_heat = true) AS entry_today,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND bath_down_heat = true) AS bath_down_today,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND bath_up_heat = true) AS bath_up_today,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND wardrobe_heat = true) AS wardrobe_today,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND hall_up_heat = true) AS hall_up_today`
+            : ""
+        },
+
+        -- Yesterday
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND living_room_heat = true) AS living_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND guest_room_heat = true) AS guest_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND bed_room_heat = true) AS bed_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND boys_room_heat = true) AS boys_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND petra_room_heat = true) AS petra_yesterday
+        ${
+          includeSecondary
+            ? `,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND entry_hall_heat = true) AS entry_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND bath_down_heat = true) AS bath_down_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND bath_up_heat = true) AS bath_up_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND wardrobe_heat = true) AS wardrobe_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND hall_up_heat = true) AS hall_up_yesterday`
+            : ""
+        },
+
+        -- Last 24 Hours
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND living_room_heat = true) AS living_24h,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND guest_room_heat = true) AS guest_24h,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND bed_room_heat = true) AS bed_24h,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND boys_room_heat = true) AS boys_24h,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND petra_room_heat = true) AS petra_24h
+        ${
+          includeSecondary
+            ? `,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND entry_hall_heat = true) AS entry_24h,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND bath_down_heat = true) AS bath_down_24h,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND bath_up_heat = true) AS bath_up_24h,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND wardrobe_heat = true) AS wardrobe_24h,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '24 hours' AND hall_up_heat = true) AS hall_up_24h`
+            : ""
+        },
+
+        -- Last 7 Days
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND living_room_heat = true) AS living_7d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND guest_room_heat = true) AS guest_7d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND bed_room_heat = true) AS bed_7d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND boys_room_heat = true) AS boys_7d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND petra_room_heat = true) AS petra_7d
+        ${
+          includeSecondary
+            ? `,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND entry_hall_heat = true) AS entry_7d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND bath_down_heat = true) AS bath_down_7d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND bath_up_heat = true) AS bath_up_7d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND wardrobe_heat = true) AS wardrobe_7d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '7 days' AND hall_up_heat = true) AS hall_up_7d`
+            : ""
+        },
+
+        -- Last 30 Days
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND living_room_heat = true) AS living_30d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND guest_room_heat = true) AS guest_30d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND bed_room_heat = true) AS bed_30d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND boys_room_heat = true) AS boys_30d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND petra_room_heat = true) AS petra_30d
+        ${
+          includeSecondary
+            ? `,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND entry_hall_heat = true) AS entry_30d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND bath_down_heat = true) AS bath_down_30d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND bath_up_heat = true) AS bath_up_30d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND wardrobe_heat = true) AS wardrobe_30d,
+        COUNT(*) FILTER (WHERE timestamp >= NOW() - INTERVAL '30 days' AND hall_up_heat = true) AS hall_up_30d`
+            : ""
+        }
+      FROM "${table}"
+      WHERE timestamp >= NOW() - INTERVAL '30 days'`;
+
+    let r;
+    let hasSecondary = true;
+    try {
+      r = await client.query(buildQuery(true));
+    } catch (queryErr: any) {
+      if (queryErr?.code === "42703") {
+        hasSecondary = false;
+        r = await client.query(buildQuery(false));
+      } else {
+        throw queryErr;
+      }
+    }
+
+    if (r.rows.length === 0) return emptyStats();
+
+    const row = r.rows[0];
+
+    const parseInterval = (suffix: string) => {
+      const roomKeys = [
+        "living_room",
+        "guest_room",
+        "bed_room",
+        "boys_room",
+        "petra_room",
+        ...(hasSecondary
+          ? (["entry_hall", "bath_down", "bath_up", "wardrobe", "hall_up"] as const)
+          : []),
+      ] as const;
+
+      const roomPrefixes: Record<string, string> = {
+        living_room: "living",
+        guest_room: "guest",
+        bed_room: "bed",
+        boys_room: "boys",
+        petra_room: "petra",
+        entry_hall: "entry",
+        bath_down: "bath_down",
+        bath_up: "bath_up",
+        wardrobe: "wardrobe",
+        hall_up: "hall_up",
+      };
+
+      const roomsResult: Record<string, { runtimeMinutes: number; kwh: number; powerKw: number }> = {};
+      let totalKWh = 0;
+      let totalRuntimeMinutes = 0;
+
+      for (const k of roomKeys) {
+        const col = `${roomPrefixes[k]}_${suffix}`;
+        const count = parseInt(row[col] ?? "0", 10);
+        // Each sample in station_dom represents a 2-minute aggregation bucket
+        const runtimeMinutes = count * 2;
+        const pKw = powers[k as keyof typeof powers] ?? 1.0;
+        const kwh = Math.round((runtimeMinutes / 60) * pKw * 1000) / 1000;
+        roomsResult[k] = { runtimeMinutes, kwh, powerKw: pKw };
+        totalKWh += kwh;
+        totalRuntimeMinutes += runtimeMinutes;
+      }
+
+      return {
+        totalKWh: Math.round(totalKWh * 100) / 100,
+        totalRuntimeMinutes,
+        rooms: roomsResult,
+      };
+    };
+
+    return {
+      today: parseInterval("today"),
+      yesterday: parseInterval("yesterday"),
+      last24h: parseInterval("24h"),
+      last7d: parseInterval("7d"),
+      last30d: parseInterval("30d"),
+    };
+  } catch (e: any) {
+    if (e?.code === "42P01" || e?.code === "42703") {
+      return emptyStats();
+    }
+    console.error("loadHeatingData error:", e);
+    return emptyStats();
+  } finally {
+    client.release();
+  }
+}
+
+export async function ensureDomTableColumns(): Promise<void> {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      ALTER TABLE public.station_dom
+        ADD COLUMN IF NOT EXISTS entry_hall_air numeric(4,1),
+        ADD COLUMN IF NOT EXISTS entry_hall_floor numeric(4,1),
+        ADD COLUMN IF NOT EXISTS entry_hall_reqall numeric(4,1),
+        ADD COLUMN IF NOT EXISTS entry_hall_heat boolean,
+        ADD COLUMN IF NOT EXISTS entry_hall_off boolean,
+        ADD COLUMN IF NOT EXISTS entry_hall_low boolean,
+        ADD COLUMN IF NOT EXISTS bath_down_air numeric(4,1),
+        ADD COLUMN IF NOT EXISTS bath_down_floor numeric(4,1),
+        ADD COLUMN IF NOT EXISTS bath_down_reqall numeric(4,1),
+        ADD COLUMN IF NOT EXISTS bath_down_heat boolean,
+        ADD COLUMN IF NOT EXISTS bath_down_off boolean,
+        ADD COLUMN IF NOT EXISTS bath_down_low boolean,
+        ADD COLUMN IF NOT EXISTS bath_up_air numeric(4,1),
+        ADD COLUMN IF NOT EXISTS bath_up_floor numeric(4,1),
+        ADD COLUMN IF NOT EXISTS bath_up_reqall numeric(4,1),
+        ADD COLUMN IF NOT EXISTS bath_up_heat boolean,
+        ADD COLUMN IF NOT EXISTS bath_up_off boolean,
+        ADD COLUMN IF NOT EXISTS bath_up_low boolean,
+        ADD COLUMN IF NOT EXISTS wardrobe_air numeric(4,1),
+        ADD COLUMN IF NOT EXISTS wardrobe_floor numeric(4,1),
+        ADD COLUMN IF NOT EXISTS wardrobe_reqall numeric(4,1),
+        ADD COLUMN IF NOT EXISTS wardrobe_heat boolean,
+        ADD COLUMN IF NOT EXISTS wardrobe_off boolean,
+        ADD COLUMN IF NOT EXISTS wardrobe_low boolean,
+        ADD COLUMN IF NOT EXISTS hall_up_air numeric(4,1),
+        ADD COLUMN IF NOT EXISTS hall_up_floor numeric(4,1),
+        ADD COLUMN IF NOT EXISTS hall_up_reqall numeric(4,1),
+        ADD COLUMN IF NOT EXISTS hall_up_heat boolean,
+        ADD COLUMN IF NOT EXISTS hall_up_off boolean,
+        ADD COLUMN IF NOT EXISTS hall_up_low boolean
+    `);
+  } catch (err: any) {
+    if (err?.code !== "42P01") {
+      console.warn("ensureDomTableColumns notice:", err?.message || err);
+    }
   } finally {
     client.release();
   }

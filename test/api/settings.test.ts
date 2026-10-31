@@ -10,6 +10,10 @@ import {
   makeTestStation,
 } from "./_mocks";
 
+// ── Imports after mocks ───────────────────────────────────────────────────────
+
+import app from "../../server/app";
+
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
 const redisMock = vi.hoisted(() => ({
@@ -129,10 +133,6 @@ vi.mock("../../server/forecast", () => ({
   getForecast: vi.fn().mockResolvedValue({}),
   getAstronomicalData: vi.fn().mockResolvedValue({}),
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-
-import app from "../../server/app";
 
 function authed() {
   mockVerifyToken.mockReturnValue(adminPayload());
