@@ -121,8 +121,8 @@ const Room = observer(
         </div>
 
         {/* 4 Data Columns: Air, Floor, Required, Active Power */}
-        <div className="flex flex-row flex-wrap gap-y-3 pt-1">
-          <div className="flex flex-col basis-1/2 md:basis-1/4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 pt-1">
+          <div className="flex flex-col">
             <NumberDataWithTrend
               sensor={{ ...DOM_SENSORS_DESC.ROOM, label: "Air" }}
               value={air ?? null}
@@ -131,7 +131,7 @@ const Room = observer(
               old={old}
             />
           </div>
-          <div className="flex flex-col basis-1/2 md:basis-1/4">
+          <div className="flex flex-col">
             <NumberDataWithTrend
               sensor={{ ...DOM_SENSORS_DESC.ROOM, label: "Floor" }}
               value={floor ?? null}
@@ -140,7 +140,7 @@ const Room = observer(
               old={old}
             />
           </div>
-          <div className="flex flex-col basis-1/2 md:basis-1/4">
+          <div className="flex flex-col">
             <NumberDataAlone
               label="Req"
               value={required ?? null}
@@ -149,7 +149,7 @@ const Room = observer(
               old={old}
             />
           </div>
-          <div className="flex flex-col basis-1/2 md:basis-1/4">
+          <div className="flex flex-col">
             <NumberDataAlone
               label="Power"
               value={activeKw}

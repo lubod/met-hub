@@ -101,7 +101,7 @@ const StationOut = observer(({ appContext }: Props) => {
         </div>
 
         {/* Quick Chips: Feels Like & Dew Point */}
-        <div className="flex items-center gap-2 pt-1 border-t border-white/[0.06] text-xs">
+        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-white/[0.06] text-xs">
           <button
             type="button"
             className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/[0.04] hover:bg-white/[0.08] text-white/80 transition-colors cursor-pointer"
@@ -185,7 +185,7 @@ const StationOut = observer(({ appContext }: Props) => {
           }
         }}
       >
-        <div className="flex justify-between items-start w-full">
+        <div className="flex flex-wrap justify-between items-start gap-2 w-full">
           <div>
             <div className="text-[0.7rem] uppercase text-[rgba(232,230,227,0.5)] font-bold tracking-wider mb-1 flex items-center gap-1.5">
               <span>🌱</span>
@@ -208,7 +208,7 @@ const StationOut = observer(({ appContext }: Props) => {
             </div>
           </div>
           <div
-            className="text-[10px] font-bold px-2.5 py-1 rounded-full select-none tracking-wider"
+            className="text-[10px] font-bold px-2.5 py-1 rounded-full select-none tracking-wider shrink-0 whitespace-nowrap"
             style={{
               backgroundColor: `${statusColor}22`,
               color: statusColor,

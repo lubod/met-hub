@@ -29,7 +29,7 @@ const HeaderStationsList = observer(({ appContext }: StepsListProps) => (
           />
         </span>
       </Listbox.Button>
-      <Listbox.Options className="glass-dropdown absolute z-[60] overflow-auto mt-1.5 w-full max-h-60 p-1.5 text-light focus:outline-none">
+      <Listbox.Options className="glass-dropdown absolute right-0 z-[60] overflow-auto mt-1.5 w-full min-w-[180px] sm:min-w-full max-h-60 p-1.5 text-light focus:outline-none">
         {[...AllStationsCfgClient.getStations()].map(([key, station]) => (
           <Listbox.Option
             key={key}

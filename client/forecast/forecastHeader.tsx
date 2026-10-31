@@ -11,8 +11,8 @@ type Props = {
 
 const ForecastHeader = observer(({ appContext }: Props) => (
   <div className="flex flex-col gap-4">
-    <div className="flex flex-row items-center justify-between">
-      <div className="flex items-center gap-3">
+    <div className="flex flex-row items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <Text>METEO FORECAST</Text>
         <span className="live-pulse-badge">
           <span className="live-pulse-dot" />
@@ -22,7 +22,7 @@ const ForecastHeader = observer(({ appContext }: Props) => (
       <button
         type="button"
         aria-label="Reload"
-        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-light/70 hover:text-light transition-all border border-white/10 cursor-pointer shadow-sm"
+        className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-light/70 hover:text-light transition-all border border-white/10 cursor-pointer shadow-sm shrink-0"
         onClick={() => {
           appContext.forecastCtrl.fetchData();
           appContext.forecastCtrl.fetchAstronomicalData(new Date());
@@ -35,7 +35,7 @@ const ForecastHeader = observer(({ appContext }: Props) => (
         />
       </button>
     </div>
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
       <div className="glass-card !p-4 rounded-xl border border-white/10 flex flex-col justify-center shadow-sm">
         <Time
           label="Sunrise"

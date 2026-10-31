@@ -134,7 +134,7 @@ const SettingsView = observer(({ appContext, className }: Props) => {
           {data.saving === "creds" ? "Generating…" : "Generate credentials"}
         </button>
       ) : (
-        <div className="mt-2 flex flex-col gap-2 rounded-xl border border-white/10 bg-black/30 p-4 text-sm">
+        <div className="mt-2 flex flex-col gap-2 rounded-xl border border-white/10 bg-black/30 p-4 text-sm break-all">
           <div>
             <span className="opacity-60">Broker: </span>
             <span className="font-mono">{data.creds.brokerUrl}</span>

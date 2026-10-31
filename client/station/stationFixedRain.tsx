@@ -9,8 +9,8 @@ type Props = {
 };
 
 const StationFixedRain = observer(({ appContext }: Props) => (
-  <div className="flex flex-row flex-wrap gap-y-4">
-    <div className="basis-1/2">
+  <div className="grid grid-cols-2 gap-2.5">
+    <div>
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.EVENTRAIN.label}
         value={appContext.cCtrl.stationData.data.eventrain}
@@ -19,7 +19,7 @@ const StationFixedRain = observer(({ appContext }: Props) => (
         fix={STATION_MEASUREMENTS_DESC.EVENTRAIN.fix}
       />
     </div>
-    <div className="basis-1/2">
+    <div>
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.HOURLYRAIN.label}
         value={appContext.cCtrl.stationData.data.hourlyrain}
@@ -28,7 +28,7 @@ const StationFixedRain = observer(({ appContext }: Props) => (
         fix={STATION_MEASUREMENTS_DESC.HOURLYRAIN.fix}
       />
     </div>
-    <div className="basis-1/2">
+    <div>
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.DAILYRAIN.label}
         value={appContext.cCtrl.stationData.data.dailyrain}
@@ -37,7 +37,7 @@ const StationFixedRain = observer(({ appContext }: Props) => (
         fix={STATION_MEASUREMENTS_DESC.DAILYRAIN.fix}
       />
     </div>
-    <div className="basis-1/2">
+    <div>
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.WEEKLYRAIN.label}
         value={appContext.cCtrl.stationData.data.weeklyrain}
@@ -46,7 +46,7 @@ const StationFixedRain = observer(({ appContext }: Props) => (
         fix={STATION_MEASUREMENTS_DESC.WEEKLYRAIN.fix}
       />
     </div>
-    <div className="basis-1/2">
+    <div>
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.MONTHLYRAIN.label}
         value={appContext.cCtrl.stationData.data.monthlyrain}
@@ -55,7 +55,7 @@ const StationFixedRain = observer(({ appContext }: Props) => (
         fix={STATION_MEASUREMENTS_DESC.MONTHLYRAIN.fix}
       />
     </div>
-    <div className="basis-1/2">
+    <div>
       <NumberDataAlone
         label={STATION_MEASUREMENTS_DESC.TOTALRAIN.label}
         value={appContext.cCtrl.stationData.data.totalrain}

@@ -241,7 +241,7 @@ const HeaderModal = observer(({ appContext }: Props) => {
                             <div>
                               Send HTTP POST requests to the ingestion endpoint:
                             </div>
-                            <div className="mt-2 text-sm space-y-2 bg-black/40 p-3 rounded-lg border border-white/10 font-mono">
+                            <div className="mt-2 text-sm space-y-2 bg-black/40 p-3 rounded-lg border border-white/10 font-mono break-all">
                               <p className="text-sky-400">POST http://www.met-hub.com/api/ingest/{id}</p>
                               <p className="text-amber-400">Headers: {"{"} &quot;x-passkey&quot;: &quot;{passkey || "(your-passkey)"}&quot; {"}"}</p>
                               <p className="text-xs text-light/70 mt-1">Payload format: JSON containing metric values (temp, humidity, windspeed, rainrate, pressurerel, etc.)</p>

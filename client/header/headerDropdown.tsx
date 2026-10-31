@@ -29,7 +29,7 @@ const HeaderDropdown = observer(({ appContext }: Props) => (
         <Menu.Button className="btn-glass px-3 py-1.5">
           {appContext.authCtrl.authData.given_name || "..."}
         </Menu.Button>
-        <Menu.Items className="glass-dropdown absolute z-[60] right-0 w-52 mt-10 p-1 text-light">
+        <Menu.Items className="glass-dropdown absolute z-[60] left-0 md:left-auto md:right-0 w-52 mt-10 p-1 text-light">
           <Menu.Item as="div" className="flex w-full items-center rounded-lg p-1">
             <div className="px-2 py-1 text-sm opacity-50">
               {appContext.authCtrl.authData.given_name}{" "}

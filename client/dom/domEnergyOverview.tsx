@@ -158,9 +158,9 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
       </div>
 
       {/* Consumption Interval Switcher */}
-      <div className="flex items-center justify-between text-xs pt-1 px-1">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1 px-1">
         <span className="text-[11px] text-light/50">History:</span>
-        <div className="flex items-center p-0.5 rounded-lg bg-black/30 border border-white/[0.06] text-[11px]">
+        <div className="flex flex-wrap items-center p-0.5 rounded-lg bg-black/30 border border-white/[0.06] text-[11px]">
           {(
             [
               ["today", "Today"],

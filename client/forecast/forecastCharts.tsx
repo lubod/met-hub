@@ -459,7 +459,13 @@ type Props = {
 
 const ForecastCharts = observer(
   ({ days, forecast_6h, forecast_1h, forecastCtrl }: Props) => {
-    const [hoveredCol, setHoveredCol] = useState<number | null>(null);
+    const [hoveredCol, setHoveredColState] = useState<number | null>(null);
+    const setHoveredCol = (idx: number | null) => {
+      if (typeof window !== "undefined" && window.matchMedia?.("(hover: none)").matches) {
+        return;
+      }
+      setHoveredColState(idx);
+    };
     const [containerWidth, setContainerWidth] = useState<number>(0);
     const containerRef = useRef<HTMLDivElement>(null);
 

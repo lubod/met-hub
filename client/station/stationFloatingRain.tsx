@@ -30,9 +30,9 @@ const INTERVALS: Array<{ label: string; index: number }> = [
 ];
 
 const StationFloatingRain = observer(({ appContext }: Props) => (
-  <div className="flex flex-row flex-wrap gap-y-4">
+  <div className="grid grid-cols-2 gap-2.5">
     {INTERVALS.map(({ label, index }) => (
-      <div className="basis-1/2" key={label}>
+      <div key={label}>
         <NumberDataAlone
           label={label}
           value={rainSum(appContext.cCtrl.stationData.raindata, index)}

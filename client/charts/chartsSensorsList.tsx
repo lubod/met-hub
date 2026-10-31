@@ -32,7 +32,7 @@ const ChartsSensorsList = observer(({ chartsCtrl }: StepsListProps) => {
             />
           </span>
         </Listbox.Button>
-        <Listbox.Options className="glass-dropdown absolute z-50 overflow-auto mt-1 w-full p-1 text-light">
+        <Listbox.Options className="glass-dropdown absolute z-50 overflow-auto max-h-72 mt-1 w-full p-1 text-light">
           {allSensors.map((item) => (
             <Listbox.Option
               key={item.id}

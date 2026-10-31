@@ -100,9 +100,9 @@ const WindRose = observer(({ appContext }: Props) => {
   const cardinal = getCardinal(dir);
 
   return (
-    <div className="flex flex-row items-center justify-between gap-2">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
       {/* ── Left: Technical Radar Dial ─────────────────────────── */}
-      <div className="flex flex-col py-1 basis-3/5 items-center justify-center">
+      <div className="flex flex-col py-1 w-full sm:basis-3/5 items-center justify-center">
         <div
           role="button"
           tabIndex={0}
@@ -301,7 +301,7 @@ const WindRose = observer(({ appContext }: Props) => {
       </div>
 
       {/* ── Right: Wind Metrics Column ─────────────────────────── */}
-      <div className="flex flex-col gap-3 basis-2/5">
+      <div className="flex flex-col gap-2.5 w-full sm:basis-2/5">
         <NumberDataWithTrend
           sensor={STATION_MEASUREMENTS_DESC.WINDSPEED}
           value={speed}

@@ -13,8 +13,8 @@ const ChartsStats = observer(({ appContext }: Props) => (
     <div className="mb-4 flex flex-row justify-center">
       <ChartsSensorsList chartsCtrl={appContext.chartsCtrl} />
     </div>
-    <div className="glass rounded-xl p-3 flex flex-row flex-wrap gap-y-4">
-      <div className="basis-1/2 md:basis-1/3">
+    <div className="glass rounded-xl p-3 grid grid-cols-2 md:grid-cols-3 gap-2.5">
+      <div>
         <NumberData
           label="Min"
           value={appContext.chartsCtrl.chartsData.cdata.min}
@@ -22,7 +22,7 @@ const ChartsStats = observer(({ appContext }: Props) => (
           fix={1}
         />
       </div>
-      <div className="basis-1/2 md:basis-1/3">
+      <div>
         <NumberData
           label="Avg"
           value={appContext.chartsCtrl.chartsData.cdata.avg}
@@ -30,7 +30,7 @@ const ChartsStats = observer(({ appContext }: Props) => (
           fix={1}
         />
       </div>
-      <div className="basis-1/2 md:basis-1/3">
+      <div>
         <NumberData
           label="Max"
           value={appContext.chartsCtrl.chartsData.cdata.max}
@@ -38,7 +38,7 @@ const ChartsStats = observer(({ appContext }: Props) => (
           fix={1}
         />
       </div>
-      <div className="basis-1/2 md:basis-1/3">
+      <div>
         <NumberData
           label="First"
           value={appContext.chartsCtrl.chartsData.cdata.first}
@@ -46,7 +46,7 @@ const ChartsStats = observer(({ appContext }: Props) => (
           fix={1}
         />
       </div>
-      <div className="basis-1/2 md:basis-1/3">
+      <div>
         <NumberData
           label="Last"
           value={appContext.chartsCtrl.chartsData.cdata.last}
@@ -54,7 +54,7 @@ const ChartsStats = observer(({ appContext }: Props) => (
           fix={1}
         />
       </div>
-      <div className="basis-1/2 md:basis-1/3">
+      <div>
         <NumberData
           label="Page"
           value={appContext.chartsCtrl.chartsData.page}
