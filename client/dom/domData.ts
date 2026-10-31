@@ -8,6 +8,7 @@ import {
 import { IStation } from "../../common/allStationsCfg";
 
 const STORAGE_KEY_ROOM_POWERS = "met_hub_dom_room_powers_v2";
+const STORAGE_KEY_VIEW_MODE = "met_hub_dom_view_mode";
 
 class DomData {
   data: IDomData = {} as IDomData;
@@ -38,10 +39,10 @@ class DomData {
 
   station: IStation | null = null;
 
-  // View mode: 'all' | 'down' | 'up' (default 'all')
-  viewMode: "all" | "down" | "up" = "all";
+  // View mode: 'all' | 'down' | 'up' (default 'down')
+  viewMode: "all" | "down" | "up" = "down";
 
-  // Retain legacy upDown for backward-compat
+  // Retain legacy upDown (false = down, true = up)
   upDown = false;
 
   // Heating power (kW) configuration per room (exact user wattages: 6907 W total)
@@ -121,6 +122,22 @@ class DomData {
           if (typeof parsed === "object" && parsed !== null) {
             this.roomPowers = { ...this.roomPowers, ...parsed };
           }
+        }
+
+        const savedMode = window.localStorage.getItem(STORAGE_KEY_VIEW_MODE) as
+          | "all"
+          | "down"
+          | "up"
+          | null;
+        if (savedMode === "up") {
+          this.viewMode = "up";
+          this.upDown = true;
+        } else if (savedMode === "all") {
+          this.viewMode = "all";
+          this.upDown = false;
+        } else if (savedMode === "down") {
+          this.viewMode = "down";
+          this.upDown = false;
         }
       }
     } catch (e) {
@@ -207,6 +224,11 @@ class DomData {
   setViewMode(mode: "all" | "down" | "up") {
     this.viewMode = mode;
     this.upDown = mode === "up";
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.setItem(STORAGE_KEY_VIEW_MODE, mode);
+      }
+    } catch {}
   }
 
   setHeatingInterval(interval: "today" | "yesterday" | "last24h" | "last7d" | "last30d") {
@@ -226,6 +248,11 @@ class DomData {
   setUpDown(upDown: boolean) {
     this.upDown = upDown;
     this.viewMode = upDown ? "up" : "down";
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.setItem(STORAGE_KEY_VIEW_MODE, this.viewMode);
+      }
+    } catch {}
   }
 
   setLoading(loading: boolean) {

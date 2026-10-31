@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from "react";
 import { observer } from "mobx-react";
+import { Switch } from "@headlessui/react";
 import { AppContext } from "..";
 import Text from "../misc/text";
 import DomRoomsUp from "./domRoomsUp";
@@ -42,30 +43,68 @@ const DomRoomsUpDown = observer(({ appContext }: Props) => {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* View Switcher Tabs */}
-      <div className="flex flex-row items-center justify-between">
+      {/* View Switcher Tabs & Toggle */}
+      <div className="flex flex-row items-center justify-between flex-wrap gap-2.5">
         <Text>HEATED ROOMS</Text>
-        <div className="flex items-center p-0.5 rounded-lg bg-black/30 border border-white/[0.06] text-xs">
+
+        <div className="flex items-center gap-2">
+          {/* DOWN / UP Interactive Toggle Switch */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/40 border border-white/[0.08] shadow-inner">
+            <button
+              type="button"
+              className={`text-xs font-bold tracking-wide transition-colors flex items-center gap-1 ${
+                mode === "down"
+                  ? "text-cyan"
+                  : "text-light/50 hover:text-white"
+              }`}
+              onClick={() => domData.setUpDown(false)}
+            >
+              <span>⬇️</span>
+              <span>DOWN</span>
+            </button>
+
+            <Switch
+              checked={domData.upDown}
+              onChange={(val) => domData.setUpDown(val)}
+              className={`${
+                domData.upDown
+                  ? "bg-orange/30 border-orange/50"
+                  : "bg-cyan/30 border-cyan/50"
+              } relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border transition-colors duration-200 ease-in-out focus:outline-none`}
+              title="Toggle between Downstairs and Upstairs"
+            >
+              <span className="sr-only">Toggle Down and Up</span>
+              <span
+                className={`${
+                  domData.upDown
+                    ? "translate-x-5 bg-orange shadow-[0_0_6px_#e07856]"
+                    : "translate-x-0.5 bg-cyan shadow-[0_0_6px_#6ba3a8]"
+                } pointer-events-none inline-block h-3.5 w-3.5 my-auto transform rounded-full shadow transition duration-200 ease-in-out`}
+              />
+            </Switch>
+
+            <button
+              type="button"
+              className={`text-xs font-bold tracking-wide transition-colors flex items-center gap-1 ${
+                mode === "up"
+                  ? "text-orange"
+                  : "text-light/50 hover:text-white"
+              }`}
+              onClick={() => domData.setUpDown(true)}
+            >
+              <span>UP</span>
+              <span>⬆️</span>
+            </button>
+          </div>
+
+          {/* ALL (10) view button */}
           <button
             type="button"
-            className={`segmented-btn !py-1 !px-2.5 ${mode === "all" ? "active" : ""}`}
+            className={`segmented-btn !py-1 !px-2.5 text-xs ${mode === "all" ? "active" : ""}`}
             onClick={() => domData.setViewMode("all")}
+            title="Show all 10 rooms"
           >
             All (10)
-          </button>
-          <button
-            type="button"
-            className={`segmented-btn !py-1 !px-2.5 ${mode === "down" ? "active" : ""}`}
-            onClick={() => domData.setViewMode("down")}
-          >
-            Down (4)
-          </button>
-          <button
-            type="button"
-            className={`segmented-btn !py-1 !px-2.5 ${mode === "up" ? "active" : ""}`}
-            onClick={() => domData.setViewMode("up")}
-          >
-            Up (6)
           </button>
         </div>
       </div>
@@ -106,8 +145,8 @@ const DomRoomsUpDown = observer(({ appContext }: Props) => {
       {mode === "down" && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-light/70">
-              Downstairs Rooms
+            <span className="text-xs font-bold uppercase tracking-wider text-light/70 flex items-center gap-1.5">
+              <span>⬇️</span> Downstairs (4 rooms)
             </span>
             <span className="text-[11px] text-light/40 font-medium">
               {downM2} m² • {downKw.toFixed(2)} kW
@@ -120,8 +159,8 @@ const DomRoomsUpDown = observer(({ appContext }: Props) => {
       {mode === "up" && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-light/70">
-              Upstairs Rooms
+            <span className="text-xs font-bold uppercase tracking-wider text-light/70 flex items-center gap-1.5">
+              <span>⬆️</span> Upstairs (6 rooms)
             </span>
             <span className="text-[11px] text-light/40 font-medium">
               {upM2} m² • {upKw.toFixed(2)} kW
