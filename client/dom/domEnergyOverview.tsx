@@ -65,7 +65,7 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
               Active Load
             </span>
             {isHeating && !isOld && (
-              <span className="w-2 h-2 rounded-full bg-orange animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-orange shadow-[0_0_8px_#e07856]" />
             )}
           </div>
           <div className="my-1">
@@ -152,7 +152,7 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
             </span>
           </div>
           <span className="text-[10px] text-light/50 truncate">
-            {totalCapacityKw.toFixed(2)} kW ({Math.round(totalCapacityKw * 1000)} W)
+            {totalCapacityKw.toFixed(2)} kW ({Math.round(totalCapacityKw * 1000)} W • {avgDensity} W/m²)
           </span>
         </div>
       </div>

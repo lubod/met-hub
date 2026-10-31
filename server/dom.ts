@@ -105,10 +105,15 @@ export class Dom implements IMeasurement {
     tmp.bath_up_heat = [];
     tmp.wardrobe_heat = [];
     tmp.hall_up_heat = [];
+    tmp.entry_hall_air = [];
     tmp.entry_hall_floor = [];
+    tmp.bath_down_air = [];
     tmp.bath_down_floor = [];
+    tmp.bath_up_air = [];
     tmp.bath_up_floor = [];
+    tmp.wardrobe_air = [];
     tmp.wardrobe_floor = [];
+    tmp.hall_up_air = [];
     tmp.hall_up_floor = [];
 
     data.forEach((item: any) => {
@@ -140,10 +145,15 @@ export class Dom implements IMeasurement {
       tmp.wardrobe_heat!.push(Boolean(value.wardrobe_heat));
       tmp.hall_up_heat!.push(Boolean(value.hall_up_heat));
 
+      if (value.entry_hall_air != null) tmp.entry_hall_air!.push(value.entry_hall_air);
       if (value.entry_hall_floor != null) tmp.entry_hall_floor!.push(value.entry_hall_floor);
+      if (value.bath_down_air != null) tmp.bath_down_air!.push(value.bath_down_air);
       if (value.bath_down_floor != null) tmp.bath_down_floor!.push(value.bath_down_floor);
+      if (value.bath_up_air != null) tmp.bath_up_air!.push(value.bath_up_air);
       if (value.bath_up_floor != null) tmp.bath_up_floor!.push(value.bath_up_floor);
+      if (value.wardrobe_air != null) tmp.wardrobe_air!.push(value.wardrobe_air);
       if (value.wardrobe_floor != null) tmp.wardrobe_floor!.push(value.wardrobe_floor);
+      if (value.hall_up_air != null) tmp.hall_up_air!.push(value.hall_up_air);
       if (value.hall_up_floor != null) tmp.hall_up_floor!.push(value.hall_up_floor);
     });
     return tmp;

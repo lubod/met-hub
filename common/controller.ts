@@ -23,6 +23,8 @@ export class CController {
 
   stationCfg: StationCfg | null = null;
 
+  lastHeatingFetch: number = 0;
+
   constructor(authData: AuthData, test: boolean = false) {
     this.authData = authData;
     this.test = test;
@@ -92,6 +94,7 @@ export class CController {
     this.domData.setLoading(true);
     const newData = await this.privateFetch(this.url("/api/getLastData/dom"));
     if (newData != null) this.domData.processData(newData);
+    this.domData.setLoading(false);
   }
 
   private async fetchDomTrendData() {
@@ -99,9 +102,15 @@ export class CController {
     // the previous (valid) trend stays visible.
     const newData = await this.privateFetch(this.url("/api/getTrendData/dom"));
     if (newData != null) this.domData.processTrendData(newData);
+    await this.fetchDomHeatingData(true);
   }
 
-  async fetchDomHeatingData() {
+  async fetchDomHeatingData(force: boolean = false) {
+    const now = Date.now();
+    if (!force && this.domData.heatingStats != null && now - this.lastHeatingFetch < 60000) {
+      return;
+    }
+    this.lastHeatingFetch = now;
     const q = this.domData.getPowersQueryString();
     const newData = await this.privateFetch(
       this.url(`/api/loadHeatingData/dom${q ? `?${q}` : ""}`),

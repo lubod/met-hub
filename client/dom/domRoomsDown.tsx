@@ -10,6 +10,7 @@ type Props = {
 
 const DomRoomsDown = observer(({ appContext }: Props) => {
   const { domData } = appContext.cCtrl;
+  const intervalRooms = domData.heatingStats?.[domData.heatingInterval]?.rooms;
 
   return (
     <div className="flex flex-col gap-3">
@@ -17,6 +18,8 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
         room="LIVING ROOM"
         areaM2={domData.roomAreas.living_room}
         powerKw={domData.roomPowers.living_room}
+        kwh={intervalRooms?.living_room?.kwh}
+        runtimeMinutes={intervalRooms?.living_room?.runtimeMinutes}
         floorTrend={domData.trendData.living_room_floor}
         airTrend={domData.trendData.living_room_air}
         air={domData.data.living_room_air}
@@ -37,6 +40,8 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
         room="GUEST ROOM"
         areaM2={domData.roomAreas.guest_room}
         powerKw={domData.roomPowers.guest_room}
+        kwh={intervalRooms?.guest_room?.kwh}
+        runtimeMinutes={intervalRooms?.guest_room?.runtimeMinutes}
         floorTrend={domData.trendData.guest_room_floor}
         airTrend={domData.trendData.guest_room_air}
         air={domData.data.guest_room_air}
@@ -57,6 +62,8 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
         room="ENTRY HALL"
         areaM2={domData.roomAreas.entry_hall}
         powerKw={domData.roomPowers.entry_hall}
+        kwh={intervalRooms?.entry_hall?.kwh}
+        runtimeMinutes={intervalRooms?.entry_hall?.runtimeMinutes}
         floorTrend={domData.trendData.entry_hall_floor}
         airTrend={domData.trendData.entry_hall_air}
         air={domData.data.entry_hall_air}
@@ -66,11 +73,19 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
         heat={domData.data.entry_hall_heat}
         off={domData.data.entry_hall_off}
         low={domData.data.entry_hall_low}
+        onClickAir={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.ENTRY_HALL_AIR)
+        }
+        onClickFloor={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.ENTRY_HALL_FLOOR)
+        }
       />
       <Room
         room="BATHROOM DOWN"
         areaM2={domData.roomAreas.bath_down}
         powerKw={domData.roomPowers.bath_down}
+        kwh={intervalRooms?.bath_down?.kwh}
+        runtimeMinutes={intervalRooms?.bath_down?.runtimeMinutes}
         floorTrend={domData.trendData.bath_down_floor}
         airTrend={domData.trendData.bath_down_air}
         air={domData.data.bath_down_air}
@@ -80,6 +95,12 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
         heat={domData.data.bath_down_heat}
         off={domData.data.bath_down_off}
         low={domData.data.bath_down_low}
+        onClickAir={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BATH_DOWN_AIR)
+        }
+        onClickFloor={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BATH_DOWN_FLOOR)
+        }
       />
     </div>
   );

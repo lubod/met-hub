@@ -21,7 +21,16 @@ type RoomProps = {
   old: boolean;
   areaM2?: number;
   powerKw?: number;
+  kwh?: number;
+  runtimeMinutes?: number;
 };
+
+function formatRoomRuntime(minutes?: number) {
+  if (!minutes || minutes <= 0) return "0m";
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
 
 const Room = observer(
   ({
@@ -39,6 +48,8 @@ const Room = observer(
     old,
     areaM2,
     powerKw = 1.0,
+    kwh,
+    runtimeMinutes,
   }: RoomProps) => {
     const activeKw = heat ? powerKw : 0;
 
@@ -75,6 +86,16 @@ const Room = observer(
                 <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
                 <span className="tabular-nums">0.00 kW</span>
               </div>
+            )}
+
+            {/* Period Energy Consumption (kWh) */}
+            {kwh != null && (
+              <span
+                className="px-2 py-0.5 rounded-full bg-cyan/10 border border-cyan/25 text-cyan text-[11px] font-semibold tabular-nums"
+                title={`Period consumption: ${kwh.toFixed(2)} kWh (${formatRoomRuntime(runtimeMinutes)} runtime at ${Math.round(powerKw * 1000)} W)`}
+              >
+                ⚡ {kwh.toFixed(2)} kWh
+              </span>
             )}
 
             {/* Summer / Seasonal mode */}

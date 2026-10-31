@@ -297,18 +297,33 @@ export async function loadData(
       };
     }
 
+    const isBoolCol = (col: string) =>
+      (stationID === "dom" && col === "rain") ||
+      col.endsWith("_heat") ||
+      col.endsWith("_off") ||
+      col.endsWith("_low");
+
+    const colExpr = isBoolCol(column) ? `("${column}"::int)` : `"${column}"`;
+    const extraInnerSelect = extraColumn !== "" ? `, s."${extraColumn}"` : "";
+    const extraOuterSelect =
+      extraColumn !== ""
+        ? isBoolCol(extraColumn)
+          ? `, max(("${extraColumn}"::int)) AS "${extraColumn}"`
+          : `, round(avg("${extraColumn}")::numeric, 1)::float AS "${extraColumn}"`
+        : "";
+
     const [resData, resStats] = await Promise.all([
       client.query(
         `WITH intervals AS (
           SELECT gs AS start, gs + $1::text::interval AS end, ROW_NUMBER() OVER () AS grp
           FROM generate_series ($2::timestamptz, $3::timestamptz, $1::text::interval) gs
         ), create_grp AS (
-          SELECT i.grp, i.start, i.end, s."${column}", s.timestamp
+          SELECT i.grp, i.start, i.end, s."${column}"${extraInnerSelect}, s.timestamp
           FROM "${table}" s
           RIGHT JOIN intervals i
             ON s.timestamp >= i.start AND s.timestamp < i.end
         )
-        SELECT grp, EXTRACT(EPOCH FROM start) * 1000 AS timestamp, min("${column}"), max("${column}")
+        SELECT grp, EXTRACT(EPOCH FROM start) * 1000 AS timestamp, min(${colExpr}) AS min, max(${colExpr}) AS max${extraOuterSelect}
         FROM create_grp
         GROUP BY grp, start
         ORDER BY grp`,
@@ -316,11 +331,11 @@ export async function loadData(
       ),
       client.query(
         `SELECT
-           min("${column}") AS min,
-           max("${column}") AS max,
-           avg("${column}") AS avg,
-           (SELECT "${column}" FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp ASC  LIMIT 1) AS first,
-           (SELECT "${column}" FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp DESC LIMIT 1) AS last
+           min(${colExpr}) AS min,
+           max(${colExpr}) AS max,
+           avg(${colExpr}) AS avg,
+           (SELECT ${colExpr} FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp ASC  LIMIT 1) AS first,
+           (SELECT ${colExpr} FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp DESC LIMIT 1) AS last
          FROM "${table}"
          WHERE timestamp >= $1 AND timestamp < $2`,
         [timestampStart, timestampEnd],
@@ -512,39 +527,41 @@ export async function loadHeatingData(
   const client = await pool.connect();
   try {
     const table = "station_dom";
+    const todayStart = "date_trunc('day', NOW() AT TIME ZONE 'Europe/Bratislava') AT TIME ZONE 'Europe/Bratislava'";
+    const yesterdayStart = "(date_trunc('day', NOW() AT TIME ZONE 'Europe/Bratislava') - INTERVAL '1 day') AT TIME ZONE 'Europe/Bratislava'";
     const buildQuery = (includeSecondary: boolean) => `
       SELECT
         -- Today
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND living_room_heat = true) AS living_today,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND guest_room_heat = true) AS guest_today,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND bed_room_heat = true) AS bed_today,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND boys_room_heat = true) AS boys_today,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND petra_room_heat = true) AS petra_today
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND living_room_heat = true) AS living_today,
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND guest_room_heat = true) AS guest_today,
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND bed_room_heat = true) AS bed_today,
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND boys_room_heat = true) AS boys_today,
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND petra_room_heat = true) AS petra_today
         ${
           includeSecondary
             ? `,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND entry_hall_heat = true) AS entry_today,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND bath_down_heat = true) AS bath_down_today,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND bath_up_heat = true) AS bath_up_today,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND wardrobe_heat = true) AS wardrobe_today,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) AND hall_up_heat = true) AS hall_up_today`
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND entry_hall_heat = true) AS entry_today,
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND bath_down_heat = true) AS bath_down_today,
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND bath_up_heat = true) AS bath_up_today,
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND wardrobe_heat = true) AS wardrobe_today,
+        COUNT(*) FILTER (WHERE timestamp >= ${todayStart} AND hall_up_heat = true) AS hall_up_today`
             : ""
         },
 
         -- Yesterday
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND living_room_heat = true) AS living_yesterday,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND guest_room_heat = true) AS guest_yesterday,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND bed_room_heat = true) AS bed_yesterday,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND boys_room_heat = true) AS boys_yesterday,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND petra_room_heat = true) AS petra_yesterday
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND living_room_heat = true) AS living_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND guest_room_heat = true) AS guest_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND bed_room_heat = true) AS bed_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND boys_room_heat = true) AS boys_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND petra_room_heat = true) AS petra_yesterday
         ${
           includeSecondary
             ? `,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND entry_hall_heat = true) AS entry_yesterday,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND bath_down_heat = true) AS bath_down_yesterday,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND bath_up_heat = true) AS bath_up_yesterday,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND wardrobe_heat = true) AS wardrobe_yesterday,
-        COUNT(*) FILTER (WHERE timestamp >= date_trunc('day', NOW()) - INTERVAL '1 day' AND timestamp < date_trunc('day', NOW()) AND hall_up_heat = true) AS hall_up_yesterday`
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND entry_hall_heat = true) AS entry_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND bath_down_heat = true) AS bath_down_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND bath_up_heat = true) AS bath_up_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND wardrobe_heat = true) AS wardrobe_yesterday,
+        COUNT(*) FILTER (WHERE timestamp >= ${yesterdayStart} AND timestamp < ${todayStart} AND hall_up_heat = true) AS hall_up_yesterday`
             : ""
         },
 

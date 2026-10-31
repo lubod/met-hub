@@ -347,7 +347,7 @@ export interface IDomHeatingStats {
   last30d: IDomHeatingStatsInterval;
 }
 
-const dom = {} as IDomData;
+const dom = {} as Required<IDomData>;
 
 export class DOM_SENSORS_DESC {
   static TEMPERATURE: ISensor = {
@@ -412,7 +412,7 @@ export class DOM_SENSORS_DESC {
 
   static ROOM: ISensor = {
     col: "temp",
-    unit: "",
+    unit: "°C",
     fix: 1,
     range: 1.6,
     couldBeNegative: false,
@@ -874,6 +874,306 @@ export class DOM_SENSORS_DESC {
     id: propName(dom).petra_room_low,
     agg: "max",
   };
+
+  static ENTRY_HALL_AIR: ISensor = {
+    col: propName(dom).entry_hall_air,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Entry hall air",
+    col2: propName(dom).entry_hall_reqall,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).entry_hall_air,
+    agg: "avg",
+  };
+
+  static ENTRY_HALL_FLOOR: ISensor = {
+    col: propName(dom).entry_hall_floor,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Entry hall floor",
+    col2: propName(dom).entry_hall_heat,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).entry_hall_floor,
+    agg: "avg",
+  };
+
+  static ENTRY_HALL_REQALL: ISensor = {
+    col: propName(dom).entry_hall_reqall,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Entry hall reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).entry_hall_reqall,
+    agg: "avg",
+  };
+
+  static ENTRY_HALL_HEAT: ISensor = {
+    col: propName(dom).entry_hall_heat,
+    unit: "",
+    fix: 0,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Entry hall heat",
+    col2: "",
+    chartType: "boolean",
+    color: MY_COLORS.orange,
+    id: propName(dom).entry_hall_heat,
+    agg: "max",
+  };
+
+  static BATH_DOWN_AIR: ISensor = {
+    col: propName(dom).bath_down_air,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bathroom down air",
+    col2: propName(dom).bath_down_reqall,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bath_down_air,
+    agg: "avg",
+  };
+
+  static BATH_DOWN_FLOOR: ISensor = {
+    col: propName(dom).bath_down_floor,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bathroom down floor",
+    col2: propName(dom).bath_down_heat,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bath_down_floor,
+    agg: "avg",
+  };
+
+  static BATH_DOWN_REQALL: ISensor = {
+    col: propName(dom).bath_down_reqall,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bathroom down reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bath_down_reqall,
+    agg: "avg",
+  };
+
+  static BATH_DOWN_HEAT: ISensor = {
+    col: propName(dom).bath_down_heat,
+    unit: "",
+    fix: 0,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bathroom down heat",
+    col2: "",
+    chartType: "boolean",
+    color: MY_COLORS.orange,
+    id: propName(dom).bath_down_heat,
+    agg: "max",
+  };
+
+  static BATH_UP_AIR: ISensor = {
+    col: propName(dom).bath_up_air,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bathroom up air",
+    col2: propName(dom).bath_up_reqall,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bath_up_air,
+    agg: "avg",
+  };
+
+  static BATH_UP_FLOOR: ISensor = {
+    col: propName(dom).bath_up_floor,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bathroom up floor",
+    col2: propName(dom).bath_up_heat,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bath_up_floor,
+    agg: "avg",
+  };
+
+  static BATH_UP_REQALL: ISensor = {
+    col: propName(dom).bath_up_reqall,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bathroom up reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).bath_up_reqall,
+    agg: "avg",
+  };
+
+  static BATH_UP_HEAT: ISensor = {
+    col: propName(dom).bath_up_heat,
+    unit: "",
+    fix: 0,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Bathroom up heat",
+    col2: "",
+    chartType: "boolean",
+    color: MY_COLORS.orange,
+    id: propName(dom).bath_up_heat,
+    agg: "max",
+  };
+
+  static WARDROBE_AIR: ISensor = {
+    col: propName(dom).wardrobe_air,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Wardrobe air",
+    col2: propName(dom).wardrobe_reqall,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).wardrobe_air,
+    agg: "avg",
+  };
+
+  static WARDROBE_FLOOR: ISensor = {
+    col: propName(dom).wardrobe_floor,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Wardrobe floor",
+    col2: propName(dom).wardrobe_heat,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).wardrobe_floor,
+    agg: "avg",
+  };
+
+  static WARDROBE_REQALL: ISensor = {
+    col: propName(dom).wardrobe_reqall,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Wardrobe reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).wardrobe_reqall,
+    agg: "avg",
+  };
+
+  static WARDROBE_HEAT: ISensor = {
+    col: propName(dom).wardrobe_heat,
+    unit: "",
+    fix: 0,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Wardrobe heat",
+    col2: "",
+    chartType: "boolean",
+    color: MY_COLORS.orange,
+    id: propName(dom).wardrobe_heat,
+    agg: "max",
+  };
+
+  static HALL_UP_AIR: ISensor = {
+    col: propName(dom).hall_up_air,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Hall up air",
+    col2: propName(dom).hall_up_reqall,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).hall_up_air,
+    agg: "avg",
+  };
+
+  static HALL_UP_FLOOR: ISensor = {
+    col: propName(dom).hall_up_floor,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Hall up floor",
+    col2: propName(dom).hall_up_heat,
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).hall_up_floor,
+    agg: "avg",
+  };
+
+  static HALL_UP_REQALL: ISensor = {
+    col: propName(dom).hall_up_reqall,
+    unit: "°C",
+    fix: 1,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Hall up reqall",
+    col2: "",
+    chartType: "",
+    color: MY_COLORS.orange,
+    id: propName(dom).hall_up_reqall,
+    agg: "avg",
+  };
+
+  static HALL_UP_HEAT: ISensor = {
+    col: propName(dom).hall_up_heat,
+    unit: "",
+    fix: 0,
+    range: 1.6,
+    couldBeNegative: false,
+    table: "dom",
+    label: "Hall up heat",
+    col2: "",
+    chartType: "boolean",
+    color: MY_COLORS.orange,
+    id: propName(dom).hall_up_heat,
+    agg: "max",
+  };
 }
 
 export const DOM_SENSORS: ISensor[] = [
@@ -887,6 +1187,12 @@ export const DOM_SENSORS: ISensor[] = [
   DOM_SENSORS_DESC.GUEST_ROOM_AIR,
   DOM_SENSORS_DESC.GUEST_ROOM_FLOOR,
   DOM_SENSORS_DESC.GUEST_ROOM_REQALL,
+  DOM_SENSORS_DESC.ENTRY_HALL_AIR,
+  DOM_SENSORS_DESC.ENTRY_HALL_FLOOR,
+  DOM_SENSORS_DESC.ENTRY_HALL_REQALL,
+  DOM_SENSORS_DESC.BATH_DOWN_AIR,
+  DOM_SENSORS_DESC.BATH_DOWN_FLOOR,
+  DOM_SENSORS_DESC.BATH_DOWN_REQALL,
   DOM_SENSORS_DESC.BED_ROOM_AIR,
   DOM_SENSORS_DESC.BED_ROOM_FLOOR,
   DOM_SENSORS_DESC.BED_ROOM_REQALL,
@@ -896,13 +1202,27 @@ export const DOM_SENSORS: ISensor[] = [
   DOM_SENSORS_DESC.PETRA_ROOM_AIR,
   DOM_SENSORS_DESC.PETRA_ROOM_FLOOR,
   DOM_SENSORS_DESC.PETRA_ROOM_REQALL,
+  DOM_SENSORS_DESC.BATH_UP_AIR,
+  DOM_SENSORS_DESC.BATH_UP_FLOOR,
+  DOM_SENSORS_DESC.BATH_UP_REQALL,
+  DOM_SENSORS_DESC.WARDROBE_AIR,
+  DOM_SENSORS_DESC.WARDROBE_FLOOR,
+  DOM_SENSORS_DESC.WARDROBE_REQALL,
+  DOM_SENSORS_DESC.HALL_UP_AIR,
+  DOM_SENSORS_DESC.HALL_UP_FLOOR,
+  DOM_SENSORS_DESC.HALL_UP_REQALL,
   // Heat-state booleans are real PG columns on station_dom and are requested
   // as col2 overlays by the room-floor charts (measurement=floor:heat).
   DOM_SENSORS_DESC.LIVING_ROOM_HEAT,
   DOM_SENSORS_DESC.GUEST_ROOM_HEAT,
+  DOM_SENSORS_DESC.ENTRY_HALL_HEAT,
+  DOM_SENSORS_DESC.BATH_DOWN_HEAT,
   DOM_SENSORS_DESC.BED_ROOM_HEAT,
   DOM_SENSORS_DESC.BOYS_ROOM_HEAT,
   DOM_SENSORS_DESC.PETRA_ROOM_HEAT,
+  DOM_SENSORS_DESC.BATH_UP_HEAT,
+  DOM_SENSORS_DESC.WARDROBE_HEAT,
+  DOM_SENSORS_DESC.HALL_UP_HEAT,
 ];
 
 export class DomCfg {

@@ -10,6 +10,7 @@ type Props = {
 
 const DomRoomsUp = observer(({ appContext }: Props) => {
   const { domData } = appContext.cCtrl;
+  const intervalRooms = domData.heatingStats?.[domData.heatingInterval]?.rooms;
 
   return (
     <div className="flex flex-col gap-3">
@@ -17,6 +18,8 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="BED ROOM"
         areaM2={domData.roomAreas.bed_room}
         powerKw={domData.roomPowers.bed_room}
+        kwh={intervalRooms?.bed_room?.kwh}
+        runtimeMinutes={intervalRooms?.bed_room?.runtimeMinutes}
         floorTrend={domData.trendData.bed_room_floor}
         airTrend={domData.trendData.bed_room_air}
         air={domData.data.bed_room_air}
@@ -37,6 +40,8 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="BOYS"
         areaM2={domData.roomAreas.boys_room}
         powerKw={domData.roomPowers.boys_room}
+        kwh={intervalRooms?.boys_room?.kwh}
+        runtimeMinutes={intervalRooms?.boys_room?.runtimeMinutes}
         floorTrend={domData.trendData.boys_room_floor}
         airTrend={domData.trendData.boys_room_air}
         air={domData.data.boys_room_air}
@@ -57,6 +62,8 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="PETRA"
         areaM2={domData.roomAreas.petra_room}
         powerKw={domData.roomPowers.petra_room}
+        kwh={intervalRooms?.petra_room?.kwh}
+        runtimeMinutes={intervalRooms?.petra_room?.runtimeMinutes}
         floorTrend={domData.trendData.petra_room_floor}
         airTrend={domData.trendData.petra_room_air}
         air={domData.data.petra_room_air}
@@ -77,6 +84,8 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="BATHROOM UP"
         areaM2={domData.roomAreas.bath_up}
         powerKw={domData.roomPowers.bath_up}
+        kwh={intervalRooms?.bath_up?.kwh}
+        runtimeMinutes={intervalRooms?.bath_up?.runtimeMinutes}
         floorTrend={domData.trendData.bath_up_floor}
         airTrend={domData.trendData.bath_up_air}
         air={domData.data.bath_up_air}
@@ -86,11 +95,19 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         heat={domData.data.bath_up_heat}
         off={domData.data.bath_up_off}
         low={domData.data.bath_up_low}
+        onClickAir={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BATH_UP_AIR)
+        }
+        onClickFloor={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.BATH_UP_FLOOR)
+        }
       />
       <Room
         room="WARDROBE"
         areaM2={domData.roomAreas.wardrobe}
         powerKw={domData.roomPowers.wardrobe}
+        kwh={intervalRooms?.wardrobe?.kwh}
+        runtimeMinutes={intervalRooms?.wardrobe?.runtimeMinutes}
         floorTrend={domData.trendData.wardrobe_floor}
         airTrend={domData.trendData.wardrobe_air}
         air={domData.data.wardrobe_air}
@@ -100,11 +117,19 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         heat={domData.data.wardrobe_heat}
         off={domData.data.wardrobe_off}
         low={domData.data.wardrobe_low}
+        onClickAir={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.WARDROBE_AIR)
+        }
+        onClickFloor={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.WARDROBE_FLOOR)
+        }
       />
       <Room
         room="HALL UP"
         areaM2={domData.roomAreas.hall_up}
         powerKw={domData.roomPowers.hall_up}
+        kwh={intervalRooms?.hall_up?.kwh}
+        runtimeMinutes={intervalRooms?.hall_up?.runtimeMinutes}
         floorTrend={domData.trendData.hall_up_floor}
         airTrend={domData.trendData.hall_up_air}
         air={domData.data.hall_up_air}
@@ -114,6 +139,12 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         heat={domData.data.hall_up_heat}
         off={domData.data.hall_up_off}
         low={domData.data.hall_up_low}
+        onClickAir={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.HALL_UP_AIR)
+        }
+        onClickFloor={() =>
+          appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.HALL_UP_FLOOR)
+        }
       />
     </div>
   );

@@ -27,15 +27,23 @@ describe("STATION_DB_SENSORS", () => {
 });
 
 describe("DOM_SENSORS heat overlays", () => {
-  it("includes the five room heat-state booleans as queryable col2 targets", () => {
+  it("includes all ten room air, floor, reqall, and heat-state booleans as queryable targets", () => {
     const cols = DOM_SENSORS.map((s) => s.col);
     for (const room of [
       "living_room",
       "guest_room",
+      "entry_hall",
+      "bath_down",
       "bed_room",
       "boys_room",
       "petra_room",
+      "bath_up",
+      "wardrobe",
+      "hall_up",
     ]) {
+      expect(cols).toContain(`${room}_air`);
+      expect(cols).toContain(`${room}_floor`);
+      expect(cols).toContain(`${room}_reqall`);
       expect(cols).toContain(`${room}_heat`);
     }
   });

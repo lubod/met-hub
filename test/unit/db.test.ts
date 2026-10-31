@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+// ── Imports after mocks ──────────────────────────────────────────────────────
+// Import order is deliberate: pgPool must be mocked before this module loads.
+// eslint-disable-next-line import/first
+import { computeET0Series, getQuery, loadRainData, loadHeatingData, loadData } from "../../server/db";
+import { AllStationsCfg } from "../../common/allStationsCfg";
+
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
 const queryMock = vi.hoisted(() => vi.fn());
@@ -11,11 +17,6 @@ const connectMock = vi.hoisted(() =>
 vi.mock("../../server/pgPool", () => ({
   default: { connect: connectMock },
 }));
-
-// ── Imports after mocks ──────────────────────────────────────────────────────
-// Import order is deliberate: pgPool must be mocked before this module loads.
-// eslint-disable-next-line import/first
-import { computeET0Series, getQuery, loadRainData, loadHeatingData } from "../../server/db";
 
 describe("getQuery (upsert SQL builder)", () => {
   it("builds a parameterized upsert with quoted identifiers", () => {
@@ -231,5 +232,66 @@ describe("loadHeatingData", () => {
     if (!stats) throw new Error("stats is null");
     expect(stats.today.totalKWh).toBe(0);
     expect(stats.today.rooms.living_room.kwh).toBe(0);
+  });
+});
+
+describe("loadData overlay and boolean handling", () => {
+  beforeEach(() => {
+    queryMock.mockReset();
+    releaseMock.mockClear();
+  });
+
+  it("includes extraColumn in SQL query and casts boolean heat overlays to int", async () => {
+    queryMock
+      .mockResolvedValueOnce({
+        rows: [
+          { grp: 1, timestamp: 1700000000000, min: 23.1, max: 23.4, living_room_heat: 1 },
+        ],
+      })
+      .mockResolvedValueOnce({
+        rows: [{ min: 23.1, max: 23.4, avg: 23.25, first: 23.1, last: 23.4 }],
+      });
+
+    const cfg = new AllStationsCfg();
+    const res = await loadData(
+      "dom",
+      new Date("2026-10-30T00:00:00Z"),
+      new Date("2026-10-31T00:00:00Z"),
+      "living_room_floor:living_room_heat",
+      cfg,
+    );
+
+    expect(res).not.toBeNull();
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    const dataSql = queryMock.mock.calls[0][0] as string;
+    expect(dataSql).toContain('s."living_room_heat"');
+    expect(dataSql).toContain('max(("living_room_heat"::int)) AS "living_room_heat"');
+    expect(res?.data[0].living_room_heat).toBe(1);
+  });
+
+  it("supports secondary circuit air and reqall overlay queries", async () => {
+    queryMock
+      .mockResolvedValueOnce({
+        rows: [
+          { grp: 1, timestamp: 1700000000000, min: 21.0, max: 21.5, entry_hall_reqall: 21.0 },
+        ],
+      })
+      .mockResolvedValueOnce({
+        rows: [{ min: 21.0, max: 21.5, avg: 21.2, first: 21.0, last: 21.5 }],
+      });
+
+    const cfg = new AllStationsCfg();
+    const res = await loadData(
+      "dom",
+      new Date("2026-10-30T00:00:00Z"),
+      new Date("2026-10-31T00:00:00Z"),
+      "entry_hall_air:entry_hall_reqall",
+      cfg,
+    );
+
+    expect(res).not.toBeNull();
+    const dataSql = queryMock.mock.calls[0][0] as string;
+    expect(dataSql).toContain('s."entry_hall_reqall"');
+    expect(dataSql).toContain('AS "entry_hall_reqall"');
   });
 });

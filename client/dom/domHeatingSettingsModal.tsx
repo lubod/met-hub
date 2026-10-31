@@ -28,14 +28,14 @@ const DomHeatingSettingsModal = observer(({ appContext }: Props) => {
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
     domData.setRoomPowers(formPowers);
-    appContext.cCtrl.fetchDomHeatingData();
+    appContext.cCtrl.fetchDomHeatingData(true);
     close();
   }
 
   function handleReset() {
     domData.resetRoomPowersToDefault();
     setFormPowers({ ...domData.roomPowers });
-    appContext.cCtrl.fetchDomHeatingData();
+    appContext.cCtrl.fetchDomHeatingData(true);
     close();
   }
 
@@ -139,7 +139,7 @@ const DomHeatingSettingsModal = observer(({ appContext }: Props) => {
                   {/* Summary row */}
                   <div className="mt-2 p-3 rounded-xl bg-cyan/10 border border-cyan/20 flex items-center justify-between text-xs">
                     <span className="text-light/80 font-medium">
-                      Total Capacity ({totalM2} m²):
+                      Total Capacity ({totalM2} m² • {avgDensity} W/m²):
                     </span>
                     <span className="font-bold text-cyan tabular-nums">
                       {totalKw.toFixed(2)} kW ({Math.round(totalKw * 1000)} W)
