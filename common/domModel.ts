@@ -176,6 +176,7 @@ export interface IDomRoomHeatingInfo {
   name: string;
   slovakName: string;
   areaM2: number;
+  heatedAreaM2: number;
   defaultPowerKw: number;
   level: "down" | "up";
   airKey: keyof IDomData;
@@ -191,7 +192,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "living_room",
     name: "LIVING ROOM",
     slovakName: "Obývačka",
-    areaM2: 40,
+    areaM2: 42.14,
+    heatedAreaM2: 39.6,
     defaultPowerKw: 2.254, // 2254 W
     level: "down",
     airKey: "living_room_air",
@@ -205,7 +207,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "guest_room",
     name: "GUEST ROOM",
     slovakName: "Hosťovská",
-    areaM2: 13,
+    areaM2: 12.44,
+    heatedAreaM2: 12.4,
     defaultPowerKw: 0.665, // 665 W
     level: "down",
     airKey: "guest_room_air",
@@ -219,7 +222,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "entry_hall",
     name: "ENTRY HALL",
     slovakName: "Vstupná chodba",
-    areaM2: 4,
+    areaM2: 6.36,
+    heatedAreaM2: 6.2,
     defaultPowerKw: 0.329, // 329 W
     level: "down",
     airKey: "entry_hall_air",
@@ -233,7 +237,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "bath_down",
     name: "BATHROOM DOWN",
     slovakName: "Kúpeľňa dole",
-    areaM2: 5,
+    areaM2: 4.41,
+    heatedAreaM2: 3.2,
     defaultPowerKw: 0.506, // 506 W
     level: "down",
     airKey: "bath_down_air",
@@ -247,7 +252,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "boys_room",
     name: "BOYS",
     slovakName: "Chalani",
-    areaM2: 20,
+    areaM2: 21.26,
+    heatedAreaM2: 21.2,
     defaultPowerKw: 0.984, // 984 W
     level: "up",
     airKey: "boys_room_air",
@@ -261,7 +267,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "petra_room",
     name: "PETRA",
     slovakName: "Petra",
-    areaM2: 13,
+    areaM2: 14.59,
+    heatedAreaM2: 14.5,
     defaultPowerKw: 0.672, // 672 W
     level: "up",
     airKey: "petra_room_air",
@@ -275,7 +282,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "bed_room",
     name: "BED ROOM",
     slovakName: "Spálňa",
-    areaM2: 12,
+    areaM2: 13,
+    heatedAreaM2: 12.4,
     defaultPowerKw: 0.577, // 577 W
     level: "up",
     airKey: "bed_room_air",
@@ -289,7 +297,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "bath_up",
     name: "BATHROOM UP",
     slovakName: "Kúpeľňa hore",
-    areaM2: 5,
+    areaM2: 6.36,
+    heatedAreaM2: 3.5,
     defaultPowerKw: 0.541, // 541 W
     level: "up",
     airKey: "bath_up_air",
@@ -303,7 +312,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "wardrobe",
     name: "WARDROBE",
     slovakName: "Šatník",
-    areaM2: 2,
+    areaM2: 4.6,
+    heatedAreaM2: 4.5,
     defaultPowerKw: 0.132, // 132 W
     level: "up",
     airKey: "wardrobe_air",
@@ -317,7 +327,8 @@ export const DOM_ROOM_HEATING_DEFAULTS: Record<string, IDomRoomHeatingInfo> = {
     id: "hall_up",
     name: "HALL UP",
     slovakName: "Chodba hore",
-    areaM2: 3,
+    areaM2: 6.39,
+    heatedAreaM2: 6.2,
     defaultPowerKw: 0.247, // 247 W
     level: "up",
     airKey: "hall_up_air",

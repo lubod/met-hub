@@ -17,6 +17,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
       <Room
         room="BED ROOM"
         areaM2={domData.roomAreas.bed_room}
+        heatedAreaM2={domData.roomHeatedAreas.bed_room}
         powerKw={domData.roomPowers.bed_room}
         kwh={intervalRooms?.bed_room?.kwh}
         runtimeMinutes={intervalRooms?.bed_room?.runtimeMinutes}
@@ -39,6 +40,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
       <Room
         room="BOYS"
         areaM2={domData.roomAreas.boys_room}
+        heatedAreaM2={domData.roomHeatedAreas.boys_room}
         powerKw={domData.roomPowers.boys_room}
         kwh={intervalRooms?.boys_room?.kwh}
         runtimeMinutes={intervalRooms?.boys_room?.runtimeMinutes}
@@ -61,6 +63,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
       <Room
         room="PETRA"
         areaM2={domData.roomAreas.petra_room}
+        heatedAreaM2={domData.roomHeatedAreas.petra_room}
         powerKw={domData.roomPowers.petra_room}
         kwh={intervalRooms?.petra_room?.kwh}
         runtimeMinutes={intervalRooms?.petra_room?.runtimeMinutes}
@@ -83,6 +86,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
       <Room
         room="BATHROOM UP"
         areaM2={domData.roomAreas.bath_up}
+        heatedAreaM2={domData.roomHeatedAreas.bath_up}
         powerKw={domData.roomPowers.bath_up}
         kwh={intervalRooms?.bath_up?.kwh}
         runtimeMinutes={intervalRooms?.bath_up?.runtimeMinutes}
@@ -105,6 +109,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
       <Room
         room="WARDROBE"
         areaM2={domData.roomAreas.wardrobe}
+        heatedAreaM2={domData.roomHeatedAreas.wardrobe}
         powerKw={domData.roomPowers.wardrobe}
         kwh={intervalRooms?.wardrobe?.kwh}
         runtimeMinutes={intervalRooms?.wardrobe?.runtimeMinutes}
@@ -127,6 +132,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
       <Room
         room="HALL UP"
         areaM2={domData.roomAreas.hall_up}
+        heatedAreaM2={domData.roomHeatedAreas.hall_up}
         powerKw={domData.roomPowers.hall_up}
         kwh={intervalRooms?.hall_up?.kwh}
         runtimeMinutes={intervalRooms?.hall_up?.runtimeMinutes}

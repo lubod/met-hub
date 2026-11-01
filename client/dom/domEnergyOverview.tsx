@@ -11,7 +11,15 @@ type Props = {
 
 const DomEnergyOverview = observer(({ appContext }: Props) => {
   const { domData } = appContext.cCtrl;
-  const { activePowerKw, totalCapacityKw, activeRoomsCount, totalAreaM2 } = domData;
+  const {
+    activePowerKw,
+    totalCapacityKw,
+    activeRoomsCount,
+    totalAreaM2,
+    totalHeatedAreaM2,
+    avgHeatedDensity,
+    avgRoomDensity,
+  } = domData;
   const isHeating = activeRoomsCount > 0;
   const isOld = domData.oldData;
 
@@ -22,9 +30,6 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
   const {tarif} = domData.data;
   // Tariff 2 is typically Low Tariff (NT - Nízky tarif) in dual-rate ripple receivers, Tariff 1 is High Tariff (VT)
   const isLowTarif = tarif === 2;
-
-  const avgDensity =
-    totalAreaM2 > 0 ? Math.round((totalCapacityKw * 1000) / totalAreaM2) : 0;
 
   function formatRuntime(minutes: number) {
     const h = Math.floor(minutes / 60);
@@ -137,7 +142,7 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
           </span>
         </div>
 
-        {/* 4. Total Capacity */}
+        {/* 4. Total Capacity & Area */}
         <div className="p-3 rounded-xl border bg-white/[0.02] border-white/5 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-light/60">
@@ -145,14 +150,20 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
             </span>
             <span>🏠</span>
           </div>
-          <div className="my-1">
+          <div className="my-1 flex items-baseline gap-1.5 flex-wrap">
             <span className="text-xl md:text-2xl font-bold text-white/90 tabular-nums">
-              {totalAreaM2}
+              {totalHeatedAreaM2}
               <span className="text-xs font-normal ml-1 text-light/60">m²</span>
             </span>
+            <span className="text-[11px] text-light/45 font-normal">
+              ({totalAreaM2} m² total)
+            </span>
           </div>
-          <span className="text-[10px] text-light/50 truncate">
-            {totalCapacityKw.toFixed(2)} kW ({Math.round(totalCapacityKw * 1000)} W • {avgDensity} W/m²)
+          <span
+            className="text-[10px] text-light/50 truncate"
+            title={`Installed heating power: ${totalCapacityKw.toFixed(2)} kW (${Math.round(totalCapacityKw * 1000)} W) • Heated cable density: ${avgHeatedDensity} W/m² • Total room density: ${avgRoomDensity} W/m²`}
+          >
+            {totalCapacityKw.toFixed(2)} kW • {avgHeatedDensity} W/m² ({Math.round(totalCapacityKw * 1000)} W)
           </span>
         </div>
       </div>

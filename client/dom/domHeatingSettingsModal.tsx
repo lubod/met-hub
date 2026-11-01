@@ -40,8 +40,10 @@ const DomHeatingSettingsModal = observer(({ appContext }: Props) => {
   }
 
   const totalKw = Object.values(formPowers).reduce((acc, v) => acc + (v || 0), 0);
-  const totalM2 = domData.totalAreaM2;
-  const avgDensity = totalM2 > 0 ? Math.round((totalKw * 1000) / totalM2) : 0;
+  const totalRoomM2 = domData.totalAreaM2;
+  const totalHeatedM2 = domData.totalHeatedAreaM2;
+  const avgHeatedDensity =
+    totalHeatedM2 > 0 ? Math.round((totalKw * 1000) / totalHeatedM2) : 0;
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -94,8 +96,11 @@ const DomHeatingSettingsModal = observer(({ appContext }: Props) => {
                 <form onSubmit={handleSave} className="mt-4 flex flex-col gap-3">
                   {Object.entries(DOM_ROOM_HEATING_DEFAULTS).map(([roomId, info]) => {
                     const power = formPowers[roomId] ?? info.defaultPowerKw;
-                    const area = domData.roomAreas[roomId] ?? info.areaM2;
-                    const density = area > 0 ? Math.round((power * 1000) / area) : 0;
+                    const roomArea = domData.roomAreas[roomId] ?? info.areaM2;
+                    const heatedArea =
+                      domData.roomHeatedAreas[roomId] ?? info.heatedAreaM2 ?? roomArea;
+                    const density =
+                      heatedArea > 0 ? Math.round((power * 1000) / heatedArea) : 0;
                     const watts = Math.round(power * 1000);
 
                     return (
@@ -111,7 +116,7 @@ const DomHeatingSettingsModal = observer(({ appContext }: Props) => {
                             </span>
                           </span>
                           <span className="text-[11px] text-light/50">
-                            {area} m² • {density} W/m² • {watts} W
+                            {roomArea} m² ({heatedArea} m² heat) • {density} W/m² • {watts} W
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -139,7 +144,7 @@ const DomHeatingSettingsModal = observer(({ appContext }: Props) => {
                   {/* Summary row */}
                   <div className="mt-2 p-3 rounded-xl bg-cyan/10 border border-cyan/20 flex items-center justify-between text-xs">
                     <span className="text-light/80 font-medium">
-                      Total Capacity ({totalM2} m² • {avgDensity} W/m²):
+                      Total ({totalHeatedM2} m² heat / {totalRoomM2} m² room • {avgHeatedDensity} W/m²):
                     </span>
                     <span className="font-bold text-cyan tabular-nums">
                       {totalKw.toFixed(2)} kW ({Math.round(totalKw * 1000)} W)

@@ -17,6 +17,7 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
       <Room
         room="LIVING ROOM"
         areaM2={domData.roomAreas.living_room}
+        heatedAreaM2={domData.roomHeatedAreas.living_room}
         powerKw={domData.roomPowers.living_room}
         kwh={intervalRooms?.living_room?.kwh}
         runtimeMinutes={intervalRooms?.living_room?.runtimeMinutes}
@@ -39,6 +40,7 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
       <Room
         room="GUEST ROOM"
         areaM2={domData.roomAreas.guest_room}
+        heatedAreaM2={domData.roomHeatedAreas.guest_room}
         powerKw={domData.roomPowers.guest_room}
         kwh={intervalRooms?.guest_room?.kwh}
         runtimeMinutes={intervalRooms?.guest_room?.runtimeMinutes}
@@ -61,6 +63,7 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
       <Room
         room="ENTRY HALL"
         areaM2={domData.roomAreas.entry_hall}
+        heatedAreaM2={domData.roomHeatedAreas.entry_hall}
         powerKw={domData.roomPowers.entry_hall}
         kwh={intervalRooms?.entry_hall?.kwh}
         runtimeMinutes={intervalRooms?.entry_hall?.runtimeMinutes}
@@ -83,6 +86,7 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
       <Room
         room="BATHROOM DOWN"
         areaM2={domData.roomAreas.bath_down}
+        heatedAreaM2={domData.roomHeatedAreas.bath_down}
         powerKw={domData.roomPowers.bath_down}
         kwh={intervalRooms?.bath_down?.kwh}
         runtimeMinutes={intervalRooms?.bath_down?.runtimeMinutes}

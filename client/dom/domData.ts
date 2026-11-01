@@ -59,18 +59,32 @@ class DomData {
     hall_up: 0.247,     // chodba hore: 247 W
   };
 
-  // Room area (m²) as specified by user (living 40, pracovna 13, chalani 20, petra 13, spalna 12 + aux)
+  // Room area (m²) as specified by user
   roomAreas: Record<string, number> = {
-    living_room: 40,
-    guest_room: 13,
-    entry_hall: 4,
-    bath_down: 5,
-    boys_room: 20,
-    petra_room: 13,
-    bed_room: 12,
-    bath_up: 5,
-    wardrobe: 2,
-    hall_up: 3,
+    living_room: 42.14,
+    guest_room: 12.44,
+    entry_hall: 6.36,
+    bath_down: 4.41,
+    boys_room: 21.26,
+    petra_room: 14.59,
+    bed_room: 13,
+    bath_up: 6.36,
+    wardrobe: 4.6,
+    hall_up: 6.39,
+  };
+
+  // Installed heating area (m²) as specified by user
+  roomHeatedAreas: Record<string, number> = {
+    living_room: 39.6,
+    guest_room: 12.4,
+    entry_hall: 6.2,
+    bath_down: 3.2,
+    boys_room: 21.2,
+    petra_room: 14.5,
+    bed_room: 12.4,
+    bath_up: 3.5,
+    wardrobe: 4.5,
+    hall_up: 6.2,
   };
 
   heatingStats: IDomHeatingStats | null = null;
@@ -91,6 +105,7 @@ class DomData {
       viewMode: observable,
       roomPowers: observable,
       roomAreas: observable,
+      roomHeatedAreas: observable,
       heatingStats: observable,
       heatingInterval: observable,
       isSettingsOpen: observable,
@@ -98,6 +113,9 @@ class DomData {
       totalCapacityKw: computed,
       activeRoomsCount: computed,
       totalAreaM2: computed,
+      totalHeatedAreaM2: computed,
+      avgHeatedDensity: computed,
+      avgRoomDensity: computed,
       processData: action,
       processTrendData: action,
       processHeatingStats: action,
@@ -191,7 +209,25 @@ class DomData {
   }
 
   get totalAreaM2(): number {
-    return Object.values(this.roomAreas).reduce((acc, v) => acc + (v || 0), 0);
+    const sum = Object.values(this.roomAreas).reduce((acc, v) => acc + (v || 0), 0);
+    return Math.round(sum * 100) / 100;
+  }
+
+  get totalHeatedAreaM2(): number {
+    const sum = Object.values(this.roomHeatedAreas).reduce((acc, v) => acc + (v || 0), 0);
+    return Math.round(sum * 100) / 100;
+  }
+
+  get avgHeatedDensity(): number {
+    return this.totalHeatedAreaM2 > 0
+      ? Math.round((this.totalCapacityKw * 1000) / this.totalHeatedAreaM2)
+      : 0;
+  }
+
+  get avgRoomDensity(): number {
+    return this.totalAreaM2 > 0
+      ? Math.round((this.totalCapacityKw * 1000) / this.totalAreaM2)
+      : 0;
   }
 
   getPowersQueryString(): string {

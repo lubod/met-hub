@@ -20,6 +20,7 @@ type RoomProps = {
   onClickFloor?: any;
   old: boolean;
   areaM2?: number;
+  heatedAreaM2?: number;
   powerKw?: number;
   kwh?: number;
   runtimeMinutes?: number;
@@ -47,11 +48,17 @@ const Room = observer(
     onClickFloor,
     old,
     areaM2,
+    heatedAreaM2,
     powerKw = 1.0,
     kwh,
     runtimeMinutes,
   }: RoomProps) => {
     const activeKw = heat ? powerKw : 0;
+    const effectiveHeatedArea = heatedAreaM2 ?? areaM2;
+    const density =
+      effectiveHeatedArea != null && effectiveHeatedArea > 0
+        ? Math.round((powerKw * 1000) / effectiveHeatedArea)
+        : 0;
 
     return (
       <div className="flex flex-col gap-3 p-3 rounded-2xl bg-white/[0.015] border border-white/5 hover:border-white/10 transition-colors">
@@ -62,8 +69,20 @@ const Room = observer(
               {room}
             </span>
             {areaM2 != null && (
-              <span className="text-[11px] px-2 py-0.5 rounded-md bg-white/[0.06] text-light/70 font-medium">
-                {areaM2} m²
+              <span
+                className="text-[11px] px-2 py-0.5 rounded-md bg-white/[0.06] text-light/70 font-medium"
+                title={
+                  heatedAreaM2 != null
+                    ? `Room: ${areaM2} m² • Heated cable area: ${heatedAreaM2} m² (${density} W/m² @ ${Math.round(powerKw * 1000)} W)`
+                    : `Room: ${areaM2} m² (${density} W/m²)`
+                }
+              >
+                <span>{areaM2} m²</span>
+                {heatedAreaM2 != null && heatedAreaM2 !== areaM2 && (
+                  <span className="text-light/45 ml-1 font-normal">
+                    ({heatedAreaM2} m² heat)
+                  </span>
+                )}
               </span>
             )}
           </div>
