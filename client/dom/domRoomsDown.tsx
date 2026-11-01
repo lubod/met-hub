@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { AppContext } from "..";
-import { DOM_SENSORS_DESC } from "../../common/domModel";
+import { DOM_ROOM_HEATING_DEFAULTS, DOM_SENSORS_DESC } from "../../common/domModel";
 import Room from "./room";
 
 type Props = {
@@ -18,6 +18,7 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
         room="LIVING ROOM"
         areaM2={domData.roomAreas.living_room}
         heatedAreaM2={domData.roomHeatedAreas.living_room}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.living_room.heatingType}
         powerKw={domData.roomPowers.living_room}
         kwh={intervalRooms?.living_room?.kwh}
         runtimeMinutes={intervalRooms?.living_room?.runtimeMinutes}
@@ -41,6 +42,7 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
         room="GUEST ROOM"
         areaM2={domData.roomAreas.guest_room}
         heatedAreaM2={domData.roomHeatedAreas.guest_room}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.guest_room.heatingType}
         powerKw={domData.roomPowers.guest_room}
         kwh={intervalRooms?.guest_room?.kwh}
         runtimeMinutes={intervalRooms?.guest_room?.runtimeMinutes}
@@ -64,6 +66,7 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
         room="ENTRY HALL"
         areaM2={domData.roomAreas.entry_hall}
         heatedAreaM2={domData.roomHeatedAreas.entry_hall}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.entry_hall.heatingType}
         powerKw={domData.roomPowers.entry_hall}
         kwh={intervalRooms?.entry_hall?.kwh}
         runtimeMinutes={intervalRooms?.entry_hall?.runtimeMinutes}
@@ -87,6 +90,7 @@ const DomRoomsDown = observer(({ appContext }: Props) => {
         room="BATHROOM DOWN"
         areaM2={domData.roomAreas.bath_down}
         heatedAreaM2={domData.roomHeatedAreas.bath_down}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.bath_down.heatingType}
         powerKw={domData.roomPowers.bath_down}
         kwh={intervalRooms?.bath_down?.kwh}
         runtimeMinutes={intervalRooms?.bath_down?.runtimeMinutes}

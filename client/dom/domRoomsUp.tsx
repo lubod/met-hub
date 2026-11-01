@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { AppContext } from "..";
-import { DOM_SENSORS_DESC } from "../../common/domModel";
+import { DOM_ROOM_HEATING_DEFAULTS, DOM_SENSORS_DESC } from "../../common/domModel";
 import Room from "./room";
 
 type Props = {
@@ -18,6 +18,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="BED ROOM"
         areaM2={domData.roomAreas.bed_room}
         heatedAreaM2={domData.roomHeatedAreas.bed_room}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.bed_room.heatingType}
         powerKw={domData.roomPowers.bed_room}
         kwh={intervalRooms?.bed_room?.kwh}
         runtimeMinutes={intervalRooms?.bed_room?.runtimeMinutes}
@@ -41,6 +42,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="BOYS"
         areaM2={domData.roomAreas.boys_room}
         heatedAreaM2={domData.roomHeatedAreas.boys_room}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.boys_room.heatingType}
         powerKw={domData.roomPowers.boys_room}
         kwh={intervalRooms?.boys_room?.kwh}
         runtimeMinutes={intervalRooms?.boys_room?.runtimeMinutes}
@@ -64,6 +66,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="PETRA"
         areaM2={domData.roomAreas.petra_room}
         heatedAreaM2={domData.roomHeatedAreas.petra_room}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.petra_room.heatingType}
         powerKw={domData.roomPowers.petra_room}
         kwh={intervalRooms?.petra_room?.kwh}
         runtimeMinutes={intervalRooms?.petra_room?.runtimeMinutes}
@@ -87,6 +90,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="BATHROOM UP"
         areaM2={domData.roomAreas.bath_up}
         heatedAreaM2={domData.roomHeatedAreas.bath_up}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.bath_up.heatingType}
         powerKw={domData.roomPowers.bath_up}
         kwh={intervalRooms?.bath_up?.kwh}
         runtimeMinutes={intervalRooms?.bath_up?.runtimeMinutes}
@@ -110,6 +114,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="WARDROBE"
         areaM2={domData.roomAreas.wardrobe}
         heatedAreaM2={domData.roomHeatedAreas.wardrobe}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.wardrobe.heatingType}
         powerKw={domData.roomPowers.wardrobe}
         kwh={intervalRooms?.wardrobe?.kwh}
         runtimeMinutes={intervalRooms?.wardrobe?.runtimeMinutes}
@@ -133,6 +138,7 @@ const DomRoomsUp = observer(({ appContext }: Props) => {
         room="HALL UP"
         areaM2={domData.roomAreas.hall_up}
         heatedAreaM2={domData.roomHeatedAreas.hall_up}
+        heatingType={DOM_ROOM_HEATING_DEFAULTS.hall_up.heatingType}
         powerKw={domData.roomPowers.hall_up}
         kwh={intervalRooms?.hall_up?.kwh}
         runtimeMinutes={intervalRooms?.hall_up?.runtimeMinutes}

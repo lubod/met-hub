@@ -161,7 +161,7 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
           </div>
           <span
             className="text-[10px] text-light/50 truncate"
-            title={`Installed heating power: ${totalCapacityKw.toFixed(2)} kW (${Math.round(totalCapacityKw * 1000)} W) • Heated cable density: ${avgHeatedDensity} W/m² • Total room density: ${avgRoomDensity} W/m²`}
+            title={`Installed capacity: ${totalCapacityKw.toFixed(2)} kW (${Math.round(totalCapacityKw * 1000)} W) • ${avgHeatedDensity} W/m²\n• Vykurovacie fólie (8 izieb): ${domData.foilsHeatedAreaM2} m² (${domData.foilsCapacityKw.toFixed(2)} kW • ~${Math.round((domData.foilsCapacityKw * 1000) / domData.foilsHeatedAreaM2)} W/m²)\n• Vykurovacie rohože (2 kúpeľne): ${domData.matsHeatedAreaM2} m² (${domData.matsCapacityKw.toFixed(2)} kW • ~${Math.round((domData.matsCapacityKw * 1000) / domData.matsHeatedAreaM2)} W/m²)`}
           >
             {totalCapacityKw.toFixed(2)} kW • {avgHeatedDensity} W/m² ({Math.round(totalCapacityKw * 1000)} W)
           </span>

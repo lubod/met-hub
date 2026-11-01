@@ -109,14 +109,25 @@ const DomHeatingSettingsModal = observer(({ appContext }: Props) => {
                         className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/5"
                       >
                         <div className="flex flex-col">
-                          <span className="text-xs font-semibold text-white/90">
-                            {info.name}{" "}
-                            <span className="text-light/50 font-normal">
-                              ({info.slovakName})
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-semibold text-white/90">
+                              {info.name}{" "}
+                              <span className="text-light/50 font-normal">
+                                ({info.slovakName})
+                              </span>
                             </span>
-                          </span>
+                            <span
+                              className={`px-1.5 py-0.2 rounded text-[9px] font-semibold uppercase tracking-wider border ${
+                                info.heatingType === "mat"
+                                  ? "bg-purple-500/15 border-purple-500/30 text-purple-300"
+                                  : "bg-blue-500/10 border-blue-500/25 text-blue-300"
+                              }`}
+                            >
+                              {info.heatingType === "mat" ? "Rohož" : "Fólia"}
+                            </span>
+                          </div>
                           <span className="text-[11px] text-light/50">
-                            {roomArea} m² ({heatedArea} m² heat) • {density} W/m² • {watts} W
+                            {roomArea} m² ({heatedArea} m² {info.heatingType === "mat" ? "rohož" : "fólia"}) • {density} W/m² • {watts} W
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -142,13 +153,19 @@ const DomHeatingSettingsModal = observer(({ appContext }: Props) => {
                   })}
 
                   {/* Summary row */}
-                  <div className="mt-2 p-3 rounded-xl bg-cyan/10 border border-cyan/20 flex items-center justify-between text-xs">
-                    <span className="text-light/80 font-medium">
-                      Total ({totalHeatedM2} m² heat / {totalRoomM2} m² room • {avgHeatedDensity} W/m²):
-                    </span>
-                    <span className="font-bold text-cyan tabular-nums">
-                      {totalKw.toFixed(2)} kW ({Math.round(totalKw * 1000)} W)
-                    </span>
+                  <div className="mt-2 p-3 rounded-xl bg-cyan/10 border border-cyan/20 flex flex-col gap-1.5 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-light/80 font-medium">
+                        Total Capacity ({totalHeatedM2} m² heat • {avgHeatedDensity} W/m²):
+                      </span>
+                      <span className="font-bold text-cyan tabular-nums">
+                        {totalKw.toFixed(2)} kW ({Math.round(totalKw * 1000)} W)
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-between text-[11px] text-light/60 pt-1.5 border-t border-cyan/15 gap-1">
+                      <span>Fólie (8 izieb): {domData.foilsHeatedAreaM2} m² ({domData.foilsCapacityKw.toFixed(2)} kW • ~{Math.round((domData.foilsCapacityKw * 1000) / domData.foilsHeatedAreaM2)} W/m²)</span>
+                      <span>Rohože (2 kúpeľne): {domData.matsHeatedAreaM2} m² ({domData.matsCapacityKw.toFixed(2)} kW • ~{Math.round((domData.matsCapacityKw * 1000) / domData.matsHeatedAreaM2)} W/m²)</span>
+                    </div>
                   </div>
 
                   <div className="mt-4 flex flex-row justify-between items-center gap-2">

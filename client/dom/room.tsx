@@ -21,6 +21,7 @@ type RoomProps = {
   old: boolean;
   areaM2?: number;
   heatedAreaM2?: number;
+  heatingType?: "mat" | "foil";
   powerKw?: number;
   kwh?: number;
   runtimeMinutes?: number;
@@ -49,6 +50,7 @@ const Room = observer(
     old,
     areaM2,
     heatedAreaM2,
+    heatingType,
     powerKw = 1.0,
     kwh,
     runtimeMinutes,
@@ -73,14 +75,14 @@ const Room = observer(
                 className="text-[11px] px-2 py-0.5 rounded-md bg-white/[0.06] text-light/70 font-medium"
                 title={
                   heatedAreaM2 != null
-                    ? `Room: ${areaM2} m² • Heated cable area: ${heatedAreaM2} m² (${density} W/m² @ ${Math.round(powerKw * 1000)} W)`
+                    ? `Room: ${areaM2} m² • ${heatingType === "mat" ? "Vykurovacia rohož" : "Vykurovacia fólia"}: ${heatedAreaM2} m² (${density} W/m² @ ${Math.round(powerKw * 1000)} W)`
                     : `Room: ${areaM2} m² (${density} W/m²)`
                 }
               >
                 <span>{areaM2} m²</span>
                 {heatedAreaM2 != null && heatedAreaM2 !== areaM2 && (
                   <span className="text-light/45 ml-1 font-normal">
-                    ({heatedAreaM2} m² heat)
+                    ({heatedAreaM2} m² {heatingType === "mat" ? "rohož" : "fólia"})
                   </span>
                 )}
               </span>
@@ -88,6 +90,24 @@ const Room = observer(
           </div>
 
           <div className="flex items-center gap-1.5 flex-wrap">
+            {/* Heating technology: Rohož (kúpeľňa) vs Fólia (ostatné izby) */}
+            {heatingType != null && (
+              <span
+                className={`px-1.5 py-0.5 rounded text-[10px] font-semibold border ${
+                  heatingType === "mat"
+                    ? "bg-purple-500/15 border-purple-500/30 text-purple-300"
+                    : "bg-blue-500/10 border-blue-500/25 text-blue-300"
+                }`}
+                title={
+                  heatingType === "mat"
+                    ? `Vykurovacia rohož (kúpeľňa): ${effectiveHeatedArea} m² • ${density} W/m²`
+                    : `Vykurovacia fólia: ${effectiveHeatedArea} m² • ${density} W/m²`
+                }
+              >
+                {heatingType === "mat" ? "Rohož" : "Fólia"}
+              </span>
+            )}
+
             {/* Heating / Power status */}
             {heat ? (
               <div

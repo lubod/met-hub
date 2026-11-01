@@ -116,6 +116,10 @@ class DomData {
       totalHeatedAreaM2: computed,
       avgHeatedDensity: computed,
       avgRoomDensity: computed,
+      foilsCapacityKw: computed,
+      matsCapacityKw: computed,
+      foilsHeatedAreaM2: computed,
+      matsHeatedAreaM2: computed,
       processData: action,
       processTrendData: action,
       processHeatingStats: action,
@@ -228,6 +232,38 @@ class DomData {
     return this.totalAreaM2 > 0
       ? Math.round((this.totalCapacityKw * 1000) / this.totalAreaM2)
       : 0;
+  }
+
+  get foilsCapacityKw(): number {
+    let sum = 0;
+    for (const [id, info] of Object.entries(DOM_ROOM_HEATING_DEFAULTS)) {
+      if (info.heatingType === "foil") sum += this.roomPowers[id] || 0;
+    }
+    return Math.round(sum * 1000) / 1000;
+  }
+
+  get matsCapacityKw(): number {
+    let sum = 0;
+    for (const [id, info] of Object.entries(DOM_ROOM_HEATING_DEFAULTS)) {
+      if (info.heatingType === "mat") sum += this.roomPowers[id] || 0;
+    }
+    return Math.round(sum * 1000) / 1000;
+  }
+
+  get foilsHeatedAreaM2(): number {
+    let sum = 0;
+    for (const [id, info] of Object.entries(DOM_ROOM_HEATING_DEFAULTS)) {
+      if (info.heatingType === "foil") sum += this.roomHeatedAreas[id] || 0;
+    }
+    return Math.round(sum * 100) / 100;
+  }
+
+  get matsHeatedAreaM2(): number {
+    let sum = 0;
+    for (const [id, info] of Object.entries(DOM_ROOM_HEATING_DEFAULTS)) {
+      if (info.heatingType === "mat") sum += this.roomHeatedAreas[id] || 0;
+    }
+    return Math.round(sum * 100) / 100;
   }
 
   getPowersQueryString(): string {
