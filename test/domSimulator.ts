@@ -342,9 +342,9 @@ export class DomSimulator extends CSimulator {
   getPGData(decoded: any) {
     return {
       timestamp: decoded.timestamp,
-      temp: decoded.temp.toFixed(1),
-      humidity: decoded.humidity.toFixed(1),
-      tarif: decoded.tarif.toFixed(0),
+      temp: decoded.temp != null ? decoded.temp.toFixed(1) : null,
+      humidity: decoded.humidity != null ? decoded.humidity.toFixed(1) : null,
+      tarif: decoded.tarif != null ? decoded.tarif.toFixed(0) : "0",
       rain: decoded.rain,
       living_room_air: decoded.living_room_air.toFixed(1),
       living_room_floor: decoded.living_room_floor.toFixed(1),

@@ -4,10 +4,10 @@ import { ISensor } from "./sensor";
 import { propName } from "./units";
 
 export interface IDomExternalData {
-  temp: number;
-  humidity: number;
+  temp: number | null;
+  humidity: number | null;
   rain: number;
-  text: string;
+  text?: string;
 }
 
 export interface IDomRoomData {
@@ -19,45 +19,48 @@ export interface IDomRoomData {
   kuri: number;
   low: number;
   leto: number;
-  text: string;
+  text?: string;
 }
 
 export interface IDomTarifData {
   tarif: number;
-  text: string;
+  text?: string;
 }
 
 export interface IDomDataRaw {
   timestamp: string;
   PASSKEY: string;
   dateutc: string;
-  tarif: IDomTarifData;
-  vonku: IDomExternalData;
-  obyvacka_vzduch: IDomRoomData;
-  obyvacka_podlaha: IDomRoomData;
-  pracovna_vzduch: IDomRoomData;
-  pracovna_podlaha: IDomRoomData;
-  spalna_vzduch: IDomRoomData;
-  spalna_podlaha: IDomRoomData;
-  chalani_vzduch: IDomRoomData;
-  chalani_podlaha: IDomRoomData;
-  petra_vzduch: IDomRoomData;
-  petra_podlaha: IDomRoomData;
-  zadverie_vzduch: IDomRoomData;
-  zadverie_podlaha: IDomRoomData;
-  chodba_vzduch: IDomRoomData;
-  chodba_podlaha: IDomRoomData;
-  satna_vzduch: IDomRoomData;
-  satna_podlaha: IDomRoomData;
-  kupelna_hore: IDomRoomData;
-  kupelna_dole: IDomRoomData;
+  tarif?: IDomTarifData;
+  vonku?: IDomExternalData;
+  temp?: number | null;
+  humidity?: number | null;
+  rain?: number | boolean;
+  obyvacka_vzduch?: IDomRoomData;
+  obyvacka_podlaha?: IDomRoomData;
+  pracovna_vzduch?: IDomRoomData;
+  pracovna_podlaha?: IDomRoomData;
+  spalna_vzduch?: IDomRoomData;
+  spalna_podlaha?: IDomRoomData;
+  chalani_vzduch?: IDomRoomData;
+  chalani_podlaha?: IDomRoomData;
+  petra_vzduch?: IDomRoomData;
+  petra_podlaha?: IDomRoomData;
+  zadverie_vzduch?: IDomRoomData;
+  zadverie_podlaha?: IDomRoomData;
+  chodba_vzduch?: IDomRoomData;
+  chodba_podlaha?: IDomRoomData;
+  satna_vzduch?: IDomRoomData;
+  satna_podlaha?: IDomRoomData;
+  kupelna_hore?: IDomRoomData;
+  kupelna_dole?: IDomRoomData;
 }
 
 export interface IDomData {
   timestamp: Date;
   place: string;
-  temp: number;
-  humidity: number;
+  temp: number | null;
+  humidity: number | null;
   rain: boolean;
   tarif: number;
   living_room_air: number;
@@ -130,8 +133,8 @@ export interface IDomData {
 
 export interface IDomTrendData {
   timestamp: Array<Date>;
-  temp: Array<number>;
-  humidity: Array<number>;
+  temp: Array<number | null>;
+  humidity: Array<number | null>;
   rain: Array<boolean>;
   tarif: Array<number>;
   living_room_air: Array<number>;

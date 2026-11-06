@@ -417,6 +417,46 @@ describe("POST /setDomData", () => {
       .send(validDomPayload);
     expect(res.status).toBe(401);
   });
+
+  it("accepts payload with temp == null without throwing TypeError", async () => {
+    const multi = freshMulti();
+    redisMock.multi.mockReturnValue(multi);
+
+    const payloadWithNullTemp = {
+      ...validDomPayload,
+      vonku: { ...validDomPayload.vonku, temp: null },
+    };
+
+    const res = await request(app)
+      .post("/setDomData?PASSKEY=test-dom-passkey")
+      .send(payloadWithNullTemp);
+    expect(res.status).toBe(200);
+
+    const setCall = multi.set.mock.calls.find((c: any) => c[0] === "dom-last");
+    expect(setCall).toBeDefined();
+    const stored = JSON.parse(setCall![1]);
+    expect(stored.temp).toBeNull();
+  });
+
+  it("accepts payload with vonku == null without throwing TypeError", async () => {
+    const multi = freshMulti();
+    redisMock.multi.mockReturnValue(multi);
+
+    const payloadWithNullVonku = {
+      ...validDomPayload,
+      vonku: null,
+    };
+
+    const res = await request(app)
+      .post("/setDomData?PASSKEY=test-dom-passkey")
+      .send(payloadWithNullVonku);
+    expect(res.status).toBe(200);
+
+    const setCall = multi.set.mock.calls.find((c: any) => c[0] === "dom-last");
+    expect(setCall).toBeDefined();
+    const stored = JSON.parse(setCall![1]);
+    expect(stored.temp).toBeNull();
+  });
 });
 
 describe("POST /data/report (Ecowitt protocol)", () => {
