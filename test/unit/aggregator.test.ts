@@ -18,11 +18,13 @@ const redisMock = vi.hoisted(() => ({
 }));
 
 const publishAvailabilityMock = vi.hoisted(() => vi.fn());
+const publishMinuteMock = vi.hoisted(() => vi.fn());
+const writeEventMock = vi.hoisted(() => vi.fn());
 
 vi.mock("../../server/redisClient", () => ({ default: redisMock }));
-vi.mock("../../server/router", () => ({ writeEvent: vi.fn() }));
+vi.mock("../../server/router", () => ({ writeEvent: writeEventMock }));
 vi.mock("../../server/mqttBroker", () => ({
-  publishMinute: vi.fn(),
+  publishMinute: publishMinuteMock,
   publishAvailability: publishAvailabilityMock,
 }));
 
@@ -108,5 +110,52 @@ describe("Aggregator Shutdown (aggregator.ts)", () => {
     const aggregator = new Aggregator([mockMeas]);
     await aggregator.aggregateMeasurement(mockMeas, Date.now());
     expect(publishAvailabilityMock).toHaveBeenCalledWith("st1", false);
+  });
+
+  it("aggregates raw samples into a minute bucket, enqueues toStore, updates trend, and notifies MQTT/SSE", async () => {
+    publishAvailabilityMock.mockClear();
+    publishMinuteMock.mockClear();
+    writeEventMock.mockClear();
+    redisMock.xAdd.mockClear();
+    const multiChain = {
+      zAdd: vi.fn().mockReturnThis(),
+      zRemRangeByScore: vi.fn().mockReturnThis(),
+      exec: vi.fn().mockResolvedValue(["OK", 1]),
+    };
+    redisMock.multi.mockReturnValueOnce(multiChain);
+
+    const rawSample = { timestamp: "2026-11-15T09:00:10.000Z", temp: 20 };
+    const aggResult = { timestamp: new Date("2026-11-15T09:00:00.000Z"), temp: 20 };
+    redisMock.eval.mockResolvedValueOnce([JSON.stringify(rawSample)]);
+
+    const mockMeas = {
+      getRedisRawDataKey: () => "raw_key",
+      getRedisLastDataKey: () => "last_key",
+      getRedisTrendKey: () => "trend_key",
+      getStationID: () => "st1",
+      aggregateRawData2Minute: vi.fn().mockReturnValue(aggResult),
+    } as unknown as IMeasurement;
+
+    const aggregator = new Aggregator([mockMeas]);
+    await aggregator.aggregateMeasurement(mockMeas, Date.now());
+
+    const minuteMs = Date.UTC(2026, 10, 15, 9, 0, 0, 0);
+    expect(mockMeas.aggregateRawData2Minute).toHaveBeenCalledWith(
+      minuteMs,
+      [expect.objectContaining({ temp: 20 })],
+    );
+    expect(redisMock.xAdd).toHaveBeenCalledWith("toStore", "*", {
+      m: JSON.stringify(aggResult),
+      id: "st1",
+    });
+    expect(publishMinuteMock).toHaveBeenCalledWith("st1", aggResult);
+    expect(publishAvailabilityMock).toHaveBeenCalledWith("st1", true);
+    expect(multiChain.zAdd).toHaveBeenCalledWith("trend_key", {
+      score: minuteMs,
+      value: JSON.stringify(aggResult),
+    });
+    expect(multiChain.zRemRangeByScore).toHaveBeenCalled();
+    expect(multiChain.exec).toHaveBeenCalled();
+    expect(writeEventMock).toHaveBeenCalledWith("st1", "minute");
   });
 });

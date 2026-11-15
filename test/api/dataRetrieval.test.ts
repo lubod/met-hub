@@ -38,6 +38,7 @@ const mockGetStationByID = vi.hoisted(() => vi.fn(() => undefined as any));
 const mockGetStationsByUser = vi.hoisted(() => vi.fn(() => undefined as Set<string> | undefined));
 const mockGetPublicStations = vi.hoisted(() => vi.fn(() => new Set<string>()));
 const mockLoadData = vi.hoisted(() => vi.fn().mockResolvedValue([]));
+const mockLoadDailyET0 = vi.hoisted(() => vi.fn().mockResolvedValue({ et0: 3.4 }));
 const mockLoadHeatingData = vi.hoisted(() =>
   vi.fn().mockResolvedValue({
     today: { totalKWh: 12.5, totalRuntimeMinutes: 300, rooms: {} },
@@ -71,6 +72,7 @@ vi.mock("../../server/db", () => ({
   loadData: mockLoadData,
   loadRainData: vi.fn().mockResolvedValue([]),
   loadHeatingData: mockLoadHeatingData,
+  loadDailyET0: mockLoadDailyET0,
   create: vi.fn(),
 }));
 
@@ -324,5 +326,58 @@ describe("GET /api/getAstronomicalData", () => {
       "/api/getAstronomicalData?lat=48.1&lon=17.1&date=2024-06-15",
     );
     expect(res.status).toBe(200);
+  });
+});
+
+// ── Tests: getDailyET0 & config ──────────────────────────────────────────────
+
+describe("GET /api/getDailyET0/station/:stationID", () => {
+  beforeEach(() => {
+    mockVerifyToken.mockReturnValue(null);
+    mockGetStationByID.mockReturnValue(makePublicStation());
+    mockGetPublicStations.mockReturnValue(new Set([TEST_PUBLIC_STATION_ID]));
+    redisMock.get.mockReset().mockResolvedValue(null);
+    redisMock.set.mockReset().mockResolvedValue("OK");
+    mockLoadDailyET0.mockClear();
+  });
+
+  it("returns cached ET0 from Redis without hitting DB", async () => {
+    redisMock.get.mockResolvedValueOnce(JSON.stringify({ et0: 2.8 }));
+
+    const res = await request(app).get(
+      `/api/getDailyET0/station/${TEST_PUBLIC_STATION_ID}`,
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ et0: 2.8 });
+    expect(redisMock.get).toHaveBeenCalledWith(
+      `ET0_DAILY_CACHE_${TEST_PUBLIC_STATION_ID}`,
+    );
+    expect(mockLoadDailyET0).not.toHaveBeenCalled();
+  });
+
+  it("loads ET0 from DB on cache miss and stores it in Redis for 60s", async () => {
+    const res = await request(app).get(
+      `/api/getDailyET0/station/${TEST_PUBLIC_STATION_ID}`,
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ et0: 3.4 });
+    expect(mockLoadDailyET0).toHaveBeenCalledTimes(1);
+    expect(redisMock.set).toHaveBeenCalledWith(
+      `ET0_DAILY_CACHE_${TEST_PUBLIC_STATION_ID}`,
+      JSON.stringify({ et0: 3.4 }),
+      { EX: 60 },
+    );
+  });
+});
+
+describe("GET /api/config", () => {
+  it("returns public runtime googleClientId", async () => {
+    const res = await request(app).get("/api/config");
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      googleClientId: process.env.CLIENT_ID,
+    });
   });
 });
