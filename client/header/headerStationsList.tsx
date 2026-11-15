@@ -2,7 +2,6 @@ import { Listbox } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import React from "react";
 import { observer } from "mobx-react";
-import { isMobile } from "react-device-detect";
 import { AppContext } from "..";
 import { AllStationsCfgClient } from "../../common/allStationsCfgClient";
 

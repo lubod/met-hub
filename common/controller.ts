@@ -25,6 +25,8 @@ export class CController {
 
   lastHeatingFetch: number = 0;
 
+  lastET0Fetch: number = 0;
+
   constructor(authData: AuthData, test: boolean = false) {
     this.authData = authData;
     this.test = test;
@@ -60,6 +62,7 @@ export class CController {
   }
 
   setStation(station: IStation | null) {
+    this.lastET0Fetch = 0;
     if (station == null) {
       this.stationID = "";
       this.stationCfg = null;
@@ -93,7 +96,11 @@ export class CController {
   private async fetchDomData() {
     this.domData.setLoading(true);
     const newData = await this.privateFetch(this.url("/api/getLastData/dom"));
-    if (newData != null) this.domData.processData(newData);
+    if (newData != null) {
+      this.domData.processData(newData);
+    } else {
+      this.domData.checkOldData(new Date());
+    }
     this.domData.setLoading(false);
   }
 
@@ -127,15 +134,24 @@ export class CController {
     const newData = await this.privateFetch(
       this.url(`/api/getLastData/station/${this.stationCfg.STATION_ID}`),
     );
-    // Keep last-good readings on failure; always release the spinner.
-    if (newData != null) this.stationData.setData(newData);
+    // Keep last-good readings on failure; re-check staleness and release the spinner.
+    if (newData != null) {
+      this.stationData.setData(newData);
+    } else {
+      this.stationData.checkOldData(new Date());
+    }
     this.stationData.setLoading(false);
   }
 
-  private async fetchSDailyET0() {
+  private async fetchSDailyET0(force: boolean = false) {
     if (this.stationData.station == null || this.stationCfg == null) {
       return;
     }
+    const now = Date.now();
+    if (!force && this.stationData.dailyET0 != null && now - this.lastET0Fetch < 60000) {
+      return;
+    }
+    this.lastET0Fetch = now;
     const newData = await this.privateFetch(
       this.url(`/api/getDailyET0/station/${this.stationCfg.STATION_ID}`),
     );
@@ -165,11 +181,9 @@ export class CController {
 
   async fetchData() {
     if (this.stationID === "dom") {
-      await this.fetchDomData();
-      await this.fetchDomHeatingData();
+      await Promise.all([this.fetchDomData(), this.fetchDomHeatingData()]);
     } else {
-      await this.fetchSData();
-      await this.fetchSDailyET0();
+      await Promise.all([this.fetchSData(), this.fetchSDailyET0()]);
     }
   }
 

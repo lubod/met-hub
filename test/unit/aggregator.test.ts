@@ -5,6 +5,8 @@ import { IMeasurement } from "../../server/measurement";
 
 // Hoist mock redisClient
 const redisMock = vi.hoisted(() => ({
+  get: vi.fn().mockResolvedValue(null),
+  eval: vi.fn().mockResolvedValue([]),
   zRangeByScore: vi.fn().mockResolvedValue([]),
   zRemRangeByScore: vi.fn().mockResolvedValue(0),
   xAdd: vi.fn().mockResolvedValue("OK"),
@@ -15,8 +17,14 @@ const redisMock = vi.hoisted(() => ({
   })),
 }));
 
+const publishAvailabilityMock = vi.hoisted(() => vi.fn());
+
 vi.mock("../../server/redisClient", () => ({ default: redisMock }));
 vi.mock("../../server/router", () => ({ writeEvent: vi.fn() }));
+vi.mock("../../server/mqttBroker", () => ({
+  publishMinute: vi.fn(),
+  publishAvailability: publishAvailabilityMock,
+}));
 
 describe("Aggregator Shutdown (aggregator.ts)", () => {
   it("shutdown() cancels active timer and waits for active promise", async () => {
@@ -62,5 +70,43 @@ describe("Aggregator Shutdown (aggregator.ts)", () => {
     // Check timer and activePromise are cleared
     expect((aggregator as any).timer).toBeNull();
     expect((aggregator as any).activePromise).toBeNull();
+  });
+
+  it("does not mark station stale on empty tick when last reading is <= 5 min old", async () => {
+    publishAvailabilityMock.mockClear();
+    redisMock.eval.mockResolvedValueOnce([]);
+    redisMock.get.mockResolvedValueOnce(
+      JSON.stringify({ timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString() }),
+    );
+
+    const mockMeas = {
+      getRedisRawDataKey: () => "raw_key",
+      getRedisLastDataKey: () => "last_key",
+      getRedisTrendKey: () => "trend_key",
+      getStationID: () => "st1",
+    } as unknown as IMeasurement;
+
+    const aggregator = new Aggregator([mockMeas]);
+    await aggregator.aggregateMeasurement(mockMeas, Date.now());
+    expect(publishAvailabilityMock).not.toHaveBeenCalled();
+  });
+
+  it("marks station stale on empty tick when last reading is > 5 min old or missing", async () => {
+    publishAvailabilityMock.mockClear();
+    redisMock.eval.mockResolvedValueOnce([]);
+    redisMock.get.mockResolvedValueOnce(
+      JSON.stringify({ timestamp: new Date(Date.now() - 6 * 60 * 1000).toISOString() }),
+    );
+
+    const mockMeas = {
+      getRedisRawDataKey: () => "raw_key",
+      getRedisLastDataKey: () => "last_key",
+      getRedisTrendKey: () => "trend_key",
+      getStationID: () => "st1",
+    } as unknown as IMeasurement;
+
+    const aggregator = new Aggregator([mockMeas]);
+    await aggregator.aggregateMeasurement(mockMeas, Date.now());
+    expect(publishAvailabilityMock).toHaveBeenCalledWith("st1", false);
   });
 });

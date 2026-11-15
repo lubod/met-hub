@@ -54,7 +54,7 @@ class ChartsCtrl {
     const hasDomAccess =
       this.chartsData.station.id === "dom" &&
       this.authData.isAuth &&
-      this.authData.email?.toLowerCase() === "lubo.drobny@gmail.com";
+      this.authData.id === this.chartsData.station.owner;
 
     if (
       !this.chartsData.station.public &&

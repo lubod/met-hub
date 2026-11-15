@@ -322,6 +322,7 @@ export async function loadData(
           FROM "${table}" s
           RIGHT JOIN intervals i
             ON s.timestamp >= i.start AND s.timestamp < i.end
+            AND s.timestamp >= $2::timestamptz AND s.timestamp < ($3::timestamptz + $1::text::interval)
         )
         SELECT grp, EXTRACT(EPOCH FROM start) * 1000 AS timestamp, min(${colExpr}) AS min, max(${colExpr}) AS max${extraOuterSelect}
         FROM create_grp
@@ -433,6 +434,7 @@ export async function loadRainData(stationID: string) {
         FROM "${table}" s
         JOIN hour_coef h ON DATE_TRUNC('hour', s.timestamp) = h.hour
         WHERE s.rainrate > 0
+          AND s.timestamp > current_timestamp - '4 weeks'::interval
       )
       SELECT
         coalesce(SUM(CASE WHEN timestamp > current_timestamp - '1 hour'::interval    THEN rain END), 0) AS "1hour",
@@ -667,8 +669,8 @@ export async function loadHeatingData(
       for (const k of roomKeys) {
         const col = `${roomPrefixes[k]}_${suffix}`;
         const count = parseInt(row[col] ?? "0", 10);
-        // Each sample in station_dom represents a 2-minute aggregation bucket
-        const runtimeMinutes = count * 2;
+        // Each sample in station_dom represents a 1-minute aggregation bucket
+        const runtimeMinutes = count;
         const pKw = powers[k as keyof typeof powers] ?? 1.0;
         const kwh = Math.round((runtimeMinutes / 60) * pKw * 1000) / 1000;
         roomsResult[k] = { runtimeMinutes, kwh, powerKw: pKw };
@@ -788,8 +790,7 @@ export async function store(
 ) {
   const stationID = measurement.getStationID();
   if (!/^[a-z0-9][a-z0-9_-]*$/i.test(stationID) || stationID.length > 64) {
-    console.error(`store: invalid stationID "${stationID}", skipping`);
-    return;
+    throw new Error(`Invalid stationID: ${stationID}`);
   }
   const dbclient = await pool.connect();
   try {
@@ -801,6 +802,7 @@ export async function store(
   } catch (e) {
     await dbclient.query("ROLLBACK");
     console.error(e);
+    throw e;
   } finally {
     dbclient.release();
   }

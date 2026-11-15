@@ -175,6 +175,7 @@ async function startConfigWatcher() {
   // Pub/sub requires a dedicated connection; the main stream client cannot
   // enter subscriber mode while doing xRead.
   const sub = client.duplicate();
+  sub.on?.("error", (err) => console.error("store: Redis pub/sub error:", err));
   await sub.connect();
   await sub.subscribe(STATIONS_CFG_CHANGED, (id) => {
     reloadStation(id).catch((err) => {

@@ -5,6 +5,19 @@ function formatDate(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
+function getBratislavaOffset(date: Date): string {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Europe/Bratislava",
+      timeZoneName: "longOffset",
+    }).formatToParts(date);
+    const tz = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+    const m = tz.match(/GMT([+-]\d{2}:\d{2})/);
+    if (m) return m[1];
+  } catch {}
+  return "+01:00";
+}
+
 export async function getForecast(lat: string, lon: string) {
   // ~1.1 km grid: bounds the Redis cache-key space so unauthenticated
   // high-precision requests cannot flood keys or hammer upstream met.no.
@@ -41,7 +54,7 @@ export async function getForecast(lat: string, lon: string) {
     if (!json?.properties?.timeseries) {
       throw new Error("Unexpected forecast response structure");
     }
-    redisClient.set(cacheKey, JSON.stringify(json), { EX: 3600 });
+    await redisClient.set(cacheKey, JSON.stringify(json), { EX: 3600 });
     return json;
   } catch (e) {
     console.error(e);
@@ -50,8 +63,10 @@ export async function getForecast(lat: string, lon: string) {
 }
 
 export async function getAstronomicalData(lat: string, lon: string, date: Date) {
+  const qlat = parseFloat(lat).toFixed(2);
+  const qlon = parseFloat(lon).toFixed(2);
   const dateStr = formatDate(date);
-  const cacheKey = `ASTRONOMICAL_DATA_CACHE_${parseFloat(lat).toFixed(2)}_${parseFloat(lon).toFixed(2)}_${dateStr}`;
+  const cacheKey = `ASTRONOMICAL_DATA_CACHE_${qlat}_${qlon}_${dateStr}`;
   const reply = await redisClient.get(cacheKey);
   if (reply != null) {
     try {
@@ -64,7 +79,8 @@ export async function getAstronomicalData(lat: string, lon: string, date: Date) 
       // corrupt cache entry – fall through to fetch
     }
   }
-  const url = `https://api.met.no/weatherapi/sunrise/3.0/sun?lat=${lat}&lon=${lon}&date=${dateStr}&offset=+02:00`;
+  const offset = encodeURIComponent(getBratislavaOffset(date));
+  const url = `https://api.met.no/weatherapi/sunrise/3.0/sun?lat=${qlat}&lon=${qlon}&date=${dateStr}&offset=${offset}`;
   console.info(`GET ${url}`);
   try {
     const response = await fetch(url, {
@@ -81,7 +97,7 @@ export async function getAstronomicalData(lat: string, lon: string, date: Date) 
     if (!json?.properties) {
       throw new Error("Unexpected astronomical data response structure");
     }
-    redisClient.set(cacheKey, JSON.stringify(json), { EX: 3600 });
+    await redisClient.set(cacheKey, JSON.stringify(json), { EX: 3600 });
     return json;
   } catch (e) {
     console.error(e);

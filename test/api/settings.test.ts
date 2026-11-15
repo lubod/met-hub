@@ -322,4 +322,29 @@ describe("Cloud bridge auto-claim (WU endpoint)", () => {
     expect(res.status).toBe(200);
     expect(mockAddStation).not.toHaveBeenCalled();
   });
+
+  it("does not claim when identifier is shorter than 12 characters", async () => {
+    settingsState.current.bridge.autoClaim = true;
+
+    const res = await request(app)
+      .get("/weatherstation/updateweatherstation.php?ID=short12345&dateutc=now&tempf=70");
+
+    expect(res.status).toBe(400);
+    expect(mockAddStation).not.toHaveBeenCalled();
+  });
+
+  it("stops claiming when global claimed cap is reached without incrementing", async () => {
+    settingsState.current.bridge.autoClaim = true;
+    redisMock.get.mockResolvedValueOnce("50");
+    redisMock.incr.mockClear();
+
+    const res = await request(app)
+      .get("/weatherstation/updateweatherstation.php?ID=abc123456789&dateutc=now&tempf=70");
+
+    expect(res.status).toBe(400);
+    expect(mockAddStation).not.toHaveBeenCalled();
+    // Only the per-IP counter may have incremented before the global cap check;
+    // bridge:claimed:total must not be incremented after seeing 50.
+    expect(redisMock.incr).not.toHaveBeenCalledWith("bridge:claimed:total");
+  });
 });

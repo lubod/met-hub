@@ -5,7 +5,7 @@ import { Aedes, Client, PublishPacket, Subscription } from "aedes";
 import type { Duplex } from "node:stream";
 import websocketStream from "websocket-stream";
 import redisClient from "./redisClient";
-import { getSettings } from "./settings";
+import { getSettings, SETTINGS_CHANGED } from "./settings";
 import { allStationsCfg } from "./state";
 import { STATION_SENSORS } from "../common/stationModel";
 import { DOM_SENSORS } from "../common/domModel";
@@ -75,11 +75,44 @@ function topicMatches(topic: string, filter: string): boolean {
   return f.length === t.length;
 }
 
+const DOM_ACCESS_EMAIL = (process.env.DOM_ACCESS_EMAIL || "lubo.drobny@gmail.com").toLowerCase();
+
+async function hasDomAccess(userId: string): Promise<boolean> {
+  const adminId = await redisClient.hGet("USERS", "admin");
+  if (adminId && userId === adminId) return true;
+  const raw = await redisClient.hGet("USERS", userId);
+  if (!raw) return false;
+  try {
+    const parsed = JSON.parse(raw) as { email?: string };
+    return parsed.email?.toLowerCase() === DOM_ACCESS_EMAIL;
+  } catch {
+    return false;
+  }
+}
+
+async function resolveDomOwnerId(): Promise<string | null> {
+  const adminId = await redisClient.hGet("USERS", "admin");
+  if (adminId) return adminId;
+  const allUsers = await redisClient.hGetAll("USERS");
+  for (const [uid, raw] of Object.entries(allUsers)) {
+    if (uid === "admin") continue;
+    try {
+      const parsed = JSON.parse(raw) as { email?: string };
+      if (parsed.email?.toLowerCase() === DOM_ACCESS_EMAIL) return uid;
+    } catch {}
+  }
+  return null;
+}
+
 async function buildAllowedTopics(userId: string): Promise<string[]> {
+  const base = getSettings().mqtt.topicBase;
   const patterns = [`methub/discovery/${userId}/#`];
   const owned = allStationsCfg.getStationsByUser(userId);
-  if (owned) for (const id of owned) patterns.push(`methub/${id}/#`);
-  for (const id of allStationsCfg.getPublicStations()) patterns.push(`methub/${id}/#`);
+  if (owned) for (const id of owned) patterns.push(`${base}/${id}/#`);
+  for (const id of allStationsCfg.getPublicStations()) patterns.push(`${base}/${id}/#`);
+  if (await hasDomAccess(userId)) {
+    patterns.push(`${base}/dom/#`);
+  }
   return patterns;
 }
 
@@ -148,20 +181,23 @@ export function publishAvailability(stationId: string, online: boolean): void {
 }
 
 function publishDiscoveryForStation(stationId: string, ownerId: string): void {
-  const station = allStationsCfg.getStationByID(stationId);
-  if (station == null || !ownerId) return;
-  const base = getSettings().mqtt.topicBase;
+  const place =
+    stationId === "dom"
+      ? "Dom"
+      : allStationsCfg.getStationByID(stationId)?.place;
+  if (!place || !ownerId) return;
+  const { topicBase: base, haDiscovery } = getSettings().mqtt;
   const prefix = `methub/discovery/${ownerId}`;
   const sensors =
     stationId === "dom"
       ? DOM_SENSORS.filter((s) => s.unit !== "")
       : STATION_SENSORS;
-  for (const cfg of sensorConfigs(base, prefix, stationId, station.place, sensors)) {
-    publish(cfg.topic, cfg.payload, true);
+  for (const cfg of sensorConfigs(base, prefix, stationId, place, sensors)) {
+    publish(cfg.topic, haDiscovery ? cfg.payload : "", true);
   }
 }
 
-async function republishAll(): Promise<void> {
+export async function republishAll(): Promise<void> {
   const base = getSettings().mqtt.topicBase;
   for (const [id, station] of allStationsCfg.getStations()) {
     if (!station.owner) continue;
@@ -174,6 +210,13 @@ async function republishAll(): Promise<void> {
     if (raw != null) publish(`${base}/${id}/state`, raw, true);
     publish(`${base}/${id}/availability`, "stale", true);
   }
+  const domOwner = await resolveDomOwnerId();
+  if (domOwner) {
+    publishDiscoveryForStation("dom", domOwner);
+  }
+  const domRaw = await redisClient.get("dom-last");
+  if (domRaw != null) publish(`${base}/dom/state`, domRaw, true);
+  publish(`${base}/dom/availability`, "stale", true);
 }
 
 export function connectedClients(): number {
@@ -251,16 +294,24 @@ export async function initMqttBroker(httpServer: HttpServer): Promise<void> {
   // Retained discovery/state republish: HA recovers after restarts, and
   // stays in sync when stations are added via the config-change channel.
   republishAll().catch((err) => console.error("mqtt: republish failed:", err));
-  redisClient
-    .duplicate()
+  const sub = redisClient.duplicate();
+  sub.on?.("error", (err) => console.error("mqtt: Redis pub/sub error:", err));
+  sub
     .connect()
-    .then((sub) =>
-      sub.subscribe("STATIONS_CFG_CHANGED", (id) => {
+    .then(async () => {
+      await sub.subscribe("STATIONS_CFG_CHANGED", (id) => {
         republishAll().catch((err) =>
           console.error(`mqtt: republish after ${id} failed:`, err),
         );
-      }),
-    )
+      });
+      await sub.subscribe(SETTINGS_CHANGED, (section) => {
+        if (section === "mqtt") {
+          republishAll().catch((err) =>
+            console.error("mqtt: republish after settings change failed:", err),
+          );
+        }
+      });
+    })
     .catch((err) => console.error("mqtt: discovery sync unavailable:", err));
 }
 

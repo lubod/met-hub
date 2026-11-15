@@ -24,10 +24,7 @@ const HeaderCurrentTime = observer(({ headerData }: { headerData: HeaderData }) 
   />
 ));
 
-const Header = observer(({ appContext }: Props) => {
-  const isFresh = !appContext.cCtrl.stationData.oldData;
-
-  return (
+const Header = observer(({ appContext }: Props) => (
     <HeaderContainer>
       <div className="flex flex-wrap items-center gap-3 md:grid md:grid-cols-[1fr_auto_1fr]">
         {/* Left: Brand Identity + Live Badge */}
@@ -81,7 +78,6 @@ const Header = observer(({ appContext }: Props) => {
         )}
       </div>
     </HeaderContainer>
-  );
-});
+));
 
 export default Header;

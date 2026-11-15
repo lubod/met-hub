@@ -144,18 +144,36 @@ if ("serviceWorker" in navigator && window.location.hostname !== "localhost") {
   });
 }
 
-const appContainer = document.getElementById("app");
-if (appContainer) {
-  const root = createRoot(appContainer);
-  root.render(
+function RootApp() {
+  const buildClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || "";
+  const [clientId, setClientId] = React.useState(buildClientId);
+
+  React.useEffect(() => {
+    if (!buildClientId || buildClientId === "dummy-client-id-for-ci") {
+      fetch("/api/config")
+        .then((r) => (r.ok ? r.json() : null))
+        .then((cfg) => {
+          if (cfg?.googleClientId) setClientId(cfg.googleClientId);
+        })
+        .catch(() => {});
+    }
+  }, [buildClientId]);
+
+  return (
     <ErrorBoundary>
       <div className="App">
         <div className="bg-aurora" />
         <div className="bg-terrain" />
-        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ""}>
+        <GoogleOAuthProvider clientId={clientId}>
           <App appContext={appContext} />
         </GoogleOAuthProvider>
       </div>
-    </ErrorBoundary>,
+    </ErrorBoundary>
   );
+}
+
+const appContainer = document.getElementById("app");
+if (appContainer) {
+  const root = createRoot(appContainer);
+  root.render(<RootApp />);
 }

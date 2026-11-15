@@ -3,8 +3,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // ── Imports after mocks ──────────────────────────────────────────────────────
 // Import order is deliberate: pgPool must be mocked before this module loads.
 // eslint-disable-next-line import/first
-import { computeET0Series, getQuery, loadRainData, loadHeatingData, loadData } from "../../server/db";
+import { computeET0Series, getQuery, loadRainData, loadHeatingData, loadData, store } from "../../server/db";
 import { AllStationsCfg } from "../../common/allStationsCfg";
+import { IMeasurement } from "../../server/measurement";
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
@@ -138,15 +139,15 @@ describe("loadHeatingData", () => {
     releaseMock.mockClear();
   });
 
-  it("calculates runtime minutes and kWh accurately from 2-minute sample counts", async () => {
+  it("calculates runtime minutes and kWh accurately from 1-minute sample counts", async () => {
     queryMock.mockResolvedValue({
       rows: [
         {
-          living_today: "30",    // 30 * 2 = 60 min (1 hr) * 4.0 kW = 4.0 kWh
-          guest_today: "15",     // 15 * 2 = 30 min (0.5 hr) * 1.3 kW = 0.65 kWh
-          bed_today: "60",       // 60 * 2 = 120 min (2 hr) * 1.2 kW = 2.4 kWh
+          living_today: "30",    // 30 * 1 = 30 min (0.5 hr) * 4.0 kW = 2.0 kWh
+          guest_today: "15",     // 15 * 1 = 15 min (0.25 hr) * 1.3 kW = 0.325 kWh
+          bed_today: "60",       // 60 * 1 = 60 min (1 hr) * 1.2 kW = 1.2 kWh
           boys_today: "0",       // 0 kWh
-          petra_today: "45",     // 45 * 2 = 90 min (1.5 hr) * 1.3 kW = 1.95 kWh
+          petra_today: "45",     // 45 * 1 = 45 min (0.75 hr) * 1.3 kW = 0.975 kWh
           living_yesterday: "0",
           guest_yesterday: "0",
           bed_yesterday: "0",
@@ -185,27 +186,27 @@ describe("loadHeatingData", () => {
     });
     expect(stats).not.toBeNull();
     if (!stats) throw new Error("stats is null");
-    expect(stats.today.rooms.living_room.runtimeMinutes).toBe(60);
-    expect(stats.today.rooms.living_room.kwh).toBe(4.0);
-    expect(stats.today.rooms.guest_room.runtimeMinutes).toBe(30);
-    expect(stats.today.rooms.guest_room.kwh).toBe(0.65);
-    expect(stats.today.rooms.bed_room.runtimeMinutes).toBe(120);
-    expect(stats.today.rooms.bed_room.kwh).toBe(2.4);
+    expect(stats.today.rooms.living_room.runtimeMinutes).toBe(30);
+    expect(stats.today.rooms.living_room.kwh).toBe(2.0);
+    expect(stats.today.rooms.guest_room.runtimeMinutes).toBe(15);
+    expect(stats.today.rooms.guest_room.kwh).toBe(0.325);
+    expect(stats.today.rooms.bed_room.runtimeMinutes).toBe(60);
+    expect(stats.today.rooms.bed_room.kwh).toBe(1.2);
     expect(stats.today.rooms.boys_room.runtimeMinutes).toBe(0);
     expect(stats.today.rooms.boys_room.kwh).toBe(0);
-    expect(stats.today.rooms.petra_room.runtimeMinutes).toBe(90);
-    expect(stats.today.rooms.petra_room.kwh).toBe(1.95);
+    expect(stats.today.rooms.petra_room.runtimeMinutes).toBe(45);
+    expect(stats.today.rooms.petra_room.kwh).toBe(0.975);
 
-    // Total: 4.0 + 0.65 + 2.4 + 0 + 1.95 = 9.0 kWh
-    expect(stats.today.totalKWh).toBe(9.0);
-    expect(stats.today.totalRuntimeMinutes).toBe(300);
+    // Total: 2.0 + 0.325 + 1.2 + 0 + 0.975 = 4.5 kWh
+    expect(stats.today.totalKWh).toBe(4.5);
+    expect(stats.today.totalRuntimeMinutes).toBe(150);
   });
 
   it("applies custom powers when provided", async () => {
     queryMock.mockResolvedValue({
       rows: [
         {
-          living_today: "60", // 120 min = 2 hr * custom 5.0 kW = 10.0 kWh
+          living_today: "60", // 60 min = 1 hr * custom 5.0 kW = 5.0 kWh
           guest_today: "0",
           bed_today: "0",
           boys_today: "0",
@@ -222,7 +223,7 @@ describe("loadHeatingData", () => {
     expect(stats).not.toBeNull();
     if (!stats) throw new Error("stats is null");
     expect(stats.today.rooms.living_room.powerKw).toBe(5.0);
-    expect(stats.today.rooms.living_room.kwh).toBe(10.0);
+    expect(stats.today.rooms.living_room.kwh).toBe(5.0);
   });
 
   it("gracefully returns zeroed stats if station_dom table is missing", async () => {
@@ -293,5 +294,35 @@ describe("loadData overlay and boolean handling", () => {
     const dataSql = queryMock.mock.calls[0][0] as string;
     expect(dataSql).toContain('s."entry_hall_reqall"');
     expect(dataSql).toContain('AS "entry_hall_reqall"');
+  });
+});
+
+describe("store", () => {
+  beforeEach(() => {
+    queryMock.mockReset();
+    releaseMock.mockClear();
+    connectMock.mockClear();
+  });
+
+  it("throws on invalid stationID without acquiring a DB connection", async () => {
+    const badMeas = { getStationID: () => 'bad"; drop table x' } as unknown as IMeasurement;
+    await expect(store(badMeas, { temp: 20 } as any)).rejects.toThrow(/Invalid stationID/);
+    expect(connectMock).not.toHaveBeenCalled();
+  });
+
+  it("rolls back, releases client, and rethrows when INSERT fails", async () => {
+    const meas = { getStationID: () => "st1" } as unknown as IMeasurement;
+    queryMock
+      .mockResolvedValueOnce({}) // BEGIN
+      .mockRejectedValueOnce(new Error("insert timeout")) // INSERT
+      .mockResolvedValueOnce({}); // ROLLBACK
+
+    await expect(
+      store(meas, { timestamp: new Date(0), temp: 21.5 } as any),
+    ).rejects.toThrow("insert timeout");
+
+    expect(queryMock).toHaveBeenCalledWith("BEGIN");
+    expect(queryMock).toHaveBeenCalledWith("ROLLBACK");
+    expect(releaseMock).toHaveBeenCalledTimes(1);
   });
 });

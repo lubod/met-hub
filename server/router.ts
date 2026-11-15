@@ -51,7 +51,7 @@ declare global {
   }
 }
 
-const DOM_ACCESS_EMAIL = "lubo.drobny@gmail.com";
+const DOM_ACCESS_EMAIL = (process.env.DOM_ACCESS_EMAIL || "lubo.drobny@gmail.com").toLowerCase();
 
 // Cache admin ID promise for 60 seconds to avoid a Redis fetch on every request
 let adminIdPromise: Promise<string | null> | null = null;
@@ -210,7 +210,7 @@ let lastEventTime = 0;
 let nextClientId = 1;
 
 export const writeEvent = (data: string, type: "raw" | "ping" | "minute") => {
-  if (type === "ping" && Date.now() - lastEventTime < 30000) {
+  if (type === "ping" && Date.now() - lastEventTime < 20000) {
     return;
   }
   for (const [id, res] of clients) {
@@ -252,7 +252,7 @@ export const writeEvent = (data: string, type: "raw" | "ping" | "minute") => {
   lastEventTime = Date.now();
 };
 
-setInterval(() => writeEvent("-", "ping"), 30000);
+setInterval(() => writeEvent("-", "ping"), 25000).unref();
 
 function eventHandler(req: Request, res: Response) {
   if (clients.size >= MAX_SSE_CONNECTIONS) {
@@ -283,8 +283,8 @@ function eventHandler(req: Request, res: Response) {
   clients.set(clientId, res);
   console.info(`${clientId} Connection opened`);
 
-  // Set socket idle timeout (e.g. 60 seconds)
-  req.socket.setTimeout(60000);
+  // Set socket idle timeout (e.g. 90 seconds)
+  req.socket.setTimeout(90000);
   req.socket.on("timeout", () => {
     console.info(`${clientId} SSE connection idle timeout`);
     clients.delete(clientId);
@@ -395,9 +395,23 @@ router.get(
   authMiddleware,
   accessMiddleware((req) => req.params.stationID),
   catchAsync(async (req, res) => {
-    const station = allStationsCfg.getStationByID(req.params.stationID);
+    const { stationID } = req.params;
+    const station = allStationsCfg.getStationByID(stationID);
     if (station != null) {
-      const data = await loadDailyET0(req.params.stationID, allStationsCfg);
+      const cacheKey = `ET0_DAILY_CACHE_${stationID}`;
+      const cached = await redisClient.get(cacheKey);
+      if (cached != null) {
+        try {
+          res.status(200).json(JSON.parse(cached));
+          return;
+        } catch {
+          // fall through on corrupt cache
+        }
+      }
+      const data = await loadDailyET0(stationID, allStationsCfg);
+      if (data != null) {
+        await redisClient.set(cacheKey, JSON.stringify(data), { EX: 60 });
+      }
       res.status(200).json(data);
     } else {
       throw new AppError(400, "Invalid params");
@@ -469,6 +483,13 @@ router.get(
     }
   }),
 );
+
+router.get("/api/config", (_req: Request, res: Response) => {
+  res.status(200).json({
+    googleClientId:
+      process.env.CLIENT_ID || process.env.REACT_APP_GOOGLE_CLIENT_ID || "",
+  });
+});
 
 router.get(
   "/api/getAllStationsCfg",
@@ -733,13 +754,15 @@ function sniffStationType(payload: Record<string, unknown>): StationType {
 async function tryAutoClaim(identifier: string, req: Request): Promise<boolean> {
   const { bridge } = settingsService.getSettings();
   if (!bridge.autoClaim || !identifier) return false;
-  if (identifier.length < 8 || identifier.length > 64) return false;
+  if (identifier.length < 12 || identifier.length > 64) return false;
   const day = new Date().toISOString().slice(0, 10);
   const ip = req.ip ?? "unknown";
   const capKey = `bridge:cap:${ip}:${day}`;
   const perIp = await redisClient.incr(capKey);
   if (perIp === 1) await redisClient.expire(capKey, 172_800);
   if (perIp > bridge.autoClaimMaxPerDay) return false;
+  const currentTotal = Number((await redisClient.get("bridge:claimed:total")) ?? 0);
+  if (currentTotal >= 50) return false;
   const total = await redisClient.incr("bridge:claimed:total");
   if (total > 50) return false;
 

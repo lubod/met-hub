@@ -152,6 +152,7 @@ export async function initSettings(): Promise<void> {
   initialized = true;
 
   const sub = redisClient.duplicate();
+  sub.on?.("error", (err) => console.error("settings: Redis pub/sub error:", err));
   await sub.connect();
   await sub.subscribe(SETTINGS_CHANGED, () => {
     // reload never rejects (errors are caught and logged inside)

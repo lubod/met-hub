@@ -60,8 +60,21 @@ class Aggregator {
     });
     const res = (Array.isArray(popped) ? popped : []) as string[];
     if (res.length === 0) {
-      // No fresh samples this tick: flag the station as stale on MQTT.
-      publishAvailability(meas.getStationID(), false);
+      // Only flag the station as stale on MQTT if its last reading is >5 min old.
+      const lastRaw = await redisClient.get(meas.getRedisLastDataKey());
+      let isStale = true;
+      if (lastRaw != null) {
+        try {
+          const parsed = JSON.parse(lastRaw) as { timestamp?: string | number };
+          const ts = parsed.timestamp ? new Date(parsed.timestamp).getTime() : NaN;
+          if (!Number.isNaN(ts) && Date.now() - ts <= 5 * 60 * 1000) {
+            isStale = false;
+          }
+        } catch {}
+      }
+      if (isStale) {
+        publishAvailability(meas.getStationID(), false);
+      }
       return;
     }
 

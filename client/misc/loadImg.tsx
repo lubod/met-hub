@@ -1,15 +1,24 @@
 /* eslint-disable import/prefer-default-export */
-import styled from "styled-components";
+import React from "react";
 
-export const LoadImg = styled.img<{ rotate: boolean }>`
-  animation: ${(props) => (props.rotate ? "rotation 2s infinite linear" : "")};
+type LoadImgProps = {
+  rotate: boolean;
+  src: string;
+  alt?: string;
+  className?: string;
+};
 
-  @keyframes rotation {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-`;
+export function LoadImg({
+  rotate,
+  src,
+  alt = "",
+  className = "",
+}: LoadImgProps) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={`${rotate ? "animate-spin" : ""} ${className}`.trim()}
+    />
+  );
+}
