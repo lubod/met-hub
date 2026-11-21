@@ -61,82 +61,82 @@ export interface IDomData {
   place: string;
   temp: number | null;
   humidity: number | null;
-  rain: boolean;
-  tarif: number;
+  rain: boolean | null;
+  tarif: number | null;
   living_room_air: number;
   living_room_floor: number;
   living_room_reqall: number;
-  living_room_heat: boolean;
-  living_room_off: boolean;
-  living_room_low: boolean;
+  living_room_heat: boolean | null;
+  living_room_off: boolean | null;
+  living_room_low: boolean | null;
   guest_room_air: number;
   guest_room_floor: number;
   guest_room_reqall: number;
-  guest_room_heat: boolean;
-  guest_room_off: boolean;
-  guest_room_low: boolean;
+  guest_room_heat: boolean | null;
+  guest_room_off: boolean | null;
+  guest_room_low: boolean | null;
   bed_room_air: number;
   bed_room_floor: number;
   bed_room_reqall: number;
-  bed_room_heat: boolean;
-  bed_room_off: boolean;
-  bed_room_low: boolean;
+  bed_room_heat: boolean | null;
+  bed_room_off: boolean | null;
+  bed_room_low: boolean | null;
   boys_room_air: number;
   boys_room_floor: number;
   boys_room_reqall: number;
-  boys_room_heat: boolean;
-  boys_room_off: boolean;
-  boys_room_low: boolean;
+  boys_room_heat: boolean | null;
+  boys_room_off: boolean | null;
+  boys_room_low: boolean | null;
   petra_room_air: number;
   petra_room_floor: number;
   petra_room_reqall: number;
-  petra_room_heat: boolean;
-  petra_room_off: boolean;
-  petra_room_low: boolean;
+  petra_room_heat: boolean | null;
+  petra_room_off: boolean | null;
+  petra_room_low: boolean | null;
 
   // Secondary house circuits
   entry_hall_air?: number;
   entry_hall_floor?: number;
   entry_hall_reqall?: number;
-  entry_hall_heat?: boolean;
-  entry_hall_off?: boolean;
-  entry_hall_low?: boolean;
+  entry_hall_heat?: boolean | null;
+  entry_hall_off?: boolean | null;
+  entry_hall_low?: boolean | null;
 
   bath_down_air?: number;
   bath_down_floor?: number;
   bath_down_reqall?: number;
-  bath_down_heat?: boolean;
-  bath_down_off?: boolean;
-  bath_down_low?: boolean;
+  bath_down_heat?: boolean | null;
+  bath_down_off?: boolean | null;
+  bath_down_low?: boolean | null;
 
   bath_up_air?: number;
   bath_up_floor?: number;
   bath_up_reqall?: number;
-  bath_up_heat?: boolean;
-  bath_up_off?: boolean;
-  bath_up_low?: boolean;
+  bath_up_heat?: boolean | null;
+  bath_up_off?: boolean | null;
+  bath_up_low?: boolean | null;
 
   wardrobe_air?: number;
   wardrobe_floor?: number;
   wardrobe_reqall?: number;
-  wardrobe_heat?: boolean;
-  wardrobe_off?: boolean;
-  wardrobe_low?: boolean;
+  wardrobe_heat?: boolean | null;
+  wardrobe_off?: boolean | null;
+  wardrobe_low?: boolean | null;
 
   hall_up_air?: number;
   hall_up_floor?: number;
   hall_up_reqall?: number;
-  hall_up_heat?: boolean;
-  hall_up_off?: boolean;
-  hall_up_low?: boolean;
+  hall_up_heat?: boolean | null;
+  hall_up_off?: boolean | null;
+  hall_up_low?: boolean | null;
 }
 
 export interface IDomTrendData {
   timestamp: Array<Date>;
   temp: Array<number | null>;
   humidity: Array<number | null>;
-  rain: Array<boolean>;
-  tarif: Array<number>;
+  rain: Array<boolean | null>;
+  tarif: Array<number | null>;
   living_room_air: Array<number>;
   living_room_floor: Array<number>;
   guest_room_air: Array<number>;
@@ -147,31 +147,31 @@ export interface IDomTrendData {
   boys_room_floor: Array<number>;
   petra_room_air: Array<number>;
   petra_room_floor: Array<number>;
-  living_room_heat?: Array<boolean>;
-  guest_room_heat?: Array<boolean>;
-  bed_room_heat?: Array<boolean>;
-  boys_room_heat?: Array<boolean>;
-  petra_room_heat?: Array<boolean>;
+  living_room_heat?: Array<boolean | null>;
+  guest_room_heat?: Array<boolean | null>;
+  bed_room_heat?: Array<boolean | null>;
+  boys_room_heat?: Array<boolean | null>;
+  petra_room_heat?: Array<boolean | null>;
 
   entry_hall_air?: Array<number>;
   entry_hall_floor?: Array<number>;
-  entry_hall_heat?: Array<boolean>;
+  entry_hall_heat?: Array<boolean | null>;
 
   bath_down_air?: Array<number>;
   bath_down_floor?: Array<number>;
-  bath_down_heat?: Array<boolean>;
+  bath_down_heat?: Array<boolean | null>;
 
   bath_up_air?: Array<number>;
   bath_up_floor?: Array<number>;
-  bath_up_heat?: Array<boolean>;
+  bath_up_heat?: Array<boolean | null>;
 
   wardrobe_air?: Array<number>;
   wardrobe_floor?: Array<number>;
-  wardrobe_heat?: Array<boolean>;
+  wardrobe_heat?: Array<boolean | null>;
 
   hall_up_air?: Array<number>;
   hall_up_floor?: Array<number>;
-  hall_up_heat?: Array<boolean>;
+  hall_up_heat?: Array<boolean | null>;
 }
 
 export interface IDomRoomHeatingInfo {
@@ -1202,9 +1202,6 @@ export class DOM_SENSORS_DESC {
 }
 
 export const DOM_SENSORS: ISensor[] = [
-  DOM_SENSORS_DESC.TEMPERATURE,
-  DOM_SENSORS_DESC.HUMIDITY,
-  DOM_SENSORS_DESC.RAIN,
   DOM_SENSORS_DESC.TARIF,
   DOM_SENSORS_DESC.LIVING_ROOM_AIR,
   DOM_SENSORS_DESC.LIVING_ROOM_FLOOR,

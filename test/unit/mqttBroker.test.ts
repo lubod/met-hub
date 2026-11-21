@@ -255,13 +255,13 @@ describe("MQTT broker (mqttBroker.ts)", () => {
     const domDiscovery = brokerHolder.published.find(
       (p) =>
         p.topic ===
-        "methub/discovery/user1/homeassistant/sensor/methub_dom_temp/config",
+        "methub/discovery/user1/homeassistant/sensor/methub_dom_living_room_air/config",
     );
     expect(domDiscovery).toBeDefined();
     expect(domDiscovery?.retain).toBe(true);
     expect(domDiscovery?.payload).not.toBe("");
     expect(JSON.parse(domDiscovery!.payload)).toMatchObject({
-      unique_id: "methub_dom_temp",
+      unique_id: "methub_dom_living_room_air",
       state_topic: "methub/dom/state",
     });
 

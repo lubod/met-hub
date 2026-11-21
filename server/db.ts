@@ -335,8 +335,8 @@ export async function loadData(
            min(${colExpr}) AS min,
            max(${colExpr}) AS max,
            avg(${colExpr}) AS avg,
-           (SELECT ${colExpr} FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp ASC  LIMIT 1) AS first,
-           (SELECT ${colExpr} FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 ORDER BY timestamp DESC LIMIT 1) AS last
+           (SELECT ${colExpr} FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 AND ${colExpr} IS NOT NULL ORDER BY timestamp ASC  LIMIT 1) AS first,
+           (SELECT ${colExpr} FROM "${table}" WHERE timestamp >= $1 AND timestamp < $2 AND ${colExpr} IS NOT NULL ORDER BY timestamp DESC LIMIT 1) AS last
          FROM "${table}"
          WHERE timestamp >= $1 AND timestamp < $2`,
         [timestampStart, timestampEnd],

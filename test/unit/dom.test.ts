@@ -76,8 +76,9 @@ describe("Dom.decodeData", () => {
     const { decoded } = dom.decodeData(minimalRaw as any, "Dom");
     expect(decoded.temp).toBeNull();
     expect(decoded.humidity).toBeNull();
+    expect(decoded.rain).toBeNull();
     expect(decoded.living_room_air).toBeNull();
-    expect(decoded.living_room_heat).toBe(false);
+    expect(decoded.living_room_heat).toBeNull();
   });
 
   it("exposes expected station metadata via getters", () => {
@@ -145,5 +146,39 @@ describe("Dom.decodeData", () => {
     expect(trend.entry_hall_air).toEqual([20.1]);
     expect(trend.bath_down_floor).toEqual([25.0]);
     expect(trend.hall_up_air).toEqual([20.8]);
+  });
+
+  it("maps missing, null, or 0 tarif to null while preserving valid 1 and 2", () => {
+    expect(dom.decodeData({ ...baseRaw, tarif: { tarif: 1 } } as any, "Dom").decoded.tarif).toBe(1);
+    expect(dom.decodeData({ ...baseRaw, tarif: { tarif: 2 } } as any, "Dom").decoded.tarif).toBe(2);
+    expect(dom.decodeData({ ...baseRaw, tarif: { tarif: 0 } } as any, "Dom").decoded.tarif).toBeNull();
+    expect(dom.decodeData({ ...baseRaw, tarif: { tarif: null } } as any, "Dom").decoded.tarif).toBeNull();
+    expect(dom.decodeData({ ...baseRaw, tarif: null } as any, "Dom").decoded.tarif).toBeNull();
+    const { tarif: _omitted, ...withoutTarif } = baseRaw;
+    expect(dom.decodeData(withoutTarif as any, "Dom").decoded.tarif).toBeNull();
+
+    const baseTrendItem = {
+      timestamp: "2026-11-15T09:15:00.000Z",
+      temp: 15.5,
+      humidity: 65,
+      rain: 0,
+      living_room_air: 22.1,
+      living_room_floor: 23.0,
+      guest_room_air: 21.0,
+      guest_room_floor: 22.0,
+      bed_room_air: 20.5,
+      bed_room_floor: 21.5,
+      boys_room_air: 21.2,
+      boys_room_floor: 22.2,
+      petra_room_air: 21.4,
+      petra_room_floor: 22.4,
+    };
+    const trend = dom.transformTrendData([
+      JSON.stringify({ ...baseTrendItem, tarif: 1 }),
+      JSON.stringify({ ...baseTrendItem, tarif: 0 }),
+      JSON.stringify({ ...baseTrendItem, tarif: null }),
+      JSON.stringify({ ...baseTrendItem, tarif: 2 }),
+    ]);
+    expect(trend.tarif).toEqual([1, null, null, 2]);
   });
 });

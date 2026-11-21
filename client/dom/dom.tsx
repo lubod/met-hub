@@ -4,7 +4,6 @@ import { AppContext } from "..";
 import Myhr from "../misc/myhr";
 import { Container } from "../misc/container";
 import DomHeader from "./domHeader";
-import DomGardenHouse from "./domGardenHouse";
 import DomEnergyOverview from "./domEnergyOverview";
 import DomRoomsUpDown from "./domRoomsUpDown";
 
@@ -16,8 +15,6 @@ type DomProps = {
 const Dom = observer(({ appContext, className }: DomProps) => (
   <Container className={className}>
     <DomHeader appContext={appContext} />
-    <Myhr />
-    <DomGardenHouse appContext={appContext} />
     <Myhr />
     <DomEnergyOverview appContext={appContext} />
     <Myhr />

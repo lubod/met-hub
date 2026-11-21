@@ -121,7 +121,7 @@ class ChartsCtrl {
       }
 
       for (const item of newData.data) {
-        item.val = [item.min, item.max];
+        item.val = item.min != null && item.max != null ? [item.min, item.max] : null;
       }
       // console.debug("loaded data", min, max, avg, sum, newData);
 

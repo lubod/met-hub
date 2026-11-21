@@ -2,6 +2,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { AppContext } from "..";
+import { DOM_SENSORS_DESC } from "../../common/domModel";
 import Text from "../misc/text";
 import DomHeatingSettingsModal from "./domHeatingSettingsModal";
 
@@ -120,7 +121,19 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
         </div>
 
         {/* 3. Tariff Status */}
-        <div className="p-3 rounded-xl border bg-white/[0.02] border-white/5 flex flex-col justify-between">
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.TARIF)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              appContext.setMeasurementAndLoad(DOM_SENSORS_DESC.TARIF);
+            }
+          }}
+          title="Open tariff history chart"
+          className="p-3 rounded-xl border bg-white/[0.02] hover:bg-white/[0.04] border-white/5 flex flex-col justify-between cursor-pointer transition-colors"
+        >
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-light/60">
               Electricity Rate

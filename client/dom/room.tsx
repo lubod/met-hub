@@ -10,9 +10,9 @@ type RoomProps = {
   air?: number;
   floor?: number;
   required?: number;
-  heat?: boolean;
-  off?: boolean;
-  low?: boolean;
+  heat?: boolean | null;
+  off?: boolean | null;
+  low?: boolean | null;
   room: string;
   airTrend?: Array<number>;
   floorTrend?: Array<number>;

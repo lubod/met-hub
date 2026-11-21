@@ -122,8 +122,8 @@ export class Dom implements IMeasurement {
       tmp.timestamp.push(value.timestamp);
       tmp.temp.push(value.temp);
       tmp.humidity.push(value.humidity);
-      tmp.rain.push(value.rain);
-      tmp.tarif.push(value.tarif);
+      tmp.rain.push(value.rain != null ? Boolean(value.rain) : null);
+      tmp.tarif.push(value.tarif != null && value.tarif > 0 ? value.tarif : null);
       tmp.living_room_air.push(value.living_room_air);
       tmp.living_room_floor.push(value.living_room_floor);
       tmp.guest_room_air.push(value.guest_room_air);
@@ -134,16 +134,17 @@ export class Dom implements IMeasurement {
       tmp.boys_room_floor.push(value.boys_room_floor);
       tmp.petra_room_air.push(value.petra_room_air);
       tmp.petra_room_floor.push(value.petra_room_floor);
-      tmp.living_room_heat!.push(Boolean(value.living_room_heat));
-      tmp.guest_room_heat!.push(Boolean(value.guest_room_heat));
-      tmp.bed_room_heat!.push(Boolean(value.bed_room_heat));
-      tmp.boys_room_heat!.push(Boolean(value.boys_room_heat));
-      tmp.petra_room_heat!.push(Boolean(value.petra_room_heat));
-      tmp.entry_hall_heat!.push(Boolean(value.entry_hall_heat));
-      tmp.bath_down_heat!.push(Boolean(value.bath_down_heat));
-      tmp.bath_up_heat!.push(Boolean(value.bath_up_heat));
-      tmp.wardrobe_heat!.push(Boolean(value.wardrobe_heat));
-      tmp.hall_up_heat!.push(Boolean(value.hall_up_heat));
+      const optHeat = (v: unknown) => (v != null ? Boolean(v) : null);
+      tmp.living_room_heat!.push(optHeat(value.living_room_heat));
+      tmp.guest_room_heat!.push(optHeat(value.guest_room_heat));
+      tmp.bed_room_heat!.push(optHeat(value.bed_room_heat));
+      tmp.boys_room_heat!.push(optHeat(value.boys_room_heat));
+      tmp.petra_room_heat!.push(optHeat(value.petra_room_heat));
+      tmp.entry_hall_heat!.push(optHeat(value.entry_hall_heat));
+      tmp.bath_down_heat!.push(optHeat(value.bath_down_heat));
+      tmp.bath_up_heat!.push(optHeat(value.bath_up_heat));
+      tmp.wardrobe_heat!.push(optHeat(value.wardrobe_heat));
+      tmp.hall_up_heat!.push(optHeat(value.hall_up_heat));
 
       if (value.entry_hall_air != null) tmp.entry_hall_air!.push(value.entry_hall_air);
       if (value.entry_hall_floor != null) tmp.entry_hall_floor!.push(value.entry_hall_floor);
@@ -173,13 +174,19 @@ export class Dom implements IMeasurement {
         ? Number(rawHumidity)
         : null;
 
-    const rain = Boolean(data?.vonku?.rain ?? (data as any)?.rain);
+    const toOptBool = (v: unknown): boolean | null =>
+      v != null ? Boolean(v) : null;
+
+    const rawRain = data?.vonku?.rain ?? (data as any)?.rain;
+    const rain = toOptBool(rawRain);
 
     const rawTarif = data?.tarif?.tarif ?? (data as any)?.tarif;
-    const tarif =
-      rawTarif != null && !Number.isNaN(Number(rawTarif))
+    const parsedTarif =
+      rawTarif != null && rawTarif !== "" && typeof rawTarif !== "object"
         ? Number(rawTarif)
-        : 0;
+        : Number.NaN;
+    const tarif =
+      !Number.isNaN(parsedTarif) && parsedTarif > 0 ? parsedTarif : null;
 
     const decoded: IDomData = {
       timestamp: new Date(data?.timestamp),
@@ -190,69 +197,69 @@ export class Dom implements IMeasurement {
       living_room_air: data?.obyvacka_vzduch?.temp ?? (null as any),
       living_room_floor: data?.obyvacka_podlaha?.temp ?? (null as any),
       living_room_reqall: data?.obyvacka_vzduch?.reqall ?? (null as any),
-      living_room_heat: Boolean(data?.obyvacka_podlaha?.kuri),
-      living_room_off: Boolean(data?.obyvacka_podlaha?.leto),
-      living_room_low: Boolean(data?.obyvacka_podlaha?.low),
+      living_room_heat: toOptBool(data?.obyvacka_podlaha?.kuri),
+      living_room_off: toOptBool(data?.obyvacka_podlaha?.leto),
+      living_room_low: toOptBool(data?.obyvacka_podlaha?.low),
       guest_room_air: data?.pracovna_vzduch?.temp ?? (null as any),
       guest_room_floor: data?.pracovna_podlaha?.temp ?? (null as any),
       guest_room_reqall: data?.pracovna_vzduch?.reqall ?? (null as any),
-      guest_room_heat: Boolean(data?.pracovna_podlaha?.kuri),
-      guest_room_off: Boolean(data?.pracovna_podlaha?.leto),
-      guest_room_low: Boolean(data?.pracovna_podlaha?.low),
+      guest_room_heat: toOptBool(data?.pracovna_podlaha?.kuri),
+      guest_room_off: toOptBool(data?.pracovna_podlaha?.leto),
+      guest_room_low: toOptBool(data?.pracovna_podlaha?.low),
       bed_room_air: data?.spalna_vzduch?.temp ?? (null as any),
       bed_room_floor: data?.spalna_podlaha?.temp ?? (null as any),
       bed_room_reqall: data?.spalna_vzduch?.reqall ?? (null as any),
-      bed_room_heat: Boolean(data?.spalna_podlaha?.kuri),
-      bed_room_off: Boolean(data?.spalna_podlaha?.leto),
-      bed_room_low: Boolean(data?.spalna_podlaha?.low),
+      bed_room_heat: toOptBool(data?.spalna_podlaha?.kuri),
+      bed_room_off: toOptBool(data?.spalna_podlaha?.leto),
+      bed_room_low: toOptBool(data?.spalna_podlaha?.low),
       boys_room_air: data?.chalani_vzduch?.temp ?? (null as any),
       boys_room_floor: data?.chalani_podlaha?.temp ?? (null as any),
       boys_room_reqall: data?.chalani_vzduch?.reqall ?? (null as any),
-      boys_room_heat: Boolean(data?.chalani_podlaha?.kuri),
-      boys_room_off: Boolean(data?.chalani_podlaha?.leto),
-      boys_room_low: Boolean(data?.chalani_podlaha?.low),
+      boys_room_heat: toOptBool(data?.chalani_podlaha?.kuri),
+      boys_room_off: toOptBool(data?.chalani_podlaha?.leto),
+      boys_room_low: toOptBool(data?.chalani_podlaha?.low),
       petra_room_air: data?.petra_vzduch?.temp ?? (null as any),
       petra_room_floor: data?.petra_podlaha?.temp ?? (null as any),
       petra_room_reqall: data?.petra_vzduch?.reqall ?? (null as any),
-      petra_room_heat: Boolean(data?.petra_podlaha?.kuri),
-      petra_room_off: Boolean(data?.petra_podlaha?.leto),
-      petra_room_low: Boolean(data?.petra_podlaha?.low),
+      petra_room_heat: toOptBool(data?.petra_podlaha?.kuri),
+      petra_room_off: toOptBool(data?.petra_podlaha?.leto),
+      petra_room_low: toOptBool(data?.petra_podlaha?.low),
 
       // Secondary house circuits
       entry_hall_air: data?.zadverie_vzduch?.temp,
       entry_hall_floor: data?.zadverie_podlaha?.temp,
       entry_hall_reqall: data?.zadverie_vzduch?.reqall ?? data?.zadverie_podlaha?.reqall,
-      entry_hall_heat: Boolean(data?.zadverie_podlaha?.kuri),
-      entry_hall_off: Boolean(data?.zadverie_podlaha?.leto),
-      entry_hall_low: Boolean(data?.zadverie_podlaha?.low),
+      entry_hall_heat: toOptBool(data?.zadverie_podlaha?.kuri),
+      entry_hall_off: toOptBool(data?.zadverie_podlaha?.leto),
+      entry_hall_low: toOptBool(data?.zadverie_podlaha?.low),
 
       bath_down_air: data?.kupelna_dole?.temp,
       bath_down_floor: data?.kupelna_dole?.temp,
       bath_down_reqall: data?.kupelna_dole?.reqall,
-      bath_down_heat: Boolean(data?.kupelna_dole?.kuri),
-      bath_down_off: Boolean(data?.kupelna_dole?.leto),
-      bath_down_low: Boolean(data?.kupelna_dole?.low),
+      bath_down_heat: toOptBool(data?.kupelna_dole?.kuri),
+      bath_down_off: toOptBool(data?.kupelna_dole?.leto),
+      bath_down_low: toOptBool(data?.kupelna_dole?.low),
 
       bath_up_air: data?.kupelna_hore?.temp,
       bath_up_floor: data?.kupelna_hore?.temp,
       bath_up_reqall: data?.kupelna_hore?.reqall,
-      bath_up_heat: Boolean(data?.kupelna_hore?.kuri),
-      bath_up_off: Boolean(data?.kupelna_hore?.leto),
-      bath_up_low: Boolean(data?.kupelna_hore?.low),
+      bath_up_heat: toOptBool(data?.kupelna_hore?.kuri),
+      bath_up_off: toOptBool(data?.kupelna_hore?.leto),
+      bath_up_low: toOptBool(data?.kupelna_hore?.low),
 
       wardrobe_air: data?.satna_vzduch?.temp,
       wardrobe_floor: data?.satna_podlaha?.temp,
       wardrobe_reqall: data?.satna_vzduch?.reqall ?? data?.satna_podlaha?.reqall,
-      wardrobe_heat: Boolean(data?.satna_podlaha?.kuri),
-      wardrobe_off: Boolean(data?.satna_podlaha?.leto),
-      wardrobe_low: Boolean(data?.satna_podlaha?.low),
+      wardrobe_heat: toOptBool(data?.satna_podlaha?.kuri),
+      wardrobe_off: toOptBool(data?.satna_podlaha?.leto),
+      wardrobe_low: toOptBool(data?.satna_podlaha?.low),
 
       hall_up_air: data?.chodba_vzduch?.temp,
       hall_up_floor: data?.chodba_podlaha?.temp,
       hall_up_reqall: data?.chodba_vzduch?.reqall ?? data?.chodba_podlaha?.reqall,
-      hall_up_heat: Boolean(data?.chodba_podlaha?.kuri),
-      hall_up_off: Boolean(data?.chodba_podlaha?.leto),
-      hall_up_low: Boolean(data?.chodba_podlaha?.low),
+      hall_up_heat: toOptBool(data?.chodba_podlaha?.kuri),
+      hall_up_off: toOptBool(data?.chodba_podlaha?.leto),
+      hall_up_low: toOptBool(data?.chodba_podlaha?.low),
       place,
     };
     const date = new Date(decoded.timestamp);
