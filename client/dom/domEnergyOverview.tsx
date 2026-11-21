@@ -27,9 +27,10 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
   const stats = domData.heatingStats;
   const intervalStats = stats ? stats[currentInterval] : null;
 
-  const {tarif} = domData.data;
-  // Tariff 2 is typically Low Tariff (NT - Nízky tarif) in dual-rate ripple receivers, Tariff 1 is High Tariff (VT)
-  const isLowTarif = tarif === 2;
+  const { tarif } = domData.data;
+  // Dom ripple/tariff values: 1 = NT (Low tariff), 2 = VT (High tariff)
+  const isLowTarif = tarif === 1;
+  const isHighTarif = tarif === 2;
 
   function formatRuntime(minutes: number) {
     const h = Math.floor(minutes / 60);
@@ -131,14 +132,20 @@ const DomEnergyOverview = observer(({ appContext }: Props) => {
               className={`px-2 py-0.5 rounded-md text-xs font-bold ${
                 isLowTarif
                   ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                  : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                  : isHighTarif
+                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                  : "bg-white/10 text-light/60 border border-white/15"
               }`}
             >
-              {isLowTarif ? "NT (Low)" : "VT (High)"}
+              {isLowTarif ? "NT (Low)" : isHighTarif ? "VT (High)" : "-"}
             </span>
           </div>
           <span className="text-[10px] text-light/50 truncate">
-            {isLowTarif ? "Cheaper night rate" : "Standard day rate"}
+            {isLowTarif
+              ? "Cheaper night rate"
+              : isHighTarif
+              ? "Standard day rate"
+              : "Waiting for data"}
           </span>
         </div>
 
